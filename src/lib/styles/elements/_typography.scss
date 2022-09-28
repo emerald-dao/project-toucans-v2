@@ -19,7 +19,16 @@ h4 {
 	font-stretch: 100%;
 	line-height: 1.1;
 	color: var(--clr-font-heading);
+}
+
+h1,
+h2 {
 	font-family: var(--ff-heading);
+}
+
+h3,
+h4 {
+	font-family: var(--ff-text);
 }
 
 h1 {
