@@ -9,7 +9,7 @@
 	import { getFindProfile } from '$flow/utils';
 </script>
 
-<Header themeStore={$theme} {logIn} {unauthenticate} {getFindProfile} user={$user} />
+<Header themeStore={$theme} {logIn} {unauthenticate} {getFindProfile} user={$user} {navElements} />
 <main>
 	<slot />
 </main>
