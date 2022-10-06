@@ -1,22 +1,41 @@
 import { get, writable } from 'svelte/store';
-import { steps } from './Steps';
+import { steps } from '$stores/generator/StepsStore';
 
 function createGeneratorActiveStep() {
 	const { subscribe, set, update } = writable(0);
 
-	function increment() {
-		if (get(steps).length - 1 > get(activeStep)) {
-			update((n) => n + 1);
-			steps.changeStepState(get(activeStep) - 1, 'success');
-			steps.changeStepState(get(activeStep), 'active');
+	async function increment() {
+		const activeStepNumber = get(activeStep);
+		const action = get(steps)[activeStepNumber].action;
+		const numberOfSteps = get(steps).length;
+
+		if (numberOfSteps - 1 > activeStepNumber) {
+			if (action != null) {
+				steps.changeStepState(activeStepNumber, 'loading');
+				try {
+					await action();
+					steps.changeStepState(activeStepNumber, 'success');
+					steps.changeStepState(activeStepNumber + 1, 'active');
+					update((n) => n + 1);
+				} catch (e) {
+					console.error('Error has occured: ' + e);
+					steps.changeStepState(activeStepNumber, 'error');
+				}
+			} else {
+				steps.changeStepState(activeStepNumber, 'success');
+				steps.changeStepState(activeStepNumber + 1, 'active');
+				update((n) => n + 1);
+			}
 		}
 	}
 
 	function decrement() {
-		if (get(activeStep) > 0) {
+		const activeStepNumber = get(activeStep);
+
+		if (activeStepNumber > 0) {
 			update((n) => n - 1);
-			steps.changeStepState(get(activeStep), 'active');
-			steps.changeStepState(get(activeStep) + 1, 'inactive');
+			steps.changeStepState(activeStepNumber, 'active');
+			steps.changeStepState(activeStepNumber + 1, 'inactive');
 		}
 	}
 

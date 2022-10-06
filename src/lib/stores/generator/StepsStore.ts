@@ -1,11 +1,15 @@
-// import { TestComponent1, TestComponent2, TestComponent3 } from '$atoms';
 import type { Step } from '$lib/types/generator-step.interface';
 import type { StepState } from '$lib/types/generator-step-state.type';
-import type { StepsStore } from '$lib/types/generator-steps-store.interface';
 import { writable } from 'svelte/store';
-import { Card } from '$atoms';
+import {
+	TokenType,
+	Tokenomics,
+	ReviewAndDeploy,
+	DaoDetails
+} from '$components/sections/dao-generator/index';
+import { dummyTransactionExecution } from '$flow/actions';
 
-function createSteps(steps: Step[]): StepsStore {
+function createSteps(steps: Step[]) {
 	const { subscribe, update } = writable(steps);
 
 	function changeStepState(index: number, state: StepState) {
@@ -37,18 +41,27 @@ function createSteps(steps: Step[]): StepsStore {
 
 export const steps = createSteps([
 	{
-		title: 'First Step',
-		component: Card,
+		title: 'DAO Details',
+		component: DaoDetails,
+		action: null,
 		state: 'active'
 	},
 	{
-		title: 'Second Step',
-		component: Card,
+		title: 'Token Type',
+		component: TokenType,
+		action: null,
 		state: 'inactive'
 	},
 	{
-		title: 'Third Step',
-		component: Card,
+		title: 'Tokenomics',
+		component: Tokenomics,
+		action: dummyTransactionExecution,
+		state: 'inactive'
+	},
+	{
+		title: 'Review & Deploy',
+		component: ReviewAndDeploy,
+		action: null,
 		state: 'inactive'
 	}
 ]);

@@ -1,7 +1,6 @@
 <script type="ts">
 	import dappInfo from '$lib/config/config';
 	import { Section, Container, Column, Row, AdaptableGrid } from '@mateoroldos/svelte.bones';
-	import { transactionInProgress } from '$stores/FlowStore';
 	import { Button, Tagline } from '@emerald-dao/component-library';
 	import { Card, LeadingProjectCard } from '$components/atoms';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
