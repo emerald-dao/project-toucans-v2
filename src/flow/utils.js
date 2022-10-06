@@ -2,15 +2,17 @@ import * as fcl from '@onflow/fcl';
 import { get } from 'svelte/store';
 import { transactionStore } from '$stores/flow/TransactionStore';
 
-export const executeTransaction = async (transaction) => {
+export const executeTransaction = async (transaction, actionAfterSucceed) => {
 	transactionStore.initTransaction();
 	try {
 		const transactionId = await transaction();
 		console.log(transactionId);
 		fcl.tx(transactionId).subscribe((res) => {
-			console.log(res);
 			transactionStore.subscribeTransaction(res);
 			if (res.status === 4) {
+				if (res.statusCode === 0 && actionAfterSucceed != undefined) {
+					actionAfterSucceed();
+				}
 				setTimeout(() => transactionStore.resetTransaction, 2000);
 			}
 		});
