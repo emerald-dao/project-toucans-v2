@@ -33,9 +33,9 @@ function createGeneratorActiveStep() {
 		const activeStepNumber = get(activeStep);
 
 		if (activeStepNumber > 0) {
+			steps.changeStepState(activeStepNumber - 1, 'active');
+			steps.changeStepState(activeStepNumber, 'inactive');
 			update((n) => n - 1);
-			steps.changeStepState(activeStepNumber, 'active');
-			steps.changeStepState(activeStepNumber + 1, 'inactive');
 		}
 	}
 
