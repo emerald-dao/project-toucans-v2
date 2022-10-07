@@ -14,7 +14,7 @@
 	transactionInProgress={$transactionStore.progress}
 	transactionStatus={$transactionStore.transaction}
 />
-<Header themeStore={$theme} {logIn} {unauthenticate} {getFindProfile} user={$user} {navElements} />
+<Header themeStore={theme} {logIn} {unauthenticate} {getFindProfile} user={$user} {navElements} />
 <main>
 	<slot />
 </main>

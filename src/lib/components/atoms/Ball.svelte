@@ -12,10 +12,11 @@
 	div {
 		aspect-ratio: 1 / 1;
 		width: fit-content;
-		padding: 2rem;
+		padding: 0.4rem;
 		border-radius: 100%;
 		display: grid;
 		place-content: center;
+		font-size: var(--fs-200);
 	}
 
 	.inactive {
