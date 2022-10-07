@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { FlowTransaction } from '$lib/types/flow-transaction.interface';
+import type { FlowTransaction } from '$lib/types/flow/flow-transaction.interface';
 
 function createTransaction(transaction: FlowTransaction) {
 	const { subscribe, set } = writable({

@@ -1,9 +1,11 @@
 <script>
 	import { GeneratorNav } from '$components/sections/dao-generator';
-	import { Section } from '@mateoroldos/svelte.bones';
+	import { Column, Section } from '@mateoroldos/svelte.bones';
 </script>
 
 <Section>
-	<GeneratorNav />
-	<slot />
+	<Column>
+		<GeneratorNav />
+		<slot />
+	</Column>
 </Section>

@@ -1,30 +1,20 @@
 <!-- Page that dynamically renders each step of the DAO Generation process -->
 <script>
 	import { Section, Container, Row } from '@mateoroldos/svelte.bones';
+	import { Button } from '@emerald-dao/component-library';
 	import { activeStep } from '$lib/stores/generator/ActiveStep';
 	import { steps } from '$stores/generator/StepsStore';
+
+	import { browser } from '$app/environment';
 </script>
 
-<Section>
-	<Container>
-		<!-- Display generator if user has loggedIn with wallet -->
-		<!-- {#if $user?.loggedIn}
-      <div class="main-layout">
-        <div class="sidebar-container">
-          <GeneratorNav bind:step={$activeStep} {steps} />
-        </div> -->
-		<div class="main-container">
-			<svelte:component this={$steps[$activeStep].component} />
-			<Row>
-				<button on:click={activeStep.decrement}>Previous</button>
-				<button on:click={activeStep.increment}>Next</button>
-				<button on:click={activeStep.reset}>Reset</button>
-			</Row>
-		</div>
-		<!-- </div> -->
-		<!-- If not connected, ask to connect wallet -->
-		<!-- {:else}
-      <WalletConnectModal />
-    {/if} -->
-	</Container>
-</Section>
+<Container width="small" --container-s="30ch">
+	{#if browser}
+		<svelte:component this={$steps[$activeStep].component} />
+	{/if}
+	<Row>
+		<Button type="ghost" on:click={activeStep.decrement}>Previous</Button>
+		<Button on:click={activeStep.increment}>Next</Button>
+		<!-- <Button on:click={activeStep.reset}>Reset</Button> -->
+	</Row>
+</Container>

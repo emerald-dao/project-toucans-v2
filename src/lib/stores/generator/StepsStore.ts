@@ -1,5 +1,5 @@
-import type { Step } from '$lib/types/generator-step.interface';
-import type { StepState } from '$lib/types/generator-step-state.type';
+import type { Step } from '$lib/types/generator/generator-step.interface';
+import type { StepState } from '$lib/types/generator/generator-step-state.type';
 import { writable } from 'svelte/store';
 import {
 	TokenType,

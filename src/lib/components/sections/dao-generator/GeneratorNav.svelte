@@ -3,4 +3,6 @@
 	import { StepByStep } from '$atoms';
 </script>
 
-<StepByStep steps={$steps} />
+<nav>
+	<StepByStep steps={$steps} />
+</nav>

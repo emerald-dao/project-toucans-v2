@@ -1,5 +1,5 @@
 <script type="ts">
-	import type { StepState } from '$lib/types/generator-step-state.type';
+	import type { StepState } from '$lib/types/generator/generator-step-state.type';
 
 	export let status: StepState;
 </script>

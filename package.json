@@ -52,6 +52,7 @@
 	"type": "module",
 	"dependencies": {
 		"@emerald-dao/component-library": "^1.6.2",
-		"@onflow/fcl": "^1.2.1"
+		"@onflow/fcl": "^1.2.1",
+		"felte": "^1.2.5"
 	}
 }

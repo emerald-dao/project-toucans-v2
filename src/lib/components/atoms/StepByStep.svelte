@@ -1,5 +1,5 @@
 <script type="ts">
-	import type { Step } from '$lib/types/generator-step.interface';
+	import type { Step } from '$lib/types/generator/generator-step.interface';
 	import { Ball } from '$atoms';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 
