@@ -1,5 +1,5 @@
-import type { Step } from '$lib/types/generator-step.interface';
-import type { StepState } from '$lib/types/generator-step-state.type';
+import type { Step } from '$lib/types/generator/generator-step.interface';
+import type { StepState } from '$lib/types/generator/generator-step-state.type';
 import { writable } from 'svelte/store';
 import {
 	TokenType,
@@ -55,13 +55,13 @@ export const steps = createSteps([
 	{
 		title: 'Tokenomics',
 		component: Tokenomics,
-		action: dummyTransactionExecution,
+		action: null,
 		state: 'inactive'
 	},
 	{
 		title: 'Review & Deploy',
 		component: ReviewAndDeploy,
-		action: null,
+		action: dummyTransactionExecution,
 		state: 'inactive'
 	}
 ]);

@@ -9,7 +9,7 @@ function createGeneratorActiveStep() {
 		const action = get(steps)[activeStepNumber].action;
 		const numberOfSteps = get(steps).length;
 
-		if (numberOfSteps - 1 > activeStepNumber) {
+		if (numberOfSteps > activeStepNumber) {
 			if (action != null) {
 				steps.changeStepState(activeStepNumber, 'loading');
 				try {

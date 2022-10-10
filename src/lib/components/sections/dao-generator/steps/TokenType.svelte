@@ -1,9 +1,9 @@
 <script type="ts">
+	import { TokenTypes } from '$lib/types/token-types.enum';
 	import { createForm } from 'felte';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { Column } from '@mateoroldos/svelte.bones';
 
-	let daoDetails = $daoData.daoDetails;
 	const { form } = createForm({
 		onSubmit: (values) => {
 			// ...
@@ -12,7 +12,13 @@
 </script>
 
 <Column gap="small">
-	<input type="radio" id="financial" name="tokenType" />
+	<input
+		type="radio"
+		id="financial"
+		name="tokenType"
+		bind:group={$daoData.tokenomics.tokenType}
+		value={TokenTypes.FINANCIAL}
+	/>
 	<label for="financial">
 		<h4>Financial</h4>
 		<span>
@@ -20,7 +26,13 @@
 			est adipisicing amet pariatur enim et eiusmod do ut tempor qui ea.
 		</span>
 	</label>
-	<input type="radio" id="community" name="tokenType" />
+	<input
+		type="radio"
+		id="community"
+		name="tokenType"
+		bind:group={$daoData.tokenomics.tokenType}
+		value={TokenTypes.COMMUNITY}
+	/>
 	<label for="community">
 		<h4>Community</h4>
 		<span>
