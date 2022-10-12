@@ -3,6 +3,16 @@ export const navElements = [
 		name: 'Generate DAO',
 		url: '/dao-generator',
 		prefetch: true
+	},
+	{
+		name: 'Admin',
+		url: '/admin',
+		prefetch: true
+	},
+	{
+		name: 'Discover',
+		url: '/discover',
+		prefetch: true
 	}
 ];
 
