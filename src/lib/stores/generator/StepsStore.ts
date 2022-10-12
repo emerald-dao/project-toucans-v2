@@ -6,7 +6,7 @@ import {
 	Tokenomics,
 	ReviewAndDeploy,
 	DaoDetails
-} from '$components/sections/dao-generator/index';
+} from '$components/pages/dao-generator/index';
 import { dummyTransactionExecution } from '$flow/actions';
 
 function createSteps(steps: Step[]) {
