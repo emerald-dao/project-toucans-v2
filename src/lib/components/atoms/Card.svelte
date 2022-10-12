@@ -10,5 +10,6 @@
 	div {
 		background-color: var(--clr-background-secondary);
 		border-radius: 1.4rem;
+		width: fit-content;
 	}
 </style>
