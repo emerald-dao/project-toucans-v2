@@ -5,5 +5,5 @@ export interface Step {
 	title: string;
 	component: typeof SvelteComponent;
 	action: null | (() => Promise<void>);
-	state: StepState;
+	state?: StepState;
 }

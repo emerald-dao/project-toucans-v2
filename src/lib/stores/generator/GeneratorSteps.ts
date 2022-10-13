@@ -12,26 +12,22 @@ export const generatorSteps = createSteps([
 	{
 		title: 'DAO Details',
 		component: DaoDetails,
-		action: null,
-		state: 'active'
+		action: null
 	},
 	{
 		title: 'Token Type',
 		component: TokenType,
-		action: null,
-		state: 'inactive'
+		action: null
 	},
 	{
 		title: 'Tokenomics',
 		component: Tokenomics,
-		action: null,
-		state: 'inactive'
+		action: null
 	},
 	{
 		title: 'Review & Deploy',
 		component: ReviewAndDeploy,
-		action: dummyTransactionExecution,
-		state: 'inactive'
+		action: dummyTransactionExecution
 	}
 ]);
 export const generatorActiveStep = createActiveStep(generatorSteps);

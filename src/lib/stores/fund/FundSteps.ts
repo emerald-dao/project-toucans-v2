@@ -7,20 +7,17 @@ export const fundSteps = createSteps([
 	{
 		title: 'Disclaimer',
 		component: Disclaimer,
-		action: null,
-		state: 'active'
+		action: null
 	},
 	{
 		title: 'Fund',
 		component: Fund,
-		action: null,
-		state: 'inactive'
+		action: null
 	},
 	{
 		title: 'Thank You!',
 		component: Thanks,
-		action: dummyTransactionExecution,
-		state: 'inactive'
+		action: dummyTransactionExecution
 	}
 ]);
 export const fundActiveStep = createActiveStep(fundSteps);
