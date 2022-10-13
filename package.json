@@ -53,6 +53,8 @@
 	"dependencies": {
 		"@emerald-dao/component-library": "^1.6.2",
 		"@onflow/fcl": "^1.2.1",
-		"felte": "^1.2.5"
+		"chart.js": "^3.9.1",
+		"felte": "^1.2.5",
+		"svelte-chartjs": "^3.0.1"
 	}
 }
