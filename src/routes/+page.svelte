@@ -1,5 +1,4 @@
 <script type="ts">
-	import dappInfo from '$lib/config/config';
 	import { Section, Container, Column, Row, AdaptableGrid } from '@mateoroldos/svelte.bones';
 	import { Button, Tagline } from '@emerald-dao/component-library';
 	import { Card, LeadingProjectCard } from '$components/atoms';

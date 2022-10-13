@@ -1,8 +1,8 @@
 import { get, writable } from 'svelte/store';
-import { steps } from '$stores/generator/StepsStore';
 
-function createGeneratorActiveStep() {
-	const { subscribe, set, update } = writable(0);
+export function createActiveStep(steps) {
+	const activeStep = writable(0);
+	const { subscribe, set, update } = activeStep;
 
 	async function increment() {
 		const activeStepNumber = get(activeStep);
@@ -51,5 +51,3 @@ function createGeneratorActiveStep() {
 		reset
 	};
 }
-
-export const activeStep = createGeneratorActiveStep();

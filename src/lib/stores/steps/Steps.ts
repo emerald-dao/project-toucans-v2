@@ -1,15 +1,8 @@
 import type { Step } from '$lib/types/generator/generator-step.interface';
 import type { StepState } from '$lib/types/generator/generator-step-state.type';
 import { writable } from 'svelte/store';
-import {
-	TokenType,
-	Tokenomics,
-	ReviewAndDeploy,
-	DaoDetails
-} from '$components/pages/dao-generator/index';
-import { dummyTransactionExecution } from '$flow/actions';
 
-function createSteps(steps: Step[]) {
+export function createSteps(steps: Step[]) {
 	const { subscribe, update } = writable(steps);
 
 	function changeStepState(index: number, state: StepState) {
@@ -38,30 +31,3 @@ function createSteps(steps: Step[]) {
 		resetStates
 	};
 }
-
-export const steps = createSteps([
-	{
-		title: 'DAO Details',
-		component: DaoDetails,
-		action: null,
-		state: 'active'
-	},
-	{
-		title: 'Token Type',
-		component: TokenType,
-		action: null,
-		state: 'inactive'
-	},
-	{
-		title: 'Tokenomics',
-		component: Tokenomics,
-		action: null,
-		state: 'inactive'
-	},
-	{
-		title: 'Review & Deploy',
-		component: ReviewAndDeploy,
-		action: dummyTransactionExecution,
-		state: 'inactive'
-	}
-]);

@@ -1,7 +1,9 @@
 <script type="ts">
-	import Card from '$components/atoms/Card.svelte';
+	import { Card } from '$components/atoms';
+	import Modal, { getModal } from '$components/atoms/Modal.svelte';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { Button } from '@emerald-dao/component-library';
+	import { fundSteps, fundActiveStep } from '$stores/fund/FundSteps';
 
 	export let daoData = {
 		title: 'Emerald City DAO',
@@ -25,7 +27,8 @@
 		</Row>
 		<p>{daoData.descirption}s</p>
 	</Column>
-	<Button size="full-width">FUND</Button>
+	<Button size="full-width" on:click={() => getModal().open()}>FUND</Button>
+	<Modal><svelte:component this={$fundSteps[$fundActiveStep].component} /></Modal>
 </Card>
 
 <style type="scss">
