@@ -3,7 +3,6 @@
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { goto } from '$app/navigation';
 </script>
 
 <nav>

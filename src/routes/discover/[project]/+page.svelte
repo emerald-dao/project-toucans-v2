@@ -1,6 +1,5 @@
 <script>
-	import ProjectMain from '$components/pages/project/ProjectMain.svelte';
-	import ProjectSidebar from '$components/pages/project/ProjectSidebar.svelte';
+	import { ProjectMain, ProjectSidebar } from '$components/pages/project';
 	import { Section, Container } from '@mateoroldos/svelte.bones';
 </script>
 

@@ -28,7 +28,9 @@
 		<p>{daoData.descirption}s</p>
 	</Column>
 	<Button size="full-width" on:click={() => getModal().open()}>FUND</Button>
-	<Modal><svelte:component this={$fundSteps[$fundActiveStep].component} /></Modal>
+	<Modal>
+		<!-- <svelte:component this={fundSteps[$fundActiveStep].component} /> -->
+	</Modal>
 </Card>
 
 <style type="scss">
