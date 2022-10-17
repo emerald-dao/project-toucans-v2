@@ -29,7 +29,7 @@
 	</Column>
 	<Button size="full-width" on:click={() => getModal().open()}>FUND</Button>
 	<Modal>
-		<!-- <svelte:component this={fundSteps[$fundActiveStep].component} /> -->
+		<svelte:component this={$fundSteps[$fundActiveStep].component} />
 	</Modal>
 </Card>
 
