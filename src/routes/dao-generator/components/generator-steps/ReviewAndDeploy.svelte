@@ -7,7 +7,7 @@
 </script>
 
 <Column gap="small">
-	<RecapCard title="DAO Details" stepNumber={1}>
+	<RecapCard title="DAO Details" stepNumber={0}>
 		<Row>
 			<h5>{$daoData.daoDetails.name}</h5>
 			<span>{$daoData.daoDetails.tokenName}</span>
@@ -15,10 +15,10 @@
 		<p>{$daoData.daoDetails.description}</p>
 		<span>{$daoData.daoDetails.website}</span>
 	</RecapCard>
-	<RecapCard title="Token Type" stepNumber={2}>
+	<RecapCard title="Token Type" stepNumber={1}>
 		<h5>{$daoData.tokenomics.tokenType}</h5>
 	</RecapCard>
-	<RecapCard title="Tokenomics" stepNumber={3}>
+	<RecapCard title="Tokenomics" stepNumber={2}>
 		{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 			<h5>{$daoData.tokenomics.initialRound.targetAmount} raise</h5>
 			<span

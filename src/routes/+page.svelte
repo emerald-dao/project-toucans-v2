@@ -138,4 +138,8 @@
 	p {
 		text-align: center;
 	}
+
+	h3 {
+		font-size: var(--fs-500);
+	}
 </style>

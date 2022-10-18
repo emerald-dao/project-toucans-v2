@@ -39,6 +39,20 @@ export function createActiveStep(steps) {
 		}
 	}
 
+	function goToStep(i: number) {
+		const numberOfSteps = get(steps).length;
+		for (let index = 0; index < numberOfSteps; index++) {
+			if (index > i) {
+				steps.changeStepState(index, 'inactive');
+			} else if (index === i) {
+				steps.changeStepState(index, 'active');
+			} else if (index < i) {
+				steps.changeStepState(index, 'success');
+			}
+		}
+		set(i);
+	}
+
 	function reset() {
 		set(0);
 		steps.resetStates();
@@ -48,6 +62,7 @@ export function createActiveStep(steps) {
 		subscribe,
 		increment,
 		decrement,
+		goToStep,
 		reset
 	};
 }
