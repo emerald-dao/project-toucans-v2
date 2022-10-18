@@ -2,8 +2,8 @@
 	import { Tabs } from '$atoms';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { Column } from '@mateoroldos/svelte.bones';
-	import MainFounders from '../MainFounders.svelte';
-	import RecentActivity from '../RecentActivity.svelte';
+	import MainFounders from '../atoms/MainFounders.svelte';
+	import RecentActivity from '../atoms/RecentActivity.svelte';
 
 	let tabs = [
 		{

@@ -1,7 +1,8 @@
 <script type="ts">
 	import { Section, Container, Column, Row, AdaptableGrid } from '@mateoroldos/svelte.bones';
 	import { Button, Tagline } from '@emerald-dao/component-library';
-	import { Card, LeadingProjectCard } from '$components/atoms';
+	import { Card } from '$components/atoms';
+	import { LeadingProjectCard } from '$components/cards/index';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
 
 	let toucansFeatures = [

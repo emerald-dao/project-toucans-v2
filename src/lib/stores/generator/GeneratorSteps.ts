@@ -1,10 +1,10 @@
 import { createActiveStep } from '$stores/steps/ActiveStep';
 import { createSteps } from '$stores/steps/Steps';
 import { dummyTransactionExecution } from '$flow/actions';
-import TokenType from '$components/pages/dao-generator/steps/TokenType.svelte';
-import Tokenomics from '$components/pages/dao-generator/steps/Tokenomics.svelte';
-import ReviewAndDeploy from '$components/pages/dao-generator/steps/ReviewAndDeploy.svelte';
-import DaoDetails from '$components/pages/dao-generator/steps/DaoDetails.svelte';
+import TokenType from '../../../../src/routes/dao-generator/components/generator-steps/TokenType.svelte';
+import Tokenomics from '../../../../src/routes/dao-generator/components/generator-steps/Tokenomics.svelte';
+import ReviewAndDeploy from '../../../../src/routes/dao-generator/components/generator-steps/ReviewAndDeploy.svelte';
+import DaoDetails from '../../../../src/routes/dao-generator/components/generator-steps/DaoDetails.svelte';
 
 export const generatorSteps = createSteps([
 	{

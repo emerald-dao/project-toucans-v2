@@ -1,13 +1,13 @@
 <script>
-	import { ProjectMain, ProjectSidebar } from '$components/pages/project';
+	import { ProjectMainSection, ProjectSidebarSection } from './components';
 	import { Section, Container } from '@mateoroldos/svelte.bones';
 </script>
 
 <Section>
 	<Container>
 		<div class="main-wrapper">
-			<ProjectSidebar />
-			<ProjectMain />
+			<ProjectSidebarSection />
+			<ProjectMainSection />
 		</div>
 	</Container>
 </Section>

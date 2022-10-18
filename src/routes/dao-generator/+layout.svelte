@@ -1,5 +1,5 @@
 <script>
-	import { GeneratorNav } from '$components/pages/dao-generator';
+	import { GeneratorNav } from './components';
 	import { Column, Section } from '@mateoroldos/svelte.bones';
 </script>
 

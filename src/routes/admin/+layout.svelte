@@ -1,5 +1,5 @@
 <script>
-	import { AdminNav } from '$components/pages/admin';
+	import { AdminNav } from './components';
 	import { Container, Section } from '@mateoroldos/svelte.bones';
 </script>
 
