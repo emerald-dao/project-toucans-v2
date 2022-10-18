@@ -26,8 +26,8 @@
 			<span class="data-card">{`$ ${daoData.currency}`}</span>
 		</Row>
 		<p>{daoData.descirption}s</p>
+		<Button size="full-width" on:click={() => getModal().open()}>FUND</Button>
 	</Column>
-	<Button size="full-width" on:click={() => getModal().open()}>FUND</Button>
 	<Modal>
 		<svelte:component this={$fundSteps[$fundActiveStep].component} />
 	</Modal>
