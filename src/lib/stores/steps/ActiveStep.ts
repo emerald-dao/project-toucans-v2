@@ -40,16 +40,10 @@ export function createActiveStep(steps) {
 	}
 
 	function goToStep(i: number) {
-		const numberOfSteps = get(steps).length;
-		for (let index = 0; index < numberOfSteps; index++) {
-			if (index > i) {
-				steps.changeStepState(index, 'inactive');
-			} else if (index === i) {
-				steps.changeStepState(index, 'active');
-			} else if (index < i) {
-				steps.changeStepState(index, 'success');
-			}
-		}
+		const activeStepNumber = get(activeStep);
+
+		steps.changeStepState(activeStepNumber, 'inactive');
+		steps.changeStepState(i, 'active');
 		set(i);
 	}
 
