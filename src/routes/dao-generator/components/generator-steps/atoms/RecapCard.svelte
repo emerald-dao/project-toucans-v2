@@ -8,7 +8,7 @@
 	export let stepNumber: number;
 </script>
 
-<Card padding={2.7}>
+<Card padding={2.7} width="100%">
 	<Column gap="none" align="flex-start" justify="flex-start">
 		<h4>{title}</h4>
 		<slot />

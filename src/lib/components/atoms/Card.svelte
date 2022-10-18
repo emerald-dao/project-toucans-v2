@@ -1,8 +1,9 @@
 <script type="ts">
 	export let padding: number = 5;
+	export let width: 'fit-content' | '100%' = 'fit-content';
 </script>
 
-<div style={`padding: ${padding}rem`}>
+<div style={`padding: ${padding}rem; width: ${width}`}>
 	<slot />
 </div>
 
