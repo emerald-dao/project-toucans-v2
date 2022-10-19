@@ -1,6 +1,6 @@
 <script type="ts">
 	import { Button } from '@emerald-dao/component-library';
-	import { Column, Row } from '@mateoroldos/svelte.bones';
+	import { Row } from '@mateoroldos/svelte.bones';
 	import type { SvelteComponent } from 'svelte';
 
 	interface TabObject {
