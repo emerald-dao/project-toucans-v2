@@ -7,15 +7,13 @@
 
 <div class="error-wrapper">
 	{#if message}
-		<span class="error" transition:fly={{ y: 2, duration: 200 }}
-			><Icon icon="tabler:alert-triangle" color="var(--clr-alert-main)" /> {message}</span
-		>
+		<span class="error" transition:fly={{ y: 2, duration: 200 }}>{message}</span>
 	{/if}
 </div>
 
 <style type="scss">
 	.error-wrapper {
-		height: 2rem;
+		height: 2.8rem;
 
 		.error {
 			display: flex;

@@ -1,4 +1,5 @@
 <script type="ts">
+	import Icon from '@iconify/svelte';
 	import { TokenTypes } from '$lib/types/token-types.enum';
 	import { createForm } from 'felte';
 	import { daoData } from '$stores/generator/DaoDataStore';
@@ -18,7 +19,7 @@
 					issuanceRate: yup.number().min(1).required(),
 					reserveRate: yup.number().min(0).max(100).required()
 			  });
-	const { form } = createForm({
+	const { form, touched, errors } = createForm({
 		extend: [validator({ schema }), reporter],
 		onSubmit() {
 			generatorActiveStep.increment();
@@ -34,6 +35,8 @@
 			min="1"
 			name="targetAmount"
 			placeholder="e.g. 1.000.000"
+			class:validated={$touched.targetAmount && $errors.targetAmount === null}
+			class:error={$touched.targetAmount && $errors.targetAmount != null}
 			bind:value={$daoData.tokenomics.initialRound.targetAmount}
 		/>
 		<ValidationMessage for="targetAmount" let:messages={message}>
@@ -46,6 +49,8 @@
 			min="0"
 			name="issuanceRate"
 			placeholder="e.g. 1 AlphaCoin - 1 FUSD"
+			class:validated={$touched.issuanceRate && $errors.issuanceRate === null}
+			class:error={$touched.issuanceRate && $errors.issuanceRate != null}
 			bind:value={$daoData.tokenomics.initialRound.issuanceRate}
 		/>
 		<ValidationMessage for="issuanceRate" let:messages={message}>
@@ -53,15 +58,21 @@
 		</ValidationMessage>
 
 		<label for="reserveRate">Reserve Rate</label>
-		<input
-			type="number"
-			min="0"
-			max="100"
-			name="reserveRate"
-			id="reserveRate"
-			placeholder="20%"
-			bind:value={$daoData.tokenomics.initialRound.reserveRate}
-		/>
+		<div class="input-icon-left">
+			<div class="icon">
+				<Icon icon="tabler:percentage" />
+			</div>
+			<input
+				type="number"
+				min="0"
+				max="100"
+				name="reserveRate"
+				placeholder="20"
+				class:validated={$touched.reserveRate && $errors.reserveRate === null}
+				class:error={$touched.reserveRate && $errors.reserveRate != null}
+				bind:value={$daoData.tokenomics.initialRound.reserveRate}
+			/>
+		</div>
 		<ValidationMessage for="reserveRate" let:messages={message}>
 			<FormErrors {message} />
 		</ValidationMessage>
@@ -71,6 +82,8 @@
 			type="number"
 			name="supply"
 			placeholder="e.g. 1.000.000"
+			class:validated={$touched.supply && $errors.supply === null}
+			class:error={$touched.supply && $errors.supply != null}
 			bind:value={$daoData.tokenomics.totalSupply}
 		/>
 		<ValidationMessage for="supply" let:messages={message}>
@@ -100,9 +113,6 @@
 </form>
 
 <style type="scss">
-	.validation-error {
-		border-color: var(--clr-alert-main);
-	}
 	form {
 		display: flex;
 		flex-direction: column;

@@ -22,9 +22,10 @@
 		position: sticky;
 		top: 5rem;
 		background-color: var(--clr-background-primary);
-		padding: 1.4rem 0 1.5rem 0;
-		// border-bottom: 1px var(--clr-neutral-900-t9) solid;
+		padding-block: 1.8rem;
+		border-bottom: 1px var(--clr-neutral-900-t9) solid;
 		backdrop-filter: blur(10px);
+		z-index: 1;
 
 		span {
 			font-size: var(--fs-300);

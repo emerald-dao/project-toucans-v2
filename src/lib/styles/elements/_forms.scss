@@ -1,14 +1,62 @@
 input,
 textarea {
-	background-color: transparent;
-	border: 0.5px var(--clr-neutral-900) solid;
+	background-color: var(--clr-neutral-300-t5);
+	border: 2px var(--clr-neutral-400-t2) solid;
 	border-radius: 0.6rem;
-	padding: 0.6rem;
+	padding-block: 0.8rem;
+	padding-right: 40px;
+	padding-left: 1.2rem;
 	color: var(--clr-neutral-900);
 	font-size: var(--fs-300);
+	width: 100%;
+}
+
+input:focus,
+textarea:focus {
+	border-color: var(--clr-primary-main-t6);
+	outline: none;
+	transition: 0.3s;
+}
+
+input.validated,
+textarea.validated {
+	background: url('https://api.iconify.design/tabler/circle-check.svg?color=green') no-repeat scroll
+			7px 7px,
+		var(--clr-neutral-300-t7);
+	background-size: 20px;
+	background-position: top 0.8rem right 10px;
+}
+
+input.error,
+textarea.error {
+	background: url('https://api.iconify.design/tabler/alert-circle.svg?color=red') no-repeat scroll
+			7px 7px,
+		var(--clr-neutral-300-t7);
+	background-size: 20px;
+	background-position: top 0.8rem right 10px;
 }
 
 label {
 	font-size: var(--fs-300);
-	margin-bottom: 0.2em;
+	margin-bottom: 0.3em;
+	--font-weight: 500;
+}
+
+.input-icon-left {
+	position: relative;
+
+	.icon {
+		position: absolute;
+		color: var(--clr-neutral-500);
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.8rem;
+		border-right: 2px var(--clr-neutral-400-t2) solid;
+	}
+
+	input {
+		padding-left: 3.6rem;
+	}
 }

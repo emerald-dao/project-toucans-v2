@@ -1,4 +1,5 @@
 <script type="ts">
+	import Icon from '@iconify/svelte';
 	import { createForm } from 'felte';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { validator } from '@felte/validator-yup';
@@ -19,7 +20,7 @@
 			)
 	});
 
-	const { form } = createForm({
+	const { form, touched, errors } = createForm({
 		extend: [validator({ schema }), reporter],
 		onSubmit() {
 			generatorActiveStep.increment();
@@ -33,6 +34,8 @@
 		type="text"
 		name="daoName"
 		placeholder="Emerald DAO"
+		class:validated={$touched.daoName && $errors.daoName === null}
+		class:error={$touched.daoName && $errors.daoName != null}
 		bind:value={$daoData.daoDetails.name}
 	/>
 	<ValidationMessage for="daoName" let:messages={message}>
@@ -40,12 +43,19 @@
 	</ValidationMessage>
 
 	<label for="tokenName">Token name</label>
-	<input
-		type="text"
-		name="tokenName"
-		placeholder="DAOcoin"
-		bind:value={$daoData.daoDetails.tokenName}
-	/>
+	<div class="input-icon-left">
+		<div class="icon">
+			<Icon icon="tabler:currency-dollar" />
+		</div>
+		<input
+			type="text"
+			name="tokenName"
+			placeholder="DAOcoin"
+			class:validated={$touched.tokenName && $errors.tokenName === null}
+			class:error={$touched.tokenName && $errors.tokenName != null}
+			bind:value={$daoData.daoDetails.tokenName}
+		/>
+	</div>
 	<ValidationMessage for="tokenName" let:messages={message}>
 		<FormErrors {message} />
 	</ValidationMessage>
@@ -55,6 +65,8 @@
 		type="text"
 		name="description"
 		placeholder="A DAO for the people"
+		class:validated={$touched.description && $errors.description === null}
+		class:error={$touched.description && $errors.description != null}
 		bind:value={$daoData.daoDetails.description}
 	/>
 	<ValidationMessage for="description" let:messages={message}>
@@ -62,12 +74,20 @@
 	</ValidationMessage>
 
 	<label for="website">Website</label>
-	<input
-		type="text"
-		name="website"
-		placeholder="www.alphadao.io"
-		bind:value={$daoData.daoDetails.website}
-	/>
+	<div class="input-icon-left">
+		<div class="icon">
+			<Icon icon="tabler:world" />
+		</div>
+		<input
+			type="text"
+			name="website"
+			placeholder="www.alphadao.io"
+			class:validated={$touched.website && $errors.website === null}
+			class:error={$touched.website && $errors.website != null}
+			bind:value={$daoData.daoDetails.website}
+		/>
+	</div>
+
 	<ValidationMessage for="website" let:messages={message}>
 		<FormErrors {message} />
 	</ValidationMessage>
@@ -80,6 +100,7 @@
 
 		input {
 			margin-bottom: 0rem;
+			position: relative;
 		}
 
 		textarea {
