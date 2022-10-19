@@ -141,7 +141,7 @@ $dark: (
 			hsla(map-deep-get($colors, neutral, 'hue'), map-deep-get($colors, neutral, 'saturation'), 6%)
 	),
 	alert: (
-		main: hsla(map-deep-get($colors, alert, 'hue'), map-deep-get($colors, alert, 'saturation'), 34%)
+		main: hsla(map-deep-get($colors, alert, 'hue'), map-deep-get($colors, alert, 'saturation'), 39%)
 	),
 	success: (
 		main:

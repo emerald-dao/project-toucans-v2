@@ -9,11 +9,18 @@
 <Container width="small" --container-s="34ch">
 	<svelte:component this={$generatorSteps[$generatorActiveStep].component} />
 	<div class="step-buttons">
-		<Button type="transparent" on:click={generatorActiveStep.decrement}>
-			<Icon icon="tabler:arrow-narrow-left" />Back</Button
-		>
-		<Button on:click={generatorActiveStep.increment}>Next</Button>
-		<!-- <Button on:click={activeStep.reset}>Reset</Button> -->
+		{#if $generatorActiveStep > 0}
+			<Button type="transparent" on:click={generatorActiveStep.decrement}>
+				<Icon icon="tabler:arrow-left" />Back</Button
+			>
+		{:else}
+			<div />
+		{/if}
+		{#if $generatorSteps[$generatorActiveStep].form}
+			<Button form={$generatorSteps[$generatorActiveStep].slug} size="large">Next</Button>
+		{:else}
+			<Button on:click={generatorActiveStep.increment}>Next</Button>
+		{/if}
 	</div>
 </Container>
 
@@ -23,5 +30,6 @@
 		flex-direction: row;
 		justify-content: space-between;
 		margin-top: 2rem;
+		gap: 2rem;
 	}
 </style>

@@ -1,36 +1,66 @@
 <script type="ts">
 	import { createForm } from 'felte';
 	import { daoData } from '$stores/generator/DaoDataStore';
+	import { validator } from '@felte/validator-yup';
+	import * as yup from 'yup';
+	import { reporter, ValidationMessage } from '@felte/reporter-svelte';
+	import FormErrors from '$components/forms/FormErrors.svelte';
+	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
+
+	const schema = yup.object({
+		daoName: yup.string().max(20).min(4).required(),
+		tokenName: yup.string().max(5).min(2).uppercase().required(),
+		description: yup.string().max(200).min(60).required(),
+		website: yup
+			.string()
+			.matches(
+				/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+				'Enter a correct URL'
+			)
+	});
 
 	const { form } = createForm({
-		onSubmit: (values) => {
-			// ...
+		extend: [validator({ schema }), reporter],
+		onSubmit() {
+			generatorActiveStep.increment();
 		}
 	});
 </script>
 
-<form use:form>
-	<label for="dao-name">What should we call this DAO?</label>
+<form use:form id={$generatorSteps[$generatorActiveStep].slug}>
+	<label for="daoName">What should we call this DAO?</label>
 	<input
 		type="text"
-		name="dao-name"
-		placeholder="Alpha DAO"
+		name="daoName"
+		placeholder="Emerald DAO"
 		bind:value={$daoData.daoDetails.name}
 	/>
-	<label for="token-name">Token name</label>
+	<ValidationMessage for="daoName" let:messages={message}>
+		<FormErrors {message} />
+	</ValidationMessage>
+
+	<label for="tokenName">Token name</label>
 	<input
 		type="text"
-		name="token-name"
+		name="tokenName"
 		placeholder="DAOcoin"
 		bind:value={$daoData.daoDetails.tokenName}
 	/>
+	<ValidationMessage for="tokenName" let:messages={message}>
+		<FormErrors {message} />
+	</ValidationMessage>
+
 	<label for="description">DAO description</label>
-	<input
+	<textarea
 		type="text"
 		name="description"
 		placeholder="A DAO for the people"
 		bind:value={$daoData.daoDetails.description}
 	/>
+	<ValidationMessage for="description" let:messages={message}>
+		<FormErrors {message} />
+	</ValidationMessage>
+
 	<label for="website">Website</label>
 	<input
 		type="text"
@@ -38,6 +68,9 @@
 		placeholder="www.alphadao.io"
 		bind:value={$daoData.daoDetails.website}
 	/>
+	<ValidationMessage for="website" let:messages={message}>
+		<FormErrors {message} />
+	</ValidationMessage>
 </form>
 
 <style type="scss">
@@ -46,7 +79,12 @@
 		flex-direction: column;
 
 		input {
-			margin-bottom: 2rem;
+			margin-bottom: 0rem;
+		}
+
+		textarea {
+			min-height: 15rem;
+			font-size: var(--fs-300);
 		}
 	}
 </style>

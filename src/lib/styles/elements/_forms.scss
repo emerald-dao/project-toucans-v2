@@ -2,7 +2,11 @@ input,
 textarea {
 	background-color: transparent;
 	border: 0.5px var(--clr-neutral-900) solid;
-	border-radius: 0.3rem;
-	padding: 0.3em;
+	border-radius: 0.6rem;
+	padding: 0.6rem;
 	color: var(--clr-neutral-900);
+}
+
+label {
+	margin-bottom: 0.2em;
 }

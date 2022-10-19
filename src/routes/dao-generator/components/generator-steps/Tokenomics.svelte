@@ -2,50 +2,80 @@
 	import { TokenTypes } from '$lib/types/token-types.enum';
 	import { createForm } from 'felte';
 	import { daoData } from '$stores/generator/DaoDataStore';
+	import { validator } from '@felte/validator-yup';
+	import * as yup from 'yup';
+	import { reporter, ValidationMessage } from '@felte/reporter-svelte';
+	import FormErrors from '$components/forms/FormErrors.svelte';
+	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 
-	let daoDetails = $daoData.daoDetails;
+	const schema =
+		$daoData.tokenomics.tokenType === TokenTypes.COMMUNITY
+			? yup.object({
+					supply: yup.number().min(1).required()
+			  })
+			: yup.object({
+					targetAmount: yup.number().min(1).required(),
+					issuanceRate: yup.number().min(1).required(),
+					reserveRate: yup.number().min(0).max(100).required()
+			  });
 	const { form } = createForm({
-		onSubmit: (values) => {
-			// ...
+		extend: [validator({ schema }), reporter],
+		onSubmit() {
+			generatorActiveStep.increment();
 		}
 	});
 </script>
 
-<form use:form>
+<form use:form id={$generatorSteps[$generatorActiveStep].slug}>
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-		<label for="target-amount">Target Amount</label>
+		<label for="targetAmount">Target Amount</label>
 		<input
 			type="number"
-			min="0"
-			name="target-amount"
+			min="1"
+			name="targetAmount"
 			placeholder="e.g. 1.000.000"
 			bind:value={$daoData.tokenomics.initialRound.targetAmount}
 		/>
-		<label for="issuance-rate">Target Amount</label>
+		<ValidationMessage for="targetAmount" let:messages={message}>
+			<FormErrors {message} />
+		</ValidationMessage>
+
+		<label for="issuance-rate">Issuance Rate</label>
 		<input
 			type="number"
 			min="0"
-			name="issuance-rate"
+			name="issuanceRate"
 			placeholder="e.g. 1 AlphaCoin - 1 FUSD"
 			bind:value={$daoData.tokenomics.initialRound.issuanceRate}
 		/>
-		<label for="reserve-rate">Reserve Rate</label>
+		<ValidationMessage for="issuanceRate" let:messages={message}>
+			<FormErrors {message} />
+		</ValidationMessage>
+
+		<label for="reserveRate">Reserve Rate</label>
 		<input
 			type="number"
 			min="0"
 			max="100"
-			name="reserve-rate"
+			name="reserveRate"
+			id="reserveRate"
 			placeholder="20%"
 			bind:value={$daoData.tokenomics.initialRound.reserveRate}
 		/>
+		<ValidationMessage for="reserveRate" let:messages={message}>
+			<FormErrors {message} />
+		</ValidationMessage>
 	{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 		<label for="supply">Total Supply</label>
 		<input
-			type="text"
+			type="number"
 			name="supply"
 			placeholder="e.g. 1.000.000"
 			bind:value={$daoData.tokenomics.totalSupply}
 		/>
+		<ValidationMessage for="supply" let:messages={message}>
+			<FormErrors {message} />
+		</ValidationMessage>
 	{/if}
 	<label for="burn-tokens">
 		<input
@@ -70,12 +100,15 @@
 </form>
 
 <style type="scss">
+	.validation-error {
+		border-color: var(--clr-alert-main);
+	}
 	form {
 		display: flex;
 		flex-direction: column;
 
 		input {
-			margin-bottom: 2rem;
+			margin-bottom: 0.1em;
 		}
 	}
 </style>

@@ -2,16 +2,16 @@
 	import { TokenTypes } from '$lib/types/token-types.enum';
 	import { createForm } from 'felte';
 	import { daoData } from '$stores/generator/DaoDataStore';
-	import { Column } from '@mateoroldos/svelte.bones';
+	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 
 	const { form } = createForm({
-		onSubmit: (values) => {
-			// ...
+		onSubmit() {
+			generatorActiveStep.increment();
 		}
 	});
 </script>
 
-<Column gap="small">
+<form use:form id={$generatorSteps[$generatorActiveStep].slug}>
 	<input
 		type="radio"
 		id="financial"
@@ -40,32 +40,38 @@
 			est adipisicing amet pariatur enim et eiusmod do ut tempor qui ea.
 		</span>
 	</label>
-</Column>
+</form>
 
 <style type="scss">
-	input {
-		display: none;
-	}
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
 
-	label {
-		padding: 2rem;
-		border: 0.5px var(--clr-neutral-900) solid;
-		width: 100%;
-		border-radius: 1rem;
-		cursor: pointer;
-		font-size: var(--fs-300);
-
-		h4 {
-			margin-bottom: 0.8rem;
+		input {
+			display: none;
 		}
-	}
 
-	input:checked + label {
-		color: var(--clr-primary-main);
-		border: 0.5px var(--clr-primary-main) solid;
+		label {
+			padding: 2rem;
+			border: 0.5px var(--clr-neutral-900) solid;
+			width: 100%;
+			border-radius: 1rem;
+			cursor: pointer;
+			font-size: var(--fs-300);
 
-		h4 {
+			h4 {
+				margin-bottom: 0.8rem;
+			}
+		}
+
+		input:checked + label {
 			color: var(--clr-primary-main);
+			border: 0.5px var(--clr-primary-main) solid;
+
+			h4 {
+				color: var(--clr-primary-main);
+			}
 		}
 	}
 </style>
