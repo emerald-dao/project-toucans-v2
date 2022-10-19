@@ -1,11 +1,27 @@
 <script>
+	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import { GeneratorNav } from './components';
-	import { Column, Section } from '@mateoroldos/svelte.bones';
+	import { Container, Section } from '@mateoroldos/svelte.bones';
 </script>
 
-<Section>
-	<Column>
-		<GeneratorNav />
-		<slot />
-	</Column>
+<Section paddingTop="small">
+	<GeneratorNav />
+	<div class="content-wrapper">
+		<Container width="small" --container-s="34ch">
+			<h2>{$generatorSteps[$generatorActiveStep].title}</h2>
+			<slot />
+		</Container>
+	</div>
 </Section>
+
+<style type="scss">
+	.content-wrapper {
+		margin-top: 2.8rem;
+
+		h2 {
+			font-size: var(--fs-400);
+			font-family: var(--ff-main);
+			margin-bottom: 2.4rem;
+		}
+	}
+</style>

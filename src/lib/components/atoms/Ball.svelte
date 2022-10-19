@@ -2,9 +2,10 @@
 	import type { StepState } from '$lib/types/generator/generator-step-state.type';
 
 	export let status: StepState;
+	export let width: number | 'auto' = 'auto';
 </script>
 
-<div class={status}>
+<div class={status} style={`width: ${width}rem`}>
 	<slot />
 </div>
 
