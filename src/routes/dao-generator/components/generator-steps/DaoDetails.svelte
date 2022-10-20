@@ -10,7 +10,13 @@
 
 	const schema = yup.object({
 		daoName: yup.string().max(20).min(4).required(),
-		tokenName: yup.string().max(5).min(2).uppercase().required(),
+		tokenName: yup
+			.string()
+			.max(5)
+			.min(2)
+			.uppercase()
+			.matches(/^[a-zA-Z0-9@]+$/, 'Token name cannot contain white space or special character')
+			.required(),
 		description: yup.string().max(200).min(60).required(),
 		website: yup
 			.string()
@@ -28,7 +34,7 @@
 	});
 </script>
 
-<form use:form id={$generatorSteps[$generatorActiveStep].slug}>
+<form use:form id={$generatorSteps[$generatorActiveStep].slug} autocomplete="off">
 	<label for="daoName">What should we call this DAO?</label>
 	<input
 		type="text"
@@ -43,8 +49,8 @@
 	</ValidationMessage>
 
 	<label for="tokenName">Token name</label>
-	<div class="input-icon-left">
-		<div class="icon">
+	<div class="input-wrapper">
+		<div class="icon-wrapper-left">
 			<Icon icon="tabler:currency-dollar" />
 		</div>
 		<input
@@ -74,8 +80,8 @@
 	</ValidationMessage>
 
 	<label for="website">Website</label>
-	<div class="input-icon-left">
-		<div class="icon">
+	<div class="input-wrapper">
+		<div class="icon-wrapper-left">
 			<Icon icon="tabler:world" />
 		</div>
 		<input
@@ -97,11 +103,6 @@
 	form {
 		display: flex;
 		flex-direction: column;
-
-		input {
-			margin-bottom: 0rem;
-			position: relative;
-		}
 
 		textarea {
 			min-height: 15rem;

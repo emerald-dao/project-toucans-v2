@@ -8,6 +8,7 @@
 	import { reporter, ValidationMessage } from '@felte/reporter-svelte';
 	import FormErrors from '$components/forms/FormErrors.svelte';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
+	import { Column } from '@mateoroldos/svelte.bones';
 
 	const schema =
 		$daoData.tokenomics.tokenType === TokenTypes.COMMUNITY
@@ -27,7 +28,7 @@
 	});
 </script>
 
-<form use:form id={$generatorSteps[$generatorActiveStep].slug}>
+<form use:form id={$generatorSteps[$generatorActiveStep].slug} autocomplete="off">
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 		<label for="targetAmount">Target Amount</label>
 		<input
@@ -58,8 +59,8 @@
 		</ValidationMessage>
 
 		<label for="reserveRate">Reserve Rate</label>
-		<div class="input-icon-left">
-			<div class="icon">
+		<div class="input-wrapper">
+			<div class="icon-wrapper-left">
 				<Icon icon="tabler:percentage" />
 			</div>
 			<input
@@ -90,35 +91,35 @@
 			<FormErrors {message} />
 		</ValidationMessage>
 	{/if}
-	<label for="burn-tokens">
-		<input
-			type="checkbox"
-			name="burn-tokens"
-			id="burn-tokens"
-			placeholder="e.g. 1.000.000"
-			bind:checked={$daoData.tokenomics.burnTokens}
-		/>
-		Burn tokens
-	</label>
-	<label for="mint-tokens">
-		<input
-			type="checkbox"
-			name="mint-tokens"
-			id="mint-tokens"
-			placeholder="e.g. 1.000.000"
-			bind:checked={$daoData.tokenomics.mintTokens}
-		/>
-		Mint tokens
-	</label>
+	<Column gap="small" align="flex-start">
+		<label for="burn-tokens" class="switch">
+			<input
+				type="checkbox"
+				name="burn-tokens"
+				id="burn-tokens"
+				placeholder="e.g. 1.000.000"
+				bind:checked={$daoData.tokenomics.burnTokens}
+			/>
+			<span class="slider" />
+			<span class="label">Burn tokens</span>
+		</label>
+		<label for="mint-tokens" class="switch">
+			<input
+				type="checkbox"
+				name="mint-tokens"
+				id="mint-tokens"
+				placeholder="e.g. 1.000.000"
+				bind:checked={$daoData.tokenomics.mintTokens}
+			/>
+			<span class="slider" />
+			<span class="label">Mint tokens</span>
+		</label>
+	</Column>
 </form>
 
 <style type="scss">
 	form {
 		display: flex;
 		flex-direction: column;
-
-		input {
-			margin-bottom: 0.1em;
-		}
 	}
 </style>

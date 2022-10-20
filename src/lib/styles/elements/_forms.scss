@@ -1,7 +1,7 @@
 input,
 textarea {
-	background-color: var(--clr-neutral-300-t5);
-	border: 2px var(--clr-neutral-400-t2) solid;
+	background-color: var(--clr-neutral-300-t9);
+	border: 2px var(--clr-neutral-300) solid;
 	border-radius: 0.6rem;
 	padding-block: 0.8rem;
 	padding-right: 40px;
@@ -9,31 +9,28 @@ textarea {
 	color: var(--clr-neutral-900);
 	font-size: var(--fs-300);
 	width: 100%;
-}
 
-input:focus,
-textarea:focus {
-	border-color: var(--clr-primary-main-t6);
-	outline: none;
-	transition: 0.3s;
-}
+	&:focus {
+		border-color: var(--clr-neutral-500);
+		outline: none;
+		transition: 0.3s;
+	}
 
-input.validated,
-textarea.validated {
-	background: url('https://api.iconify.design/tabler/circle-check.svg?color=green') no-repeat scroll
-			7px 7px,
-		var(--clr-neutral-300-t7);
-	background-size: 20px;
-	background-position: top 0.8rem right 10px;
-}
+	&.validated {
+		background: url('https://api.iconify.design/tabler/circle-check.svg?color=green') no-repeat
+				scroll 7px 7px,
+			var(--clr-neutral-300-t9);
+		background-size: 20px;
+		background-position: top 0.8rem right 10px;
+	}
 
-input.error,
-textarea.error {
-	background: url('https://api.iconify.design/tabler/alert-circle.svg?color=red') no-repeat scroll
-			7px 7px,
-		var(--clr-neutral-300-t7);
-	background-size: 20px;
-	background-position: top 0.8rem right 10px;
+	&.error {
+		background: url('https://api.iconify.design/tabler/alert-circle.svg?color=red') no-repeat scroll
+				7px 7px,
+			var(--clr-neutral-300-t9);
+		background-size: 20px;
+		background-position: top 0.8rem right 10px;
+	}
 }
 
 label {
@@ -42,10 +39,24 @@ label {
 	--font-weight: 500;
 }
 
-.input-icon-left {
+.input-wrapper {
 	position: relative;
 
-	.icon {
+	.icon-wrapper-left {
+		position: absolute;
+		color: var(--clr-neutral-500);
+		background-color: var(--clr-neutral-400-t8);
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.8rem;
+		border-right: 2px var(--clr-neutral-400) solid;
+		padding-left: 0.2rem;
+		border-radius: 0.6rem 0 0 0.6rem;
+	}
+
+	.icon-wrapper-right {
 		position: absolute;
 		color: var(--clr-neutral-500);
 		height: 100%;
@@ -53,10 +64,23 @@ label {
 		align-items: center;
 		justify-content: center;
 		width: 2.8rem;
-		border-right: 2px var(--clr-neutral-400-t2) solid;
+		border-right: 2px inherit solid;
+		padding-left: 0.2rem;
 	}
 
 	input {
 		padding-left: 3.6rem;
 	}
+}
+
+// Hide arrows in number inputs
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	appearance: none;
+}
+
+/* Firefox */
+input[type='number'] {
+	appearance: textfield;
 }
