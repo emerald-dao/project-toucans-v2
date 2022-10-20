@@ -29,5 +29,6 @@
 
 		.content-wrapper {
 			padding: 2rem;
+		}
 	}
 </style>

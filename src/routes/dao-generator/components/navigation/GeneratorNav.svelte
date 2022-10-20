@@ -20,7 +20,7 @@
 <style type="scss">
 	nav {
 		position: sticky;
-		top: 5rem;
+		top: 0;
 		background-color: var(--clr-background-primary);
 		padding-block: 1.8rem;
 		border-bottom: 1px var(--clr-neutral-900-t9) solid;
