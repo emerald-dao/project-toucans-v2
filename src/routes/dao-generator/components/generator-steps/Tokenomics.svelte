@@ -14,6 +14,7 @@
 	let res = tokenomicsSuite.get();
 </script>
 
+{res.isValidByGroup($daoData.tokenomics.tokenType)}
 <form
 	id={$generatorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
@@ -89,7 +90,7 @@
 		</label>
 	</Column>
 
-	<StepButtons active={res.isValid()} />
+	<StepButtons active={res.isValidByGroup($daoData.tokenomics.tokenType)} />
 </form>
 
 <style type="scss">
