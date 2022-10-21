@@ -15,7 +15,6 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.19.1",
-		"@felte/reporter-svelte": "^1.1.4",
 		"@iconify/svelte": "^3.0.0",
 		"@mateoroldos/svelte.bones": "^1.0.0",
 		"@storybook/addon-actions": "^6.5.12",
@@ -48,16 +47,14 @@
 		"svelte-preprocess": "^4.10.7",
 		"tslib": "^2.3.1",
 		"typescript": "^4.7.4",
+		"vest": "^4.6.7",
 		"vite": "^3.1.0"
 	},
 	"type": "module",
 	"dependencies": {
 		"@emerald-dao/component-library": "^1.6.2",
-		"@felte/validator-yup": "^1.0.10",
 		"@onflow/fcl": "^1.2.1",
 		"chart.js": "^3.9.1",
-		"felte": "^1.2.5",
-		"svelte-chartjs": "^3.0.1",
-		"yup": "^0.32.11"
+		"svelte-chartjs": "^3.0.1"
 	}
 }

@@ -15,22 +15,6 @@ textarea {
 		outline: none;
 		transition: 0.3s;
 	}
-
-	&.validated {
-		background: url('https://api.iconify.design/tabler/circle-check.svg?color=green') no-repeat
-				scroll 7px 7px,
-			var(--clr-neutral-300-t9);
-		background-size: 20px;
-		background-position: top 0.8rem right 10px;
-	}
-
-	&.error {
-		background: url('https://api.iconify.design/tabler/alert-circle.svg?color=red') no-repeat scroll
-				7px 7px,
-			var(--clr-neutral-300-t9);
-		background-size: 20px;
-		background-position: top 0.8rem right 10px;
-	}
 }
 
 label {
@@ -42,20 +26,7 @@ label {
 .input-wrapper {
 	position: relative;
 
-	.icon-wrapper-left {
-		position: absolute;
-		color: var(--clr-neutral-500);
-		background-color: var(--clr-neutral-400-t8);
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 2.8rem;
-		border-right: 2px var(--clr-neutral-400) solid;
-		padding-left: 0.2rem;
-		border-radius: 0.6rem 0 0 0.6rem;
-	}
-
+	.icon-wrapper-left,
 	.icon-wrapper-right {
 		position: absolute;
 		color: var(--clr-neutral-500);
@@ -64,10 +35,35 @@ label {
 		align-items: center;
 		justify-content: center;
 		width: 2.8rem;
-		border-right: 2px inherit solid;
+		top: 0;
+	}
+
+	.icon-wrapper-left {
+		left: 0;
 		padding-left: 0.2rem;
 	}
 
+	.icon-wrapper-right {
+		right: 0;
+		padding-right: 0.2rem;
+		padding-top: 1.1rem;
+		align-items: flex-start;
+	}
+
+	.solid {
+		background-color: var(--clr-neutral-400-t8);
+	}
+	.solid.icon-wrapper-left {
+		border-right: 2px var(--clr-neutral-400) solid;
+		border-radius: 0.6rem 0 0 0.6rem;
+	}
+	.solid.icon-wrapper-right {
+		border-radius: 0 0.6rem 0.6rem 0;
+		border-left: 2px var(--clr-neutral-400) solid;
+	}
+}
+
+.input-wrapper:has(.icon-wrapper-left) {
 	input {
 		padding-left: 3.6rem;
 	}

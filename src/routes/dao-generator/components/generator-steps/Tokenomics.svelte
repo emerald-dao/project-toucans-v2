@@ -1,95 +1,68 @@
 <script type="ts">
-	import Icon from '@iconify/svelte';
-	import { TokenTypes } from '$lib/types/token-types.enum';
-	import { createForm } from 'felte';
-	import { daoData } from '$stores/generator/DaoDataStore';
-	import { validator } from '@felte/validator-yup';
-	import * as yup from 'yup';
-	import { reporter, ValidationMessage } from '@felte/reporter-svelte';
-	import FormErrors from '$components/forms/FormErrors.svelte';
-	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
+	import StepButtons from './atoms/StepButtons.svelte';
 	import { Column } from '@mateoroldos/svelte.bones';
+	import InputWrapper from '$lib/components/forms/InputWrapper.svelte';
+	import { daoData } from '$stores/generator/DaoDataStore';
+	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
+	import tokenomicsSuite from '$lib/validations/tokenomicsSuite';
+	import { TokenTypes } from '$lib/types/token-types.enum';
 
-	const schema =
-		$daoData.tokenomics.tokenType === TokenTypes.COMMUNITY
-			? yup.object({
-					supply: yup.number().min(1).required()
-			  })
-			: yup.object({
-					targetAmount: yup.number().min(1).required(),
-					issuanceRate: yup.number().min(1).required(),
-					reserveRate: yup.number().min(0).max(100).required()
-			  });
-	const { form, touched, errors } = createForm({
-		extend: [validator({ schema }), reporter],
-		onSubmit() {
-			generatorActiveStep.increment();
-		}
-	});
+	const handleChange = (input) => {
+		res = tokenomicsSuite($daoData.tokenomics, input.target.name);
+	};
+
+	let res = tokenomicsSuite.get();
 </script>
 
-<form use:form id={$generatorSteps[$generatorActiveStep].slug} autocomplete="off">
+<form
+	id={$generatorSteps[$generatorActiveStep].slug}
+	on:submit|preventDefault={generatorActiveStep.increment}
+	autocomplete="off"
+>
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-		<label for="targetAmount">Target Amount</label>
-		<input
-			type="number"
-			min="1"
-			name="targetAmount"
-			placeholder="e.g. 1.000.000"
-			class:validated={$touched.targetAmount && $errors.targetAmount === null}
-			class:error={$touched.targetAmount && $errors.targetAmount != null}
-			bind:value={$daoData.tokenomics.initialRound.targetAmount}
-		/>
-		<ValidationMessage for="targetAmount" let:messages={message}>
-			<FormErrors {message} />
-		</ValidationMessage>
-
-		<label for="issuance-rate">Issuance Rate</label>
-		<input
-			type="number"
-			min="0"
-			name="issuanceRate"
-			placeholder="e.g. 1 AlphaCoin - 1 FUSD"
-			class:validated={$touched.issuanceRate && $errors.issuanceRate === null}
-			class:error={$touched.issuanceRate && $errors.issuanceRate != null}
-			bind:value={$daoData.tokenomics.initialRound.issuanceRate}
-		/>
-		<ValidationMessage for="issuanceRate" let:messages={message}>
-			<FormErrors {message} />
-		</ValidationMessage>
-
-		<label for="reserveRate">Reserve Rate</label>
-		<div class="input-wrapper">
-			<div class="icon-wrapper-left">
-				<Icon icon="tabler:percentage" />
-			</div>
+		<InputWrapper name="targetAmount" label="Target amount" {res}>
 			<input
+				name="targetAmount"
+				type="number"
+				min="1"
+				placeholder="e.g. 1.000.000"
+				bind:value={$daoData.tokenomics.initialRound.targetAmount}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+
+		<InputWrapper name="issuanceRate" label="Issuance rate" {res}>
+			<input
+				name="issuanceRate"
+				type="number"
+				min="0"
+				placeholder="e.g. 1 AlphaCoin - 1 FUSD"
+				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+
+		<InputWrapper name="reserveRate" label="Reserve rate" icon="tabler:percentage" {res}>
+			<input
+				name="reserveRate"
 				type="number"
 				min="0"
 				max="100"
-				name="reserveRate"
 				placeholder="20"
-				class:validated={$touched.reserveRate && $errors.reserveRate === null}
-				class:error={$touched.reserveRate && $errors.reserveRate != null}
 				bind:value={$daoData.tokenomics.initialRound.reserveRate}
+				on:input={handleChange}
 			/>
-		</div>
-		<ValidationMessage for="reserveRate" let:messages={message}>
-			<FormErrors {message} />
-		</ValidationMessage>
+		</InputWrapper>
 	{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
-		<label for="supply">Total Supply</label>
-		<input
-			type="number"
-			name="supply"
-			placeholder="e.g. 1.000.000"
-			class:validated={$touched.supply && $errors.supply === null}
-			class:error={$touched.supply && $errors.supply != null}
-			bind:value={$daoData.tokenomics.totalSupply}
-		/>
-		<ValidationMessage for="supply" let:messages={message}>
-			<FormErrors {message} />
-		</ValidationMessage>
+		<InputWrapper name="supply" label="Total supply" {res}>
+			<input
+				type="number"
+				name="supply"
+				placeholder="e.g. 1.000.000"
+				bind:value={$daoData.tokenomics.totalSupply}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
 	{/if}
 	<Column gap="small" align="flex-start">
 		<label for="burn-tokens" class="switch">
@@ -115,6 +88,8 @@
 			<span class="label">Mint tokens</span>
 		</label>
 	</Column>
+
+	<StepButtons active={res.isValid()} />
 </form>
 
 <style type="scss">

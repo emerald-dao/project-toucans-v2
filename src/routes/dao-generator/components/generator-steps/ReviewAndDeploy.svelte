@@ -1,4 +1,5 @@
 <script type="ts">
+	import StepButtons from './atoms/StepButtons.svelte';
 	import Card from '$components/atoms/Card.svelte';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
@@ -32,3 +33,4 @@
 		<span>{`Token minting ${$daoData.tokenomics.mintTokens}`}</span>
 	</RecapCard>
 </Column>
+<StepButtons />

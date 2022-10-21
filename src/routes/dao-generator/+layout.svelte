@@ -1,4 +1,6 @@
 <script>
+	import Icon from '@iconify/svelte';
+	import { Button } from '@emerald-dao/component-library';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import { GeneratorNav } from './components';
 	import { Container, Section } from '@mateoroldos/svelte.bones';
