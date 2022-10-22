@@ -30,6 +30,17 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 		enforce(data.tokenName).shorterThan(5);
 	});
 
+	skipWhen(daoDetailsSuite.get().hasErrors('tokenName'), () => {
+		test.memo(
+			'tokenName',
+			'Token name already taken',
+			async () => {
+				return await dummyCheckDaoName(false);
+			},
+			[data.tokenName]
+		);
+	});
+
 	test('description', 'Description is needed', () => {
 		enforce(data.description).isNotBlank();
 	});

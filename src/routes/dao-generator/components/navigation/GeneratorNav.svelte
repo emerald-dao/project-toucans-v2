@@ -11,7 +11,7 @@
 				<span>
 					{step.title}
 				</span>
-				<Ball status={step.state} width={1.4} />
+				<Ball status={step.state} width={1.8} />
 			</Column>
 		{/each}
 	</Row>
@@ -29,6 +29,7 @@
 
 		span {
 			font-size: var(--fs-300);
+			--font-weight: 500;
 		}
 	}
 </style>

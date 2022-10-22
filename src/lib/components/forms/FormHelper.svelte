@@ -8,14 +8,12 @@
 </script>
 
 {#if message}
-	{#each message as msg}
-		<div in:fly={{ y: 4, duration: 300 }}>
-			{#if type === 'error'}
-				<Icon icon="tabler:x" color="var(--clr-alert-main)" width="0.75em" />
-			{/if}
-			<span class={type}>{msg}</span>
-		</div>
-	{/each}
+	<div in:fly={{ y: 4, duration: 400 }}>
+		{#if type === 'error'}
+			<Icon icon="tabler:x" color="var(--clr-alert-main)" width="0.75em" />
+		{/if}
+		<span class={type}>{message}</span>
+	</div>
 {/if}
 
 <style type="scss">

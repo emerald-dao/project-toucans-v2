@@ -1,27 +1,32 @@
 <script type="ts">
 	import StepButtons from './atoms/StepButtons.svelte';
-	import { Button } from '@emerald-dao/component-library';
 	import InputWrapper from '$lib/components/forms/InputWrapper.svelte';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
-	import Icon from '@iconify/svelte';
 
-	const handleChange = (input) => {
+	const handleChange = (input: InputEvent) => {
 		res = daoDetailsSuite($daoData.daoDetails, input.target.name);
 
 		if (input.target.name === 'name') {
 			namePending = true;
 		}
 
+		if (input.target.name === 'tokenName') {
+			tokenNamePending = true;
+		}
+
 		res.done((result) => {
 			res = result;
 			namePending = false;
+			tokenNamePending = false;
 		});
 	};
 
 	let namePending: boolean;
-	let namePendingMessage = ['Checking if name already exists in the blockchain...'];
+	let namePendingMessage = ['Checking if name already exists in Flow blockchain...'];
+	let tokenNamePending: boolean;
+	let tokenNamePendingMessage = ['Checking if token name already exists in Flow blockchain...'];
 
 	let res = daoDetailsSuite.get();
 </script>
@@ -47,7 +52,14 @@
 		/>
 	</InputWrapper>
 
-	<InputWrapper name="tokenName" label="Token Name" icon="tabler:currency-dollar" {res}>
+	<InputWrapper
+		name="tokenName"
+		label="Token Name"
+		icon="tabler:currency-dollar"
+		pending={tokenNamePending}
+		pendingMessage={tokenNamePendingMessage}
+		{res}
+	>
 		<input
 			name="tokenName"
 			type="text"
