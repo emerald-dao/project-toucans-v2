@@ -54,7 +54,7 @@
 
 		.story-wrapper {
 			@include mq(medium) {
-				border-left: 1px var(--clr-neutral-400) solid;
+				border-left: 1px var(--clr-neutral-900-t8) solid;
 				padding-left: 3rem;
 			}
 

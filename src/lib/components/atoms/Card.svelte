@@ -10,6 +10,7 @@
 <style type="scss">
 	div {
 		background-color: var(--clr-background-secondary);
+		border: 1px var(--clr-neutral-900-t9) solid;
 		border-radius: 1.4rem;
 		height: fit-content;
 	}
