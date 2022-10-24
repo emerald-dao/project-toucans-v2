@@ -67,6 +67,6 @@
 	}
 
 	.modal-content {
-		max-width: 25ch;
+		max-width: 300px;
 	}
 </style>

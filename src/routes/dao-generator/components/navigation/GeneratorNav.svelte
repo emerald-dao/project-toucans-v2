@@ -20,11 +20,11 @@
 <style type="scss">
 	nav {
 		position: sticky;
-		top: 0;
-		background-color: var(--clr-background-primary);
-		padding-block: 1.8rem;
+		top: -1.2rem;
+		background-color: var(--clr-background-secondary-t5);
+		padding-block: 2.6rem 1.8rem;
 		border-bottom: 1px var(--clr-neutral-900-t9) solid;
-		backdrop-filter: blur(10px);
+		backdrop-filter: blur(20px);
 		z-index: 1;
 
 		span {

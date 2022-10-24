@@ -6,7 +6,7 @@
 	import { Container, Section } from '@mateoroldos/svelte.bones';
 </script>
 
-<Section paddingTop="small">
+<Section paddingTop="none">
 	<GeneratorNav />
 	<div class="content-wrapper">
 		<Container width="small" --container-s="34ch">
