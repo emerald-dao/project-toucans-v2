@@ -36,7 +36,7 @@
 
 <Column gap="small" align="flex-start">
 	<h4>Fund Emerald DAO</h4>
-	<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment}>
+	<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
 		<label for="amount">Amount to Found</label>
 		<Column gap={0.2} align="flex-start">
 			<RadioButtons data={currenciesRadioButtonsData} />
