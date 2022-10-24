@@ -11,12 +11,11 @@
 		Irure consectetur minim adipisicing proident laboris aliqua ut ad incididunt pariatur enim
 		magna. Lorem id in exercitation nulla amet.
 	</p>
-	<Button on:click={fundActiveStep.increment} size="full-width">next</Button>
+	<Button on:click={fundActiveStep.increment} size="full-width">Next</Button>
 </Column>
 
 <style type="scss">
 	p {
-		max-width: 30ch;
 		font-size: var(--fs-300);
 	}
 </style>

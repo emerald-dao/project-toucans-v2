@@ -52,6 +52,10 @@
 </div>
 
 <style type="scss">
+	.input-wrapper {
+		width: 100%;
+	}
+
 	.helper-wrapper {
 		min-height: 1.9rem;
 		display: flex;

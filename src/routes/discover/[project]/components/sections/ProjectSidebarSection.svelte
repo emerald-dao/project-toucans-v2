@@ -44,7 +44,9 @@
 		<Button size="full-width" on:click={initFunding}>FUND</Button>
 	</Column>
 	<Modal>
-		<svelte:component this={$fundSteps[$fundActiveStep].component} />
+		<div class="modal-content">
+			<svelte:component this={$fundSteps[$fundActiveStep].component} />
+		</div>
 	</Modal>
 </Card>
 
@@ -62,5 +64,9 @@
 
 	p {
 		font-size: var(--fs-300);
+	}
+
+	.modal-content {
+		max-width: 25ch;
 	}
 </style>

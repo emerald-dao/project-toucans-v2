@@ -7,7 +7,7 @@ const fundingSuite = create((data = {}, currentField) => {
 		enforce(data.amount).greaterThan(0);
 	});
 
-	test('message', 'Special message should be longer than 5 chars', () => {
+	test('message', 'Message should be longer than 5 chars', () => {
 		enforce(data.specialMessage).longerThan(5);
 	});
 });

@@ -1,4 +1,5 @@
 <script type="ts">
+	import Icon from '@iconify/svelte';
 	import InputWrapper from '$lib/components/forms/InputWrapper.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import { fundActiveStep } from '$stores/fund/FundSteps';
@@ -75,7 +76,7 @@
 		</Row>
 	</form>
 	<Button form="fund-form" size="full-width" state={res.isValid() ? 'active' : 'disabled'}
-		>next</Button
+		><Icon icon="tabler:pig-money" />Fund</Button
 	>
 </Column>
 
@@ -83,8 +84,6 @@
 	form {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
-		max-width: 30ch;
 
 		.token-name {
 			font-size: var(--fs-200);

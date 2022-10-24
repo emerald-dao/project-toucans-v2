@@ -12,9 +12,9 @@
 			$fundData.tokenName
 		} ${($fundData.amount * $fundData.issuanceRate).toFixed(2)}`}
 	</p>
-	<Column gap="small">
-		<span>Share it!</span>
-		<Row gap="small">
+	<Column gap={1}>
+		<span>Share it</span>
+		<Row gap={0.8}>
 			<Button
 				href={`https://twitter.com/intent/tweet?text=I%20just%20funded%20${
 					$fundData.daoName
@@ -23,9 +23,10 @@
 				}%20${($fundData.amount * $fundData.issuanceRate).toFixed(2)}
 				`}
 				target="_blank"
-				type="ghost"><Icon icon="tabler:brand-twitter" />Twitter</Button
+				type="ghost"
+				size="x-small"><Icon icon="tabler:brand-twitter" />Twitter</Button
 			>
-			<Button href="https://discord.com/" target="_blank" type="ghost"
+			<Button href="https://discord.com/" target="_blank" type="ghost" size="x-small"
 				><Icon icon="tabler:brand-discord" />Discord</Button
 			>
 		</Row>
@@ -38,6 +39,7 @@
 		text-transform: uppercase;
 		font-size: var(--fs-200);
 		letter-spacing: 0.2em;
+		font-family: var(--ff-mono);
 	}
 	p {
 		text-align: center;
