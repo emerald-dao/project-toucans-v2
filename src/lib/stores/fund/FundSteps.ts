@@ -19,7 +19,7 @@ export const fundSteps = createSteps([
 	{
 		title: 'Thank You!',
 		component: Thanks,
-		action: dummyTransactionExecution
+		action: null
 	}
 ]);
 export const fundActiveStep = createActiveStep(fundSteps);

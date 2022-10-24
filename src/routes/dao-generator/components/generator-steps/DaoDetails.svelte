@@ -5,7 +5,7 @@
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
 
-	const handleChange = (input: InputEvent) => {
+	const handleChange = (input: Event) => {
 		res = daoDetailsSuite($daoData.daoDetails, input.target.name);
 
 		if (input.target.name === 'name') {

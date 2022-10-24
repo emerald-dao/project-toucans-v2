@@ -4,18 +4,28 @@
 	import { fly } from 'svelte/transition';
 
 	export let name: string;
-	export let label: string;
+	export let label: string | null = null;
 	export let icon: string | null = null;
+	export let iconUrl: string | null = null;
+	export let iconText: string | null = null;
 	export let pending: boolean = false;
 	export let pendingMessage: string[] = [];
 	export let res;
 </script>
 
-<label for={name}>{label}</label>
+{#if label}
+	<label for={name}>{label}</label>
+{/if}
 <div class="input-wrapper">
-	{#if icon}
+	{#if icon || iconUrl || iconText}
 		<div class="icon-wrapper-left solid">
-			<Icon {icon} />
+			{#if icon}
+				<Icon {icon} />
+			{:else if iconUrl}
+				<img src={iconUrl} alt="Form helper icon" />
+			{:else if iconText}
+				<span class="icon-text">{iconText}</span>
+			{/if}
 		</div>
 	{/if}
 	{#if res.getErrors(name).length > 0}

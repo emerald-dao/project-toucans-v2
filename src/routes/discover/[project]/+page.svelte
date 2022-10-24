@@ -1,6 +1,6 @@
 <script>
 	import { ProjectMainSection, ProjectSidebarSection } from './components';
-	import { Section, Container, Row } from '@mateoroldos/svelte.bones';
+	import { Section, Container } from '@mateoroldos/svelte.bones';
 </script>
 
 <Section>

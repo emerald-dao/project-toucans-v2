@@ -11,10 +11,18 @@ textarea {
 	width: 100%;
 
 	&:focus {
-		border-color: var(--clr-neutral-500);
+		border-color: var(--clr-neutral-300);
 		outline: none;
 		transition: 0.3s;
 	}
+}
+
+input:read-only,
+textarea:read-only {
+	background-color: var(--clr-neutral-300-t2);
+	border: 2px var(--clr-neutral-300-t4) solid;
+
+	pointer-events: none;
 }
 
 label {
@@ -34,18 +42,29 @@ label {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 2.8rem;
+		width: auto;
+		max-width: 3.4rem;
+		min-width: 3rem;
 		top: 0;
+		padding: 0.5rem;
 	}
 
 	.icon-wrapper-left {
 		left: 0;
-		padding-left: 0.2rem;
+
+		.icon-text {
+			font-size: var(--fs-100);
+			--font-weight: 700;
+		}
+
+		img {
+			width: 26px;
+		}
 	}
 
 	.icon-wrapper-right {
 		right: 0;
-		padding-right: 0.2rem;
+		padding-right: 0.8rem;
 		padding-top: 1.1rem;
 		align-items: flex-start;
 	}
