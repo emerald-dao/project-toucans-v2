@@ -23,10 +23,10 @@
 		justify-content: flex-start;
 		align-items: center;
 		gap: 0.2em;
-		margin-top: 0.3em;
+		margin-top: 0.05em;
 
 		span {
-			font-size: var(--fs-200);
+			font-size: var(--fs-100);
 		}
 
 		.error {

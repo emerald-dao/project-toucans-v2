@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte';
 	import { Row } from '@mateoroldos/svelte.bones';
 	import { createEventDispatcher } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	const dispatch = createEventDispatcher();
 
@@ -12,24 +13,32 @@
 
 	export let forAccount: string;
 	export let amount: number;
+	export let tokenName: string;
 </script>
 
-<Row gap="small">
-	<Card padding={1.4} width="100%">
-		<Row gap={1}>
-			<span>{amount}</span>
-			<Icon icon="tabler:arrow-narrow-right" />
-			<span>{forAccount}</span>
-		</Row>
-	</Card>
-	<div class="clickable" on:click={deleteDist}>
-		<Icon icon="tabler:playstation-x" />
-	</div>
-</Row>
+<div transition:fly={{ x: 10, duration: 700 }}>
+	<Row gap="small">
+		<Card padding={1.4} width="100%">
+			<Row gap={1}>
+				<span><span class="token-name">{`$${tokenName} `} </span>{amount}</span>
+				<Icon icon="tabler:arrow-narrow-right" />
+				<span>{forAccount}</span>
+			</Row>
+		</Card>
+		<div class="clickable" on:click={deleteDist}>
+			<Icon icon="tabler:playstation-x" />
+		</div>
+	</Row>
+</div>
 
 <style type="scss">
 	span {
-		font-size: var(--fs-200);
+		font-size: var(--fs-100);
+		--font-weight: 500;
+	}
+
+	.token-name {
+		color: var(--clr-font-text-t5);
 	}
 
 	.clickable {

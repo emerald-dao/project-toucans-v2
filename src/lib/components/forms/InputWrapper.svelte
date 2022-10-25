@@ -57,9 +57,8 @@
 	}
 
 	.helper-wrapper {
-		min-height: 1.9rem;
+		min-height: 1.4rem;
 		display: flex;
 		flex-direction: column;
-		margin-bottom: 1rem;
 	}
 </style>
