@@ -1,6 +1,5 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { Row } from '@mateoroldos/svelte.bones';
 	import { fly } from 'svelte/transition';
 
 	export let message: string | null | string[];

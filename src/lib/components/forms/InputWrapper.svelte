@@ -29,15 +29,15 @@
 		</div>
 	{/if}
 	{#if res.getErrors(name).length > 0}
-		<div class="icon-wrapper-right" in:fly={{ x: 4, duration: 400 }}>
+		<div class="icon-wrapper-right" transition:fly|local={{ x: 4, duration: 400 }}>
 			<Icon icon="tabler:alert-circle" color="var(--clr-alert-main)" />
 		</div>
 	{:else if res.isValid(name)}
-		<div class="icon-wrapper-right" in:fly={{ x: 4, duration: 400 }}>
+		<div class="icon-wrapper-right" transition:fly|local={{ x: 4, duration: 400 }}>
 			<Icon icon="tabler:check" color="var(--clr-success-main)" />
 		</div>
 	{:else if pending}
-		<div class="icon-wrapper-right" in:fly={{ x: 4, duration: 400 }}>
+		<div class="icon-wrapper-right" transition:fly|local={{ x: 4, duration: 400 }}>
 			<Icon icon="tabler:loader-2" color="var(--clr-secondary-main)" class="rotate" />
 		</div>
 	{/if}

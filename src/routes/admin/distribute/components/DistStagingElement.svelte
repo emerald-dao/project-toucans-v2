@@ -16,7 +16,7 @@
 	export let tokenName: string;
 </script>
 
-<div transition:fly={{ x: 10, duration: 700 }}>
+<div transition:fly|local={{ x: 10, duration: 700 }}>
 	<Row gap="small">
 		<Card padding={1.4} width="100%">
 			<Row gap={1}>

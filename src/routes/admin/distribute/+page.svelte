@@ -102,7 +102,7 @@
 			{/each}
 		</div>
 		{#if distStaging.length > 0}
-			<div transition:fly={{ y: 10, duration: 500, delay: 200 }}>
+			<div transition:fly|local={{ y: 10, duration: 500, delay: 200 }}>
 				<Button size="full-width" on:click={distributeTokens}>Distribute</Button>
 			</div>
 		{/if}
