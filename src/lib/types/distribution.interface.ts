@@ -1,4 +1,4 @@
 export interface Distribution {
-	forAccount: string;
-	amount: number | undefined;
+	account: string;
+	tokens: number | undefined;
 }

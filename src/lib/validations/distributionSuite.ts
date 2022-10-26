@@ -4,7 +4,7 @@ const distributionSuite = create((data = {}, currentField) => {
 	only(currentField);
 
 	test('address', 'Address should have 18 chars', () => {
-		enforce(data.forAccount).lengthEquals(18);
+		enforce(data.account).lengthEquals(18);
 	});
 
 	skipWhen(distributionSuite.get().hasErrors('address'), () => {
@@ -14,12 +14,12 @@ const distributionSuite = create((data = {}, currentField) => {
 			async () => {
 				return await dummyCheckAddress(true);
 			},
-			[data.forAccount]
+			[data.account]
 		);
 	});
 
 	test('amount', 'Amount should me greater than 0', () => {
-		enforce(data.amount).greaterThan(0);
+		enforce(data.tokens).greaterThan(0);
 	});
 });
 

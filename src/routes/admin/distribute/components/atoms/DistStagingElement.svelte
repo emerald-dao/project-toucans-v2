@@ -12,7 +12,7 @@
 	}
 
 	export let forAccount: string;
-	export let amount: number;
+	export let amount: number | undefined;
 	export let tokenName: string;
 </script>
 

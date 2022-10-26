@@ -1,51 +1,28 @@
 <script type="ts">
 	import type { Distribution } from '$lib/types/distribution.interface';
 	import type { FullDaoProject } from '$lib/types/dao-project.interface';
-	import distributionSuite from '$lib/validations/distributionSuite';
+	import DistributionStaging from './components/sections/DistributionStaging.svelte';
+	import DistributionForms from './components/sections/DistributionForms.svelte';
 	import { Button } from '@emerald-dao/component-library';
-	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
-	import DistStagingElement from './components/DistStagingElement.svelte';
 	import { fly } from 'svelte/transition';
-	import InputWrapper from '$components/forms/InputWrapper.svelte';
-	import { DropZone } from '$atoms';
-	import { distributionCsvValidation } from '$lib/validations/distributionCsvValidation';
 
 	const daoData: FullDaoProject = getContext('dao-data');
 
-	let csvFile: File[] = [];
-
-	const handleChange = (input: Event) => {
-		res = distributionSuite(currentDist, input.target.name);
-
-		if (input.target.name === 'address') {
-			addressPending = true;
-		}
-
-		res.done((result) => {
-			res = result;
-			addressPending = false;
-		});
-	};
-
-	let res = distributionSuite.get();
-	let addressPending: boolean;
-	let addressPendingMessage = ['Checking if address exists in the blockchain'];
-
 	let distStaging: Distribution[] = [];
 
-	let currentDist: Distribution = {
-		forAccount: '',
-		amount: undefined
+	let formDist: Distribution = {
+		account: '',
+		tokens: undefined
 	};
+	let csvDist: Distribution[] = [];
 
-	const addToStaging = () => {
-		distStaging = [...distStaging, { ...currentDist }];
-	};
-
-	const deleteFromStaging = (i: number) => {
-		distStaging.splice(i, 1);
-		distStaging = distStaging;
+	const addToStaging = (validForm: boolean) => {
+		if (validForm) {
+			distStaging = [...distStaging, { ...formDist }, ...csvDist];
+		} else {
+			distStaging = [...distStaging, ...csvDist];
+		}
 	};
 
 	const distributeTokens = () => {
@@ -55,58 +32,10 @@
 
 <div class="main-wrapper">
 	<div class="forms-wrapper sub-wrapper">
-		<h4>Manual Add</h4>
-		<form id="dist-form" on:submit|preventDefault={addToStaging} autocomplete="off">
-			<InputWrapper
-				name="address"
-				label="Address"
-				pending={addressPending}
-				pendingMessage={addressPendingMessage}
-				{res}
-			>
-				<input
-					name="address"
-					type="text"
-					maxlength="18"
-					bind:value={currentDist.forAccount}
-					on:input={handleChange}
-				/>
-			</InputWrapper>
-			<InputWrapper name="amount" label="Amount" iconText={`$${daoData.tokenName}`} {res}>
-				<input
-					name="amount"
-					type="number"
-					bind:value={currentDist.amount}
-					on:input={handleChange}
-				/>
-			</InputWrapper>
-		</form>
-		<Button
-			form="dist-form"
-			type="ghost"
-			color="neutral"
-			size="full-width"
-			state={res.isValid() ? 'active' : 'disabled'}
-			>Add <Icon icon="tabler:arrow-narrow-right" /></Button
-		>
-		<DropZone
-			name="distribution-csv"
-			accept="text/csv"
-			bind:bindValue={csvFile}
-			validationFunction={distributionCsvValidation}
-		/>
+		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
 	</div>
 	<div class="dist-wrapper sub-wrapper">
-		<div class="dist-elements-wrapper">
-			{#each distStaging as dist, i}
-				<DistStagingElement
-					forAccount={dist.forAccount}
-					amount={dist.amount}
-					tokenName={daoData.tokenName}
-					on:deleteDist={() => deleteFromStaging(i)}
-				/>
-			{/each}
-		</div>
+		<DistributionStaging bind:distStaging />
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 200 }}>
 				<Button size="full-width" on:click={distributeTokens}>Distribute</Button>
@@ -130,15 +59,6 @@
 			display: flex;
 			flex-direction: column;
 			gap: 1.4rem;
-
-			.dist-elements-wrapper {
-				height: 100%;
-				display: flex;
-				flex-direction: column;
-				gap: 1rem;
-				overflow-y: auto;
-				overflow-x: hidden;
-			}
 		}
 	}
 </style>
