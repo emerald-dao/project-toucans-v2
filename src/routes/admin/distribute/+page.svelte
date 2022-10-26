@@ -1,4 +1,5 @@
 <script type="ts">
+	import type { Distribution } from '$lib/types/distribution.interface';
 	import type { FullDaoProject } from '$lib/types/dao-project.interface';
 	import distributionSuite from '$lib/validations/distributionSuite';
 	import { Button } from '@emerald-dao/component-library';
@@ -7,13 +8,12 @@
 	import DistStagingElement from './components/DistStagingElement.svelte';
 	import { fly } from 'svelte/transition';
 	import InputWrapper from '$components/forms/InputWrapper.svelte';
-
-	interface Dist {
-		forAccount: string;
-		amount: number | undefined;
-	}
+	import { DropZone } from '$atoms';
+	import { distributionCsvValidation } from '$lib/validations/distributionCsvValidation';
 
 	const daoData: FullDaoProject = getContext('dao-data');
+
+	let csvFile: File[] = [];
 
 	const handleChange = (input: Event) => {
 		res = distributionSuite(currentDist, input.target.name);
@@ -32,9 +32,9 @@
 	let addressPending: boolean;
 	let addressPendingMessage = ['Checking if address exists in the blockchain'];
 
-	let distStaging: Dist[] = [];
+	let distStaging: Distribution[] = [];
 
-	let currentDist: Dist = {
+	let currentDist: Distribution = {
 		forAccount: '',
 		amount: undefined
 	};
@@ -89,6 +89,12 @@
 			state={res.isValid() ? 'active' : 'disabled'}
 			>Add <Icon icon="tabler:arrow-narrow-right" /></Button
 		>
+		<DropZone
+			name="distribution-csv"
+			accept="text/csv"
+			bind:bindValue={csvFile}
+			validationFunction={distributionCsvValidation}
+		/>
 	</div>
 	<div class="dist-wrapper sub-wrapper">
 		<div class="dist-elements-wrapper">
@@ -117,7 +123,6 @@
 		height: 100%;
 
 		.sub-wrapper {
-			// background-color: var(--clr-background-secondary);
 			padding: 2rem;
 		}
 

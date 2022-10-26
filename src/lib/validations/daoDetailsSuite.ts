@@ -56,7 +56,7 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 	});
 });
 
-const dummyCheckDaoName = async (success: boolean) => {
+const dummyCheckDaoName = async (success: boolean): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
 			if (success) {
