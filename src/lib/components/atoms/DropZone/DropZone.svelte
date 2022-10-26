@@ -1,4 +1,5 @@
 <script type="ts">
+	import { Row } from '@mateoroldos/svelte.bones';
 	import DropZoneFile from './DropZoneFile.svelte';
 	import Icon from '@iconify/svelte';
 	import { getFilesAsync } from '$lib/utilities/getFilesAsync';
@@ -73,7 +74,7 @@
 	{#if bindValue && bindValue.length > 2}
 		<div class="empty-all-wrapper">
 			<div on:click|stopPropagation={deleteAllFiles} class="empty-all-icon-wrapper">
-				<Icon icon="ion:trash" color="var(--clr-accent-main)" />
+				<Icon icon="tabler:trash" color="var(--clr-font-text-soft)" />
 			</div>
 		</div>
 	{/if}
@@ -83,12 +84,15 @@
 			<DropZoneFile {file} on:deleteFile={() => deleteFile(index)} />
 		{/each}
 	{:else}
-		<Icon icon="ion:cloud-upload-outline" color="var(--clr-accent-main-t3)" />
+		<Icon icon="tabler:cloud-upload" color="var(--clr-font-text-soft)" />
 		<span class="prompt">{placeholder}</span>
 	{/if}
 	{#if errors.length > 0}
 		{#each errors as error}
-			<p class="error">{error}</p>
+			<Row gap={0.4}>
+				<Icon icon="tabler:x" color="var(--clr-alert-main)" width="0.75em" />
+				<p class="error">{error}</p>
+			</Row>
 		{/each}
 	{/if}
 
@@ -130,17 +134,12 @@
 		justify-content: flex-start;
 		text-align: center;
 		cursor: pointer;
-		color: var(--clr-font-text);
-		border: 2px var(--clr-primary-main-t5) solid;
-		background-color: var(--clr-primary-main-t9);
-		border-radius: 10px;
 		transition: 0.5s;
 		overflow-y: auto;
-		margin-top: 1rem;
 
 		.prompt {
-			font-size: var(--fs-300);
-			color: var(--clr-primary-main-t3);
+			font-size: var(--fs-200);
+			color: var(--clr-font-text-soft);
 		}
 
 		.empty-all-wrapper {
@@ -155,22 +154,27 @@
 			align-items: flex-end;
 
 			.empty-all-icon-wrapper {
-				background-color: var(--clr-primary-main-t8);
+				background-color: var(--clr-neutral-300);
 				padding: 0.4rem;
 				border-radius: 0.4rem;
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				border: 2px var(--clr-primary-main-t7) solid;
+				border: 2px var(--clr-neutral-400) solid;
 			}
 		}
 	}
 
 	.drop-zone-over {
-		background-color: var(--clr-primary-main-t6);
+		background-color: var(--clr-neutral-300-t5);
 	}
 	.drop-zone-error {
-		border-color: red;
+		border-color: var(--clr-alert-main);
+	}
+
+	.error {
+		font-size: var(--fs-100);
+		color: var(--clr-alert-main);
 	}
 
 	input {

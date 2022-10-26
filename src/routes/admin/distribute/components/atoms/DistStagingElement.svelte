@@ -26,7 +26,7 @@
 			</Row>
 		</Card>
 		<div class="clickable" on:click={deleteDist}>
-			<Icon icon="tabler:playstation-x" />
+			<Icon icon="tabler:circle-x" />
 		</div>
 	</Row>
 </div>

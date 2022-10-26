@@ -1,4 +1,4 @@
-<script>
+<script type="ts">
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
@@ -9,7 +9,7 @@
 		}
 	});
 
-	const displayThumbnail = (file) => {
+	const displayThumbnail = (file: File) => {
 		const reader = new FileReader();
 		reader.readAsDataURL(file); // base 64 format
 
@@ -28,8 +28,8 @@
 
 	let dispatch = createEventDispatcher();
 
-	let thumbnailElement;
-	export let file;
+	let thumbnailElement: HTMLDivElement;
+	export let file: File;
 </script>
 
 <div class="drop-zone-file">
@@ -40,7 +40,7 @@
 		<h5>{file.name}</h5>
 	</div>
 	<div on:click|stopPropagation={() => dispatch('deleteFile')}>
-		<Icon icon="ion:close-circle" color="var(--clr-accent-main)" />
+		<Icon icon="tabler:circle-x" color="var(--clr-accent-main)" />
 	</div>
 </div>
 
@@ -57,7 +57,7 @@
 		min-height: 5rem;
 		width: 100%;
 		border-radius: 0.6rem;
-		background-color: var(--clr-accent-main-t9);
+		background-color: var(--clr-neutral-400-t7);
 		font-size: var(--fs-200);
 		position: relative;
 
@@ -66,7 +66,8 @@
 		}
 
 		h5 {
-			color: var(--clr-accent-main);
+			color: var(--clr-font-heading);
+			text-align: left;
 		}
 
 		.file-data {
