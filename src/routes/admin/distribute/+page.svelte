@@ -37,7 +37,7 @@
 	<div class="dist-wrapper sub-wrapper">
 		<DistributionStaging bind:distStaging />
 		{#if distStaging.length > 0}
-			<div transition:fly|local={{ y: 10, duration: 500, delay: 200 }}>
+			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
 				<Button size="full-width" on:click={distributeTokens}>Distribute</Button>
 			</div>
 		{/if}
@@ -59,6 +59,9 @@
 			display: flex;
 			flex-direction: column;
 			gap: 1.4rem;
+			border: 2px var(--clr-neutral-300) solid;
+			border-radius: 0.6rem;
+			transition: 3s;
 		}
 	}
 </style>
