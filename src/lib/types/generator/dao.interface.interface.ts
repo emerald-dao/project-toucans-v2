@@ -7,7 +7,7 @@ export interface DaoData {
 		tokenName: string;
 		description: string;
 		website: string;
-		logo: File | undefined;
+		logo: File[] | undefined;
 	};
 	tokenomics: {
 		tokenType: TokenTypes;

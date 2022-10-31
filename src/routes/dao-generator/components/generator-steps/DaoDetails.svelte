@@ -4,6 +4,7 @@
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
+	import { DropZone } from '$atoms';
 
 	const handleChange = (input: Event) => {
 		res = daoDetailsSuite($daoData.daoDetails, input.target.name);
@@ -87,6 +88,14 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
+
+	<label for="logo">Logo</label>
+	<DropZone
+		name="logo"
+		accept="image/png"
+		amountOfFiles={1}
+		bind:bindValue={$daoData.daoDetails.logo}
+	/>
 
 	<StepButtons active={res.isValid()} />
 </form>

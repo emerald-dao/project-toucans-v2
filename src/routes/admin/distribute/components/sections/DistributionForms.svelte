@@ -8,7 +8,6 @@
 	import InputWrapper from '$components/forms/InputWrapper.svelte';
 	import { DropZone } from '$atoms';
 	import distributionSuite from '$lib/validations/distributionSuite';
-	import { distributionCsvValidation } from '$lib/validations/distributionCsvValidation';
 
 	const daoData: FullDaoProject = getContext('dao-data');
 
@@ -82,12 +81,7 @@
 </form>
 <div class="wrapper">
 	<h4>Drop CSV</h4>
-	<DropZone
-		name="distribution-csv"
-		accept="text/csv"
-		bind:bindValue={csvFile}
-		validationFunction={distributionCsvValidation}
-	/>
+	<DropZone name="distribution-csv" accept="text/csv" bind:bindValue={csvFile} amountOfFiles={1} />
 </div>
 <Button
 	form="dist-form"

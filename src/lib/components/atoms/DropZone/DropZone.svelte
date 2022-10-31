@@ -10,10 +10,28 @@
 	export let name: string;
 	export let placeholder = 'Drop file here or click to upload';
 	export let accept: string; // Type of file we accept
+	export let amountOfFiles: number;
 	export let isDirectory: boolean = false;
 	export let multiple: boolean = false;
-	export let bindValue: File[];
-	export let validationFunction: ((files: File[] | FileList) => Promise<true>) | null = null;
+	export let bindValue: File[] | undefined;
+
+	export let validationFunction: (files: File[] | FileList) => Promise<true> = async (
+		files: File[] | FileList
+	): Promise<true> => {
+		return new Promise((resolve, reject) => {
+			if (files.length > amountOfFiles) {
+				reject(['Too many files']);
+			} else {
+				for (let i = 0; i < files.length; i++) {
+					if (files[i].type != accept) {
+						reject(['Wrong file type']);
+					}
+					continue;
+				}
+				resolve(true);
+			}
+		});
+	};
 
 	let errors: string[] = [];
 
@@ -120,6 +138,7 @@
 		/>
 	{/if}
 </div>
+<button on:click={() => console.log(inputRef.value)}>aa</button>
 
 <style type="scss">
 	.drop-zone {

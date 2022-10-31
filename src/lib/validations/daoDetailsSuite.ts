@@ -35,7 +35,7 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 			'tokenName',
 			'Token name already taken',
 			async () => {
-				return await dummyCheckDaoName(false);
+				return await dummyCheckDaoName(true);
 			},
 			[data.tokenName]
 		);
