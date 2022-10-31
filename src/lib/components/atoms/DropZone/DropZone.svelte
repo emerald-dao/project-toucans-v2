@@ -138,7 +138,6 @@
 		/>
 	{/if}
 </div>
-<button on:click={() => console.log(inputRef.value)}>aa</button>
 
 <style type="scss">
 	.drop-zone {
