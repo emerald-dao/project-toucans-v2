@@ -1,6 +1,6 @@
 <script type="ts">
+	import RecapElement from './atoms/RecapElement.svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
-	import Card from '$components/atoms/Card.svelte';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { TokenTypes } from '$lib/types/token-types.enum';
@@ -9,28 +9,31 @@
 
 <Column gap="small">
 	<RecapCard title="DAO Details" stepNumber={0}>
-		<Row>
-			<h5>{$daoData.daoDetails.name}</h5>
-			<span>{$daoData.daoDetails.tokenName}</span>
+		<Row gap="small">
+			<RecapElement title="Dao Name" data={$daoData.daoDetails.name} />
+			<RecapElement title="Token Name" data={$daoData.daoDetails.tokenName} />
 		</Row>
-		<p>{$daoData.daoDetails.description}</p>
-		<span>{$daoData.daoDetails.website}</span>
+		<RecapElement title="Description" data={$daoData.daoDetails.description} />
+		<RecapElement title="Website" data={$daoData.daoDetails.website} />
 	</RecapCard>
 	<RecapCard title="Token Type" stepNumber={1}>
-		<h5>{$daoData.tokenomics.tokenType}</h5>
+		<RecapElement data={$daoData.tokenomics.tokenType} />
 	</RecapCard>
 	<RecapCard title="Tokenomics" stepNumber={2}>
 		{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-			<h5>{$daoData.tokenomics.initialRound.targetAmount} raise</h5>
-			<span
-				>{`${$daoData.tokenomics.initialRound.targetAmount} ${$daoData.daoDetails.tokenName} = 1 ${$daoData.tokenomics.initialRound.token}`}</span
-			>
-			<span>{`${$daoData.tokenomics.initialRound.reserveRate}% reserve rate`}</span>
+			<RecapElement title="Target amount" data={$daoData.tokenomics.initialRound.targetAmount} />
+			<RecapElement
+				title="Issuance rate"
+				data={`${$daoData.tokenomics.initialRound.targetAmount} ${$daoData.daoDetails.tokenName} = 1 ${$daoData.tokenomics.initialRound.token}`}
+			/>
+			<RecapElement title="Reserve rate" data={$daoData.tokenomics.initialRound.reserveRate} />
 		{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
-			<h5>{$daoData.tokenomics.totalSupply}</h5>
+			<RecapElement title="Total supply" data={$daoData.tokenomics.totalSupply} />
 		{/if}
-		<span>{`Token burning ${$daoData.tokenomics.burnTokens}`}</span>
-		<span>{`Token minting ${$daoData.tokenomics.mintTokens}`}</span>
+		<Row gap="small">
+			<RecapElement title="Token burning" data={$daoData.tokenomics.burnTokens} />
+			<RecapElement title="Token minting" data={$daoData.tokenomics.mintTokens} />
+		</Row>
 	</RecapCard>
 </Column>
 <StepButtons />
