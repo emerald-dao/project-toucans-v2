@@ -1,6 +1,10 @@
 <script type="ts">
 	import '../app.postcss';
 	import '$lib/styles/app.scss';
+	import '@emerald-dao/design-system/build/variables-dark.css';
+	import '@emerald-dao/design-system/build/variables-light.css';
+	import '@emerald-dao/design-system/build/variables.css';
+	import '@emerald-dao/component-library/styles/app.scss';
 	import { Header, Footer, TransactionModal } from '@emerald-dao/component-library';
 	import { navElements, emeraldTools, socialMedia } from '$lib/config/navigation';
 	import { theme } from '$stores/ThemeStore';
@@ -9,7 +13,6 @@
 	import { getFindProfile } from '$flow/utils';
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
-	console.log($page);
 </script>
 
 <TransactionModal

@@ -1,19 +1,20 @@
 <script type="ts">
 	import StepButtons from './atoms/StepButtons.svelte';
-	import InputWrapper from '$lib/components/forms/InputWrapper.svelte';
+	import { InputWrapper, DropZone } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
-	import { DropZone } from '$atoms';
 
 	const handleChange = (input: Event) => {
-		res = daoDetailsSuite($daoData.daoDetails, input.target.name);
+		const target = input.target as HTMLInputElement;
 
-		if (input.target.name === 'name') {
+		res = daoDetailsSuite($daoData.daoDetails, target.name);
+
+		if (target.name === 'name') {
 			namePending = true;
 		}
 
-		if (input.target.name === 'tokenName') {
+		if (target.name === 'tokenName') {
 			tokenNamePending = true;
 		}
 
@@ -42,7 +43,8 @@
 		label="What should we call this DAO?"
 		pending={namePending}
 		pendingMessage={namePendingMessage}
-		{res}
+		errors={res.getErrors('name')}
+		isValid={res.isValid('name')}
 	>
 		<input
 			name="name"
@@ -59,7 +61,9 @@
 		icon="tabler:currency-dollar"
 		pending={tokenNamePending}
 		pendingMessage={tokenNamePendingMessage}
-		{res}
+		errors={res.getErrors('tokenName')}
+		isValid={res.isValid('tokenName')}
+		tooltip="Add any helper text here"
 	>
 		<input
 			name="tokenName"
@@ -70,7 +74,12 @@
 		/>
 	</InputWrapper>
 
-	<InputWrapper name="description" label="Description" {res}>
+	<InputWrapper
+		name="description"
+		label="Description"
+		errors={res.getErrors('description')}
+		isValid={res.isValid('description')}
+	>
 		<textarea
 			name="description"
 			placeholder="A DAO for the people"
@@ -79,7 +88,13 @@
 		/>
 	</InputWrapper>
 
-	<InputWrapper name="website" label="Website" icon="tabler:world" {res}>
+	<InputWrapper
+		name="website"
+		label="Website"
+		icon="tabler:world"
+		errors={res.getErrors('website')}
+		isValid={res.isValid('website')}
+	>
 		<input
 			name="website"
 			type="text"
@@ -107,7 +122,6 @@
 
 		textarea {
 			min-height: 15rem;
-			font-size: var(--fs-300);
 		}
 	}
 </style>

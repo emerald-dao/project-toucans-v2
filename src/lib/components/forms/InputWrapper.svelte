@@ -2,6 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import FormHelper from '$components/forms/FormHelper.svelte';
 	import { fly } from 'svelte/transition';
+	import type { SuiteResult } from 'vest';
 
 	export let name: string;
 	export let label: string | null = null;
@@ -10,7 +11,7 @@
 	export let iconText: string | null = null;
 	export let pending: boolean = false;
 	export let pendingMessage: string[] = [];
-	export let res;
+	export let res: SuiteResult;
 </script>
 
 {#if label}

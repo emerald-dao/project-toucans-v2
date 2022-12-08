@@ -1,7 +1,7 @@
 <script type="ts">
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { Column } from '@mateoroldos/svelte.bones';
-	import InputWrapper from '$lib/components/forms/InputWrapper.svelte';
+	import { InputWrapper } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import tokenomicsSuite from '$lib/validations/tokenomicsSuite';
@@ -20,7 +20,12 @@
 	autocomplete="off"
 >
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-		<InputWrapper name="targetAmount" label="Target amount" {res}>
+		<InputWrapper
+			name="targetAmount"
+			label="Target amount"
+			errors={res.getErrors('targetAmount')}
+			isValid={res.isValid('targetAmount')}
+		>
 			<input
 				name="targetAmount"
 				type="number"
@@ -31,7 +36,12 @@
 			/>
 		</InputWrapper>
 
-		<InputWrapper name="issuanceRate" label="Issuance rate" {res}>
+		<InputWrapper
+			name="issuanceRate"
+			label="Issuance rate"
+			errors={res.getErrors('issuanceRate')}
+			isValid={res.isValid('issuanceRate')}
+		>
 			<input
 				name="issuanceRate"
 				type="number"
@@ -42,7 +52,13 @@
 			/>
 		</InputWrapper>
 
-		<InputWrapper name="reserveRate" label="Reserve rate" icon="tabler:percentage" {res}>
+		<InputWrapper
+			name="reserveRate"
+			label="Reserve rate"
+			icon="tabler:percentage"
+			errors={res.getErrors('reserveRate')}
+			isValid={res.isValid('reserveRate')}
+		>
 			<input
 				name="reserveRate"
 				type="number"
@@ -54,7 +70,12 @@
 			/>
 		</InputWrapper>
 	{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
-		<InputWrapper name="supply" label="Total supply" {res}>
+		<InputWrapper
+			name="supply"
+			label="Total supply"
+			errors={res.getErrors('supply')}
+			isValid={res.isValid('supply')}
+		>
 			<input
 				type="number"
 				name="supply"

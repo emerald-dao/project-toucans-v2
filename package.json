@@ -53,7 +53,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@emerald-dao/component-library": "^1.6.2",
+		"@emerald-dao/component-library": "^3.0.0",
+		"@emerald-dao/design-system": "^2.0.0",
 		"@onflow/fcl": "^1.2.1",
 		"chart.js": "^3.9.1",
 		"svelte-chartjs": "^3.0.1"
