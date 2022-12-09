@@ -1,5 +1,4 @@
 <script>
-	import Card from '$components/atoms/Card.svelte';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 
 	export let name = 'Emerald DAO';
@@ -7,7 +6,7 @@
 </script>
 
 <a href={`/discover/${name}`}>
-	<Card>
+	<div class="card-primary">
 		<div class="main-wrapper" class:with-story={story}>
 			<Column align="flex-start" gap="small">
 				<Row justify="flex-start" gap="small">
@@ -35,7 +34,7 @@
 				</div>
 			{/if}
 		</div>
-	</Card>
+	</div>
 </a>
 
 <style type="scss">

@@ -1,6 +1,5 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { Card } from '$components/atoms';
 	import { Column } from '@mateoroldos/svelte.bones';
 	import { generatorActiveStep } from '$stores/generator/GeneratorSteps';
 
@@ -8,7 +7,7 @@
 	export let stepNumber: number;
 </script>
 
-<Card padding={2.7} width="100%">
+<div class="card-primary">
 	<div class="main-wrapper">
 		<h4>{title}</h4>
 		<Column gap={1.4} align="flex-start">
@@ -18,7 +17,7 @@
 			<Icon icon="tabler:edit" color="var(--clr-primary-main)" />
 		</div>
 	</div>
-</Card>
+</div>
 
 <style type="scss">
 	.main-wrapper {

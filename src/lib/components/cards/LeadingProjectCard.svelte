@@ -1,5 +1,4 @@
 <script type="ts">
-	import { Card } from '$atoms';
 	import { Row, Column } from '@mateoroldos/svelte.bones';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
 
@@ -7,7 +6,7 @@
 	export let number: number;
 </script>
 
-<Card padding={3}>
+<div class="card-primary">
 	<Row gap="small">
 		<span class="number">
 			{number}
@@ -28,7 +27,7 @@
 			<span>{`${daoData.numberOfPayments} payments`}</span>
 		</Column>
 	</Row>
-</Card>
+</div>
 
 <style type="scss">
 	.number {

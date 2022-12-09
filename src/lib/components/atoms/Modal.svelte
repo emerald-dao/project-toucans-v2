@@ -13,7 +13,6 @@
 	import Icon from '@iconify/svelte';
 	import { onDestroy } from 'svelte';
 	import { Button } from '@emerald-dao/component-library';
-	import Card from './Card.svelte';
 	import { fly } from 'svelte/transition';
 
 	let topDiv;
@@ -75,7 +74,7 @@
 			on:click|stopPropagation={() => {}}
 			transition:fly={{ y: 30, duration: 500 }}
 		>
-			<Card>
+			<div class="card-primary">
 				<div class="close-button">
 					<Button type="transparent" on:click={() => close()}>
 						<Icon icon="tabler:circle-x" color="var(--clr-primary-main" />
@@ -84,7 +83,7 @@
 				<div class="modal-content">
 					<slot />
 				</div>
-			</Card>
+			</div>
 		</div>
 	</div>
 {/if}

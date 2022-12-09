@@ -1,6 +1,5 @@
 <script type="ts">
 	import { user } from '$stores/flow/FlowStore';
-	import { Card } from '$components/atoms';
 	import Modal, { getModal } from '$components/atoms/Modal.svelte';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { Button } from '@emerald-dao/component-library';
@@ -31,7 +30,7 @@
 	};
 </script>
 
-<Card padding={2}>
+<div class="card-primary">
 	<Column gap="small" align="flex-start">
 		<h1>{daoData.name}</h1>
 		<span>{daoData.website}</span>
@@ -48,7 +47,7 @@
 			<svelte:component this={$fundSteps[$fundActiveStep].component} />
 		</div>
 	</Modal>
-</Card>
+</div>
 
 <style type="scss">
 	h1 {

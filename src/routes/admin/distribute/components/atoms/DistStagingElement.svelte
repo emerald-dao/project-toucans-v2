@@ -1,5 +1,4 @@
 <script type="ts">
-	import { Card } from '$components/atoms';
 	import Icon from '@iconify/svelte';
 	import { Row } from '@mateoroldos/svelte.bones';
 	import { createEventDispatcher } from 'svelte';
@@ -18,13 +17,13 @@
 
 <div transition:fly|local={{ x: 10, duration: 700 }}>
 	<Row gap="small">
-		<Card padding={1.4} width="100%">
+		<div class="card-primary">
 			<Row gap={1}>
 				<span><span class="token-name">{`$${tokenName} `} </span>{amount}</span>
 				<Icon icon="tabler:arrow-narrow-right" />
 				<span>{forAccount}</span>
 			</Row>
-		</Card>
+		</div>
 		<div class="clickable" on:click={deleteDist}>
 			<Icon icon="tabler:circle-x" />
 		</div>

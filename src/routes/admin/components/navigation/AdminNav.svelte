@@ -1,12 +1,12 @@
 <script>
-	import { Card, Ball } from '$components/atoms';
+	import { Ball } from '$components/atoms';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 </script>
 
 <nav>
-	<Card padding={3}>
+	<div class="card-primary">
 		<Column align="flex-start">
 			<Row gap={1}>
 				<img src="/ec-logo.png" alt="DAO Logo" />
@@ -30,7 +30,7 @@
 				>
 			</Column>
 		</Column>
-	</Card>
+	</div>
 </nav>
 
 <style type="scss">

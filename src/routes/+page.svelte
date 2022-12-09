@@ -1,7 +1,6 @@
 <script type="ts">
 	import { Section, Container, Column, Row, AdaptableGrid } from '@mateoroldos/svelte.bones';
 	import { Button, Tagline } from '@emerald-dao/component-library';
-	import { Card } from '$components/atoms';
 	import { LeadingProjectCard } from '$components/cards/index';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
 
@@ -82,12 +81,12 @@
 			<h2>Tokens for any Community</h2>
 			<AdaptableGrid minWidth="small">
 				{#each toucansFeatures as feature}
-					<Card>
+					<div class="card-primary">
 						<Column justify="center" gap="small">
 							<h3>{feature.title}</h3>
 							<p>{feature.description}</p>
 						</Column>
-					</Card>
+					</div>
 				{/each}
 			</AdaptableGrid>
 		</Column>
