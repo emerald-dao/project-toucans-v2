@@ -1,6 +1,6 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import InputWrapper from '$lib/components/forms/InputWrapper.svelte';
+	import { InputWrapper } from '@emerald-dao/component-library';
 	import { Button } from '@emerald-dao/component-library';
 	import { fundActiveStep } from '$stores/fund/FundSteps';
 	import { Column, Row } from '@mateoroldos/svelte.bones';
@@ -45,7 +45,8 @@
 				<InputWrapper
 					name="amount"
 					iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
-					{res}
+					errors={res.getErrors('amount')}
+					isValid={res.isValid('amount')}
 				>
 					<input
 						type="number"
@@ -56,7 +57,12 @@
 					/>
 				</InputWrapper>
 			</Column>
-			<InputWrapper name="message" label="Add a special message" {res}>
+			<InputWrapper
+				name="message"
+				label="Add a special message"
+				errors={res.getErrors('message')}
+				isValid={res.isValid('message')}
+			>
 				<textarea
 					name="message"
 					placeholder="Write a special message"

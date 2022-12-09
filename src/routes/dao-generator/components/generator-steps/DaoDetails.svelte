@@ -108,7 +108,7 @@
 	<DropZone
 		name="logo"
 		accept="image/png"
-		amountOfFiles={1}
+		maxAmountOfFiles={1}
 		bind:bindValue={$daoData.daoDetails.logo}
 	/>
 

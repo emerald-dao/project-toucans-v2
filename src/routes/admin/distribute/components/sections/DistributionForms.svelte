@@ -5,7 +5,7 @@
 	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
-	import InputWrapper from '$components/forms/InputWrapper.svelte';
+	import { InputWrapper } from '@emerald-dao/component-library';
 	import distributionSuite from '$lib/validations/distributionSuite';
 
 	const daoData: FullDaoProject = getContext('dao-data');
@@ -64,7 +64,8 @@
 		label="Address"
 		pending={addressPending}
 		pendingMessage={addressPendingMessage}
-		{res}
+		errors={res.getErrors('address')}
+		isValid={res.isValid('address')}
 	>
 		<input
 			name="address"
@@ -74,13 +75,24 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
-	<InputWrapper name="amount" label="Amount" iconText={`$${daoData.tokenName}`} {res}>
+	<InputWrapper
+		name="amount"
+		label="Amount"
+		iconText={`$${daoData.tokenName}`}
+		errors={res.getErrors('amount')}
+		isValid={res.isValid('amount')}
+	>
 		<input name="amount" type="number" bind:value={formDist.tokens} on:input={handleChange} />
 	</InputWrapper>
 </form>
 <div class="wrapper">
 	<h4>Drop CSV</h4>
-	<DropZone name="distribution-csv" accept="text/csv" bind:bindValue={csvFile} amountOfFiles={1} />
+	<DropZone
+		name="distribution-csv"
+		accept="text/csv"
+		bind:bindValue={csvFile}
+		maxAmountOfFiles={1}
+	/>
 </div>
 <Button
 	form="dist-form"
