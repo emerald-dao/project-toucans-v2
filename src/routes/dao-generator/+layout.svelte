@@ -10,7 +10,7 @@
 	<GeneratorNav />
 	<div class="content-wrapper">
 		<Container width="small" --container-s="34ch">
-			<h2>{$generatorSteps[$generatorActiveStep].title}</h2>
+			<h2>{$generatorSteps[$generatorActiveStep].name}</h2>
 			<slot />
 		</Container>
 	</div>

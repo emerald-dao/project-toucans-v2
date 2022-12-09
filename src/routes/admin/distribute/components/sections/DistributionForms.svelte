@@ -2,11 +2,10 @@
 	import type { FullDaoProject } from '$lib/types/dao-project.interface';
 	import type { Distribution } from '$lib/types/distribution.interface';
 	import Papa from 'papaparse';
-	import { Button } from '@emerald-dao/component-library';
+	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import InputWrapper from '$components/forms/InputWrapper.svelte';
-	import { DropZone } from '$atoms';
 	import distributionSuite from '$lib/validations/distributionSuite';
 
 	const daoData: FullDaoProject = getContext('dao-data');

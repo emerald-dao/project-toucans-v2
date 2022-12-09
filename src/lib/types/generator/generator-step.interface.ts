@@ -1,11 +1,11 @@
+import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
 import type { SvelteComponent } from 'svelte';
-import type { StepState } from './generator-step-state.type';
 
 export interface Step {
-	title: string;
+	name: string;
 	slug?: string;
 	component: typeof SvelteComponent;
 	action: null | (() => Promise<void>);
 	form: boolean;
-	state?: StepState;
+	state: ProgressStates;
 }

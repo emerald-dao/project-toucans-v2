@@ -1,5 +1,5 @@
 import type { Step } from '$lib/types/generator/generator-step.interface';
-import type { StepState } from '$lib/types/generator/generator-step-state.type';
+import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
 import { writable } from 'svelte/store';
 
 export function createSteps(steps: Step[]) {
@@ -9,7 +9,7 @@ export function createSteps(steps: Step[]) {
 
 	const { subscribe, update } = writable(steps);
 
-	function changeStepState(index: number, state: StepState) {
+	function changeStepState(index: number, state: ProgressStates) {
 		update((steps) => {
 			steps[index].state = state;
 			return steps;

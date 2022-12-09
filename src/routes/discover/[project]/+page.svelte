@@ -15,8 +15,6 @@
 </Section>
 
 <style type="scss">
-	@use '../../../lib/styles/utils' as *;
-
 	.main-wrapper {
 		display: flex;
 		overflow: hidden;

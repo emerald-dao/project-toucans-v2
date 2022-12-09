@@ -8,32 +8,36 @@ import DaoDetails from '../../../../src/routes/dao-generator/components/generato
 
 export const generatorSteps = createSteps([
 	{
-		title: 'DAO Details',
+		name: 'DAO Details',
 		slug: 'daoDetailes',
 		component: DaoDetails,
 		action: null,
-		form: true
+		form: true,
+		state: 'active'
 	},
 	{
-		title: 'Token Type',
+		name: 'Token Type',
 		slug: 'tokenType',
 		component: TokenType,
 		action: null,
-		form: true
+		form: true,
+		state: 'inactive'
 	},
 	{
-		title: 'Tokenomics',
+		name: 'Tokenomics',
 		slug: 'tokenomics',
 		component: Tokenomics,
 		action: null,
-		form: true
+		form: true,
+		state: 'inactive'
 	},
 	{
-		title: 'Review & Deploy',
+		name: 'Review & Deploy',
 		slug: 'review',
 		component: ReviewAndDeploy,
 		action: dummyTransactionExecution,
-		form: false
+		form: false,
+		state: 'inactive'
 	}
 ]);
 export const generatorActiveStep = createActiveStep(generatorSteps);

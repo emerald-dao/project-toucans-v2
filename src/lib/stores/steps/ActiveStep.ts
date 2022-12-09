@@ -1,6 +1,13 @@
 import { get, writable } from 'svelte/store';
+import type { Subscriber, Unsubscriber } from 'svelte/store';
+import type { Step } from '$lib/types/generator/generator-step.interface';
+import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
 
-export function createActiveStep(steps) {
+export function createActiveStep(steps: {
+	subscribe: (this: void, run: Subscriber<Step[]>) => Unsubscriber;
+	changeStepState: (index: number, state: ProgressStates) => void;
+	resetStates: () => void;
+}) {
 	const activeStep = writable(0);
 	const { subscribe, set, update } = activeStep;
 

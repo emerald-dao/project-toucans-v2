@@ -1,6 +1,5 @@
 <script type="ts">
 	import '../app.postcss';
-	import '$lib/styles/app.scss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
 	import '@emerald-dao/design-system/build/variables-light.css';
 	import '@emerald-dao/design-system/build/variables.css';

@@ -7,7 +7,10 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [
 		preprocess({
-			postcss: true
+			postcss: true,
+			scss: {
+				prependData: `@import './node_modules/@emerald-dao/component-library/styles/utils/mixins';`
+			}
 		})
 	],
 
