@@ -6,9 +6,9 @@
 	const daoData: FullDaoProject = getContext('dao-data');
 </script>
 
-<div class="main-wrapper">
+<div class="card column-10">
 	<div class="rounds-wrapper">
-		<h4>Active</h4>
+		<h5>Active</h5>
 		{#each daoData.rounds as round}
 			{#if round.status === 'active'}
 				<RoundDetail {round} />
@@ -17,7 +17,7 @@
 	</div>
 
 	<div class="rounds-wrapper">
-		<h4>Finished</h4>
+		<h5>Finished</h5>
 		{#each daoData.rounds as round}
 			{#if round.status != 'active'}
 				<RoundDetail {round} />
@@ -27,15 +27,11 @@
 </div>
 
 <style type="scss">
-	.main-wrapper {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		gap: 3rem;
-
-		h4 {
-			font-size: var(--fs-400);
+	.card {
+		padding: var(--space-12);
+		h5 {
 			margin-bottom: 0.8rem;
+			margin-top: 0;
 		}
 
 		.rounds-wrapper {

@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Section, Container, Column, Row, AdaptableGrid } from '@mateoroldos/svelte.bones';
+	import { Column, Row, AdaptableGrid } from '@mateoroldos/svelte.bones';
 	import { Button, Tagline } from '@emerald-dao/component-library';
 	import { LeadingProjectCard } from '$components/cards/index';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
@@ -58,8 +58,8 @@
 	];
 </script>
 
-<Section>
-	<Container>
+<div class="section">
+	<div class="container-small">
 		<Column>
 			<h1>Create a token.<br /> Launch a DAO</h1>
 			<p>
@@ -71,11 +71,11 @@
 				<Button type="ghost">Browse Projects</Button>
 			</Row>
 		</Column>
-	</Container>
-</Section>
+	</div>
+</div>
 
-<Section>
-	<Container>
+<div class="section">
+	<div class="container">
 		<Column>
 			<Tagline>Why Start a DAO?</Tagline>
 			<h2>Tokens for any Community</h2>
@@ -90,11 +90,11 @@
 				{/each}
 			</AdaptableGrid>
 		</Column>
-	</Container>
-</Section>
+	</div>
+</div>
 
-<Section>
-	<Container>
+<div class="section">
+	<div class="container">
 		<Column>
 			<Tagline>Explore</Tagline>
 			<h2>Leading Projects</h2>
@@ -104,33 +104,33 @@
 				{/each}
 			</AdaptableGrid>
 		</Column>
-	</Container>
-</Section>
+	</div>
+</div>
 
-<Section>
-	<Container>
+<div class="section">
+	<div class="container">
 		<Column>
 			<Tagline>No Code Required</Tagline>
 			<h2>Creating your own token is easy</h2>
 		</Column>
-	</Container>
-</Section>
+	</div>
+</div>
 
-<Section>
-	<Container>
+<div class="section">
+	<div class="container">
 		<Column>
 			<h2>FAQ</h2>
 		</Column>
-	</Container>
-</Section>
+	</div>
+</div>
 
-<Section>
-	<Container>
+<div class="section">
+	<div class="container">
 		<Column>
 			<h2>Powerd by <strong>Emerald City</strong></h2>
 		</Column>
-	</Container>
-</Section>
+	</div>
+</div>
 
 <style type="scss">
 	h1,

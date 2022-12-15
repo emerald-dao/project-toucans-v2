@@ -50,9 +50,7 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 	});
 
 	test('website', 'Must be a valid URL', () => {
-		enforce(data.website).matches(
-			/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
-		);
+		enforce(data.website).matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
 	});
 });
 

@@ -67,31 +67,27 @@
 	});
 </script>
 
-<Section>
-	<Container width="large">
+<div class="section">
+	<div class="container">
 		<div class="main-wrapper">
 			<AdminNav />
 			<div class="content-wrapper">
 				<slot />
 			</div>
 		</div>
-	</Container>
-</Section>
+	</div>
+</div>
 
 <style type="scss">
 	.main-wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
+		gap: var(--space-8);
 
 		@include mq(medium) {
 			display: grid;
-			grid-template-columns: 1fr 3fr;
-		}
-
-		.content-wrapper {
-			width: 100%;
-			padding: 2.6rem;
+			grid-template-columns: 1fr 4fr;
+			gap: var(--space-16);
 		}
 	}
 </style>

@@ -1,20 +1,32 @@
 import type { Currencies } from './currencies.enum';
 
-export interface DaoInfo {
-	daoName: string;
-	daoAddress: string;
-	tokenName: string;
-	funderAddress: string;
+interface DaoInfo {
+	name: string;
+	type: DaoType;
+	address: string;
+	token: string;
+	founder: string;
+	dateFounded: Date;
+	logoUrl: string;
+	tags: DaoTags[];
+	description: string;
+	totalTokens: number;
+	socials: {
+		website: string;
+		twitter: string;
+		discord: string;
+	};
 }
 
-export interface FullDaoProject extends DaoInfo {
-	stats: DaoStats;
+export interface FinancialDao extends DaoInfo {
+	type: DaoType.Financial;
 	rounds: Round[];
-	activity: Activity[];
+	totalFusdRaised: number;
 }
 
-export interface DaoStats {
-	totalMoneyRised: number;
+export interface CommunityDao extends DaoInfo {
+	type: DaoType.Community;
+	mainHolders: [string, number][];
 }
 
 export interface Round {
@@ -33,4 +45,15 @@ export interface Activity {
 	currency: Currencies.FLOW | Currencies.FUSD;
 	amount: number;
 	account: string;
+}
+
+export enum DaoTags {
+	'Education' = 'education',
+	'Building' = 'building',
+	'Community' = 'community'
+}
+
+export enum DaoType {
+	'Community' = 'community',
+	'Financial' = 'financial'
 }

@@ -6,7 +6,7 @@
 
 <nav>
 	<Row>
-		<ProgressSteps steps={$generatorSteps} />
+		<ProgressSteps steps={$generatorSteps} gap={8} />
 	</Row>
 </nav>
 
@@ -19,5 +19,7 @@
 		border-bottom: 1px var(--clr-neutral-900-t9) solid;
 		backdrop-filter: blur(20px);
 		z-index: 1;
+		display: flex;
+		justify-content: center;
 	}
 </style>
