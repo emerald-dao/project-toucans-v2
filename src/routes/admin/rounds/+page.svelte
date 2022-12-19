@@ -1,9 +1,9 @@
 <script type="ts">
-	import type { FullDaoProject } from '$lib/types/dao-project.interface';
+	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import { getContext } from 'svelte';
 	import RoundDetail from './components/round/RoundDetail.svelte';
 
-	const daoData: FullDaoProject = getContext('dao-data');
+	const daoData: FinancialDao = getContext('dao-data');
 </script>
 
 <div class="card column-10">

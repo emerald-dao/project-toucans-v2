@@ -1,5 +1,9 @@
-<script>
+<script type="ts">
+	import { DaoType } from '$lib/types/dao-project.interface';
+
 	import Icon from '@iconify/svelte';
+
+	export let daoType: DaoType;
 </script>
 
 <nav class="column-12 align-start">
@@ -12,17 +16,21 @@
 			<Icon icon="tabler:chart-infographic" />
 			Stats
 		</a>
-		<a href="/admin/rounds" class="sidebar-link">
-			<Icon icon="tabler:analyze" />
-			Rounds
-		</a>
+		{#if daoType === DaoType.Financial}
+			<a href="/admin/rounds" class="sidebar-link">
+				<Icon icon="tabler:analyze" />
+				Rounds
+			</a>
+		{/if}
+		{#if daoType === DaoType.Community}
+			<a href="/admin/distribute" class="sidebar-link">
+				<Icon icon="tabler:arrows-maximize" />
+				Distribute
+			</a>
+		{/if}
 		<a href="/admin/info" class="sidebar-link">
 			<Icon icon="tabler:bolt" />
 			Edit Info
-		</a>
-		<a href="/admin/distribute" class="sidebar-link">
-			<Icon icon="tabler:arrows-maximize" />
-			Distribute
 		</a>
 	</div>
 </nav>

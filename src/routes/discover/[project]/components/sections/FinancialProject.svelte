@@ -1,6 +1,6 @@
 <script type="ts">
 	import ChartTitle from './../atoms/ChartTitle.svelte';
-	import DataCard from './../atoms/DataCard.svelte';
+	import DataCard from '$lib/components/cards/DataCard.svelte';
 	import Tabs from '$components/atoms/Tabs.svelte';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import MainFounders from '../atoms/MainFounders.svelte';
@@ -28,11 +28,7 @@
 				icon="tabler:pig-money"
 				data={daoData.totalFusdRaised.toLocaleString()}
 			/>
-			<DataCard
-				title="Total Tokens"
-				icon="tabler:coin"
-				data={daoData.totalTokens.toLocaleString()}
-			/>
+			<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.maxSupply.toLocaleString()} />
 			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
 		</div>
 		<div class="card">

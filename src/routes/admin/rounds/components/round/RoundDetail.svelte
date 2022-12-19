@@ -3,9 +3,11 @@
 	import { Ball } from '$atoms';
 	import { Row } from '@mateoroldos/svelte.bones';
 	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
-	import { Button, Currency } from '@emerald-dao/component-library';
+	import { Button, Currency, Label, ProgressBar } from '@emerald-dao/component-library';
 
 	export let round: Round;
+
+	console.log(round);
 
 	const goalReached = round.goal < round.raised;
 </script>
@@ -21,25 +23,36 @@
 		</div>
 		<span class="xsmall">{`${formatDate(round.startDate)} > ${formatDate(round.finishDate)}`}</span>
 	</div>
-	<Row gap={1}>
+	<div class="row-5">
 		{#if round.status === 'active'}
-			<progress value={round.raised} max={round.goal}>{round.raised}</progress>
-			<span class="date">{`${daysOfDifference(new Date(), round.finishDate)} days left`}</span>
+			<div class="progress-bar-wrapper">
+				<ProgressBar
+					value={round.raised}
+					max={round.goal}
+					labelText={`$${round.raised.toLocaleString()} raised`}
+					helperText={`${((round.raised / round.goal) * 100).toLocaleString()}%`}
+				/>
+			</div>
+			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
+				{`${daysOfDifference(new Date(), round.finishDate)} days left`}
+			</Label>
 		{:else if round.status === 'finished'}
-			<Button
-				size="x-small"
-				type="ghost"
-				color="neutral"
-				state={round.distributed ? 'disabled' : 'active'}>Distribute reserve</Button
-			>
-			<Button
-				size="x-small"
-				type="ghost"
-				color="neutral"
-				state={round.withdrawn ? 'disabled' : 'active'}>Withdraw to treasury</Button
-			>
+			<div class="row-3">
+				<Button
+					size="x-small"
+					type="ghost"
+					color="neutral"
+					state={round.distributed ? 'disabled' : 'active'}>Distribute reserve</Button
+				>
+				<Button
+					size="x-small"
+					type="ghost"
+					color="neutral"
+					state={round.withdrawn ? 'disabled' : 'active'}>Withdraw to treasury</Button
+				>
+			</div>
 		{/if}
-	</Row>
+	</div>
 </div>
 
 <style type="scss">
@@ -47,5 +60,10 @@
 		padding-bottom: var(--space-4);
 		border-bottom: 0.5px var(--clr-border-primary) solid;
 		width: 100%;
+
+		.progress-bar-wrapper {
+			min-width: 150px;
+			max-width: 180px;
+		}
 	}
 </style>

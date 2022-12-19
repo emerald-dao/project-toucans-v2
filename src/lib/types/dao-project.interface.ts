@@ -10,7 +10,8 @@ interface DaoInfo {
 	logoUrl: string;
 	tags: DaoTags[];
 	description: string;
-	totalTokens: number;
+	maxSupply: number;
+	circulatingSupply: number;
 	socials: {
 		website: string;
 		twitter: string;

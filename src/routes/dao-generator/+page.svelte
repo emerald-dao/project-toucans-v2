@@ -1,8 +1,7 @@
-<!-- Page that dynamically renders each step of the DAO Generation process -->
-<script>
-	import { Button } from '@emerald-dao/component-library';
-	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
-	import Icon from '@iconify/svelte';
+<script type="ts">
+	import CreateProjectStepsCard from '$lib/components/cards/CreateProjectStepsCard.svelte';
 </script>
 
-<svelte:component this={$generatorSteps[$generatorActiveStep].component} />
+<div class="section-large container center">
+	<CreateProjectStepsCard />
+</div>

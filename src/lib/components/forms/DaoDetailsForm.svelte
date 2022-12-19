@@ -1,5 +1,4 @@
 <script type="ts">
-	import StepButtons from './atoms/StepButtons.svelte';
 	import { InputWrapper, DropZone } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
@@ -111,8 +110,6 @@
 		maxAmountOfFiles={1}
 		bind:bindValue={$daoData.daoDetails.logo}
 	/>
-
-	<StepButtons active={res.isValid()} />
 </form>
 
 <style type="scss">
