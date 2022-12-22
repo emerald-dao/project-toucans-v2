@@ -1,66 +1,74 @@
 <script>
-	import { Column, Row } from '@mateoroldos/svelte.bones';
-
+	import { Label } from '@emerald-dao/component-library';
 	export let name = 'Emerald DAO';
 	export let story = true;
 </script>
 
-<a href={`/discover/${name}`}>
-	<div class="card-primary">
-		<div class="main-wrapper" class:with-story={story}>
-			<Column align="flex-start" gap="small">
-				<Row justify="flex-start" gap="small">
-					<img src="/ec-logo.png" alt="DAO logo" />
-					<h3>DAO Title</h3>
-				</Row>
-				<p>
-					Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate incididunt
-					laboris. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate
-					incididunt laboris.
-				</p>
-			</Column>
-			{#if story}
-				<div class="story-wrapper">
-					<Column align="flex-start" gap="small">
-						<h4>Story</h4>
-						<p>
-							Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate incididunt
-							laboris. Reprehenderit consectetur veniam cupidatat nulla ad velit. Irure commodo
-							pariatur dolor ut aute sunt qui. Sit commodo dolor nostrud in reprehenderit mollit ut
-							exercitation voluptate incididunt laboris. Reprehenderit consectetur veniam cupidatat
-							nulla ad velit. Irure commodo pariatur dolor ut aute sunt qui.
-						</p>
-					</Column>
-				</div>
-			{/if}
+<a href={`/discover/${name}`} class="card-primary" class:with-story={story}>
+	<div class="column-5">
+		<div class="row-3 align-center">
+			<img src="/ec-logo.png" alt="DAO logo" />
+			<h3>DAO Title</h3>
 		</div>
+		<div class="row-3">
+			<Label color="neutral" size="small">Building</Label>
+			<Label color="neutral" size="small">Education</Label>
+			<Label color="neutral" size="small">Community</Label>
+		</div>
+		<p>
+			Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate incididunt
+			laboris. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate
+			incididunt laboris. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation
+			voluptate incididunt laboris. Sit commodo dolor nostrud in reprehenderit mollit ut
+			exercitation voluptate incididunt laboris.
+		</p>
 	</div>
+	{#if story}
+		<div class="story-wrapper">
+			<div class="column-4">
+				<h4>Story</h4>
+				<p class="small">
+					Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate incididunt
+					laboris. Reprehenderit consectetur veniam cupidatat nulla ad velit. Irure commodo pariatur
+					dolor ut aute sunt qui. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation
+					voluptate incididunt laboris. Reprehenderit consectetur veniam cupidatat nulla ad velit.
+					Irure commodo pariatur dolor ut aute sunt qui.
+				</p>
+			</div>
+		</div>
+	{/if}
 </a>
 
 <style type="scss">
-	.main-wrapper {
+	.card-primary {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
 		color: var(--clr-font-text);
 		text-decoration: none;
+		padding: var(--space-10);
+		gap: var(--space-8);
 
 		img {
-			max-width: 100px;
+			max-width: 50px;
+		}
+
+		p {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 4;
+			line-clamp: 4;
+			-webkit-box-orient: vertical;
 		}
 
 		.story-wrapper {
 			@include mq(medium) {
-				border-left: 1px var(--clr-neutral-900-t8) solid;
-				padding-left: 3rem;
+				border-left: 1px var(--clr-border-primary) solid;
+				padding-left: var(--space-7);
 			}
 
 			h4 {
-				font-size: var(--fs-400);
-			}
-
-			p {
-				font-size: var(--fs-200);
+				font-size: var(--font-size-5);
 			}
 		}
 	}
@@ -71,21 +79,5 @@
 			grid-template-columns: 3fr 2fr;
 			align-items: flex-start;
 		}
-	}
-
-	a:link {
-		text-decoration: none;
-	}
-
-	a:visited {
-		text-decoration: none;
-	}
-
-	a:hover {
-		text-decoration: none;
-	}
-
-	a:active {
-		text-decoration: none;
 	}
 </style>

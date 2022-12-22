@@ -74,7 +74,7 @@
 			on:click|stopPropagation={() => {}}
 			transition:fly={{ y: 30, duration: 500 }}
 		>
-			<div class="card-primary">
+			<div class="card-secondary">
 				<div class="close-button">
 					<Button type="transparent" on:click={() => close()}>
 						<Icon icon="tabler:circle-x" color="var(--clr-primary-main" />
@@ -96,10 +96,10 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: var(--clr-background-primary-t2);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		background-color: rgba(0, 0, 0, 0.85);
 
 		.modal {
 			position: relative;

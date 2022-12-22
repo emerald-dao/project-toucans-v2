@@ -30,17 +30,17 @@
 		{#if daoData.socials.twitter || daoData.socials.discord || daoData.socials.website}
 			<div class="row-4">
 				{#if daoData.socials.twitter}
-					<a href="twitter" class="menu-link" target="_blank">
+					<a href="twitter" class="header-link" target="_blank">
 						<Icon icon="tabler:brand-twitter" />
 					</a>
 				{/if}
 				{#if daoData.socials.discord}
-					<a href="discord" class="menu-link" target="_blank">
+					<a href="discord" class="header-link" target="_blank">
 						<Icon icon="tabler:brand-discord" />
 					</a>
 				{/if}
 				{#if daoData.socials.website}
-					<a href="website" class="menu-link" target="_blank">
+					<a href="website" class="header-link" target="_blank">
 						<Icon icon="tabler:world" />
 					</a>
 				{/if}
@@ -74,7 +74,7 @@
 			object-fit: contain;
 		}
 
-		.menu-link {
+		.header-link {
 			font-size: var(--font-size-3);
 		}
 	}

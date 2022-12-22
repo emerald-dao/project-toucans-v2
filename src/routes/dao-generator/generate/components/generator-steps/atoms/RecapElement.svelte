@@ -1,48 +1,48 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { Column, Row } from '@mateoroldos/svelte.bones';
 
 	export let title: string | null = null;
 	export let data: string | number | boolean | undefined;
 	export let icon: string | null = null;
 </script>
 
-{#if (typeof data != 'boolean' && data) || typeof data === 'boolean'}
-	<Column gap={0.2} align="flex-start">
-		{#if title}
-			<Row gap={0.3}>
-				{#if icon}
-					<Icon {icon} color="var(--clr-font-text-soft-t3)" />
-				{/if}
-				<h5>{title}</h5>
-			</Row>
-		{/if}
-		{#if typeof data === 'boolean'}
-			{#if data}
-				<Icon icon="tabler:circle-check" color="var(--clr-primary-main)" />
-			{:else}
-				<Icon icon="tabler:circle-x" color="var(--clr-alert-main)" />
+<div class="column main-wrapper">
+	{#if title}
+		<div class="title-wrapper row-1 align-center">
+			{#if icon}
+				<Icon {icon} color="var(--clr-font-text-soft-t3)" />
 			{/if}
-		{:else}
-			<span>{data}</span>
-		{/if}
-	</Column>
-{/if}
+			{#if typeof data === 'boolean'}
+				{#if data}
+					<Icon icon="tabler:circle-check" color="var(--clr-primary-main)" />
+				{:else}
+					<Icon icon="tabler:circle-x" color="var(--clr-alert-main)" />
+				{/if}
+			{/if}
+			<span class="title">{title}</span>
+		</div>
+	{/if}
+	{#if typeof data != 'boolean'}
+		<span>{data}</span>
+	{/if}
+</div>
 
 <style type="scss">
-	h5 {
-		margin: 0;
-		color: var(--clr-font-text-soft-t4);
-		font-size: var(--fs-200);
+	.title-wrapper {
+		margin-bottom: -5px;
+		.title {
+			color: var(--clr-text-off);
+			font-size: var(--font-size-0);
+		}
 	}
 
 	span {
-		font-size: var(--fs-300);
+		font-size: var(--font-size-2);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;
 		-webkit-line-clamp: 4;
-		line-clamp: 2;
+		line-clamp: 4;
 		-webkit-box-orient: vertical;
 	}
 </style>

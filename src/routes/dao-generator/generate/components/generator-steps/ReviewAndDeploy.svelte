@@ -25,17 +25,17 @@
 	let logoElement: HTMLImageElement;
 </script>
 
-<Column gap="small">
+<div class="column-6">
 	<RecapCard title="DAO Details" stepNumber={0}>
-		<Row gap="small" align="flex-start">
+		<div class="row-5">
 			{#if $daoData.daoDetails.logo}
 				<img bind:this={logoElement} class="logo" alt="Dao logo" />
 			{/if}
-			<Column gap={1} align="flex-start">
+			<div class="column">
 				<RecapElement title="Dao Name" data={$daoData.daoDetails.name} />
 				<RecapElement title="Token Name" data={$daoData.daoDetails.tokenName} />
-			</Column>
-		</Row>
+			</div>
+		</div>
 		<RecapElement title="Description" data={$daoData.daoDetails.description} />
 		<RecapElement title="Website" data={$daoData.daoDetails.website} />
 	</RecapCard>
@@ -53,12 +53,12 @@
 		{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 			<RecapElement title="Total supply" data={$daoData.tokenomics.totalSupply} />
 		{/if}
-		<Row gap="small">
+		<div class="row-6">
 			<RecapElement title="Token burning" data={$daoData.tokenomics.burnTokens} />
 			<RecapElement title="Token minting" data={$daoData.tokenomics.mintTokens} />
-		</Row>
+		</div>
 	</RecapCard>
-</Column>
+</div>
 <StepButtons />
 
 <style type="scss">

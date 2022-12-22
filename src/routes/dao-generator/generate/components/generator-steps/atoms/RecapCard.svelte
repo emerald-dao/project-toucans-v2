@@ -1,6 +1,5 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { Column } from '@mateoroldos/svelte.bones';
 	import { generatorActiveStep } from '$stores/generator/GeneratorSteps';
 
 	export let title: string;
@@ -8,24 +7,23 @@
 </script>
 
 <div class="card-primary">
-	<div class="main-wrapper">
-		<h4>{title}</h4>
-		<Column gap={1.4} align="flex-start">
-			<slot />
-		</Column>
-		<div class="edit-wrapper" on:click={() => generatorActiveStep.goToStep(stepNumber)}>
-			<Icon icon="tabler:edit" color="var(--clr-primary-main)" />
-		</div>
+	<h4>{title}</h4>
+	<div class="column-3 align-start">
+		<slot />
+	</div>
+	<div class="edit-wrapper" on:click={() => generatorActiveStep.goToStep(stepNumber)} on:keydown>
+		<Icon icon="tabler:edit" color="var(--clr-primary-main)" />
 	</div>
 </div>
 
 <style type="scss">
-	.main-wrapper {
+	.card-primary {
 		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 1.8rem;
+		width: 100%;
 
 		h4 {
 			font-size: var(--fs-400);
@@ -33,8 +31,8 @@
 
 		.edit-wrapper {
 			position: absolute;
-			top: 0;
-			right: 0;
+			top: 25px;
+			right: 25px;
 			cursor: pointer;
 		}
 	}
