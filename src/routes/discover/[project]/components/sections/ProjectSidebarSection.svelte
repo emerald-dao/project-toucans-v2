@@ -1,7 +1,6 @@
 <script type="ts">
 	import { user } from '$stores/flow/FlowStore';
-	import Modal, { getModal } from '$components/atoms/Modal.svelte';
-	import { Button, Label } from '@emerald-dao/component-library';
+	import { Button, Label, Modal, getModal } from '@emerald-dao/component-library';
 	import { fundSteps, fundActiveStep } from '$stores/fund/FundSteps';
 	import { fundData } from '$stores/fund/FundDataStore';
 	import Icon from '@iconify/svelte';
