@@ -3,6 +3,7 @@
 	import { Button, Tagline } from '@emerald-dao/component-library';
 	import { LeadingProjectCard } from '$components/cards/index';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
+	import CreateYourToken from './components/sections/CreateYourToken.svelte';
 
 	let toucansFeatures = [
 		{
@@ -110,8 +111,7 @@
 <div class="section">
 	<div class="container">
 		<Column>
-			<Tagline>No Code Required</Tagline>
-			<h2>Creating your own token is easy</h2>
+			<CreateYourToken />
 		</Column>
 	</div>
 </div>
