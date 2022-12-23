@@ -14,6 +14,10 @@
 
 <style type="scss">
 	.card-primary {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		width: fit-content;
 		padding: var(--space-10);
 
