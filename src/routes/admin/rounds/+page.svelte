@@ -1,7 +1,11 @@
 <script type="ts">
+	import { newRoundSteps, newRoundActiveStep } from '$lib/stores/rounds/RoundSteps';
+	import Icon from '@iconify/svelte';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
-	import RoundDetail from './components/round/RoundDetail.svelte';
+	import RoundDetail from './components/atoms/RoundDetail.svelte';
+	import { Modal, getModal } from '@emerald-dao/component-library';
 
 	const daoData: FinancialDao = getContext('dao-data');
 </script>
@@ -24,16 +28,26 @@
 			{/if}
 		{/each}
 	</div>
+
+	<div class="create-round-wrapper">
+		<Button on:click={() => getModal().open()}><Icon icon="tabler:plus" />Create Round</Button>
+	</div>
 </div>
+<Modal>
+	<div class="column-4 align-end">
+		<svelte:component this={$newRoundSteps[$newRoundActiveStep].component} />
+		<Button on:click={newRoundActiveStep.increment}>Next</Button>
+	</div>
+</Modal>
 
 <style type="scss">
 	.card {
 		padding: var(--space-12);
+
 		h5 {
-			margin-bottom: 0.8rem;
+			margin-bottom: var(--space-2);
 			margin-top: 0;
 		}
-
 		.rounds-wrapper {
 			display: flex;
 			flex-direction: column;
@@ -41,6 +55,12 @@
 		}
 		.rounds-wrapper:not(:last-child) {
 			margin-bottom: 2rem;
+		}
+
+		.create-round-wrapper {
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
 		}
 	}
 </style>

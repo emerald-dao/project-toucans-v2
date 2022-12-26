@@ -1,13 +1,10 @@
 <script type="ts">
 	import type { Round } from '$lib/types/dao-project.interface';
 	import { Ball } from '$atoms';
-	import { Row } from '@mateoroldos/svelte.bones';
 	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
 	import { Button, Currency, Label, ProgressBar } from '@emerald-dao/component-library';
 
 	export let round: Round;
-
-	console.log(round);
 
 	const goalReached = round.goal < round.raised;
 </script>

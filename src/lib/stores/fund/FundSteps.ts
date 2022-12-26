@@ -7,19 +7,25 @@ import Thanks from '../../../../src/routes/discover/[project]/components/funding
 
 export const fundSteps = createSteps([
 	{
-		title: 'Disclaimer',
+		name: 'Disclaimer',
 		component: Disclaimer,
-		action: null
+		action: null,
+		form: false,
+		state: 'active'
 	},
 	{
-		title: 'Fund',
+		name: 'Fund',
 		component: Fund,
-		action: null
+		action: null,
+		form: false,
+		state: 'inactive'
 	},
 	{
-		title: 'Thank You!',
+		name: 'Thank You!',
 		component: Thanks,
-		action: null
+		action: dummyTransactionExecution,
+		form: false,
+		state: 'inactive'
 	}
 ]);
 export const fundActiveStep = createActiveStep(fundSteps);
