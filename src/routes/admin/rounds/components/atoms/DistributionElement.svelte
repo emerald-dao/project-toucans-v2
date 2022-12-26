@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 
@@ -13,7 +14,7 @@
 	document.documentElement.style.setProperty(`--random-color-${i}`, randomColor);
 </script>
 
-<div class="row-2 align-center">
+<div class="row-2 align-center" transition:fly|local={{ x: 10, duration: 200 }}>
 	<div class="circle" style={`background-color: var(--random-color-${i});`} />
 	<span class="xsmall">{address}</span><span class="xsmall percentage">{`${percentage}%`}</span>
 	{#if canDelete}

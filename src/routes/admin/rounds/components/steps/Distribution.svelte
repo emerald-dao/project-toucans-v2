@@ -124,6 +124,8 @@
 <style type="scss">
 	.main-wrapper {
 		max-width: 800px;
+		overflow: hidden;
+
 		.secondary-wrapper {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
@@ -145,6 +147,10 @@
 					}
 				}
 			}
+		}
+
+		.right-wrapper {
+			overflow: hidden;
 		}
 
 		span {
