@@ -14,8 +14,13 @@
 		percentage: number;
 	}
 
-	const handleChange = () => {
-		res = roundDistributionSuite(distributionData);
+	const handleChange = (input: Event) => {
+		if (input.type === 'change') {
+			res = roundDistributionSuite(distributionData, 'percentage');
+		} else {
+			const target = input.target as HTMLInputElement;
+			res = roundDistributionSuite(distributionData, target.name);
+		}
 	};
 
 	const handleSubmit = () => {
@@ -24,6 +29,9 @@
 			address: '',
 			percentage: 0
 		};
+
+		roundDistributionSuite.reset();
+		res = roundDistributionSuite.get();
 	};
 
 	const deleteFromDistributionList = (i: number) => {
@@ -85,11 +93,16 @@
 						max={distributionList[0].percentage}
 						suffix="%"
 						id="distribution-percentage"
+						on:change={handleChange}
 						--clr-surface-secondary="var(--clr-surface-primary)"
 					/>
 				</div>
-				<Button size="full-width" type="ghost" color="neutral" on:click={handleSubmit}
-					><Icon icon="tabler:plus" /> Add</Button
+				<Button
+					size="full-width"
+					type="ghost"
+					color="neutral"
+					on:click={handleSubmit}
+					state={res.isValid() ? 'active' : 'disabled'}><Icon icon="tabler:plus" /> Add</Button
 				>
 			</form>
 		</div>
