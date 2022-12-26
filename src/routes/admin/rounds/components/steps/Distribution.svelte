@@ -26,6 +26,11 @@
 		};
 	};
 
+	const deleteFromDistributionList = (i: number) => {
+		distributionList.splice(i, 1);
+		distributionList = distributionList;
+	};
+
 	let res = roundDistributionSuite.get();
 
 	let distributionList: DistributionData[] = [
@@ -50,40 +55,51 @@
 	}
 </script>
 
-<div class="column-4">
+<div class="main-wrapper">
 	<span>Distribution</span>
-	<div class="main-wrapper">
-		<form>
-			<InputWrapper
-				name="address"
-				label="Address"
-				isValid={res.isValid('address')}
-				errors={res.getErrors('address')}
-			>
-				<input
-					type="text"
-					id="address"
-					bind:value={distributionData.address}
-					on:input={handleChange}
-				/>
-			</InputWrapper>
-			<label for="distribution-percentage">Distribution percentage</label>
-			<Range
-				bind:value={distributionData.percentage}
-				max={distributionList[0].percentage}
-				suffix="%"
-				id="distribution-percentage"
-				--clr-surface-secondary="var(--clr-surface-primary)"
-			/>
-			<Button size="full-width" type="ghost" color="neutral" on:click={handleSubmit}
-				><Icon icon="tabler:plus" /> Add</Button
-			>
-		</form>
-		<div class="column-4">
+	<div class="secondary-wrapper">
+		<div class="left-wrapper">
+			<p class="xsmall">
+				You can optionally set a percentage of this round to be distributed between different
+				wallets. Please add all the wallets you want to distribute to with their respective
+				percentage
+			</p>
+			<form>
+				<InputWrapper
+					name="address"
+					label="Address"
+					isValid={res.isValid('address')}
+					errors={res.getErrors('address')}
+				>
+					<input
+						type="text"
+						id="address"
+						bind:value={distributionData.address}
+						on:input={handleChange}
+					/>
+				</InputWrapper>
+				<div class="range-wrapper">
+					<label for="distribution-percentage">Percentage to distribute</label>
+					<Range
+						bind:value={distributionData.percentage}
+						max={distributionList[0].percentage}
+						suffix="%"
+						id="distribution-percentage"
+						--clr-surface-secondary="var(--clr-surface-primary)"
+					/>
+				</div>
+				<Button size="full-width" type="ghost" color="neutral" on:click={handleSubmit}
+					><Icon icon="tabler:plus" /> Add</Button
+				>
+			</form>
+		</div>
+		<div class="right-wrapper">
 			{#each distributionList as distrbutionData, i}
 				<DistributionElement
 					address={distrbutionData.address}
 					percentage={distrbutionData.percentage}
+					canDelete={i > 0}
+					on:delete={() => deleteFromDistributionList(i)}
 					{i}
 				/>
 			{/each}
@@ -94,12 +110,32 @@
 
 <style type="scss">
 	.main-wrapper {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: var(--space-8);
-	}
+		max-width: 800px;
+		.secondary-wrapper {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-10);
 
-	span {
-		color: var(--clr-heading-main);
+			.left-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-5);
+
+				form {
+					display: flex;
+					flex-direction: column;
+					.range-wrapper {
+						display: flex;
+						flex-direction: column;
+						gap: var(--space-2);
+						margin-bottom: var(--space-5);
+					}
+				}
+			}
+		}
+
+		span {
+			color: var(--clr-heading-main);
+		}
 	}
 </style>
