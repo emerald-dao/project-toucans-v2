@@ -1,14 +1,15 @@
 <script type="ts">
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { Column } from '@mateoroldos/svelte.bones';
-	import { InputWrapper } from '@emerald-dao/component-library';
+	import { InputWrapper, Range } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import tokenomicsSuite from '$lib/validations/tokenomicsSuite';
 	import { TokenTypes } from '$lib/types/token-types.enum';
 
-	const handleChange = (input) => {
-		res = tokenomicsSuite($daoData.tokenomics, input.target.name);
+	const handleChange = (input: Event) => {
+		const target = input.target as HTMLInputElement;
+		res = tokenomicsSuite($daoData.tokenomics, target.name);
 	};
 
 	let res = tokenomicsSuite.get();
@@ -52,23 +53,15 @@
 			/>
 		</InputWrapper>
 
-		<InputWrapper
-			name="reserveRate"
-			label="Reserve rate"
-			icon="tabler:percentage"
-			errors={res.getErrors('reserveRate')}
-			isValid={res.isValid('reserveRate')}
-		>
-			<input
-				name="reserveRate"
-				type="number"
-				min="0"
-				max="100"
-				placeholder="20"
+		<div class="range-wrapper">
+			<label for="reserveRate">Reserve rate</label>
+			<Range
 				bind:value={$daoData.tokenomics.initialRound.reserveRate}
-				on:input={handleChange}
+				suffix="%"
+				id="reserveRate"
+				on:change={handleChange}
 			/>
-		</InputWrapper>
+		</div>
 	{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 		<InputWrapper
 			name="supply"
@@ -117,5 +110,9 @@
 	form {
 		display: flex;
 		flex-direction: column;
+
+		.range-wrapper {
+			margin-bottom: var(--space-7);
+		}
 	}
 </style>
