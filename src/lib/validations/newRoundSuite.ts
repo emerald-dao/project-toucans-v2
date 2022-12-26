@@ -3,8 +3,6 @@ import { create, enforce, test, only } from 'vest';
 const newRoundSuite = create((data = {}, currentField) => {
 	only(currentField);
 
-	console.log(currentField);
-
 	test('fundingGoal', 'Funding goal must be greater tha 0', () => {
 		enforce(data.fundingGoal).greaterThan(0);
 	});
