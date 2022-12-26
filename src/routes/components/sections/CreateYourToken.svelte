@@ -66,7 +66,7 @@
 		justify-content: center;
 		align-items: center;
 		text-align: justify;
-		max-width: 40ch;
+		max-width: 45ch;
 
 		@include mq('medium') {
 			display: grid;
@@ -82,9 +82,11 @@
 		}
 
 		.title-wrapper {
+			text-align: center;
 			margin: var(--space-13) 0;
 
 			@include mq('medium') {
+				text-align: justify;
 				margin-top: 0;
 				margin-bottom: var(--space-16);
 			}

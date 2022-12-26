@@ -35,6 +35,11 @@
 		--font-weight: 600;
 	}
 
+	img {
+		width: 82px;
+		height: 81px;
+	}
+
 	.variation {
 		font-size: var(--fs-200);
 	}
