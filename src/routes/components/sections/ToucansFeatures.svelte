@@ -23,7 +23,7 @@
 <section class="container-large">
 	<div class="title-wrapper">
 		<span class="tagline">Why Start a DAO?</span>
-		<h2>Tokens for any Community</h2>
+		<h2 class="w-medium">Tokens for any Community</h2>
 	</div>
 	<div class="cards-wrapper">
 		{#each toucansFeatures as feature}

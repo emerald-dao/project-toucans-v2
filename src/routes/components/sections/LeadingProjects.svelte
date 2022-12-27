@@ -7,34 +7,34 @@
 		{
 			logoUrl: '/ec-logo.png',
 			name: 'Emerald City DAO',
-			totalInvested: 100,
-			currency: 'FLOW',
+			totalInvested: 1500,
+			currency: 'FUSD',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
 		{
 			logoUrl: '/ec-logo.png',
 			name: 'Emerald City DAO',
-			totalInvested: 100,
-			currency: 'FLOW',
+			totalInvested: 1500,
+			currency: 'FUSD',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
 		{
 			logoUrl: '/ec-logo.png',
 			name: 'Emerald City DAO',
-			totalInvested: 100,
-			currency: 'FLOW',
+			totalInvested: 1500,
+			currency: 'FUSD',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
 		{
 			logoUrl: '/ec-logo.png',
 			name: 'Emerald City DAO',
-			totalInvested: 100,
-			currency: 'FLOW',
+			totalInvested: 1500,
+			currency: 'FUSD',
 			numberOfPayments: 12,
-			variationPercentage: -8.2
+			variationPercentage: -0.5
 		}
 	];
 </script>
@@ -42,7 +42,7 @@
 <section class="container">
 	<div class="title-wrapper">
 		<span class="tagline">Explore</span>
-		<h2>Leading Projects</h2>
+		<h2 class="w-medium">Leading Projects</h2>
 	</div>
 	<div class="projects-wrapper">
 		<AdaptableGrid gap="small">
