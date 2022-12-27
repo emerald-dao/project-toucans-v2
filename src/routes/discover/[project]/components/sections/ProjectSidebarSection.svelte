@@ -24,23 +24,23 @@
 	<div class="column-6">
 		<div class="row-4 align-center">
 			<img src={daoData.logoUrl} alt="DAO Logo" />
-			<h1 class="h3">{daoData.name}</h1>
+			<h1 class="h3 w-medium">{daoData.name}</h1>
 		</div>
 		{#if daoData.socials.twitter || daoData.socials.discord || daoData.socials.website}
 			<div class="row-4">
 				{#if daoData.socials.twitter}
 					<a href="twitter" class="header-link" target="_blank">
-						<Icon icon="tabler:brand-twitter" />
+						<Icon icon="tabler:brand-twitter" width="24" />
 					</a>
 				{/if}
 				{#if daoData.socials.discord}
 					<a href="discord" class="header-link" target="_blank">
-						<Icon icon="tabler:brand-discord" />
+						<Icon icon="tabler:brand-discord" width="24" />
 					</a>
 				{/if}
 				{#if daoData.socials.website}
 					<a href="website" class="header-link" target="_blank">
-						<Icon icon="tabler:world" />
+						<Icon icon="tabler:world" width="24" />
 					</a>
 				{/if}
 			</div>

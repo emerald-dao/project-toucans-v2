@@ -37,26 +37,24 @@
 
 <div in:fade={{ duration: 200 }}>
 	<Column gap="small" align="flex-start">
-		<h4>Fund Emerald DAO</h4>
+		<h3 class="w-medium">Fund Emerald DAO</h3>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
-			<label for="amount">Amount to Found</label>
-			<Column gap={0.2} align="flex-start">
-				<RadioButtons data={currenciesRadioButtonsData} />
-				<InputWrapper
+			<RadioButtons data={currenciesRadioButtonsData} />
+			<label for="receive">Funding amount</label>
+			<InputWrapper
+				name="amount"
+				iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
+				errors={res.getErrors('amount')}
+				isValid={res.isValid('amount')}
+			>
+				<input
+					type="number"
 					name="amount"
-					iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
-					errors={res.getErrors('amount')}
-					isValid={res.isValid('amount')}
-				>
-					<input
-						type="number"
-						name="amount"
-						placeholder="1000"
-						bind:value={$fundData.amount}
-						on:input={handleChange}
-					/>
-				</InputWrapper>
-			</Column>
+					placeholder="1000"
+					bind:value={$fundData.amount}
+					on:input={handleChange}
+				/>
+			</InputWrapper>
 			<InputWrapper
 				name="message"
 				label="Add a special message"
@@ -71,17 +69,15 @@
 				/>
 			</InputWrapper>
 
-			<label for="recieve">You will recieve</label>
-			<Row gap={0.1}>
-				<span class="token-name">${'EMLD'}</span>
-				<input
-					name="recieve"
-					type="text"
-					value={($fundData.amount * $fundData.issuanceRate).toFixed(2)}
-					readonly
-					id="recieve"
-				/>
-			</Row>
+			<label for="receive">You will receive</label>
+
+			<input
+				name="receive"
+				type="text"
+				value="${($fundData.amount * $fundData.issuanceRate).toFixed(2)} EMLD"
+				readonly
+				id="receive"
+			/>
 		</form>
 		<Button form="fund-form" size="full-width" state={res.isValid() ? 'active' : 'disabled'}
 			><Icon icon="tabler:pig-money" />Fund</Button
@@ -100,13 +96,21 @@
 			color: var(--clr-font-text-t4);
 		}
 
-		#recieve {
+		label {
+			margin-bottom: var(--space-2);
+		}
+
+		#receive {
+			padding: 0;
 			background-color: transparent;
 			border: none;
 		}
 
 		textarea {
 			min-height: 8rem;
+			min-width: 18rem;
+			max-width: 18rem;
+			margin-top: var(--space-2);
 		}
 	}
 </style>

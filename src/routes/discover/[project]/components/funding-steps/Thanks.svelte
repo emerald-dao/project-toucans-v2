@@ -8,14 +8,14 @@
 
 <div in:fade={{ duration: 200 }}>
 	<Column>
-		<h4>Thank You!</h4>
+		<h3 class="w-medium">Thank You!</h3>
 		<p>
 			{`You funded ${$fundData.daoName} with $${$fundData.currency} ${$fundData.amount} and got $${
 				$fundData.tokenName
 			} ${($fundData.amount * $fundData.issuanceRate).toFixed(2)}`}
 		</p>
-		<Column gap={1}>
-			<span>Share it</span>
+		<Column gap={2}>
+			<span class="tagline-small">Share it!</span>
 			<Row gap={0.8}>
 				<Button
 					href={`https://twitter.com/intent/tweet?text=I%20just%20funded%20${
@@ -26,10 +26,15 @@
 				`}
 					target="_blank"
 					type="ghost"
-					size="x-small"><Icon icon="tabler:brand-twitter" />Twitter</Button
+					color="neutral"
+					size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
 				>
-				<Button href="https://discord.com/" target="_blank" type="ghost" size="x-small"
-					><Icon icon="tabler:brand-discord" />Discord</Button
+				<Button
+					href="https://discord.com/"
+					target="_blank"
+					color="neutral"
+					type="ghost"
+					size="small"><Icon icon="tabler:brand-discord" />Discord</Button
 				>
 			</Row>
 		</Column>
@@ -37,13 +42,10 @@
 </div>
 
 <style type="scss">
-	span {
+	.tagline-small {
 		color: var(--clr-primary-main);
-		text-transform: uppercase;
-		font-size: var(--fs-200);
-		letter-spacing: 0.2em;
-		font-family: var(--ff-mono);
 	}
+
 	p {
 		text-align: center;
 		max-width: 30ch;

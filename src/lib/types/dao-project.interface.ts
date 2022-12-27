@@ -49,12 +49,12 @@ export interface Activity {
 }
 
 export enum DaoTags {
-	'Education' = 'education',
-	'Building' = 'building',
-	'Community' = 'community'
+	'Education' = 'Education',
+	'Building' = 'Building',
+	'Community' = 'Community'
 }
 
 export enum DaoType {
-	'Community' = 'community',
-	'Financial' = 'financial'
+	'Community' = 'Community',
+	'Financial' = 'Financial'
 }
