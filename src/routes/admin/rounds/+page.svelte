@@ -10,7 +10,7 @@
 	const daoData: FinancialDao = getContext('dao-data');
 </script>
 
-<div class="card column-10">
+<div class="card column-3">
 	<div class="rounds-wrapper">
 		<h5>Active</h5>
 		{#each daoData.rounds as round}
@@ -38,7 +38,6 @@
 <Modal>
 	<div class="column-4 align-end">
 		<svelte:component this={$newRoundSteps[$newRoundActiveStep].component} />
-		<Button on:click={newRoundActiveStep.increment}>Next</Button>
 	</div>
 </Modal>
 
