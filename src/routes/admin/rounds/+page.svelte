@@ -30,7 +30,9 @@
 	</div>
 
 	<div class="create-round-wrapper">
-		<Button on:click={() => getModal().open()}><Icon icon="tabler:plus" />Create Round</Button>
+		<Button on:click={() => getModal().open()} width="extended"
+			><Icon icon="tabler:plus" />Create Round</Button
+		>
 	</div>
 </div>
 <Modal>

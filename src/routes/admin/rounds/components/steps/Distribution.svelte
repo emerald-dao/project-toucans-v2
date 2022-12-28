@@ -98,7 +98,7 @@
 					/>
 				</div>
 				<Button
-					size="full-width"
+					width="full-width"
 					type="ghost"
 					color="neutral"
 					on:click={handleSubmit}

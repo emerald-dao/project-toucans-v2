@@ -25,7 +25,7 @@
 			max={daoData.maxSupply}
 			labelText="Distribution"
 		/>
-		<Button size="full-width">Distribute Tokens</Button>
+		<Button width="full-width">Distribute Tokens</Button>
 	</DataCard>
 </div>
 
