@@ -83,7 +83,7 @@
 				/>
 			</Row>
 		</form>
-		<Button form="fund-form" size="full-width" state={res.isValid() ? 'active' : 'disabled'}
+		<Button form="fund-form" width="full-width" state={res.isValid() ? 'active' : 'disabled'}
 			><Icon icon="tabler:pig-money" />Fund</Button
 		>
 	</Column>

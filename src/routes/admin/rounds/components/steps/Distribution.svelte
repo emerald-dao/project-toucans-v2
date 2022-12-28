@@ -1,4 +1,5 @@
 <script type="ts">
+	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
 	import Icon from '@iconify/svelte';
 	import { Button, InputWrapper, Range } from '@emerald-dao/component-library';
 	import DistributionElement from '../atoms/DistributionElement.svelte';
@@ -98,7 +99,7 @@
 					/>
 				</div>
 				<Button
-					size="full-width"
+					width="full-width"
 					type="ghost"
 					color="neutral"
 					on:click={handleSubmit}
@@ -118,6 +119,9 @@
 			{/each}
 			<div />
 		</div>
+	</div>
+	<div class="button-wrapper">
+		<Button on:click={newRoundActiveStep.increment} width="extended">Next</Button>
 	</div>
 </div>
 
@@ -151,6 +155,13 @@
 
 		.right-wrapper {
 			overflow: hidden;
+		}
+
+		.button-wrapper {
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			margin-top: var(--space-3);
 		}
 
 		span {
