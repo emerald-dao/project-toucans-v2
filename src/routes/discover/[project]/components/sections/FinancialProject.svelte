@@ -3,7 +3,7 @@
 	import DataCard from '$lib/components/cards/DataCard.svelte';
 	import Tabs from '$components/atoms/Tabs.svelte';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
-	import MainFounders from '../atoms/MainFounders.svelte';
+	import MainFunders from '../atoms/MainFunders.svelte';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 
 	export let daoData: FinancialDao;
@@ -14,8 +14,8 @@
 			component: RecentActivity
 		},
 		{
-			name: 'Main Founders',
-			component: MainFounders
+			name: 'Main Funders',
+			component: MainFunders
 		}
 	];
 </script>

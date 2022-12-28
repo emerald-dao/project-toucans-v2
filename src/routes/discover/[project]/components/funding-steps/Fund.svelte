@@ -87,6 +87,7 @@
 
 <style type="scss">
 	form {
+		width: 100%;
 		display: flex;
 		flex-direction: column;
 
@@ -108,8 +109,8 @@
 
 		textarea {
 			min-height: 8rem;
-			min-width: 18rem;
-			max-width: 18rem;
+			min-width: 300px;
+			max-width: 300px;
 			margin-top: var(--space-2);
 		}
 	}

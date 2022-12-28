@@ -2,8 +2,8 @@
 	import ChartTitle from './../atoms/ChartTitle.svelte';
 	import Tabs from '$components/atoms/Tabs.svelte';
 	import type { CommunityDao } from '$lib/types/dao-project.interface';
-	import MainFounders from '../atoms/MainFounders.svelte';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
+	import MainHolders from '../atoms/MainHolders.svelte';
 
 	export let daoData: CommunityDao;
 
@@ -13,8 +13,8 @@
 			component: RecentActivity
 		},
 		{
-			name: 'Main Founders',
-			component: MainFounders
+			name: 'Main Holders',
+			component: MainHolders
 		}
 	];
 </script>

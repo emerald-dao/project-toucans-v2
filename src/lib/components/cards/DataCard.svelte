@@ -20,3 +20,9 @@
 	</div>
 	<slot />
 </div>
+
+<style type="scss">
+	.card {
+		padding: var(--space-5) var(--space-7);
+	}
+</style>

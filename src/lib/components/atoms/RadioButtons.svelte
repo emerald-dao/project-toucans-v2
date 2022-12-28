@@ -46,12 +46,10 @@
 
 		label {
 			padding: 0.4rem 0.8rem;
-			border: 2px var(--clr-neutral-300) solid;
-			// border-radius: 0.8rem;
+			border: 2px var(--clr-border-primary) solid;
 			cursor: pointer;
-			font-size: var(--fs-100);
+			font-size: var(--font-size-0);
 			--font-weight: 400;
-			background-color: var(--clr-neutral-300-t9);
 			transition: 0.4s;
 		}
 
@@ -68,7 +66,7 @@
 		}
 
 		input:checked + label {
-			background-color: var(--clr-neutral-300-t4);
+			background-color: var(--clr-neutral-700);
 		}
 	}
 </style>
