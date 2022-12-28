@@ -8,13 +8,10 @@ const newRoundSuite = create((data = {}, currentField) => {
 	});
 
 	test('startDate', 'Start date must be equal or greater than today', () => {
-		console.log('aa');
-
 		enforce(new Date(data.startDate).getTime()).greaterThanOrEquals(new Date().getTime());
 	});
 
 	test('endDate', 'End date must be greater than start date', () => {
-		console.log('bb');
 		enforce(new Date(data.endDate).getTime()).greaterThan(new Date(data.startDate).getTime());
 	});
 });

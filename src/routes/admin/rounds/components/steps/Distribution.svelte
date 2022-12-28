@@ -71,9 +71,9 @@
 			<p class="xsmall">
 				You can optionally set a percentage of this round to be distributed between different
 				wallets. Please add all the wallets you want to distribute to with their respective
-				percentage
+				percentage.
 			</p>
-			<form>
+			<form class="card-primary">
 				<InputWrapper
 					name="address"
 					label="Address"
@@ -95,7 +95,6 @@
 						suffix="%"
 						id="distribution-percentage"
 						on:change={handleChange}
-						--clr-surface-secondary="var(--clr-surface-primary)"
 					/>
 				</div>
 				<Button
@@ -121,7 +120,7 @@
 		</div>
 	</div>
 	<div class="button-wrapper">
-		<Button on:click={newRoundActiveStep.increment} width="extended">Next</Button>
+		<Button on:click={newRoundActiveStep.increment} width="extended">Distribute</Button>
 	</div>
 </div>
 
@@ -166,6 +165,7 @@
 
 		span {
 			color: var(--clr-heading-main);
+			margin-bottom: var(--space-2);
 		}
 	}
 </style>

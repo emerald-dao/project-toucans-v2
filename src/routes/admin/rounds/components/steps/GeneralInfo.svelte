@@ -103,7 +103,11 @@
 			</InputWrapper>
 		</div>
 		<div class="button-wrapper">
-			<Button on:click={newRoundActiveStep.increment} width="extended">Next</Button>
+			<Button
+				on:click={newRoundActiveStep.increment}
+				width="extended"
+				state={res.isValid() ? 'active' : 'disabled'}>Next</Button
+			>
 		</div>
 	</form>
 </div>
