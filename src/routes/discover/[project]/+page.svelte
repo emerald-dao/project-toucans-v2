@@ -2,27 +2,24 @@
 	import CommunityProject from './components/sections/CommunityProject.svelte';
 	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
 	import { ProjectSidebarSection } from './components';
-	import { Section, Container } from '@mateoroldos/svelte.bones';
 	import FinancialProject from './components/sections/FinancialProject.svelte';
 	import { financialDaoData } from '$lib/mock/financialDao';
 
 	let daoData: FinancialDao | CommunityDao = financialDaoData;
 </script>
 
-<Section>
-	<Container>
-		<div class="main-wrapper">
-			<ProjectSidebarSection {daoData} />
-			<div class="secondary-wrapper">
-				{#if daoData.type === DaoType.Community}
-					<CommunityProject {daoData} />
-				{:else if daoData.type === DaoType.Financial}
-					<FinancialProject {daoData} />
-				{/if}
-			</div>
+<section class="container">
+	<div class="main-wrapper">
+		<ProjectSidebarSection {daoData} />
+		<div class="secondary-wrapper">
+			{#if daoData.type === DaoType.Community}
+				<CommunityProject {daoData} />
+			{:else if daoData.type === DaoType.Financial}
+				<FinancialProject {daoData} />
+			{/if}
 		</div>
-	</Container>
-</Section>
+	</div>
+</section>
 
 <style type="scss">
 	.main-wrapper {

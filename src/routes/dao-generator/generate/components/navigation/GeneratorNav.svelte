@@ -1,13 +1,12 @@
 <script type="ts">
 	import { generatorSteps } from '$stores/generator/GeneratorSteps';
-	import { Row } from '@mateoroldos/svelte.bones';
 	import { ProgressSteps } from '@emerald-dao/component-library';
 </script>
 
 <nav>
-	<Row>
+	<div class="row">
 		<ProgressSteps steps={$generatorSteps} gap={8} />
-	</Row>
+	</div>
 </nav>
 
 <style type="scss">

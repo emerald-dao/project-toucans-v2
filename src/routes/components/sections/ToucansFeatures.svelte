@@ -1,6 +1,4 @@
 <script type="ts">
-	import { Column } from '@mateoroldos/svelte.bones';
-
 	let toucansFeatures = [
 		{
 			title: 'Grant',
@@ -28,11 +26,11 @@
 	<div class="cards-wrapper">
 		{#each toucansFeatures as feature}
 			<div class="card-primary">
-				<Column justify="center" gap={0.8}>
+				<div class="column-2 align-center">
 					<img src="/frame-125.png" alt="frame" />
 					<h3>{feature.title}</h3>
 					<p>{feature.description}</p>
-				</Column>
+				</div>
 			</div>
 		{/each}
 	</div>

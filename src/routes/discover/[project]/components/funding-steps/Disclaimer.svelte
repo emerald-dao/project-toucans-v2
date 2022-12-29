@@ -1,10 +1,9 @@
 <script type="ts">
 	import { Button } from '@emerald-dao/component-library';
 	import { fundActiveStep } from '$stores/fund/FundSteps';
-	import { Column } from '@mateoroldos/svelte.bones';
 </script>
 
-<Column gap="small" align="flex-start">
+<div class="column-5 align-start">
 	<h3 class="w-medium">Fund Emerald DAO</h3>
 	<p>
 		Sunt aliquip pariatur id reprehenderit non sit ex qui esse. Tempor non ullamco cillum dolore.
@@ -12,7 +11,7 @@
 		magna. Lorem id in exercitation nulla amet.
 	</p>
 	<Button on:click={fundActiveStep.increment} size="full-width">Accept</Button>
-</Column>
+</div>
 
 <style type="scss">
 	p {
