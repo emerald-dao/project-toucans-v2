@@ -1,24 +1,13 @@
 <script type="ts">
 	import ChartTitle from './../atoms/ChartTitle.svelte';
 	import DataCard from '$lib/components/cards/DataCard.svelte';
-	import Tabs from '$components/atoms/Tabs.svelte';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import MainFunders from '../atoms/MainFunders.svelte';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import { daysOfDifference } from '$lib/utilities/formatDate';
+	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 
 	export let daoData: FinancialDao;
-
-	let tabs = [
-		{
-			name: 'Recent Activity',
-			component: RecentActivity
-		},
-		{
-			name: 'Main Funders',
-			component: MainFunders
-		}
-	];
 </script>
 
 <div class="column-10">
@@ -43,7 +32,19 @@
 			/>
 		</div>
 	</div>
-	<Tabs {tabs} />
+
+	<Tabs>
+		<TabList>
+			<Tab>Recent Activity</Tab>
+			<Tab>Main Funders</Tab>
+		</TabList>
+		<TabPanel>
+			<RecentActivity />
+		</TabPanel>
+		<TabPanel>
+			<MainFunders />
+		</TabPanel>
+	</Tabs>
 </div>
 
 <style type="scss">

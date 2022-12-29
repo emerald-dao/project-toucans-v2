@@ -1,22 +1,11 @@
 <script type="ts">
 	import ChartTitle from './../atoms/ChartTitle.svelte';
-	import Tabs from '$components/atoms/Tabs.svelte';
 	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import MainHolders from '../atoms/MainHolders.svelte';
+	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 
 	export let daoData: CommunityDao;
-
-	let tabs = [
-		{
-			name: 'Recent Activity',
-			component: RecentActivity
-		},
-		{
-			name: 'Main Holders',
-			component: MainHolders
-		}
-	];
 </script>
 
 <div class="column-10">
@@ -31,7 +20,18 @@
 			<span class="large">{daoData.totalTokens.toLocaleString()}</span>
 		</div>
 	</div>
-	<Tabs {tabs} />
+	<Tabs>
+		<TabList>
+			<Tab>Recent Activity</Tab>
+			<Tab>Main MainHolders</Tab>
+		</TabList>
+		<TabPanel>
+			<RecentActivity />
+		</TabPanel>
+		<TabPanel>
+			<MainHolders />
+		</TabPanel>
+	</Tabs>
 </div>
 
 <style type="scss">
