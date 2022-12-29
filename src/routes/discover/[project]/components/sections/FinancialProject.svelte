@@ -5,6 +5,7 @@
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import MainFunders from '../atoms/MainFunders.svelte';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
+	import { daysOfDifference } from '$lib/utilities/formatDate';
 
 	export let daoData: FinancialDao;
 
@@ -34,7 +35,10 @@
 		<div class="card">
 			<ChartTitle
 				title="Active Round"
-				data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
+				amountRaised={daoData.rounds[0].raised.toLocaleString()}
+				currency={daoData.rounds[0].currency}
+				goal={daoData.rounds[0].goal}
+				daysLeft={daysOfDifference(new Date(), daoData.rounds[0].finishDate)}
 				icon="tabler:activity-heartbeat"
 			/>
 		</div>
