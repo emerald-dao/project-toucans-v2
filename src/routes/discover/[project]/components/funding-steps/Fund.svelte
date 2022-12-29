@@ -3,7 +3,6 @@
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import { Button } from '@emerald-dao/component-library';
 	import { fundActiveStep } from '$stores/fund/FundSteps';
-	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { fundData } from '$stores/fund/FundDataStore';
 	import fundingSuite from '$lib/validations/fundingSuite';
 	import { Currencies } from '$lib/types/currencies.enum';
@@ -11,36 +10,37 @@
 	import { fade } from 'svelte/transition';
 
 	const handleChange = (input: Event) => {
-		res = fundingSuite($fundData, input.target.name);
+		const target = input.target as HTMLInputElement;
+
+		res = fundingSuite($fundData, target.name);
 	};
 
 	let res = fundingSuite.get();
 
-	const currenciesRadioButtonsData = {
-		name: 'currency',
-		bindStore: fundData,
-		bindValue: 'currency',
-		options: [
-			{
-				name: Currencies.FLOW,
-				value: Currencies.FLOW,
-				text: '$FLOW'
-			},
-			{
-				name: Currencies.FUSD,
-				value: Currencies.FUSD,
-				text: '$FUSD'
-			}
-		]
-	};
+	const currenciesOptions = [
+		{
+			name: Currencies.FLOW,
+			value: Currencies.FLOW,
+			text: '$FLOW'
+		},
+		{
+			name: Currencies.FUSD,
+			value: Currencies.FUSD,
+			text: '$FUSD'
+		}
+	];
 </script>
 
 <div in:fade={{ duration: 200 }}>
-	<Column gap="small" align="flex-start">
+	<div class="column-6 align-start">
 		<h3 class="w-medium">Fund Emerald DAO</h3>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
-			<RadioButtons data={currenciesRadioButtonsData} />
 			<label for="receive">Funding amount</label>
+			<RadioButtons
+				name="currencies"
+				bind:binding={$fundData['currency']}
+				options={currenciesOptions}
+			/>
 			<InputWrapper
 				name="amount"
 				iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
@@ -68,21 +68,23 @@
 					on:input={handleChange}
 				/>
 			</InputWrapper>
-
-			<label for="receive">You will receive</label>
-
-			<input
-				name="receive"
-				type="text"
-				value="${($fundData.amount * $fundData.issuanceRate).toFixed(2)} EMLD"
-				readonly
-				id="receive"
-			/>
+			{#if $fundData.issuanceRate}
+				<label for="receive">You will receive</label>
+				<input
+					name="receive"
+					type="text"
+					value="${(($fundData.amount ? $fundData.amount : 0) * $fundData.issuanceRate).toFixed(
+						2
+					)} EMLD"
+					readonly
+					id="receive"
+				/>
+			{/if}
 		</form>
 		<Button form="fund-form" size="full-width" state={res.isValid() ? 'active' : 'disabled'}
 			><Icon icon="tabler:pig-money" />Fund</Button
 		>
-	</Column>
+	</div>
 </div>
 
 <style type="scss">
@@ -90,12 +92,6 @@
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-
-		.token-name {
-			font-size: var(--fs-200);
-			--font-weight: 600;
-			color: var(--clr-font-text-t4);
-		}
 
 		label {
 			margin-bottom: var(--space-2);

@@ -1,33 +1,18 @@
 <script type="ts">
-	import type { Writable } from 'svelte/store';
+	export let options: Option[];
+	export let name: string;
+	export let binding: string;
 
 	interface Option {
 		name: string;
 		value: string;
 		text: string;
 	}
-
-	interface RadiosData {
-		name: string;
-		bindStore: Writable;
-		bindValue: string;
-		options: Option[];
-	}
-
-	export let data: RadiosData;
-
-	let { bindStore } = data;
 </script>
 
 <div>
-	{#each data.options as option}
-		<input
-			type="radio"
-			id={option.name}
-			name={data.name}
-			bind:group={$bindStore[data.bindValue]}
-			value={option.value}
-		/>
+	{#each options as option}
+		<input type="radio" id={option.name} {name} bind:group={binding} value={option.value} />
 		<label for={option.name}>
 			<span>{option.text}</span>
 		</label>
@@ -49,8 +34,8 @@
 			border: 2px var(--clr-border-primary) solid;
 			cursor: pointer;
 			font-size: var(--font-size-0);
-			--font-weight: 400;
 			transition: 0.4s;
+			color: var(--clr-heading-off);
 		}
 
 		label:not(:nth-child(2)) {
@@ -67,6 +52,7 @@
 
 		input:checked + label {
 			background-color: var(--clr-neutral-700);
+			color: var(--clr-heading-main);
 		}
 	}
 </style>
