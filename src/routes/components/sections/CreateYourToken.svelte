@@ -98,6 +98,8 @@
 		.left-wrapper {
 			position: sticky;
 			top: var(--space-20);
+			display: grid;
+			place-content: center;
 		}
 
 		.title-wrapper {
