@@ -1,10 +1,13 @@
 <script type="ts">
 	import CreateProjectStepsCard from '$components/cards/CreateProjectStepsCard.svelte';
+	import IntersectionObserver from 'svelte-intersection-observer';
 
 	interface stepData {
 		number: number;
 		title: string;
 		description: string;
+		element: HTMLElement | undefined;
+		intersecting: boolean;
 	}
 
 	let stepsData: stepData[] = [
@@ -12,19 +15,25 @@
 			number: 1,
 			title: 'Select your DAO details',
 			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.'
+				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+			element: undefined,
+			intersecting: false
 		},
 		{
 			number: 2,
 			title: 'Select your DAO details',
 			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.'
+				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+			element: undefined,
+			intersecting: false
 		},
 		{
 			number: 3,
 			title: 'Select your DAO details',
 			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.'
+				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+			element: undefined,
+			intersecting: false
 		}
 	];
 </script>
@@ -44,16 +53,26 @@
 			</p>
 		</div>
 		<div class="column-16">
-			{#each stepsData as step}
-				<div class="steps-wrapper">
-					<div class="row-3 align-center">
-						<div class="circle center" class:active={true}>
-							<span class="w-bold">{step.number}</span>
+			{#each stepsData as step, i}
+				<IntersectionObserver
+					element={stepsData[i].element}
+					bind:intersecting={stepsData[i].intersecting}
+					threshold={1}
+					rootMargin="-115px"
+				>
+					<div bind:this={stepsData[i].element} class="steps-wrapper">
+						<div class="row-3 align-center">
+							<div
+								class="circle center"
+								class:active={stepsData[i].intersecting && !stepsData[i + 1]?.intersecting}
+							>
+								<span class="w-bold">{step.number}</span>
+							</div>
+							<h4>{step.title}</h4>
 						</div>
-						<h4 class="w-medium">{step.title}</h4>
+						<p>{step.description}</p>
 					</div>
-					<p>{step.description}</p>
-				</div>
+				</IntersectionObserver>
 			{/each}
 		</div>
 	</div>
@@ -79,6 +98,8 @@
 		.left-wrapper {
 			position: sticky;
 			top: var(--space-20);
+			display: grid;
+			place-content: center;
 		}
 
 		.title-wrapper {
@@ -102,6 +123,8 @@
 				height: 32px;
 				background-color: var(--clr-surface-primary);
 				border-radius: 14px;
+				transition: 0.5s;
+				transition-delay: 0.1s;
 			}
 
 			.circle.active {
