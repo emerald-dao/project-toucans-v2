@@ -21,15 +21,24 @@
 			<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.maxSupply.toLocaleString()} />
 			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
 		</div>
-		<div class="card">
+		<div class="card row justify-between">
 			<ChartTitle
 				title="Active Round"
-				amountRaised={daoData.rounds[0].raised.toLocaleString()}
-				currency={daoData.rounds[0].currency}
-				goal={daoData.rounds[0].goal}
-				daysLeft={daysOfDifference(new Date(), daoData.rounds[0].finishDate)}
+				data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
 				icon="tabler:activity-heartbeat"
 			/>
+			<div class="row projections-wrapper">
+				<div class="column goal-wrapper">
+					<p class="xsmall">Goal</p>
+					<span class="large w-bold">{daoData.rounds[0].goal}</span>
+				</div>
+				<div class="column days-left-wrapper">
+					<p class="xsmall">Days left</p>
+					<span class="large w-bold"
+						>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
+					>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -48,4 +57,25 @@
 </div>
 
 <style type="scss">
+	.projections-wrapper {
+		gap: var(--space-2);
+
+		span {
+			color: var(--clr-heading-main);
+		}
+
+		.goal-wrapper {
+			padding: var(--space-3) var(--space-10) var(--space-3) var(--space-7);
+			background-color: var(--clr-surface-primary);
+			border-top-left-radius: var(--radius-4);
+			border-bottom-left-radius: var(--radius-4);
+		}
+
+		.days-left-wrapper {
+			padding: var(--space-3) var(--space-7);
+			background-color: var(--clr-surface-primary);
+			border-top-right-radius: var(--radius-4);
+			border-bottom-right-radius: var(--radius-4);
+		}
+	}
 </style>

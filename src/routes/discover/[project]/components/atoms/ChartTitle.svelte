@@ -1,10 +1,7 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
 	export let title: string;
-	export let amountRaised: string;
-	export let currency: string;
-	export let goal: number;
-	export let daysLeft: number;
+	export let data: string;
 	export let icon: string;
 </script>
 
@@ -14,17 +11,7 @@
 			<Icon {icon} />
 			<span>{title}</span>
 		</div>
-		<h4 class="heading w-bold">{amountRaised} {currency} raised</h4>
-	</div>
-	<div class="row projections-wrapper">
-		<div class="column goal-wrapper">
-			<p class="xsmall">Goal</p>
-			<span class="heading w-bold">{goal}</span>
-		</div>
-		<div class="column days-left-wrapper">
-			<p class="xsmall">Days left</p>
-			<span class="heading w-bold">{daysLeft}</span>
-		</div>
+		<h4 class="heading w-bold">{data}</h4>
 	</div>
 </div>
 

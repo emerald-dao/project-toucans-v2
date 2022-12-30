@@ -17,7 +17,7 @@
 		/>
 		<div class="card-primary total-tokens-card column-0">
 			<span class="xsmall">Total Tokens</span>
-			<span class="large">{daoData.totalTokens.toLocaleString()}</span>
+			<span class="large">{daoData.maxSupply.toLocaleString()}</span>
 		</div>
 	</div>
 	<Tabs>
