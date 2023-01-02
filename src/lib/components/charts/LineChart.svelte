@@ -1,9 +1,9 @@
-<script>
+<script type="ts">
 	import { Line } from 'svelte-chartjs';
 
 	export let title;
-	export let chartData;
-	export let labels;
+	export let chartData = [20, 10, 5, 2, 20, 30, 45];
+	export let labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
 	import {
 		Chart as ChartJS,

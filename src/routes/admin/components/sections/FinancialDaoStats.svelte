@@ -1,5 +1,7 @@
 <script type="ts">
 	import DataCard from '$components/cards/DataCard.svelte';
+	import LineChart from '$components/charts/LineChart.svelte';
+	import PieChart from '$components/charts/PieChart.svelte';
 	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import { Button, ProgressBar } from '@emerald-dao/component-library';
 
@@ -14,7 +16,10 @@
 		icon="tabler:home"
 	/>
 	<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
-	<div class="chart-wrapper card">Chart goes here</div>
+	<div class="chart-wrapper card">
+		<PieChart title="Funding" />
+		<!-- <LineChart title="Funding" /> -->
+	</div>
 	<DataCard
 		title="Summary"
 		hasBackground={true}
@@ -39,6 +44,9 @@
 
 		.chart-wrapper {
 			grid-area: 2 / 1 / 3 / 3;
+			padding-bottom: 0;
+			display: flex;
+			justify-content: flex-end;
 		}
 	}
 </style>
