@@ -1,4 +1,5 @@
 <script type="ts">
+	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
 	import Icon from '@iconify/svelte';
 	import { Button, InputWrapper, Range } from '@emerald-dao/component-library';
 	import DistributionElement from '../atoms/DistributionElement.svelte';
@@ -70,9 +71,9 @@
 			<p class="xsmall">
 				You can optionally set a percentage of this round to be distributed between different
 				wallets. Please add all the wallets you want to distribute to with their respective
-				percentage
+				percentage.
 			</p>
-			<form>
+			<form class="card-primary">
 				<InputWrapper
 					name="address"
 					label="Address"
@@ -94,11 +95,10 @@
 						suffix="%"
 						id="distribution-percentage"
 						on:change={handleChange}
-						--clr-surface-secondary="var(--clr-surface-primary)"
 					/>
 				</div>
 				<Button
-					size="full-width"
+					width="full-width"
 					type="ghost"
 					color="neutral"
 					on:click={handleSubmit}
@@ -118,6 +118,9 @@
 			{/each}
 			<div />
 		</div>
+	</div>
+	<div class="button-wrapper">
+		<Button on:click={newRoundActiveStep.increment} width="extended">Distribute</Button>
 	</div>
 </div>
 
@@ -153,8 +156,16 @@
 			overflow: hidden;
 		}
 
+		.button-wrapper {
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			margin-top: var(--space-3);
+		}
+
 		span {
 			color: var(--clr-heading-main);
+			margin-bottom: var(--space-2);
 		}
 	}
 </style>

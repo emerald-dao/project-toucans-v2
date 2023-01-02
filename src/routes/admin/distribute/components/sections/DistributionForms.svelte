@@ -98,7 +98,7 @@
 	form="dist-form"
 	type="ghost"
 	color="neutral"
-	size="full-width"
+	width="full-width"
 	state={res.isValid() || csvDist.length > 0 ? 'active' : 'disabled'}
 	>Add <Icon icon="tabler:arrow-narrow-right" /></Button
 >

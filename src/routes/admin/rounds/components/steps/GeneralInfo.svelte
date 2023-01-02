@@ -1,7 +1,8 @@
 <script type="ts">
 	import { onMount } from 'svelte';
 	import newRoundSuite from '$lib/validations/newRoundSuite';
-	import { InputWrapper } from '@emerald-dao/component-library';
+	import { InputWrapper, Button } from '@emerald-dao/component-library';
+	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
 
 	let now = new Date();
 	let nowString = now.toISOString().split('T')[0];
@@ -47,14 +48,15 @@
 
 <div class="column-4">
 	<span>General Info</span>
-	<form class="column-4" autocomplete="off">
-		<div class="row-6">
+	<form autocomplete="off">
+		<div class="date-inputs-wrapper">
 			<div>
 				<InputWrapper
 					name="startDate"
 					errors={res.getErrors('startDate')}
 					isValid={res.isValid('startDate')}
 					label="Start date"
+					statusIcons={false}
 				>
 					<input
 						type="date"
@@ -72,6 +74,7 @@
 					errors={res.getErrors('endDate')}
 					isValid={res.isValid('endDate')}
 					label="End date"
+					statusIcons={false}
 				>
 					<input
 						type="date"
@@ -99,11 +102,37 @@
 				/>
 			</InputWrapper>
 		</div>
+		<div class="button-wrapper">
+			<Button
+				on:click={newRoundActiveStep.increment}
+				width="extended"
+				state={res.isValid() ? 'active' : 'disabled'}>Next</Button
+			>
+		</div>
 	</form>
 </div>
 
 <style type="scss">
+	form {
+		max-width: 400px;
+		display: flex;
+		flex-direction: column;
+
+		.date-inputs-wrapper {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-4);
+		}
+	}
+
 	span {
 		color: var(--clr-heading-main);
+	}
+
+	.button-wrapper {
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+		margin-top: var(--space-3);
 	}
 </style>

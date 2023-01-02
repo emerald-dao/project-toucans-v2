@@ -56,7 +56,8 @@
 		</div>
 		<p class="small">{daoData.description}s</p>
 	</div>
-	<Button size="full-width" on:click={initFunding}><Icon icon="tabler:cash-banknote" />Fund</Button>
+	<Button width="full-width" on:click={initFunding}><Icon icon="tabler:cash-banknote" />Fund</Button
+	>
 </div>
 <Modal>
 	<div class="modal-content">

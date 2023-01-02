@@ -38,7 +38,7 @@
 		<DistributionStaging bind:distStaging />
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
-				<Button size="full-width" on:click={distributeTokens}>Distribute</Button>
+				<Button width="full-width" on:click={distributeTokens}>Distribute</Button>
 			</div>
 		{/if}
 	</div>

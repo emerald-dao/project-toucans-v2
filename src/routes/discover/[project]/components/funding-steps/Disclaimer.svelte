@@ -11,7 +11,7 @@
 		Irure consectetur minim adipisicing proident laboris aliqua ut ad incididunt pariatur enim
 		magna. Lorem id in exercitation nulla amet.
 	</p>
-	<Button on:click={fundActiveStep.increment} size="full-width">Accept</Button>
+	<Button on:click={fundActiveStep.increment} width="full-width">Accept</Button>
 </Column>
 
 <style type="scss">
