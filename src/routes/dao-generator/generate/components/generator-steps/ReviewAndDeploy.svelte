@@ -44,12 +44,15 @@
 	</RecapCard>
 	<RecapCard title="Tokenomics" stepNumber={2}>
 		{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-			<RecapElement title="Target amount" data={$daoData.tokenomics.initialRound.targetAmount} />
+			<RecapElement title="Target amount" data={$daoData.tokenomics.targetAmount} />
 			<RecapElement
 				title="Issuance rate"
-				data={`${$daoData.tokenomics.initialRound.targetAmount} ${$daoData.daoDetails.tokenName} = 1 ${$daoData.tokenomics.initialRound.token}`}
+				data={`${$daoData.tokenomics.initialRound.issuanceRate} ${$daoData.daoDetails.tokenName} = 1 ${$daoData.tokenomics.initialRound.token}`}
 			/>
-			<RecapElement title="Reserve rate" data={$daoData.tokenomics.initialRound.reserveRate} />
+			<RecapElement
+				title="Reserve rate"
+				data={$daoData.tokenomics.initialRound.reserveRate + '%'}
+			/>
 		{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 			<RecapElement title="Total supply" data={$daoData.tokenomics.totalSupply} />
 		{/if}

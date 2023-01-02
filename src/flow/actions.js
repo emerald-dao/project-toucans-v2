@@ -5,8 +5,8 @@ import { browser } from '$app/environment';
 import { user } from '$stores/flow/FlowStore';
 import { executeTransaction, replaceWithProperValues } from './utils';
 
-import rawContractCode from './cadence/ExampleToken.cdc?raw';
-import deployContractTx from './cadence/transactions/deploy_contract.cdc?raw';
+import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
+import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import { daoData } from '$stores/generator/DaoDataStore';
 import { get } from 'svelte/store';
 
@@ -43,14 +43,16 @@ const deployContract = async () => {
 	const data = get(daoData);
 	console.log(data);
 	const contractName = data.daoDetails.name.replace(/\s+/g, "");
-	const hexCode = Buffer.from(replaceWithProperValues(rawContractCode, contractName)).toString('hex');
+	const hexCode = Buffer.from(replaceWithProperValues(rawFinancialTokenCode, contractName)).toString('hex');
+	console.log(replaceWithProperValues(rawFinancialTokenCode, contractName))
+	console.log(replaceWithProperValues(deployFinancialTokenTx))
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(deployContractTx),
+		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(parseFloat(data.tokenomics.totalSupply).toFixed(2), t.UFix64),
+			arg(parseFloat(data.tokenomics.targetAmount).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
-			arg((parseFloat(data.tokenomics.initialRound.reserveRate) / 100.0).toFixed(2), t.UFix64),
+			arg(parseFloat(data.tokenomics.initialRound.reserveRate / 100.0).toFixed(2), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,

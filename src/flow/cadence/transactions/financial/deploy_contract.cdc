@@ -1,11 +1,11 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import FUSD from "../utility/FUSD.cdc"
+import FungibleToken from "../../utility/FungibleToken.cdc"
+import FUSD from "../../utility/FUSD.cdc"
 
 transaction(
   contractName: String,
   totalSupply: UFix64, 
   initialFUSDIssuanceRate: UFix64,
-  reserveTokens: UFix64,
+  reserveRate: UFix64,
   contractCode: String
 ) {
 
@@ -24,7 +24,7 @@ transaction(
       code: contractCode.decodeHex(),
       _totalSupply: totalSupply, 
       _initialFUSDIssuanceRate: initialFUSDIssuanceRate,
-      _reserveTokens: reserveTokens
+      _reserveRate: reserveRate
     )
   }
 

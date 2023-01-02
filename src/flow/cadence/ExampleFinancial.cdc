@@ -5,9 +5,13 @@ import MetadataViews from "./utility/MetadataViews.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 import FUSD from "./utility/FUSD.cdc"
  
-pub contract ExampleToken: FungibleToken {
+pub contract ExampleFinancial: FungibleToken {
 
-    // Contract Variables
+    // Total amount you would like to raise
+    pub var targetAmount: UFix64
+    // The total amount that have been sold off so far
+    pub var amountBought: UFix64
+    // The amount of tokens in existance
     pub var totalSupply: UFix64
     pub var currentFundingCycle: UInt32
     access(self) var fundingCycle: FundingCycle
@@ -29,25 +33,25 @@ pub contract ExampleToken: FungibleToken {
     pub struct FundingCycle {
       pub let currentCycle: UInt32
       pub let issuanceRates: IssuanceRates
-      // The totalSupply of this token at the
-      // time this struct is created.
-      pub let initialTotalSupply: UFix64
+      // The amount of tokens that are still to be sold at
+      // the beginning of this cycle.
+      pub let initialAmountLeft: UFix64
       // Represented as a percent
-      pub let reserveTokens: UFix64
+      pub let reserveRate: UFix64
       pub var amountPurchased: UFix64
 
       pub fun updateAmountPurchased(amount: UFix64) {
         self.amountPurchased = self.amountPurchased + amount
       }
 
-      init(_issuanceRates: IssuanceRates, _reserveTokens: UFix64) {
+      init(_issuanceRates: IssuanceRates, _reserveRate: UFix64) {
         pre {
-          _reserveTokens <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
+          _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
         }
-        self.currentCycle = ExampleToken.currentFundingCycle
+        self.currentCycle = ExampleFinancial.currentFundingCycle
         self.issuanceRates = _issuanceRates
-        self.initialTotalSupply = ExampleToken.totalSupply
-        self.reserveTokens = _reserveTokens
+        self.initialAmountLeft = ExampleFinancial.targetAmount - ExampleFinancial.amountBought
+        self.reserveRate = _reserveRate
         self.amountPurchased = 0.0
       }
     }
@@ -90,7 +94,7 @@ pub contract ExampleToken: FungibleToken {
         }
 
         destroy() {
-            ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
+            ExampleFinancial.totalSupply = ExampleFinancial.totalSupply - self.balance
             emit TokensBurned(amount: self.balance)
         }
 
@@ -128,15 +132,15 @@ pub contract ExampleToken: FungibleToken {
                     )
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
                     return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: ExampleToken.VaultStoragePath,
-                        receiverPath: ExampleToken.ReceiverPublicPath,
-                        metadataPath: ExampleToken.VaultPublicPath,
-                        providerPath: /private/ExampleTokenVault,
+                        storagePath: ExampleFinancial.VaultStoragePath,
+                        receiverPath: ExampleFinancial.ReceiverPublicPath,
+                        metadataPath: ExampleFinancial.VaultPublicPath,
+                        providerPath: /private/ExampleFinancialVault,
                         receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
                         metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
                         providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
                         createEmptyVaultFunction: (fun (): @Vault {
-                            return <- ExampleToken.createEmptyVault()
+                            return <- ExampleFinancial.createEmptyVault()
                         })
                     )
             }
@@ -153,20 +157,20 @@ pub contract ExampleToken: FungibleToken {
         pre {
           amount > 0.0: "Amount minted must be greater than zero"
         }
-        ExampleToken.totalSupply = ExampleToken.totalSupply + amount
+        ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
         emit TokensMinted(amount: amount)
         return <- create Vault(balance: amount)
       }
 
-      pub fun nextFundingCycle(issuanceRates: IssuanceRates, reserveTokens: UFix64) {
-        ExampleToken.currentFundingCycle = ExampleToken.currentFundingCycle + 1
+      pub fun nextFundingCycle(issuanceRates: IssuanceRates, reserveRate: UFix64) {
+        ExampleFinancial.currentFundingCycle = ExampleFinancial.currentFundingCycle + 1
 
-        ExampleToken.fundingCycle = FundingCycle(
+        ExampleFinancial.fundingCycle = FundingCycle(
           _issuanceRates: issuanceRates,
-          _reserveTokens: reserveTokens
+          _reserveRate: reserveRate
         )
 
-        emit NewFundingCycle(cycle: ExampleToken.currentFundingCycle, info: ExampleToken.fundingCycle)
+        emit NewFundingCycle(cycle: ExampleFinancial.currentFundingCycle, info: ExampleFinancial.fundingCycle)
       }
     }
 
@@ -179,7 +183,7 @@ pub contract ExampleToken: FungibleToken {
       // x + y <= z - z*w == z(1 - w)
       pre {
         (amount + self.getCurrentFundingCycle().amountPurchased) <= 
-        self.getCurrentFundingCycle().initialTotalSupply * (1.0 - self.getCurrentFundingCycle().reserveTokens): 
+        self.getCurrentFundingCycle().initialAmountLeft * (1.0 - self.getCurrentFundingCycle().reserveRate): 
           "You cannot purchase more than the reserve limit."
       }
       
@@ -208,6 +212,11 @@ pub contract ExampleToken: FungibleToken {
       
       let fundingCycleRef: &FundingCycle = &self.fundingCycle as &FundingCycle
       fundingCycleRef.updateAmountPurchased(amount: amount)
+
+      // Tokens were minted, so increase supply
+      ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
+      // Tokens were purchased, so increment amount raised
+      ExampleFinancial.amountBought = ExampleFinancial.amountBought + amount
       
       return <- purchasedTokens
     }
@@ -222,24 +231,26 @@ pub contract ExampleToken: FungibleToken {
     }
 
     init(
-      _totalSupply: UFix64, 
+      _targetAmount: UFix64, 
       _initialFUSDIssuanceRate: UFix64,
-      _reserveTokens: UFix64
+      _reserveRate: UFix64
     ) {
 
       // Contract Variables
-      self.totalSupply = _totalSupply
+      self.totalSupply = 0.0
+      self.amountBought = 0.0
+      self.targetAmount = _targetAmount
       self.currentFundingCycle = 0
       self.fundingCycle = FundingCycle(
         _issuanceRates: IssuanceRates(_FLOW: nil, _FUSD: _initialFUSDIssuanceRate, _others: {}),
-        _reserveTokens: _reserveTokens
+        _reserveRate: _reserveRate
       )
 
       // Paths
-      self.VaultStoragePath = /storage/ExampleTokenVault
-      self.ReceiverPublicPath = /public/ExampleTokenReceiver
-      self.VaultPublicPath = /public/ExampleTokenMetadata
-      self.AdminStoragePath = /storage/ExampleTokenAdmin
+      self.VaultStoragePath = /storage/ExampleFinancialVault
+      self.ReceiverPublicPath = /public/ExampleFinancialReceiver
+      self.VaultPublicPath = /public/ExampleFinancialMetadata
+      self.AdminStoragePath = /storage/ExampleFinancialAdmin
 
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)

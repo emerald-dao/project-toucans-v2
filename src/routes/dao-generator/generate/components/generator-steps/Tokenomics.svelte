@@ -21,21 +21,6 @@
 >
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 		<InputWrapper
-			name="supply"
-			label="Total supply"
-			errors={res.getErrors('supply')}
-			isValid={res.isValid('supply')}
-		>
-			<input
-				type="text"
-				name="supply"
-				placeholder="e.g. 1.000.000"
-				bind:value={$daoData.tokenomics.totalSupply}
-				on:input={handleChange}
-			/>
-		</InputWrapper>
-
-		<InputWrapper
 			name="targetAmount"
 			label="Target amount"
 			errors={res.getErrors('targetAmount')}
@@ -46,23 +31,7 @@
 				type="text"
 				min="1"
 				placeholder="e.g. 1.000.000"
-				bind:value={$daoData.tokenomics.initialRound.targetAmount}
-				on:input={handleChange}
-			/>
-		</InputWrapper>
-
-		<InputWrapper
-			name="issuanceRate"
-			label="Issuance rate"
-			errors={res.getErrors('issuanceRate')}
-			isValid={res.isValid('issuanceRate')}
-		>
-			<input
-				name="issuanceRate"
-				type="text"
-				min="0"
-				placeholder="e.g. 1 AlphaCoin - 1 FUSD"
-				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
+				bind:value={$daoData.tokenomics.targetAmount}
 				on:input={handleChange}
 			/>
 		</InputWrapper>
@@ -76,6 +45,22 @@
 				on:change={handleChange}
 			/>
 		</div>
+
+		<InputWrapper
+			name="issuanceRate"
+			label="Issuance rate"
+			errors={res.getErrors('issuanceRate')}
+			isValid={res.isValid('issuanceRate')}
+		>
+			<input
+				name="issuanceRate"
+				type="text"
+				min="0"
+				placeholder={`e.g. 1 AlphaCoin - 1 ${$daoData.tokenomics.initialRound.token}`}
+				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
 	{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 		<InputWrapper
 			name="supply"

@@ -12,11 +12,11 @@ export interface DaoData {
 	tokenomics: {
 		tokenType: TokenTypes;
 		totalSupply: number | undefined;
+		targetAmount: number | undefined;
 		burnTokens: boolean;
 		mintTokens: boolean;
 		walletAddresses: string[] | [];
 		initialRound: {
-			targetAmount: number | undefined;
 			token: Currencies;
 			issuanceRate: number | undefined;
 			reserveRate: number | undefined;
