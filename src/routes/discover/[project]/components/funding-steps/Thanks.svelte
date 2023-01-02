@@ -2,21 +2,20 @@
 	import Icon from '@iconify/svelte';
 	import { fundData } from '$stores/fund/FundDataStore';
 	import { Button } from '@emerald-dao/component-library';
-	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { fade } from 'svelte/transition';
 </script>
 
 <div in:fade={{ duration: 200 }}>
-	<Column>
-		<h4>Thank You!</h4>
+	<div class="column-8 align-center">
+		<h3 class="w-medium">Thank You!</h3>
 		<p>
 			{`You funded ${$fundData.daoName} with $${$fundData.currency} ${$fundData.amount} and got $${
 				$fundData.tokenName
 			} ${($fundData.amount * $fundData.issuanceRate).toFixed(2)}`}
 		</p>
-		<Column gap={1}>
-			<span>Share it</span>
-			<Row gap={0.8}>
+		<div class="column-8 align-center">
+			<span class="tagline-small">Share it!</span>
+			<div class="row-3">
 				<Button
 					href={`https://twitter.com/intent/tweet?text=I%20just%20funded%20${
 						$fundData.daoName
@@ -26,24 +25,26 @@
 				`}
 					target="_blank"
 					type="ghost"
-					size="x-small"><Icon icon="tabler:brand-twitter" />Twitter</Button
+					color="neutral"
+					size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
 				>
-				<Button href="https://discord.com/" target="_blank" type="ghost" size="x-small"
-					><Icon icon="tabler:brand-discord" />Discord</Button
+				<Button
+					href="https://discord.com/"
+					target="_blank"
+					color="neutral"
+					type="ghost"
+					size="small"><Icon icon="tabler:brand-discord" />Discord</Button
 				>
-			</Row>
-		</Column>
-	</Column>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style type="scss">
-	span {
+	.tagline-small {
 		color: var(--clr-primary-main);
-		text-transform: uppercase;
-		font-size: var(--fs-200);
-		letter-spacing: 0.2em;
-		font-family: var(--ff-mono);
 	}
+
 	p {
 		text-align: center;
 		max-width: 30ch;

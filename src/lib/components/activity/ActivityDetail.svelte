@@ -1,32 +1,28 @@
 <script type="ts">
-	import { Row } from '@mateoroldos/svelte.bones';
+	import { StatusCircle } from '@emerald-dao/component-library';
 
-	export let activityType: 'entry' | 'spent';
-	export let details: string;
+	export let activityType: 'alert' | 'success';
+	export let walletAddress: string;
+	export let date: string;
 </script>
 
-<Row gap={0.8}>
-	<div class={`circle ${activityType}`} />
-	<span>{details}</span>
-</Row>
+<div class="row-3 align-center">
+	<StatusCircle status={activityType} width="8px" />
+	<div class="column">
+		<p class="address">{walletAddress}</p>
+		<span class="date">{date}</span>
+	</div>
+</div>
 
 <style type="scss">
-	.circle {
-		width: 10px;
-		height: 10px;
-		border-radius: 100%;
+	.address {
+		color: var(--clr-heading-main);
+		font-size: var(--font-size-1);
 	}
 
-	.circle.entry {
-		background-color: var(--clr-success-main);
-	}
-
-	.circle.spent {
-		background-color: var(--clr-alert-main);
-	}
-
-	span {
-		font-size: var(--fs-200);
-		--font-weight: 200;
+	.date {
+		font-size: var(--font-size-0);
+		line-height: normal;
+		margin-bottom: var(--space-1);
 	}
 </style>

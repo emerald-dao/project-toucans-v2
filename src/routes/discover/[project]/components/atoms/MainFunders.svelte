@@ -1,4 +1,4 @@
 <script type="ts">
 </script>
 
-<div>Main Founders</div>
+<div>Main Funders</div>

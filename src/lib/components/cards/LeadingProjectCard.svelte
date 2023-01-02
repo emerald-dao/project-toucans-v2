@@ -1,5 +1,4 @@
 <script type="ts">
-	import { Row, Column } from '@mateoroldos/svelte.bones';
 	import type { LeadingDao } from '$lib/types/leading-dao.interface';
 	import Icon from '@iconify/svelte';
 
@@ -8,7 +7,7 @@
 </script>
 
 <div class="card-primary">
-	<Row gap="small">
+	<div class="row-6">
 		<div class="logo-container">
 			<div class="circle center">
 				<span class="number">
@@ -17,9 +16,9 @@
 			</div>
 			<img src={daoData.logoUrl} alt={`${daoData.name} logo`} />
 		</div>
-		<Column gap="none" align="flex-start">
+		<div class="column align-start">
 			<h4>{daoData.name}</h4>
-			<Row gap="none">
+			<div class="row-0">
 				<span
 					class="variation"
 					class:positive={daoData.variationPercentage > 0}
@@ -34,10 +33,10 @@
 					{/if}
 				</span>
 				<span>{`${daoData.totalInvested} $${daoData.currency}`}</span>
-			</Row>
+			</div>
 			<span>{`${daoData.numberOfPayments} payments`}</span>
-		</Column>
-	</Row>
+		</div>
+	</div>
 </div>
 
 <style type="scss">

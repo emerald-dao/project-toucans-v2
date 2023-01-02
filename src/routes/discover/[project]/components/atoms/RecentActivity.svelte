@@ -1,22 +1,38 @@
 <script type="ts">
 	import ActivityDetail from '$components/activity/ActivityDetail.svelte';
-	import { Column } from '@mateoroldos/svelte.bones';
+	import { Currency } from '@emerald-dao/component-library';
 </script>
 
-<Column gap={0.4} align="flex-start">
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="spent" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="spent" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="spent" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-	<ActivityDetail activityType="entry" details="0x2439ufew834 [20 $Flow] > 0x32bde23ds" />
-</Column>
+<div class="column-2 align-start">
+	<div class="activity-wrapper">
+		<ActivityDetail activityType="success" walletAddress="0xdklnewnfeewf" date="14 of July" />
+		<Currency amount={3000} currency="USD" color="heading" fontSize="0.75rem" />
+	</div>
+	<div class="activity-wrapper">
+		<ActivityDetail activityType="alert" walletAddress="0xdklnewnfeewf" date="14 of July" />
+		<Currency amount={-20000} currency="USD" color="heading" fontSize="0.75rem" />
+	</div>
+	<div class="activity-wrapper">
+		<ActivityDetail activityType="success" walletAddress="0xdklnewnfeewf" date="14 of July" />
+		<Currency amount={600000} currency="USD" color="heading" fontSize="0.75rem" />
+	</div>
+	<div class="activity-wrapper">
+		<ActivityDetail activityType="alert" walletAddress="0xdklnewnfeewf" date="14 of July" />
+		<Currency amount={-500} currency="USD" color="heading" fontSize="0.75rem" />
+	</div>
+	<div class="activity-wrapper">
+		<ActivityDetail activityType="alert" walletAddress="0xdklnewnfeewf" date="14 of July" />
+		<Currency amount={-500} currency="USD" color="heading" fontSize="0.75rem" />
+	</div>
+</div>
+
+<style type="scss">
+	.activity-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: var(--space-2);
+		border-bottom: 1px solid var(--clr-border-primary);
+	}
+</style>

@@ -5,7 +5,7 @@
 
 	let testDaos: LeadingDao[] = [
 		{
-			logoUrl: '/ec-logo.png',
+			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
 			currency: 'FUSD',
@@ -13,7 +13,7 @@
 			variationPercentage: 8.2
 		},
 		{
-			logoUrl: '/ec-logo.png',
+			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
 			currency: 'FUSD',
@@ -21,7 +21,7 @@
 			variationPercentage: 8.2
 		},
 		{
-			logoUrl: '/ec-logo.png',
+			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
 			currency: 'FUSD',
@@ -29,7 +29,7 @@
 			variationPercentage: 8.2
 		},
 		{
-			logoUrl: '/ec-logo.png',
+			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
 			currency: 'FUSD',
