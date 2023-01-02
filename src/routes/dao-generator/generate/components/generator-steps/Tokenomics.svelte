@@ -1,6 +1,5 @@
 <script type="ts">
 	import StepButtons from './atoms/StepButtons.svelte';
-	import { Column } from '@mateoroldos/svelte.bones';
 	import { InputWrapper, Range } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
@@ -78,7 +77,7 @@
 			/>
 		</InputWrapper>
 	{/if}
-	<Column gap="small" align="flex-start">
+	<div class="column-1 align-start">
 		<label for="burn-tokens" class="switch">
 			<input
 				type="checkbox"
@@ -101,7 +100,7 @@
 			<span class="slider" />
 			<span class="label">Mint tokens</span>
 		</label>
-	</Column>
+	</div>
 
 	<StepButtons active={res.isValidByGroup($daoData.tokenomics.tokenType)} />
 </form>
