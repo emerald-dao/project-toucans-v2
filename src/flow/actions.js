@@ -23,7 +23,7 @@ export const signUp = () => fcl.signUp();
 
 // ****** Transactions ****** //
 const dummyTransaction = async () => {
-	await fcl.mutate({
+	return await fcl.mutate({
 		cadence: `
     transaction {
       execute {
