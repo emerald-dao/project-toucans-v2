@@ -21,6 +21,21 @@
 >
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 		<InputWrapper
+			name="supply"
+			label="Total supply"
+			errors={res.getErrors('supply')}
+			isValid={res.isValid('supply')}
+		>
+			<input
+				type="text"
+				name="supply"
+				placeholder="e.g. 1.000.000"
+				bind:value={$daoData.tokenomics.totalSupply}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+
+		<InputWrapper
 			name="targetAmount"
 			label="Target amount"
 			errors={res.getErrors('targetAmount')}
@@ -28,7 +43,7 @@
 		>
 			<input
 				name="targetAmount"
-				type="number"
+				type="text"
 				min="1"
 				placeholder="e.g. 1.000.000"
 				bind:value={$daoData.tokenomics.initialRound.targetAmount}
@@ -44,7 +59,7 @@
 		>
 			<input
 				name="issuanceRate"
-				type="number"
+				type="text"
 				min="0"
 				placeholder="e.g. 1 AlphaCoin - 1 FUSD"
 				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
@@ -69,7 +84,7 @@
 			isValid={res.isValid('supply')}
 		>
 			<input
-				type="number"
+				type="text"
 				name="supply"
 				placeholder="e.g. 1.000.000"
 				bind:value={$daoData.tokenomics.totalSupply}

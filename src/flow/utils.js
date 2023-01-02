@@ -1,6 +1,26 @@
 import * as fcl from '@onflow/fcl';
 import { get } from 'svelte/store';
 import { transactionStore } from '$stores/flow/TransactionStore';
+import { addresses } from '$stores/flow/FlowStore';
+
+export function replaceWithProperValues(script, contractName = '', contractAddress = '') {
+	const addressList = get(addresses);
+	return script
+		.replace('"../ExampleToken.cdc"', contractAddress)
+		.replace('"../utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
+		.replace('"../utility/MetadataViews.cdc"', addressList.MetadataViews)
+		.replace('"../utility/FlowToken.cdc"', addressList.FlowToken)
+		.replace('"../utility/FUSD.cdc"', addressList.FUSD)
+		.replace('"../utility/FungibleToken.cdc"', addressList.FungibleToken)
+		.replace('"./utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
+		.replace('"./utility/MetadataViews.cdc"', addressList.MetadataViews)
+		.replace('"./utility/FungibleToken.cdc"', addressList.FungibleToken)
+		.replace('"./utility/FungibleTokenMetadataViews.cdc"', addressList.FungibleTokenMetadataViews)
+		.replace('"./utility/FlowToken.cdc"', addressList.FlowToken)
+		.replace('"./utility/FUSD.cdc"', addressList.FUSD)
+		.replace('"../utility/FLOAT.cdc"', addressList.FLOAT)
+		.replaceAll('ExampleToken', contractName);
+}
 
 export const executeTransaction = async (transaction, actionAfterSucceed) => {
 	transactionStore.initTransaction();

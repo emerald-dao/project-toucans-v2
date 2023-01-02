@@ -1,15 +1,11 @@
-import FungibleToken from "./FungibleToken.cdc"
-
+import FungibleToken from "./utility/FungibleToken.cdc"
+import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
+import MetadataViews from "./utility/MetadataViews.cdc"
 // Token Types
-import FlowToken from "./FlowToken.cdc"
-import FUSD from "./FUSD.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import FUSD from "./utility/FUSD.cdc"
  
-pub contract Toucans: FungibleToken {
-
-    // Collection Information
-    pub var name: String
-    pub var description: String
-    pub var image: String
+pub contract ExampleToken: FungibleToken {
 
     // Contract Variables
     pub var totalSupply: UFix64
@@ -19,7 +15,7 @@ pub contract Toucans: FungibleToken {
     // Paths
     pub let VaultStoragePath: StoragePath
     pub let ReceiverPublicPath: PublicPath
-    pub let BalancePublicPath: PublicPath
+    pub let VaultPublicPath: PublicPath
     pub let AdminStoragePath: StoragePath
 
     // Events
@@ -37,22 +33,20 @@ pub contract Toucans: FungibleToken {
       // time this struct is created.
       pub let initialTotalSupply: UFix64
       // Represented as a percent
-      pub let reserveTokens: UFix64?
+      pub let reserveTokens: UFix64
       pub var amountPurchased: UFix64
 
       pub fun updateAmountPurchased(amount: UFix64) {
         self.amountPurchased = self.amountPurchased + amount
       }
 
-      init(_issuanceRates: IssuanceRates, _reserveTokens: UFix64?) {
+      init(_issuanceRates: IssuanceRates, _reserveTokens: UFix64) {
         pre {
-          _reserveTokens == nil ||
-          (_reserveTokens! > 0.0 && _reserveTokens! < 1.0):
-          "You must provide a percent for the reserve token rate."
+          _reserveTokens <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
         }
-        self.currentCycle = Toucans.currentFundingCycle
+        self.currentCycle = ExampleToken.currentFundingCycle
         self.issuanceRates = _issuanceRates
-        self.initialTotalSupply = Toucans.totalSupply
+        self.initialTotalSupply = ExampleToken.totalSupply
         self.reserveTokens = _reserveTokens
         self.amountPurchased = 0.0
       }
@@ -70,9 +64,8 @@ pub contract Toucans: FungibleToken {
       }
     }
 
-    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {
+    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, MetadataViews.Resolver {
 
-        /// The total balance of this vault
         pub var balance: UFix64
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
@@ -82,7 +75,7 @@ pub contract Toucans: FungibleToken {
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @Toucans.Vault
+            let vault <- from as! @Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             
@@ -92,14 +85,62 @@ pub contract Toucans: FungibleToken {
             destroy vault
         }
 
-        // initialize the balance at resource creation time
         init(balance: UFix64) {
             self.balance = balance
         }
 
         destroy() {
-            Toucans.totalSupply = Toucans.totalSupply - self.balance
+            ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
             emit TokensBurned(amount: self.balance)
+        }
+
+        pub fun getViews(): [Type]{
+            return [Type<FungibleTokenMetadataViews.FTView>(),
+                    Type<FungibleTokenMetadataViews.FTDisplay>(),
+                    Type<FungibleTokenMetadataViews.FTVaultData>()]
+        }
+
+        pub fun resolveView(_ view: Type): AnyStruct? {
+            switch view {
+                case Type<FungibleTokenMetadataViews.FTView>():
+                    return FungibleTokenMetadataViews.FTView(
+                        ftDisplay: self.resolveView(Type<FungibleTokenMetadataViews.FTDisplay>()) as! FungibleTokenMetadataViews.FTDisplay?,
+                        ftVaultData: self.resolveView(Type<FungibleTokenMetadataViews.FTVaultData>()) as! FungibleTokenMetadataViews.FTVaultData?
+                    )
+                case Type<FungibleTokenMetadataViews.FTDisplay>():
+                    let media = MetadataViews.Media(
+                            file: MetadataViews.HTTPFile(
+                            url: "https://assets.website-files.com/5f6294c0c7a8cdd643b1c820/5f6294c0c7a8cda55cb1c936_Flow_Wordmark.svg"
+                        ),
+                        mediaType: "image"
+                    )
+                    let medias = MetadataViews.Medias([media])
+                    return FungibleTokenMetadataViews.FTDisplay(
+                        name: "INSERT NAME",
+                        symbol: "INSERT SYMBOL",
+                        description: "INSERT DESCRIPTION",
+                        externalURL: MetadataViews.ExternalURL("INSERT URL"),
+                        logos: medias,
+                        socials: {
+                            "twitter": MetadataViews.ExternalURL("INSERT TWITTER"),
+                            "discord": MetadataViews.ExternalURL("INSERT DISCORD")
+                        }
+                    )
+                case Type<FungibleTokenMetadataViews.FTVaultData>():
+                    return FungibleTokenMetadataViews.FTVaultData(
+                        storagePath: ExampleToken.VaultStoragePath,
+                        receiverPath: ExampleToken.ReceiverPublicPath,
+                        metadataPath: ExampleToken.VaultPublicPath,
+                        providerPath: /private/ExampleTokenVault,
+                        receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
+                        metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
+                        providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
+                        createEmptyVaultFunction: (fun (): @Vault {
+                            return <- ExampleToken.createEmptyVault()
+                        })
+                    )
+            }
+            return nil
         }
     }
 
@@ -107,26 +148,25 @@ pub contract Toucans: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-    // NOTE: This should be a configurable option.
     pub resource Administrator {
       pub fun mintTokens(amount: UFix64): @Vault {
         pre {
           amount > 0.0: "Amount minted must be greater than zero"
         }
-        Toucans.totalSupply = Toucans.totalSupply + amount
+        ExampleToken.totalSupply = ExampleToken.totalSupply + amount
         emit TokensMinted(amount: amount)
         return <- create Vault(balance: amount)
       }
 
       pub fun nextFundingCycle(issuanceRates: IssuanceRates, reserveTokens: UFix64) {
-        Toucans.currentFundingCycle = Toucans.currentFundingCycle + 1
+        ExampleToken.currentFundingCycle = ExampleToken.currentFundingCycle + 1
 
-        Toucans.fundingCycle = FundingCycle(
+        ExampleToken.fundingCycle = FundingCycle(
           _issuanceRates: issuanceRates,
           _reserveTokens: reserveTokens
         )
 
-        emit NewFundingCycle(cycle: Toucans.currentFundingCycle, info: Toucans.fundingCycle)
+        emit NewFundingCycle(cycle: ExampleToken.currentFundingCycle, info: ExampleToken.fundingCycle)
       }
     }
 
@@ -138,9 +178,8 @@ pub contract Toucans: FungibleToken {
       //
       // x + y <= z - z*w == z(1 - w)
       pre {
-        self.getCurrentFundingCycle().reserveTokens == nil ||
         (amount + self.getCurrentFundingCycle().amountPurchased) <= 
-        self.getCurrentFundingCycle().initialTotalSupply * (1.0 - self.getCurrentFundingCycle().reserveTokens!): 
+        self.getCurrentFundingCycle().initialTotalSupply * (1.0 - self.getCurrentFundingCycle().reserveTokens): 
           "You cannot purchase more than the reserve limit."
       }
       
@@ -183,31 +222,24 @@ pub contract Toucans: FungibleToken {
     }
 
     init(
-      _name: String,
-      _description: String,
-      _image: String,
       _totalSupply: UFix64, 
       _initialFUSDIssuanceRate: UFix64,
-      _reserveTokens: UFix64?
+      _reserveTokens: UFix64
     ) {
-      // Collection Information
-      self.name = _name
-      self.description = _description
-      self.image = _image
 
       // Contract Variables
       self.totalSupply = _totalSupply
+      self.currentFundingCycle = 0
       self.fundingCycle = FundingCycle(
         _issuanceRates: IssuanceRates(_FLOW: nil, _FUSD: _initialFUSDIssuanceRate, _others: {}),
         _reserveTokens: _reserveTokens
       )
-      self.currentFundingCycle = 0
 
       // Paths
-      self.VaultStoragePath = /storage/ToucansVault
-      self.ReceiverPublicPath = /public/ToucansReceiver
-      self.BalancePublicPath = /public/ToucansBalance
-      self.AdminStoragePath = /storage/ToucansAdmin
+      self.VaultStoragePath = /storage/ExampleTokenVault
+      self.ReceiverPublicPath = /public/ExampleTokenReceiver
+      self.VaultPublicPath = /public/ExampleTokenMetadata
+      self.AdminStoragePath = /storage/ExampleTokenAdmin
 
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)
@@ -219,7 +251,7 @@ pub contract Toucans: FungibleToken {
       )
 
       self.account.link<&Vault{FungibleToken.Balance}>(
-          self.BalancePublicPath,
+          self.VaultPublicPath,
           target: self.VaultStoragePath
       )
 
@@ -230,3 +262,4 @@ pub contract Toucans: FungibleToken {
       emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
+ 

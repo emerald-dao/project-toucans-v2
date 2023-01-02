@@ -95,7 +95,7 @@
 				label="Funding goal"
 			>
 				<input
-					type="number"
+					type="text"
 					name="fundingGoal"
 					bind:value={formData.fundingGoal}
 					on:input={handleChange}

@@ -48,7 +48,7 @@
 				isValid={res.isValid('amount')}
 			>
 				<input
-					type="number"
+					type="text"
 					name="amount"
 					placeholder="1000"
 					bind:value={$fundData.amount}
