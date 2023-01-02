@@ -1,25 +1,21 @@
 <script>
 	import ProjectCard from '$components/cards/ProjectCard.svelte';
-	import { Column, Container, Row, Section } from '@mateoroldos/svelte.bones';
 </script>
 
-<Section>
-	<Container>
-		<Column gap="small">
-			<h2>DAO of July</h2>
-			<ProjectCard />
-		</Column>
-	</Container>
-</Section>
+<section class="container">
+	<div class="column-8 align-center">
+		<h2>DAO of July</h2>
+		<ProjectCard />
+	</div>
+</section>
 
-<Section>
-	<Container>
-		<Column gap="small">
-			<h2>Trending Projects</h2>
-			<Row>
-				<ProjectCard story={false} />
-				<ProjectCard story={false} />
-			</Row>
-		</Column>
-	</Container>
-</Section>
+<section class="container">
+	<div class="column-8 align-center">
+		<h2>Trending Projects</h2>
+		<div class="row-6">
+			<ProjectCard story={false} />
+			<ProjectCard story={false} />
+		</div>
+		<div />
+	</div>
+</section>

@@ -16,7 +16,13 @@
 			{/if}
 			<span class="small">{title}</span>
 		</div>
-		<span class="h4">{data}</span>
+		<span class="h4 w-medium">{data}</span>
 	</div>
 	<slot />
 </div>
+
+<style type="scss">
+	.card {
+		padding: var(--space-5) var(--space-7);
+	}
+</style>
