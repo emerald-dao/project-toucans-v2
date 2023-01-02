@@ -30,11 +30,11 @@
 			<div class="row projections-wrapper">
 				<div class="column goal-wrapper">
 					<p class="xsmall">Goal</p>
-					<span class="large w-bold">{daoData.rounds[0].goal}</span>
+					<span class="large w-medium">{daoData.rounds[0].goal.toLocaleString()}</span>
 				</div>
 				<div class="column days-left-wrapper">
 					<p class="xsmall">Days left</p>
-					<span class="large w-bold"
+					<span class="large w-medium"
 						>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
 					>
 				</div>

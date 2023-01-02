@@ -17,13 +17,13 @@
 		/>
 		<div class="card-primary total-tokens-card column-0">
 			<span class="xsmall">Total Tokens</span>
-			<span class="large">{daoData.maxSupply.toLocaleString()}</span>
+			<span class="large w-medium">{daoData.maxSupply.toLocaleString()}</span>
 		</div>
 	</div>
 	<Tabs>
 		<TabList>
 			<Tab>Recent Activity</Tab>
-			<Tab>Main MainHolders</Tab>
+			<Tab>Main Holders</Tab>
 		</TabList>
 		<TabPanel>
 			<RecentActivity />

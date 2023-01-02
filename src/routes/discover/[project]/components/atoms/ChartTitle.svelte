@@ -11,7 +11,7 @@
 			<Icon {icon} />
 			<span>{title}</span>
 		</div>
-		<h4 class="heading w-bold">{data}</h4>
+		<h4 class="heading w-medium">{data}</h4>
 	</div>
 </div>
 

@@ -16,7 +16,7 @@
 			{/if}
 			<span class="small">{title}</span>
 		</div>
-		<span class="h4 w-bold">{data}</span>
+		<span class="h4 w-medium">{data}</span>
 	</div>
 	<slot />
 </div>
