@@ -44,7 +44,7 @@ const deployContract = async () => {
 	console.log(data);
 	const contractName = data.daoDetails.name.replace(/\s+/g, "");
 	const hexCode = Buffer.from(replaceWithProperValues(rawContractCode, contractName)).toString('hex');
-	await fcl.mutate({
+	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployContractTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
