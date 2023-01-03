@@ -6,9 +6,16 @@ import { user } from '$stores/flow/FlowStore';
 import { executeTransaction, replaceWithProperValues } from './utils';
 
 import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
+import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
+import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
 import { daoData } from '$stores/generator/DaoDataStore';
 import { get } from 'svelte/store';
+
+const rawTokenCodes = {
+	'Financial': rawFinancialTokenCode,
+	'Community': rawCommunityTokenCode
+}
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -42,10 +49,25 @@ export const dummyTransactionExecution = () => executeTransaction(dummyTransacti
 const deployContract = async () => {
 	const data = get(daoData);
 	console.log(data);
+	const rawContractCode = rawTokenCodes[data.tokenomics.tokenType];
+	let contractCode = rawContractCode
+								.replace('INSERT NAME', data.daoDetails.name)
+								.replace('INSERT DESCRIPTION', data.daoDetails.description)
+								.replace('INSERT SYMBOL', data.daoDetails.tokenName)
+								.replace('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.name.replace(/\s+/g, "");
-	const hexCode = Buffer.from(replaceWithProperValues(rawFinancialTokenCode, contractName)).toString('hex');
-	console.log(replaceWithProperValues(rawFinancialTokenCode, contractName))
-	console.log(replaceWithProperValues(deployFinancialTokenTx))
+	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
+
+	console.log(contractCode);
+	if (data.tokenomics.tokenType == 'Financial') {
+		return deployFinancialContract(hexCode, contractName, data);
+	} else if (data.tokenomics.tokenType == 'Community') {
+		return deployCommunityContract(hexCode, contractName, data);
+	}
+
+};
+
+const deployFinancialContract = async (hexCode, contractName, data) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
@@ -60,5 +82,21 @@ const deployContract = async () => {
 		authorizations: [fcl.authz],
 		limit: 9999
 	});
-};
+}
+
+const deployCommunityContract = async (hexCode, contractName, data) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(deployCommunityTokenTx),
+		args: (arg, t) => [
+			arg(contractName, t.String),
+			arg(parseFloat(data.tokenomics.totalSupply).toFixed(2), t.UFix64),
+			arg(hexCode, t.String)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+}
+
 export const deployContractExecution = () => executeTransaction(deployContract);
