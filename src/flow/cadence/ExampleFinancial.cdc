@@ -28,6 +28,19 @@ pub contract ExampleFinancial: FungibleToken {
     pub event TokensBurned(amount: UFix64)
     pub event NewFundingCycle(cycle: UInt32, info: FundingCycle)
 
+    pub struct CycleTimeFrame {
+      pub let startTime: UFix64
+      pub let endTime: UFix64
+
+      init(_ startTime: UFix64, _ endTime: UFix64) {
+        pre {
+          endTime > startTime: "The end time must be greater than the start time."
+        }
+        self.startTime = startTime
+        self.endTime = endTime
+      }
+    }
+
     pub struct FundingCycle {
       pub let currentCycle: UInt32
       // nil if the funding target is infinity
@@ -36,12 +49,13 @@ pub contract ExampleFinancial: FungibleToken {
       // a tax on purchases
       pub let reserveRate: UFix64
       pub var amountPurchasedInRound: UFix64
+      pub let timeFrame: CycleTimeFrame?
 
       pub fun updateAmountPurchased(amount: UFix64) {
         self.amountPurchasedInRound = self.amountPurchasedInRound + amount
       }
 
-      init(_fundingTarget: UFix64?, _issuanceRates: IssuanceRates, _reserveRate: UFix64) {
+      init(_fundingTarget: UFix64?, _issuanceRates: IssuanceRates, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?) {
         pre {
           _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
         }
@@ -50,6 +64,7 @@ pub contract ExampleFinancial: FungibleToken {
         self.fundingTarget = _fundingTarget
         self.reserveRate = _reserveRate
         self.amountPurchasedInRound = 0.0
+        self.timeFrame = _timeFrame
       }
     }
 
@@ -84,15 +99,6 @@ pub contract ExampleFinancial: FungibleToken {
             // decrease the totalSupply in the `destroy` function.
             vault.balance = 0.0
             destroy vault
-        }
-
-        init(balance: UFix64) {
-            self.balance = balance
-        }
-
-        destroy() {
-            ExampleFinancial.totalSupply = ExampleFinancial.totalSupply - self.balance
-            emit TokensBurned(amount: self.balance)
         }
 
         pub fun getViews(): [Type]{
@@ -143,6 +149,15 @@ pub contract ExampleFinancial: FungibleToken {
             }
             return nil
         }
+
+        init(balance: UFix64) {
+            self.balance = balance
+        }
+
+        destroy() {
+            ExampleFinancial.totalSupply = ExampleFinancial.totalSupply - self.balance
+            emit TokensBurned(amount: self.balance)
+        }
     }
 
     pub fun createEmptyVault(): @Vault {
@@ -152,12 +167,13 @@ pub contract ExampleFinancial: FungibleToken {
     pub resource Administrator {
       // INSERT MINTING HERE
 
-      pub fun nextFundingCycle(fundingTarget: UFix64?, issuanceRates: IssuanceRates, reserveRate: UFix64) {
+      pub fun nextFundingCycle(fundingTarget: UFix64?, issuanceRates: IssuanceRates, reserveRate: UFix64, timeFrame: CycleTimeFrame?) {
         ExampleFinancial.currentFundingCycle = ExampleFinancial.currentFundingCycle + 1
         let newFundingCycle = FundingCycle(
           _fundingTarget: fundingTarget,
           _issuanceRates: issuanceRates,
-          _reserveRate: reserveRate
+          _reserveRate: reserveRate,
+          _timeFrame: timeFrame
         )
 
         ExampleFinancial.fundingCycles.append(newFundingCycle)
@@ -167,11 +183,18 @@ pub contract ExampleFinancial: FungibleToken {
     }
 
     pub fun purchase(amount: UFix64, tokens: @FungibleToken.Vault): @Vault {
-      pre {
-        self.getCurrentFundingCycle().fundingTarget == nil ||
-        (amount + self.getCurrentFundingCycle().amountPurchasedInRound <= self.getCurrentFundingCycle().fundingTarget!): 
-          "You cannot purchase more than the reserve limit."
-      }
+      let currentFundingCycle: ExampleFinancial.FundingCycle = self.getCurrentFundingCycle()
+      // Assert we have not raised more than the target
+      assert(
+        currentFundingCycle.fundingTarget == nil || (amount + currentFundingCycle.amountPurchasedInRound <= currentFundingCycle.fundingTarget!),
+        message: "You cannot purchase more than the reserve limit."
+      )
+      let currentTime: UFix64 = getCurrentBlock().timestamp
+      // Assert that if there is a time frame on the cycle, we are within it
+      assert(
+        currentFundingCycle.timeFrame == nil || (currentFundingCycle.timeFrame!.startTime <= currentTime && currentFundingCycle.timeFrame!.endTime >= currentTime),
+        message: "The current funding cycle has ended. The project owner must start a new one to further continue funding."
+      )
       
       var issuanceRate: UFix64? = nil
       if tokens.isInstance(Type<@FlowToken.Vault>()) {
@@ -204,6 +227,13 @@ pub contract ExampleFinancial: FungibleToken {
       // Tokens were purchased, so increment amount raised
       self.amountBought = self.amountBought + amount
       
+      // Tax the purchased tokens with reserve rate
+      let tax: @Vault <- purchasedTokens.withdraw(amount: purchasedTokens.balance * currentFundingCycle.reserveRate)
+      let vault = self.account.getCapability(self.ReceiverPublicPath)
+                .borrow<&Vault{FungibleToken.Receiver}>()!
+      vault.deposit(from: <- tax)
+
+      // Return the rest after tax
       return <- purchasedTokens
     }
 
@@ -228,7 +258,8 @@ pub contract ExampleFinancial: FungibleToken {
     init(
       _fundingTarget: UFix64,
       _initialFUSDIssuanceRate: UFix64,
-      _reserveRate: UFix64
+      _reserveRate: UFix64,
+      _timeFrame: CycleTimeFrame?
     ) {
 
       // Contract Variables
@@ -238,7 +269,8 @@ pub contract ExampleFinancial: FungibleToken {
       self.fundingCycles = [FundingCycle(
         _fundingTarget: _fundingTarget,
         _issuanceRates: IssuanceRates(_FLOW: nil, _FUSD: _initialFUSDIssuanceRate, _others: {}),
-        _reserveRate: _reserveRate
+        _reserveRate: _reserveRate,
+        _timeFrame: _timeFrame
       )]
 
       // Paths

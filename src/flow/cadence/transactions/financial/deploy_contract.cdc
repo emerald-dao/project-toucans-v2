@@ -24,7 +24,8 @@ transaction(
       code: contractCode.decodeHex(),
       _fundingTarget: fundingTarget, 
       _initialFUSDIssuanceRate: initialFUSDIssuanceRate,
-      _reserveRate: reserveRate
+      _reserveRate: reserveRate,
+      _timeFrame: nil
     )
   }
 
