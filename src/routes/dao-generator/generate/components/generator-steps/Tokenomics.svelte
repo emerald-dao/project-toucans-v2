@@ -78,17 +78,6 @@
 		</InputWrapper>
 	{/if}
 	<div class="column-1 align-start">
-		<label for="burn-tokens" class="switch">
-			<input
-				type="checkbox"
-				name="burn-tokens"
-				id="burn-tokens"
-				placeholder="e.g. 1.000.000"
-				bind:checked={$daoData.tokenomics.burnTokens}
-			/>
-			<span class="slider" />
-			<span class="label">Burn tokens</span>
-		</label>
 		<label for="mint-tokens" class="switch">
 			<input
 				type="checkbox"

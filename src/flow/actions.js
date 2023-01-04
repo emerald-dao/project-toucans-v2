@@ -4,13 +4,13 @@ import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { user } from '$stores/flow/FlowStore';
 import { executeTransaction, replaceWithProperValues } from './utils';
+import { daoData } from '$stores/generator/DaoDataStore';
+import { get } from 'svelte/store';
 
 import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
 import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
-import { daoData } from '$stores/generator/DaoDataStore';
-import { get } from 'svelte/store';
 
 const rawTokenCodes = {
 	'Financial': rawFinancialTokenCode,
@@ -56,12 +56,23 @@ const deployContract = async () => {
 								.replace('INSERT SYMBOL', data.daoDetails.tokenName)
 								.replace('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.name.replace(/\s+/g, "");
-	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 
-	console.log(contractCode);
 	if (data.tokenomics.tokenType == 'Financial') {
+		console.log(data.tokenomics.mintTokens);
+		contractCode = contractCode.replace('// INSERT MINTING HERE', data.tokenomics.mintTokens ? 
+		`pub fun mintTokens(amount: UFix64): @Vault {
+			pre {
+			  amount > 0.0: "Amount minted must be greater than zero"
+			}
+			ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
+			emit TokensMinted(amount: amount)
+			return <- create Vault(balance: amount)
+		}` : '');
+		console.log(contractCode);
+		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 		return deployFinancialContract(hexCode, contractName, data);
 	} else if (data.tokenomics.tokenType == 'Community') {
+		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 		return deployCommunityContract(hexCode, contractName, data);
 	}
 

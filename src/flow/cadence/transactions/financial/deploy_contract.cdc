@@ -3,7 +3,7 @@ import FUSD from "../../utility/FUSD.cdc"
 
 transaction(
   contractName: String,
-  totalSupply: UFix64, 
+  fundingTarget: UFix64, 
   initialFUSDIssuanceRate: UFix64,
   reserveRate: UFix64,
   contractCode: String
@@ -22,7 +22,7 @@ transaction(
     deployer.contracts.add(
       name: contractName, 
       code: contractCode.decodeHex(),
-      _totalSupply: totalSupply, 
+      _fundingTarget: fundingTarget, 
       _initialFUSDIssuanceRate: initialFUSDIssuanceRate,
       _reserveRate: reserveRate
     )

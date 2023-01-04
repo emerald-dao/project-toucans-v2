@@ -13,7 +13,6 @@ export interface DaoData {
 		tokenType: TokenTypes;
 		totalSupply: number | undefined;
 		targetAmount: number | undefined;
-		burnTokens: boolean;
 		mintTokens: boolean;
 		walletAddresses: string[] | [];
 		initialRound: {

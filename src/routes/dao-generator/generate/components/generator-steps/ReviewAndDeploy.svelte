@@ -57,7 +57,6 @@
 			<RecapElement title="Total supply" data={$daoData.tokenomics.totalSupply} />
 		{/if}
 		<div class="row-6">
-			<RecapElement title="Token burning" data={$daoData.tokenomics.burnTokens} />
 			<RecapElement title="Token minting" data={$daoData.tokenomics.mintTokens} />
 		</div>
 	</RecapCard>
