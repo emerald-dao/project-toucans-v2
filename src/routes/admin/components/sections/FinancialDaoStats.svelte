@@ -17,8 +17,8 @@
 	/>
 	<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
 	<div class="chart-wrapper card">
-		<PieChart title="Funding" />
-		<!-- <LineChart title="Funding" /> -->
+		<!-- <PieChart title="Funding" /> -->
+		<LineChart title="Funding" />
 	</div>
 	<DataCard
 		title="Summary"
