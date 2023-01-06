@@ -6,9 +6,15 @@
 	export let icon: string | null = null;
 	export let hasBackground: boolean = false;
 	export let width: '100%' | 'fit-content' = '100%';
+	export let paddingInline = 'var(--space-7)';
+	export let paddingBlock = 'var(--space-5)';
 </script>
 
-<div class="card column-6" class:card-primary={hasBackground} style={`width: ${width}`}>
+<div
+	class="card column-6"
+	class:card-primary={hasBackground}
+	style={`width: ${width}; padding: ${paddingBlock} ${paddingInline}`}
+>
 	<div class="column-1">
 		<div class="row-2">
 			{#if icon}
@@ -23,6 +29,6 @@
 
 <style type="scss">
 	.card {
-		padding: var(--space-5) var(--space-7);
+		height: fit-content;
 	}
 </style>
