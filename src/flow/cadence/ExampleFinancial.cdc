@@ -228,7 +228,7 @@ pub contract ExampleFinancial: FungibleToken {
       self.amountBought = self.amountBought + amount
       
       // Tax the purchased tokens with reserve rate
-      let tax: @Vault <- purchasedTokens.withdraw(amount: purchasedTokens.balance * currentFundingCycle.reserveRate)
+      let tax: @Vault <- purchasedTokens.withdraw(amount: purchasedTokens.balance * currentFundingCycle.reserveRate) as! @ExampleFinancial.Vault
       let vault = self.account.getCapability(self.ReceiverPublicPath)
                 .borrow<&Vault{FungibleToken.Receiver}>()!
       vault.deposit(from: <- tax)

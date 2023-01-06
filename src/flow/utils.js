@@ -9,6 +9,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 		// For Tx/Scripts
 		.replace('"../../ExampleFinancial.cdc"', contractAddress)
 		.replace('"../../ExampleCommunity.cdc"', contractAddress)
+		.replace('"../../ExampleToken.cdc"', contractAddress)
 		.replace('"../../utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
 		.replace('"../../utility/MetadataViews.cdc"', addressList.MetadataViews)
 		.replace('"../../utility/FlowToken.cdc"', addressList.FlowToken)
@@ -24,7 +25,8 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 		.replace('"./utility/FUSD.cdc"', addressList.FUSD)
 		// For All
 		.replaceAll('ExampleFinancial', contractName)
-		.replaceAll('ExampleCommunity', contractName);
+		.replaceAll('ExampleCommunity', contractName)
+		.replaceAll('ExampleToken', contractName);
 }
 
 export const executeTransaction = async (transaction, actionAfterSucceed) => {
