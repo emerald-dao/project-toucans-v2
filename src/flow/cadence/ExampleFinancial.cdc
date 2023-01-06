@@ -48,9 +48,19 @@ pub contract ExampleFinancial: FungibleToken {
       pub let reserveRate: UFix64
       pub var amountPurchasedInRound: UFix64
       pub let timeFrame: CycleTimeFrame?
+      pub let funders: {Address: {Type: UFix64}}
 
-      pub fun updateAmountPurchased(amount: UFix64) {
+      pub fun trackPurchase(amount: UFix64, amountPaidOfTokenType: UFix64, tokenType: Type, payer: Address) {
         self.amountPurchasedInRound = self.amountPurchasedInRound + amount
+        if let funderHistory: &{Type: UFix64} = &self.funders[payer] as &{Type: UFix64}? {
+          if funderHistory[tokenType] != nil {
+            funderHistory[tokenType] = funderHistory[tokenType]! + amountPaidOfTokenType
+          } else {
+            funderHistory[tokenType] = amountPaidOfTokenType
+          }
+        } else {
+          self.funders[payer] = {tokenType: amountPaidOfTokenType}
+        }
       }
 
       init(_fundingTarget: UFix64?, _issuanceRates: {Type: UFix64}, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?) {
@@ -63,6 +73,7 @@ pub contract ExampleFinancial: FungibleToken {
         self.reserveRate = _reserveRate
         self.amountPurchasedInRound = 0.0
         self.timeFrame = _timeFrame
+        self.funders = {}
       }
     }
 
@@ -168,7 +179,7 @@ pub contract ExampleFinancial: FungibleToken {
       }
     }
 
-    pub fun purchase(amount: UFix64, tokens: @FungibleToken.Vault): @Vault {
+    pub fun purchase(amount: UFix64, tokens: @FungibleToken.Vault, recipient: &Vault{FungibleToken.Receiver}) {
       let currentFundingCycle: ExampleFinancial.FundingCycle = self.getCurrentFundingCycle()
       // Assert we have not raised more than the target
       assert(
@@ -182,18 +193,18 @@ pub contract ExampleFinancial: FungibleToken {
         message: "The current funding cycle has ended. The project owner must start a new one to further continue funding."
       )
       
+      fundingCycleRef.trackPurchase(amountBuying: amount, amountPaidOfTokenType: tokens.balance, tokenType: tokens.getType(), payer: recipient.owner!.address)
       var issuanceRate: UFix64 = self.getCurrentIssuanceRates()[tokens.getType()] ?? panic("This token payment is not supported during this funding cycle.")
       let tokenInfo = TokenRegistry.getRegistry()[tokens.getType()]!
-      let recipientVault = self.account.getCapability(tokenInfo.receiverPath)
+      let adminVault = self.account.getCapability(tokenInfo.receiverPath)
                           .borrow<&{FungibleToken.Receiver}>() ?? panic("You do not have a ".concat(tokenInfo.contractName).concat(" Vault set up."))
-      assert(recipientVault.getType().identifier == tokenInfo.identifier, message: "Wrong vault.")
-      recipientVault.deposit(from: <- tokens)
+      assert(adminVault.getType().identifier == tokenInfo.identifier, message: "Wrong vault.")
+      adminVault.deposit(from: <- tokens)
 
       // Mint amount of tokens according to issuance rate
       let purchasedTokens: @Vault <- create Vault(balance: amount * issuanceRate!)
       
       let fundingCycleRef: &FundingCycle = self.getCurrentFundingCycleRef()
-      fundingCycleRef.updateAmountPurchased(amount: amount)
 
       // Tokens were minted, so increase supply
       self.totalSupply = self.totalSupply + amount
@@ -207,7 +218,7 @@ pub contract ExampleFinancial: FungibleToken {
       vault.deposit(from: <- tax)
 
       // Return the rest after tax
-      return <- purchasedTokens
+      recipientVault.deposit(from: <- purchasedTokens)
     }
 
     // Helper Functions
