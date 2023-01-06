@@ -2,14 +2,11 @@
 	import DataCard from '$components/cards/DataCard.svelte';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
-	import { getAllMonths } from '$lib/utilities/formatDate';
-	import {
-		getMonthlyFunding,
-		getMonthlyFundingFromRounds
-	} from '$lib/utilities/getMonthlyFundings';
+	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import { Button, ProgressBar } from '@emerald-dao/component-library';
 
 	export let daoData: FinancialDao;
+
 	const fundingsPerMonth = getMonthlyFundingFromRounds(daoData.rounds);
 
 	const months: string[] = fundingsPerMonth.map((x) => x[0]);

@@ -6,8 +6,8 @@
 
 	export let daoData: CommunityDao;
 
-	const names: string[] = daoData.mainHolders.map((x) => x[0]);
-	const amounts: number[] = daoData.mainHolders.map((x) => x[1]);
+	const mainHolderNames: string[] = daoData.mainHolders.map((x) => x[0]);
+	const mainHolderAmounts: number[] = daoData.mainHolders.map((x) => x[1]);
 </script>
 
 <div class="main-wrapper">
@@ -19,7 +19,7 @@
 	/>
 	<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
 	<div class="chart-wrapper card">
-		<PieChart title="Token distribution" chartData={amounts} labels={names} />
+		<PieChart title="Token distribution" chartData={mainHolderAmounts} labels={mainHolderNames} />
 	</div>
 	<DataCard
 		title="Summary"

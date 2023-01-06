@@ -13,10 +13,11 @@
 	import { setLineChartColors } from './setChartColors';
 	import { onMount } from 'svelte';
 	import { theme } from '$stores/ThemeStore';
+	import { hyphenateAndLowerCase } from '$lib/utilities/formatStrings';
 
 	export let title: string;
-	export let chartData = [20, 10, 5, 2, 20, 30, 45];
-	export let labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+	export let chartData: number[];
+	export let labels: string[];
 
 	ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
 
@@ -29,7 +30,7 @@
 	};
 
 	onMount(() => {
-		chart = ChartJS.getChart(`line-chart-${title}`) as ChartJS;
+		chart = ChartJS.getChart(`line-chart-${hyphenateAndLowerCase(title)}`) as ChartJS;
 		setLineChartColors(chart);
 	});
 
@@ -74,4 +75,4 @@
 	};
 </script>
 
-<Line {data} {options} id={`line-chart-${title}`} />
+<Line {data} {options} id={`line-chart-${hyphenateAndLowerCase(title)}`} />

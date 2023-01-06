@@ -4,20 +4,29 @@
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import MainHolders from '../atoms/MainHolders.svelte';
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
+	import PieChart from '$components/charts/PieChart.svelte';
 
 	export let daoData: CommunityDao;
+
+	const mainHolderNames: string[] = daoData.mainHolders.map((x) => x[0]);
+	const mainHolderAmounts: number[] = daoData.mainHolders.map((x) => x[1]);
 </script>
 
 <div class="column-10">
-	<div class="main-wrapper card column-8">
-		<ChartTitle
-			title="Token Distribution"
-			data={`${daoData.token} Token`}
-			icon="tabler:activity-heartbeat"
-		/>
-		<div class="card-primary total-tokens-card column-0">
-			<span class="xsmall">Total Tokens</span>
-			<span class="large w-medium">{daoData.maxSupply.toLocaleString()}</span>
+	<div class="main-wrapper card row-space-between">
+		<div class="column-8">
+			<ChartTitle
+				title="Token Distribution"
+				data={`${daoData.token} Token`}
+				icon="tabler:activity-heartbeat"
+			/>
+			<div class="card-primary total-tokens-card column-0">
+				<span class="xsmall">Total Tokens</span>
+				<span class="large w-medium">{daoData.maxSupply.toLocaleString()}</span>
+			</div>
+		</div>
+		<div>
+			<PieChart title="Token distribution" chartData={mainHolderAmounts} labels={mainHolderNames} />
 		</div>
 	</div>
 	<Tabs>
