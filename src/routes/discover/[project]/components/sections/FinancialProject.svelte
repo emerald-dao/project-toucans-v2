@@ -6,8 +6,15 @@
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import { daysOfDifference } from '$lib/utilities/formatDate';
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
+	import LineChart from '$components/charts/LineChart.svelte';
+	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 
 	export let daoData: FinancialDao;
+
+	const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.rounds[0]]);
+
+	const months: string[] = fundingsPerMonth.map((x) => x[0]);
+	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
 <div class="column-10">
@@ -21,23 +28,28 @@
 			<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.maxSupply.toLocaleString()} />
 			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
 		</div>
-		<div class="card row justify-between">
-			<ChartTitle
-				title="Active Round"
-				data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
-				icon="tabler:activity-heartbeat"
-			/>
-			<div class="row projections-wrapper">
-				<div class="column goal-wrapper">
-					<p class="xsmall">Goal</p>
-					<span class="large w-medium">{daoData.rounds[0].goal.toLocaleString()}</span>
+		<div class="card column">
+			<div class="row justify-between">
+				<ChartTitle
+					title="Active Round"
+					data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
+					icon="tabler:activity-heartbeat"
+				/>
+				<div class="row projections-wrapper">
+					<div class="column goal-wrapper">
+						<p class="xsmall">Goal</p>
+						<span class="large w-medium">{daoData.rounds[0].goal.toLocaleString()}</span>
+					</div>
+					<div class="column days-left-wrapper">
+						<p class="xsmall">Days left</p>
+						<span class="large w-medium"
+							>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
+						>
+					</div>
 				</div>
-				<div class="column days-left-wrapper">
-					<p class="xsmall">Days left</p>
-					<span class="large w-medium"
-						>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
-					>
-				</div>
+			</div>
+			<div class="chart-wrapper">
+				<LineChart title="Active Round" chartData={amounts} labels={months} />
 			</div>
 		</div>
 	</div>

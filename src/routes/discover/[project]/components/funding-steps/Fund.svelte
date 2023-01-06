@@ -6,7 +6,6 @@
 	import { fundData } from '$stores/fund/FundDataStore';
 	import fundingSuite from '$lib/validations/fundingSuite';
 	import { Currencies } from '$lib/types/currencies.enum';
-	import { RadioButtons } from '$atoms';
 	import { fade } from 'svelte/transition';
 
 	const handleChange = (input: Event) => {
@@ -36,11 +35,28 @@
 		<h3 class="w-medium">Fund Emerald DAO</h3>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
 			<label for="receive">Funding amount</label>
-			<RadioButtons
-				name="currencies"
-				bind:binding={$fundData['currency']}
-				options={currenciesOptions}
-			/>
+			<div class="radio-tabs" id="currencies">
+				<label>
+					<input
+						type="radio"
+						id="flow"
+						name="currency"
+						value={Currencies.FLOW}
+						bind:group={$fundData['currency']}
+					/>
+					$FLOW
+				</label>
+				<label>
+					<input
+						type="radio"
+						id="fusd"
+						name="currency"
+						value={Currencies.FUSD}
+						bind:group={$fundData['currency']}
+					/>
+					$FUSD
+				</label>
+			</div>
 			<InputWrapper
 				name="amount"
 				iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
@@ -48,7 +64,7 @@
 				isValid={res.isValid('amount')}
 			>
 				<input
-					type="number"
+					type="text"
 					name="amount"
 					placeholder="1000"
 					bind:value={$fundData.amount}
@@ -95,6 +111,15 @@
 
 		label {
 			margin-bottom: var(--space-2);
+		}
+
+		.radio-tabs {
+			label {
+				font-size: var(--font-size-0);
+			}
+			label:has(input:checked) {
+				background-color: var(--clr-neutral-badge);
+			}
 		}
 
 		#receive {

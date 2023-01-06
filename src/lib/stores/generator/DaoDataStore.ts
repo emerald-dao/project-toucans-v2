@@ -14,11 +14,10 @@ export const daoData: Writable<DaoData> = writable({
 	tokenomics: {
 		tokenType: TokenTypes.FINANCIAL,
 		totalSupply: undefined,
-		burnTokens: false,
+		targetAmount: undefined,
 		mintTokens: false,
 		walletAddresses: [],
 		initialRound: {
-			targetAmount: undefined,
 			token: Currencies.FLOW,
 			issuanceRate: undefined,
 			reserveRate: undefined

@@ -4,17 +4,22 @@
 	import { ProjectSidebarSection } from './components';
 	import FinancialProject from './components/sections/FinancialProject.svelte';
 	import { financialDaoData } from '$lib/mock/financialDao';
+	import { communityDaoData } from '$lib/mock/communityDao';
 	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
 
+	export let data;
+	console.log(data);
 	let seeMore = false;
 
-	let daoData: FinancialDao | CommunityDao = financialDaoData;
+	let daoData: FinancialDao | CommunityDao = communityDaoData;
 </script>
 
 <section class="container">
 	<div class="main-wrapper">
-		<ProjectSidebarSection {daoData} />
+		<div class="project-sidebar-wrapper">
+			<ProjectSidebarSection {daoData} />
+		</div>
 		<div class="secondary-wrapper">
 			{#if daoData.type === DaoType.Community}
 				<CommunityProject {daoData} />
@@ -37,8 +42,6 @@
 	.main-wrapper {
 		display: flex;
 		overflow: hidden;
-		max-height: 75vh;
-		height: 100%;
 
 		@include mq(medium) {
 			display: grid;

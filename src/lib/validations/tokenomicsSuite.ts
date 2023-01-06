@@ -7,11 +7,11 @@ const tokenomicsSuite = create((data = {}, currentField) => {
 
 	group(TokenTypes.FINANCIAL, () => {
 		test('targetAmount', 'Target amount is needed', () => {
-			enforce(data.initialRound.targetAmount).isNotEmpty();
+			enforce(data.targetAmount).isNotEmpty();
 		});
 
 		test('targetAmount', 'Target amount must be greater than 0', () => {
-			enforce(data.initialRound.targetAmount).greaterThan(0);
+			enforce(data.targetAmount).greaterThan(0);
 		});
 
 		test('issuanceRate', 'Issuance rate is needed', () => {
