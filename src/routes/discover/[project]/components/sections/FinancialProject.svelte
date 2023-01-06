@@ -6,8 +6,15 @@
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import { daysOfDifference } from '$lib/utilities/formatDate';
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
+	import LineChart from '$components/charts/LineChart.svelte';
+	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 
 	export let daoData: FinancialDao;
+
+	const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.rounds[0]]);
+
+	const months: string[] = fundingsPerMonth.map((x) => x[0]);
+	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
 <div class="column-10">

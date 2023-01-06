@@ -82,7 +82,7 @@
 		errors={res.getErrors('amount')}
 		isValid={res.isValid('amount')}
 	>
-		<input name="amount" type="number" bind:value={formDist.tokens} on:input={handleChange} />
+		<input name="amount" type="text" bind:value={formDist.tokens} on:input={handleChange} />
 	</InputWrapper>
 </form>
 <div class="wrapper">

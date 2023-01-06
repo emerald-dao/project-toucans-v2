@@ -1,9 +1,16 @@
 <script type="ts">
 	import DataCard from '$components/cards/DataCard.svelte';
-	import type { CommunityDao } from '$lib/types/dao-project.interface';
+	import LineChart from '$components/charts/LineChart.svelte';
+	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import { Button, ProgressBar } from '@emerald-dao/component-library';
 
-	export let daoData: CommunityDao;
+	export let daoData: FinancialDao;
+
+	const fundingsPerMonth = getMonthlyFundingFromRounds(daoData.rounds);
+
+	const months: string[] = fundingsPerMonth.map((x) => x[0]);
+	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
 <div class="main-wrapper">
@@ -15,11 +22,14 @@
 			icon="tabler:home"
 		/>
 		<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
-		<div class="chart-wrapper card">Chart goes here</div>
+		<div class="chart-wrapper card">
+			<LineChart title="Funding" labels={months} chartData={amounts} />
+		</div>
 	</div>
 	<DataCard
 		title="Summary"
 		hasBackground={true}
+		paddingBlock="var(--space-8)"
 		data={`${(daoData.circulatingSupply / daoData.maxSupply) * 100}%`}
 	>
 		<ProgressBar
@@ -42,7 +52,7 @@
 			grid-template-columns: repeat(3, 1fr);
 			grid-template-rows: repeat(2, auto);
 			grid-column-gap: var(--space-5);
-			grid-row-gap: var(--space-8);
+			grid-row-gap: var(--space-6);
 		}
 
 		.data-card-display {

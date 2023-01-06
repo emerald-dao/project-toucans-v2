@@ -1,6 +1,6 @@
 import { createActiveStep } from '$stores/steps/ActiveStep';
 import { createSteps } from '$stores/steps/Steps';
-import { dummyTransactionExecution } from '$flow/actions';
+import { deployContractExecution, dummyTransactionExecution } from '$flow/actions';
 import TokenType from '../../../routes/dao-generator/generate/components/generator-steps/TokenType.svelte';
 import Tokenomics from '../../../routes/dao-generator/generate/components/generator-steps/Tokenomics.svelte';
 import ReviewAndDeploy from '../../../routes/dao-generator/generate/components/generator-steps/ReviewAndDeploy.svelte';
@@ -35,7 +35,7 @@ export const generatorSteps = createSteps([
 		name: 'Review & Deploy',
 		slug: 'review',
 		component: ReviewAndDeploy,
-		action: dummyTransactionExecution,
+		action: deployContractExecution,
 		form: false,
 		state: 'inactive'
 	}

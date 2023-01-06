@@ -1,6 +1,33 @@
 import * as fcl from '@onflow/fcl';
 import { get } from 'svelte/store';
 import { transactionStore } from '$stores/flow/TransactionStore';
+import { addresses } from '$stores/flow/FlowStore';
+
+export function replaceWithProperValues(script, contractName = '', contractAddress = '') {
+	const addressList = get(addresses);
+	return script
+		// For Tx/Scripts
+		.replace('"../../ExampleFinancial.cdc"', contractAddress)
+		.replace('"../../ExampleCommunity.cdc"', contractAddress)
+		.replace('"../../ExampleToken.cdc"', contractAddress)
+		.replace('"../../utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
+		.replace('"../../utility/MetadataViews.cdc"', addressList.MetadataViews)
+		.replace('"../../utility/FlowToken.cdc"', addressList.FlowToken)
+		.replace('"../../utility/FUSD.cdc"', addressList.FUSD)
+		.replace('"../../utility/FungibleToken.cdc"', addressList.FungibleToken)
+		.replace('"../../utility/FLOAT.cdc"', addressList.FLOAT)
+		// For Contract
+		.replace('"./utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
+		.replace('"./utility/MetadataViews.cdc"', addressList.MetadataViews)
+		.replace('"./utility/FungibleToken.cdc"', addressList.FungibleToken)
+		.replace('"./utility/FungibleTokenMetadataViews.cdc"', addressList.FungibleTokenMetadataViews)
+		.replace('"./utility/FlowToken.cdc"', addressList.FlowToken)
+		.replace('"./utility/FUSD.cdc"', addressList.FUSD)
+		// For All
+		.replaceAll('ExampleFinancial', contractName)
+		.replaceAll('ExampleCommunity', contractName)
+		.replaceAll('ExampleToken', contractName);
+}
 
 export const executeTransaction = async (transaction, actionAfterSucceed) => {
 	transactionStore.initTransaction();

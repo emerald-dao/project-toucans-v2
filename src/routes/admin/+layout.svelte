@@ -1,9 +1,7 @@
 <script type="ts">
 	import { financialDaoData } from '$lib/mock/financialDao';
 	import { AdminNav } from './components';
-	import { Container, Section } from '@mateoroldos/svelte.bones';
 	import { setContext } from 'svelte';
-	import { Currencies } from '$lib/types/currencies.enum';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
 	import { communityDaoData } from '$lib/mock/communityDao';
 
