@@ -2,18 +2,17 @@
 	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
 	import Icon from '@iconify/svelte';
 	import { Button, InputWrapper, Range } from '@emerald-dao/component-library';
-	import DistributionElement from '../atoms/DistributionElement.svelte';
 	import roundDistributionSuite from '$lib/validations/roundDistributionSuite';
+	import PieChart from '$components/charts/PieChart.svelte';
+	import type { SvelteComponent } from 'svelte';
 
-	let distributionData: DistributionData = {
-		address: '',
-		percentage: 0
-	};
+	let distributionList: [string, number][] = [['Treasury Wallet', 100]];
+	let distributionData: [string, number] = ['', 0];
 
-	interface DistributionData {
-		address: string;
-		percentage: number;
-	}
+	let distributionAddresses: string[] = distributionList.map((x) => x[0]);
+	let distributionPercentages: number[] = distributionList.map((x) => x[1]);
+
+	let chart: SvelteComponent;
 
 	const handleChange = (input: Event) => {
 		if (input.type === 'change') {
@@ -25,14 +24,13 @@
 	};
 
 	const handleSubmit = () => {
-		distributionList = [...distributionList, distributionData];
-		distributionData = {
-			address: '',
-			percentage: 0
-		};
-
 		roundDistributionSuite.reset();
 		res = roundDistributionSuite.get();
+
+		chart.updateChartData(distributionData[0], distributionData[1]);
+
+		distributionList = [...distributionList, distributionData];
+		distributionData = ['', 0];
 	};
 
 	const deleteFromDistributionList = (i: number) => {
@@ -42,21 +40,14 @@
 
 	let res = roundDistributionSuite.get();
 
-	let distributionList: DistributionData[] = [
-		{
-			address: 'Treasury Wallet',
-			percentage: 100
-		}
-	];
-
-	const onDistributionListChange = (newList: DistributionData[]) => {
+	const onDistributionListChange = (newList: [string, number][]) => {
 		let distributedPercentage = 0;
 
 		for (let index = 1; index < newList.length; index++) {
-			distributedPercentage = distributedPercentage + newList[index].percentage;
+			distributedPercentage = distributedPercentage + newList[index][1];
 		}
 
-		distributionList[0].percentage = 100 - distributedPercentage;
+		distributionList[0][1] = 100 - distributedPercentage;
 	};
 
 	$: {
@@ -83,15 +74,15 @@
 					<input
 						type="text"
 						id="address"
-						bind:value={distributionData.address}
+						bind:value={distributionData[0]}
 						on:input={handleChange}
 					/>
 				</InputWrapper>
 				<div class="range-wrapper">
 					<label for="distribution-percentage">Percentage to distribute</label>
 					<Range
-						bind:value={distributionData.percentage}
-						max={distributionList[0].percentage}
+						bind:value={distributionData[1]}
+						max={distributionList[0][1]}
 						suffix="%"
 						id="distribution-percentage"
 						on:change={handleChange}
@@ -107,15 +98,12 @@
 			</form>
 		</div>
 		<div class="right-wrapper">
-			{#each distributionList as distrbutionData, i}
-				<DistributionElement
-					address={distrbutionData.address}
-					percentage={distrbutionData.percentage}
-					canDelete={i > 0}
-					on:delete={() => deleteFromDistributionList(i)}
-					{i}
-				/>
-			{/each}
+			<PieChart
+				title="distribution"
+				chartData={distributionPercentages}
+				labels={distributionAddresses}
+				bind:this={chart}
+			/>
 			<div />
 		</div>
 	</div>
