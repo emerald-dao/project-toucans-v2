@@ -39,6 +39,7 @@ export interface Round {
 	finishDate: Date;
 	distributed: boolean;
 	withdrawn: boolean;
+	fundings: Funding[];
 }
 
 export interface Activity {
@@ -46,6 +47,11 @@ export interface Activity {
 	currency: Currencies.FLOW | Currencies.FUSD;
 	amount: number;
 	account: string;
+	date: Date;
+}
+
+export interface Funding extends Activity {
+	type: 'entry';
 }
 
 export enum DaoTags {

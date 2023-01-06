@@ -15,3 +15,15 @@ export const daysOfDifference = (date1: Date, date2: Date) => {
 
 	return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 };
+
+export const getAllMonths = (startDate: Date, endDate: Date): string[] => {
+	const months: string[] = [];
+	let currentDate = startDate;
+	while (currentDate <= endDate) {
+		months.push(
+			currentDate.toLocaleString('default', { month: 'long' }) + ' ' + currentDate.getFullYear()
+		);
+		currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+	}
+	return months;
+};

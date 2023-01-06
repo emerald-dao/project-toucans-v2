@@ -32,12 +32,11 @@
 			{
 				label: title,
 				data: chartData,
-				cutout: '92%',
+				cutout: '94%',
 				borderWidth: '1',
 				borderRadius: 7,
 				spacing: 10,
 				hoverOffset: 12,
-				circumference: 180,
 				rotation: 270
 			}
 		]
@@ -46,11 +45,11 @@
 	const options = {
 		responsive: true,
 		layout: {
-			padding: 50
+			padding: 10
 		},
 		plugins: {
 			legend: {
-				position: 'top',
+				position: 'bottom',
 				labels: {
 					boxWidth: 10,
 					boxHeight: 10,
