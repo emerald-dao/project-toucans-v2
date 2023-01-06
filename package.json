@@ -57,6 +57,8 @@
 		"@emerald-dao/component-library": "^3.0.0",
 		"@emerald-dao/design-system": "^2.0.0",
 		"@onflow/fcl": "^1.2.1",
+		"@supabase/supabase-js": "^1.35.7",
+		"buffer": "^6.0.3",
 		"chart.js": "^3.9.1",
 		"svelte-chartjs": "^3.0.1"
 	}

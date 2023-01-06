@@ -28,26 +28,10 @@
 		>
 			<input
 				name="targetAmount"
-				type="number"
+				type="text"
 				min="1"
 				placeholder="e.g. 1.000.000"
-				bind:value={$daoData.tokenomics.initialRound.targetAmount}
-				on:input={handleChange}
-			/>
-		</InputWrapper>
-
-		<InputWrapper
-			name="issuanceRate"
-			label="Issuance rate"
-			errors={res.getErrors('issuanceRate')}
-			isValid={res.isValid('issuanceRate')}
-		>
-			<input
-				name="issuanceRate"
-				type="number"
-				min="0"
-				placeholder="e.g. 1 AlphaCoin - 1 FUSD"
-				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
+				bind:value={$daoData.tokenomics.targetAmount}
 				on:input={handleChange}
 			/>
 		</InputWrapper>
@@ -61,6 +45,22 @@
 				on:change={handleChange}
 			/>
 		</div>
+
+		<InputWrapper
+			name="issuanceRate"
+			label="Issuance rate"
+			errors={res.getErrors('issuanceRate')}
+			isValid={res.isValid('issuanceRate')}
+		>
+			<input
+				name="issuanceRate"
+				type="text"
+				min="0"
+				placeholder={`e.g. 1 AlphaCoin - 1 ${$daoData.tokenomics.initialRound.token}`}
+				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
 	{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 		<InputWrapper
 			name="supply"
@@ -69,7 +69,7 @@
 			isValid={res.isValid('supply')}
 		>
 			<input
-				type="number"
+				type="text"
 				name="supply"
 				placeholder="e.g. 1.000.000"
 				bind:value={$daoData.tokenomics.totalSupply}
@@ -78,17 +78,6 @@
 		</InputWrapper>
 	{/if}
 	<div class="column-1 align-start">
-		<label for="burn-tokens" class="switch">
-			<input
-				type="checkbox"
-				name="burn-tokens"
-				id="burn-tokens"
-				placeholder="e.g. 1.000.000"
-				bind:checked={$daoData.tokenomics.burnTokens}
-			/>
-			<span class="slider" />
-			<span class="label">Burn tokens</span>
-		</label>
 		<label for="mint-tokens" class="switch">
 			<input
 				type="checkbox"
