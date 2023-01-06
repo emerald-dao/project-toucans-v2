@@ -23,7 +23,7 @@ transaction(
       name: contractName, 
       code: contractCode.decodeHex(),
       _fundingTarget: fundingTarget, 
-      _initialFUSDIssuanceRate: initialFUSDIssuanceRate,
+      _issuanceRates: {Type<@FUSD.Vault>(): initialFUSDIssuanceRate},
       _reserveRate: reserveRate,
       _timeFrame: nil
     )

@@ -1,9 +1,7 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
 import MetadataViews from "./utility/MetadataViews.cdc"
-// Token Types
-import FlowToken from "./utility/FlowToken.cdc"
-import FUSD from "./utility/FUSD.cdc"
+import TokenRegistry from "./TokenRegistry.cdc"
  
 pub contract ExampleFinancial: FungibleToken {
 
@@ -45,7 +43,7 @@ pub contract ExampleFinancial: FungibleToken {
       pub let currentCycle: UInt32
       // nil if the funding target is infinity
       pub let fundingTarget: UFix64?
-      pub let issuanceRates: IssuanceRates
+      pub let issuanceRates: {Type: UFix64}
       // a tax on purchases
       pub let reserveRate: UFix64
       pub var amountPurchasedInRound: UFix64
@@ -55,7 +53,7 @@ pub contract ExampleFinancial: FungibleToken {
         self.amountPurchasedInRound = self.amountPurchasedInRound + amount
       }
 
-      init(_fundingTarget: UFix64?, _issuanceRates: IssuanceRates, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?) {
+      init(_fundingTarget: UFix64?, _issuanceRates: {Type: UFix64}, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?) {
         pre {
           _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
         }
@@ -65,18 +63,6 @@ pub contract ExampleFinancial: FungibleToken {
         self.reserveRate = _reserveRate
         self.amountPurchasedInRound = 0.0
         self.timeFrame = _timeFrame
-      }
-    }
-
-    pub struct IssuanceRates {
-      pub let FLOW: UFix64?
-      pub let FUSD: UFix64?
-      pub let others: {String: UFix64}
-
-      init(_FLOW: UFix64?, _FUSD: UFix64?, _others: {String: UFix64}) {
-        self.FLOW = _FLOW
-        self.FUSD = _FUSD
-        self.others = _others
       }
     }
 
@@ -167,7 +153,7 @@ pub contract ExampleFinancial: FungibleToken {
     pub resource Administrator {
       // INSERT MINTING HERE
 
-      pub fun nextFundingCycle(fundingTarget: UFix64?, issuanceRates: IssuanceRates, reserveRate: UFix64, timeFrame: CycleTimeFrame?) {
+      pub fun nextFundingCycle(fundingTarget: UFix64?, issuanceRates: {Type: UFix64}, reserveRate: UFix64, timeFrame: CycleTimeFrame?) {
         ExampleFinancial.currentFundingCycle = ExampleFinancial.currentFundingCycle + 1
         let newFundingCycle = FundingCycle(
           _fundingTarget: fundingTarget,
@@ -196,25 +182,12 @@ pub contract ExampleFinancial: FungibleToken {
         message: "The current funding cycle has ended. The project owner must start a new one to further continue funding."
       )
       
-      var issuanceRate: UFix64? = nil
-      if tokens.isInstance(Type<@FlowToken.Vault>()) {
-        // Get issuance rate for $FLOW
-        issuanceRate = self.getCurrentIssuanceRates().FLOW ?? panic("There was no issuance rate for $FLOW.")
-
-        let flowVault = self.account.getCapability(/public/flowTokenReceiver)
-                          .borrow<&FlowToken.Vault{FungibleToken.Receiver}>()!
-        flowVault.deposit(from: <- tokens)
-      } else if tokens.isInstance(Type<@FlowToken.Vault>()) {
-        // Get issuance rate for $FUSD
-        issuanceRate = self.getCurrentIssuanceRates().FUSD ?? panic("There was no issuance rate for $FUSD.")
-        
-        // Mint amount of tokens according to issuance rate
-        let fusdVault = self.account.getCapability(/public/fusdReceiver)
-                          .borrow<&FUSD.Vault{FungibleToken.Receiver}>()!
-        fusdVault.deposit(from: <- tokens)
-      } else {
-        panic("There was no issuance rate for the supplied token type.")
-      }
+      var issuanceRate: UFix64 = self.getCurrentIssuanceRates()[tokens.getType()] ?? panic("This token payment is not supported during this funding cycle.")
+      let tokenInfo = TokenRegistry.getRegistry()[tokens.getType()]!
+      let recipientVault = self.account.getCapability(tokenInfo.receiverPath)
+                          .borrow<&{FungibleToken.Receiver}>() ?? panic("You do not have a ".concat(tokenInfo.contractName).concat(" Vault set up."))
+      assert(recipientVault.getType().identifier == tokenInfo.identifier, message: "Wrong vault.")
+      recipientVault.deposit(from: <- tokens)
 
       // Mint amount of tokens according to issuance rate
       let purchasedTokens: @Vault <- create Vault(balance: amount * issuanceRate!)
@@ -239,7 +212,7 @@ pub contract ExampleFinancial: FungibleToken {
 
     // Helper Functions
 
-    pub fun getCurrentIssuanceRates(): IssuanceRates {
+    pub fun getCurrentIssuanceRates(): {Type: UFix64} {
       return self.getCurrentFundingCycle().issuanceRates
     }
 
@@ -257,7 +230,7 @@ pub contract ExampleFinancial: FungibleToken {
 
     init(
       _fundingTarget: UFix64,
-      _initialFUSDIssuanceRate: UFix64,
+      _issuanceRates: {Type: UFix64},
       _reserveRate: UFix64,
       _timeFrame: CycleTimeFrame?
     ) {
@@ -268,7 +241,7 @@ pub contract ExampleFinancial: FungibleToken {
       self.currentFundingCycle = 0
       self.fundingCycles = [FundingCycle(
         _fundingTarget: _fundingTarget,
-        _issuanceRates: IssuanceRates(_FLOW: nil, _FUSD: _initialFUSDIssuanceRate, _others: {}),
+        _issuanceRates: _issuanceRates,
         _reserveRate: _reserveRate,
         _timeFrame: _timeFrame
       )]
