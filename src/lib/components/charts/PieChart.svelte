@@ -14,18 +14,26 @@
 
 	let chart: ChartJS | undefined;
 
-	const updateChart = () => {
-		if (chart != undefined) {
-			setPieChartColors(chart);
-		}
-	};
-
 	onMount(() => {
 		chart = ChartJS.getChart(`pie-chart-${hyphenateAndLowerCase(title)}`) as ChartJS;
 		setPieChartColors(chart);
 	});
 
-	$: $theme && updateChart();
+	export const updateChartData = (newLabel: string, newData: number) => {
+		if (chart && chart.data.labels) chart.data.labels.push(newLabel);
+		if (chart)
+			chart.data.datasets.forEach((dataset) => {
+				dataset.data.push(newData);
+			});
+
+		if (chart) chart.update();
+	};
+
+	const updateColors = () => {
+		if (chart) setPieChartColors(chart);
+	};
+
+	$: $theme && updateColors();
 
 	let data = {
 		labels,
