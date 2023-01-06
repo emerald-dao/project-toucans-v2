@@ -4,12 +4,14 @@
 	import { ProjectSidebarSection } from './components';
 	import FinancialProject from './components/sections/FinancialProject.svelte';
 	import { financialDaoData } from '$lib/mock/financialDao';
+
 	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
+	import { communityDaoData } from '$lib/mock/communityDao';
 
 	let seeMore = false;
 
-	let daoData: FinancialDao | CommunityDao = financialDaoData;
+	let daoData: FinancialDao | CommunityDao = communityDaoData;
 </script>
 
 <section class="container">
@@ -36,14 +38,23 @@
 <style type="scss">
 	.main-wrapper {
 		display: flex;
+		flex-direction: column;
 		overflow: hidden;
-		max-height: 75vh;
 		height: 100%;
 
 		@include mq(medium) {
 			display: grid;
 			grid-template-columns: 1.3fr 2fr;
 			gap: 4rem;
+			max-height: 75vh;
+		}
+
+		.secondary-wrapper {
+			margin-top: var(--space-10);
+
+			@include mq(medium) {
+				margin-top: 0;
+			}
 		}
 	}
 	.button {
@@ -56,7 +67,7 @@
 		border: solid 1px var(--clr-tertiary-main);
 		border-radius: var(--radius-1) 0px 0px var(--radius-1);
 		cursor: pointer;
-
+		background-color: rgba(255, 102, 196, 0.1);
 		p {
 			color: var(--clr-tertiary-main);
 		}

@@ -59,9 +59,13 @@
 		}
 
 		.create-round-wrapper {
-			display: flex;
-			justify-content: flex-end;
-			width: 100%;
+			display: none;
+
+			@include mq('medium') {
+				display: flex;
+				justify-content: flex-end;
+				width: 100%;
+			}
 		}
 	}
 </style>

@@ -21,7 +21,7 @@
 			<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.maxSupply.toLocaleString()} />
 			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
 		</div>
-		<div class="card row justify-between">
+		<div class="card chart-wrapper">
 			<ChartTitle
 				title="Active Round"
 				data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
@@ -57,25 +57,42 @@
 </div>
 
 <style type="scss">
-	.projections-wrapper {
-		gap: var(--space-2);
+	.chart-wrapper {
+		display: flex;
+		flex-direction: column;
 
-		span {
-			color: var(--clr-heading-main);
+		@include mq('small') {
+			flex-direction: row;
+			justify-content: space-between;
 		}
 
-		.goal-wrapper {
-			padding: var(--space-3) var(--space-10) var(--space-3) var(--space-7);
-			background-color: var(--clr-surface-primary);
-			border-top-left-radius: var(--radius-4);
-			border-bottom-left-radius: var(--radius-4);
-		}
+		.projections-wrapper {
+			margin-top: var(--space-6);
+			gap: var(--space-2);
+			justify-content: flex-start;
 
-		.days-left-wrapper {
-			padding: var(--space-3) var(--space-7);
-			background-color: var(--clr-surface-primary);
-			border-top-right-radius: var(--radius-4);
-			border-bottom-right-radius: var(--radius-4);
+			@include mq('small') {
+				height: fit-content;
+				margin-top: 0;
+			}
+
+			span {
+				color: var(--clr-heading-main);
+			}
+
+			.goal-wrapper {
+				padding: var(--space-3) var(--space-10) var(--space-3) var(--space-7);
+				background-color: var(--clr-surface-primary);
+				border-top-left-radius: var(--radius-4);
+				border-bottom-left-radius: var(--radius-4);
+			}
+
+			.days-left-wrapper {
+				padding: var(--space-3) var(--space-7);
+				background-color: var(--clr-surface-primary);
+				border-top-right-radius: var(--radius-4);
+				border-bottom-right-radius: var(--radius-4);
+			}
 		}
 	}
 </style>

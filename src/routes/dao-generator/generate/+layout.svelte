@@ -7,7 +7,9 @@
 </script>
 
 <Section paddingTop="none">
-	<GeneratorNav />
+	<div class="nav-wrapper">
+		<GeneratorNav />
+	</div>
 	<div class="content-wrapper">
 		<Container width="small" --container-s="34ch">
 			<h2>{$generatorSteps[$generatorActiveStep].name}</h2>
@@ -17,6 +19,13 @@
 </Section>
 
 <style type="scss">
+	.nav-wrapper {
+		display: none;
+
+		@include mq('small') {
+			display: block;
+		}
+	}
 	.content-wrapper {
 		margin-top: 2.8rem;
 
