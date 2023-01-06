@@ -49,7 +49,7 @@
 			grid-template-columns: repeat(3, 1fr);
 			grid-template-rows: repeat(2, auto);
 			grid-column-gap: var(--space-5);
-			grid-row-gap: var(--space-8);
+			grid-row-gap: var(--space-6);
 		}
 
 		.data-card-display {
