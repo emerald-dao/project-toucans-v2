@@ -1,6 +1,6 @@
 <script type="ts">
 	import StepButtons from './atoms/StepButtons.svelte';
-	import { InputWrapper, Range } from '@emerald-dao/component-library';
+	import { InputWrapper, Range, TooltipIcon } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import tokenomicsSuite from '$lib/validations/tokenomicsSuite';
@@ -25,6 +25,7 @@
 			label="Target amount"
 			errors={res.getErrors('targetAmount')}
 			isValid={res.isValid('targetAmount')}
+			tooltip="Lorem ipsum helper text"
 		>
 			<input
 				name="targetAmount"
@@ -37,7 +38,10 @@
 		</InputWrapper>
 
 		<div class="range-wrapper">
-			<label for="reserveRate">Reserve rate</label>
+			<div class="row-2">
+				<label for="reserveRate">Reserve rate </label>
+				<TooltipIcon tooltip="Lorem ipsum helper text" width={0.75} />
+			</div>
 			<Range
 				bind:value={$daoData.tokenomics.initialRound.reserveRate}
 				suffix="%"
@@ -51,12 +55,13 @@
 			label="Issuance rate"
 			errors={res.getErrors('issuanceRate')}
 			isValid={res.isValid('issuanceRate')}
+			tooltip="Lorem ipsum helper text"
 		>
 			<input
 				name="issuanceRate"
 				type="text"
 				min="0"
-				placeholder={`e.g. 1 AlphaCoin - 1 ${$daoData.tokenomics.initialRound.token}`}
+				placeholder={`e.g. 1 ${$daoData.daoDetails.tokenName} - 1 ${$daoData.tokenomics.initialRound.token}`}
 				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
 				on:input={handleChange}
 			/>
@@ -67,6 +72,7 @@
 			label="Total supply"
 			errors={res.getErrors('supply')}
 			isValid={res.isValid('supply')}
+			tooltip="Lorem ipsum helper text"
 		>
 			<input
 				type="text"
@@ -88,6 +94,7 @@
 			/>
 			<span class="slider" />
 			<span class="label">Mint tokens</span>
+			<TooltipIcon tooltip="Lorem ipsum helper text" width={0.75} />
 		</label>
 	</div>
 

@@ -15,53 +15,18 @@
 	};
 
 	let res = fundingSuite.get();
-
-	const currenciesOptions = [
-		{
-			name: Currencies.FLOW,
-			value: Currencies.FLOW,
-			text: '$FLOW'
-		},
-		{
-			name: Currencies.FUSD,
-			value: Currencies.FUSD,
-			text: '$FUSD'
-		}
-	];
 </script>
 
 <div in:fade={{ duration: 200 }}>
 	<div class="column-6 align-start">
 		<h3 class="w-medium">Fund Emerald DAO</h3>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
-			<label for="receive">Funding amount</label>
-			<div class="radio-tabs" id="currencies">
-				<label>
-					<input
-						type="radio"
-						id="flow"
-						name="currency"
-						value={Currencies.FLOW}
-						bind:group={$fundData['currency']}
-					/>
-					$FLOW
-				</label>
-				<label>
-					<input
-						type="radio"
-						id="fusd"
-						name="currency"
-						value={Currencies.FUSD}
-						bind:group={$fundData['currency']}
-					/>
-					$FUSD
-				</label>
-			</div>
 			<InputWrapper
 				name="amount"
 				iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
 				errors={res.getErrors('amount')}
 				isValid={res.isValid('amount')}
+				label={`Funding amount ($${$fundData.currency})`}
 			>
 				<input
 					type="text"
@@ -85,13 +50,16 @@
 				/>
 			</InputWrapper>
 			{#if $fundData.issuanceRate}
-				<label for="receive">You will receive</label>
+				<label for="receive">You will recieve</label>
+				<span class="xsmall"
+					>{`Issuance rate: $${$fundData.issuanceRate} ${$fundData.tokenName} = $1 ${$fundData.currency}`}</span
+				>
 				<input
 					name="receive"
 					type="text"
 					value="${(($fundData.amount ? $fundData.amount : 0) * $fundData.issuanceRate).toFixed(
 						2
-					)} EMLD"
+					)} {$fundData.tokenName}"
 					readonly
 					id="receive"
 				/>
@@ -113,19 +81,15 @@
 			margin-bottom: var(--space-2);
 		}
 
-		.radio-tabs {
-			label {
-				font-size: var(--font-size-0);
-			}
-			label:has(input:checked) {
-				background-color: var(--clr-neutral-badge);
-			}
-		}
-
 		#receive {
-			padding: 0;
+			padding-left: 0;
 			background-color: transparent;
 			border: none;
+			color: var(--clr-heading-main);
+		}
+
+		label[for='receive'] {
+			margin-bottom: 0;
 		}
 
 		textarea {

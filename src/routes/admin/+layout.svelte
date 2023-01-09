@@ -6,7 +6,7 @@
 	import { communityDaoData } from '$lib/mock/communityDao';
 
 	// TODO: Get all data from the blockchain and share it with a context
-	const daoData: FinancialDao | CommunityDao = financialDaoData;
+	const daoData: FinancialDao | CommunityDao = communityDaoData;
 	setContext<FinancialDao | CommunityDao>('dao-data', daoData);
 </script>
 

@@ -5,9 +5,9 @@ import { Currencies } from '$lib/types/currencies.enum';
 export const fundData: Writable<FundData> = writable({
 	daoName: '',
 	daoAddress: '',
-	tokenName: '',
+	tokenName: 'EMLD',
 	funderAddress: '',
-	currency: Currencies.FLOW,
+	currency: Currencies.FUSD,
 	amount: null,
 	specialMessage: '',
 	issuanceRate: 1.2,
