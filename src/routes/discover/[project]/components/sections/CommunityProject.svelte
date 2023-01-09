@@ -13,7 +13,7 @@
 </script>
 
 <div class="column-10">
-	<div class="main-wrapper card row-space-between">
+	<div class="main-wrapper card">
 		<div class="column-8">
 			<ChartTitle
 				title="Token Distribution"
@@ -25,7 +25,7 @@
 				<span class="large w-medium">{daoData.maxSupply.toLocaleString()}</span>
 			</div>
 		</div>
-		<div>
+		<div class="chart-wrapper">
 			<PieChart title="Token distribution" chartData={mainHolderAmounts} labels={mainHolderNames} />
 		</div>
 	</div>
@@ -45,7 +45,14 @@
 
 <style type="scss">
 	.main-wrapper {
-		height: fit-content;
+		display: flex;
+		flex-direction: column;
+
+		@include mq('medium') {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+		}
 
 		.total-tokens-card {
 			padding: var(--space-4);
@@ -54,6 +61,16 @@
 
 			span:not(:first-child) {
 				color: var(--clr-heading-main);
+			}
+		}
+
+		.chart-wrapper {
+			position: relative;
+			width: 40vw;
+			align-self: center;
+
+			@include mq('medium') {
+				width: auto;
 			}
 		}
 	}

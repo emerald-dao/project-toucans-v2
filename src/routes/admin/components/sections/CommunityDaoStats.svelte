@@ -12,14 +12,16 @@
 
 <div class="main-wrapper">
 	<DataCard title="Token" data={daoData.token} hasBackground={true} />
-	<DataCard
-		title="Circulating Supply"
-		data={daoData.circulatingSupply.toLocaleString()}
-		icon="tabler:home"
-	/>
-	<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
-	<div class="chart-wrapper card">
-		<PieChart title="Token distribution" chartData={mainHolderAmounts} labels={mainHolderNames} />
+	<div class="data-card-display">
+		<DataCard
+			title="Circulating Supply"
+			data={daoData.circulatingSupply.toLocaleString()}
+			icon="tabler:home"
+		/>
+		<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
+		<div class="chart-wrapper card">
+			<PieChart title="Token distribution" chartData={mainHolderAmounts} labels={mainHolderNames} />
+		</div>
 	</div>
 	<DataCard
 		title="Summary"
@@ -38,11 +40,26 @@
 
 <style type="scss">
 	.main-wrapper {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: repeat(2, auto);
-		grid-column-gap: var(--space-5);
-		grid-row-gap: var(--space-6);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-10);
+
+		@include mq('medium') {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-rows: repeat(2, auto);
+			grid-column-gap: var(--space-5);
+			grid-row-gap: var(--space-6);
+		}
+
+		.data-card-display {
+			display: none;
+			height: fit-content;
+
+			@include mq('medium') {
+				display: contents;
+			}
+		}
 
 		.chart-wrapper {
 			grid-area: 2 / 1 / 3 / 3;

@@ -32,10 +32,11 @@
 				/>
 			</div>
 		</div>
-		<span class="xsmall">{`${formatDate(round.startDate)} to ${formatDate(round.finishDate)}`}</span
+		<span class="xsmall display-handling"
+			>{`${formatDate(round.startDate)} to ${formatDate(round.finishDate)}`}</span
 		>
 	</div>
-	<div class="row-5">
+	<div class="row-5 display-handling">
 		{#if round.status === 'active'}
 			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
 				{`${-daysOfDifference(new Date(), round.finishDate)} days left`}
@@ -72,6 +73,14 @@
 
 		.progress-bar-wrapper {
 			width: 100%;
+		}
+
+		.display-handling {
+			display: none;
+
+			@include mq('medium') {
+				display: block;
+			}
 		}
 	}
 </style>

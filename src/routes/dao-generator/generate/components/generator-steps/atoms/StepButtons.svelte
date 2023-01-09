@@ -27,6 +27,5 @@
 		flex-direction: row;
 		justify-content: space-between;
 		margin-top: 2rem;
-		gap: 2rem;
 	}
 </style>

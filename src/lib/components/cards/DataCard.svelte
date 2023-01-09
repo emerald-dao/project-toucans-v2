@@ -29,6 +29,9 @@
 
 <style type="scss">
 	.card {
-		height: fit-content;
+		padding: var(--space-2) var(--space-3);
+		@include mq('small') {
+			padding: var(--space-5) var(--space-7);
+		}
 	}
 </style>

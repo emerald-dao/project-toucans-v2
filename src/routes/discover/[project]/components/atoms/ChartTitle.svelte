@@ -6,20 +6,22 @@
 </script>
 
 <div class="data-wrapper">
-	<div class="column-1">
-		<div class="row-2 align-center">
-			<Icon {icon} />
-			<span>{title}</span>
-		</div>
-		<h4 class="heading w-medium">{data}</h4>
+	<div class="row-2 align-center">
+		<Icon {icon} />
+		<span>{title}</span>
 	</div>
+	<h4 class="heading w-medium">{data}</h4>
 </div>
 
 <style type="scss">
 	.data-wrapper {
 		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
-		align-items: center;
+
+		@include mq('small') {
+			flex-direction: column;
+		}
 	}
 	span {
 		font-size: var(--font-size-4);

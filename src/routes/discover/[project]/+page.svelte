@@ -12,7 +12,7 @@
 	console.log(data);
 	let seeMore = false;
 
-	let daoData: FinancialDao | CommunityDao = communityDaoData;
+	let daoData: FinancialDao | CommunityDao = financialDaoData;
 </script>
 
 <section class="container">
@@ -41,12 +41,32 @@
 <style type="scss">
 	.main-wrapper {
 		display: flex;
-		overflow: hidden;
+		flex-direction: column;
+		height: 100%;
 
 		@include mq(medium) {
 			display: grid;
 			grid-template-columns: 1.3fr 2fr;
 			gap: 4rem;
+		}
+
+		.project-sidebar-wrapper {
+			position: relative;
+			top: 0;
+
+			@include mq(medium) {
+				position: sticky;
+				top: var(--space-16);
+				height: fit-content;
+			}
+		}
+
+		.secondary-wrapper {
+			margin-top: var(--space-10);
+
+			@include mq(medium) {
+				margin-top: 0;
+			}
 		}
 	}
 	.button {
@@ -57,8 +77,10 @@
 		align-items: center;
 		padding: var(--space-2) var(--space-4);
 		border: solid 1px var(--clr-tertiary-main);
+		border-right-width: 0px;
 		border-radius: var(--radius-1) 0px 0px var(--radius-1);
 		cursor: pointer;
+		background-color: var(--clr-tertiary-badge);
 
 		p {
 			color: var(--clr-tertiary-main);
