@@ -7,7 +7,6 @@
 	import { communityDaoData } from '$lib/mock/communityDao';
 	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
-	import { communityDaoData } from '$lib/mock/communityDao';
 
 	export let data;
 	console.log(data);
@@ -50,7 +49,6 @@
 			display: grid;
 			grid-template-columns: 1.3fr 2fr;
 			gap: 4rem;
-			max-height: 75vh;
 		}
 
 		.secondary-wrapper {

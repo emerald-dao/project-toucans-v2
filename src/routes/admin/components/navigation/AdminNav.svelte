@@ -40,6 +40,10 @@
 		padding-bottom: var(--space-5);
 		border-bottom: 1px solid var(--clr-neutral-400);
 
+		@include mq('medium') {
+			border-bottom: none;
+		}
+
 		.distribute-display {
 			display: none;
 

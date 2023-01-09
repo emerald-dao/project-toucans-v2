@@ -33,12 +33,16 @@
 		position: fixed;
 		top: 0;
 		right: 0;
-		height: 100vh;
-		width: 30vw;
+		height: 100%;
+		width: 100vw;
 		z-index: 99;
 		display: flex;
 		flex-direction: column;
 		background: var(--clr-surface-primary);
+
+		@include mq(medium) {
+			width: 30vw;
+		}
 
 		.button {
 			align-self: flex-end;
