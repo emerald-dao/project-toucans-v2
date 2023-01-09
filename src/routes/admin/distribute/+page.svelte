@@ -38,7 +38,7 @@
 		</div>
 		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
 	</div>
-	<div class="dist-wrapper sub-wrapper">
+	<div class="dist-wrapper sub-wrapper card">
 		<DistributionStaging bind:distStaging />
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
@@ -70,9 +70,8 @@
 			display: flex;
 			flex-direction: column;
 			gap: 1.4rem;
-			border: 2px var(--clr-border-primary) solid;
-			border-radius: 0.6rem;
 			transition: 3s;
+			padding: var(--space-8);
 		}
 	}
 </style>
