@@ -28,23 +28,28 @@
 			<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.maxSupply.toLocaleString()} />
 			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
 		</div>
-		<div class="card chart-wrapper">
-			<ChartTitle
-				title="Active Round"
-				data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
-				icon="tabler:activity-heartbeat"
-			/>
-			<div class="row projections-wrapper">
-				<div class="column goal-wrapper">
-					<p class="xsmall">Goal</p>
-					<span class="large w-medium">{daoData.rounds[0].goal.toLocaleString()}</span>
+		<div class="card column">
+			<div class="row justify-between">
+				<ChartTitle
+					title="Active Round"
+					data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
+					icon="tabler:activity-heartbeat"
+				/>
+				<div class="row projections-wrapper">
+					<div class="column goal-wrapper">
+						<p class="xsmall">Goal</p>
+						<span class="large w-medium">{daoData.rounds[0].goal.toLocaleString()}</span>
+					</div>
+					<div class="column days-left-wrapper">
+						<p class="xsmall">Days left</p>
+						<span class="large w-medium"
+							>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
+						>
+					</div>
 				</div>
-				<div class="column days-left-wrapper">
-					<p class="xsmall">Days left</p>
-					<span class="large w-medium"
-						>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
-					>
-				</div>
+			</div>
+			<div class="chart-wrapper">
+				<LineChart title="Active Round" chartData={amounts} labels={months} />
 			</div>
 		</div>
 	</div>
@@ -64,42 +69,25 @@
 </div>
 
 <style type="scss">
-	.chart-wrapper {
-		display: flex;
-		flex-direction: column;
+	.projections-wrapper {
+		gap: var(--space-2);
 
-		@include mq('small') {
-			flex-direction: row;
-			justify-content: space-between;
+		span {
+			color: var(--clr-heading-main);
 		}
 
-		.projections-wrapper {
-			margin-top: var(--space-6);
-			gap: var(--space-2);
-			justify-content: flex-start;
+		.goal-wrapper {
+			padding: var(--space-3) var(--space-10) var(--space-3) var(--space-7);
+			background-color: var(--clr-surface-primary);
+			border-top-left-radius: var(--radius-4);
+			border-bottom-left-radius: var(--radius-4);
+		}
 
-			@include mq('small') {
-				height: fit-content;
-				margin-top: 0;
-			}
-
-			span {
-				color: var(--clr-heading-main);
-			}
-
-			.goal-wrapper {
-				padding: var(--space-3) var(--space-10) var(--space-3) var(--space-7);
-				background-color: var(--clr-surface-primary);
-				border-top-left-radius: var(--radius-4);
-				border-bottom-left-radius: var(--radius-4);
-			}
-
-			.days-left-wrapper {
-				padding: var(--space-3) var(--space-7);
-				background-color: var(--clr-surface-primary);
-				border-top-right-radius: var(--radius-4);
-				border-bottom-right-radius: var(--radius-4);
-			}
+		.days-left-wrapper {
+			padding: var(--space-3) var(--space-7);
+			background-color: var(--clr-surface-primary);
+			border-top-right-radius: var(--radius-4);
+			border-bottom-right-radius: var(--radius-4);
 		}
 	}
 </style>
