@@ -32,6 +32,10 @@
 
 <div class="main-wrapper">
 	<div class="forms-wrapper sub-wrapper">
+		<div class="introduction">
+			<h5>Distribute</h5>
+			<p class="small">Distribute tokens within the members of it's community.</p>
+		</div>
 		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
 	</div>
 	<div class="dist-wrapper sub-wrapper">
@@ -48,18 +52,25 @@
 	.main-wrapper {
 		display: grid;
 		grid-template-columns: 2fr 3fr;
-		gap: 2rem;
+		gap: var(--space-13);
 		height: 100%;
 
 		.sub-wrapper {
-			padding: 2rem;
+			.introduction {
+				margin-bottom: var(--space-8);
+
+				h5 {
+					margin-bottom: var(--space-2);
+					margin-top: 0;
+				}
+			}
 		}
 
 		.dist-wrapper {
 			display: flex;
 			flex-direction: column;
 			gap: 1.4rem;
-			border: 2px var(--clr-neutral-300) solid;
+			border: 2px var(--clr-border-primary) solid;
 			border-radius: 0.6rem;
 			transition: 3s;
 		}
