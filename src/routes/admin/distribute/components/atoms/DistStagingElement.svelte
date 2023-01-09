@@ -1,4 +1,5 @@
 <script type="ts">
+	import { Currency } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
@@ -10,18 +11,16 @@
 	}
 
 	export let forAccount: string;
-	export let amount: number | undefined;
+	export let amount: number;
 	export let tokenName: string;
 </script>
 
 <div transition:fly|local={{ x: 10, duration: 700 }}>
-	<div class="row-1">
-		<div class="card-primary">
-			<div class="row-4" gap={1}>
-				<span><span class="token-name">{`$${tokenName} `} </span>{amount}</span>
-				<Icon icon="tabler:arrow-narrow-right" />
-				<span>{forAccount}</span>
-			</div>
+	<div class="main-wrapper row-4 align-center">
+		<div class="card-primary row-space-between align-center">
+			<Currency {amount} currency={tokenName} />
+			<Icon icon="tabler:arrow-narrow-right" />
+			<span>{forAccount}</span>
 		</div>
 		<div class="clickable" on:click={deleteDist} on:keydown>
 			<Icon icon="tabler:circle-x" />
@@ -30,16 +29,20 @@
 </div>
 
 <style type="scss">
-	span {
-		font-size: var(--fs-100);
-		--font-weight: 500;
-	}
+	.main-wrapper {
+		width: 100%;
 
-	.token-name {
-		color: var(--clr-font-text-t5);
-	}
+		.card-primary {
+			width: 100%;
+			padding: var(--space-4) var(--space-6);
 
-	.clickable {
-		cursor: pointer;
+			span {
+				font-size: var(--font-size-0);
+			}
+		}
+
+		.clickable {
+			cursor: pointer;
+		}
 	}
 </style>

@@ -1,11 +1,11 @@
 <script type="ts">
 	import type { Distribution } from '$lib/types/distribution.interface';
-	import type { FullDaoProject } from '$lib/types/dao-project.interface';
+	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import DistStagingElement from '../atoms/DistStagingElement.svelte';
 	import { getContext } from 'svelte';
 	import { fly } from 'svelte/transition';
 
-	const daoData: FullDaoProject = getContext('dao-data');
+	const daoData: CommunityDao = getContext('dao-data');
 
 	const deleteFromStaging = (i: number) => {
 		distStaging.splice(i, 1);
@@ -21,14 +21,18 @@
 			<DistStagingElement
 				forAccount={dist.account}
 				amount={dist.tokens}
-				tokenName={daoData.tokenName}
+				tokenName={daoData.token}
 				on:deleteDist={() => deleteFromStaging(i)}
 			/>
 		{/each}
 	{:else}
 		<div class="request-wrapper">
-			<span in:fly|local={{ y: 10, duration: 500, delay: 1000 }}>
-				Add elements to the staging area to make a distribution
+			<span class="small" in:fly|local={{ y: 10, duration: 500, delay: 1000 }}>
+				1. Use the input fields on the left to add wallet addresses to distribute DAO Treasury funds
+				to.
+			</span>
+			<span class="small" in:fly|local={{ y: 10, duration: 500, delay: 1000 }}>
+				2. When you are ready, click “Distribute” to send the funds.
 			</span>
 		</div>
 	{/if}
@@ -51,10 +55,11 @@
 		place-content: center;
 
 		span {
-			text-align: center;
-			max-width: 20ch;
-			color: var(--clr-font-text-soft);
-			font-size: var(--fs-300);
+			max-width: 26ch;
+
+			&:first-child {
+				margin-bottom: var(--space-4);
+			}
 		}
 	}
 </style>

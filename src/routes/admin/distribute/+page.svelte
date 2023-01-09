@@ -1,19 +1,19 @@
 <script type="ts">
 	import type { Distribution } from '$lib/types/distribution.interface';
-	import type { FullDaoProject } from '$lib/types/dao-project.interface';
+	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import DistributionStaging from './components/sections/DistributionStaging.svelte';
 	import DistributionForms from './components/sections/DistributionForms.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
 	import { fly } from 'svelte/transition';
 
-	const daoData: FullDaoProject = getContext('dao-data');
+	const daoData: CommunityDao = getContext('dao-data');
 
 	let distStaging: Distribution[] = [];
 
 	let formDist: Distribution = {
 		account: '',
-		tokens: undefined
+		tokens: 0
 	};
 	let csvDist: Distribution[] = [];
 

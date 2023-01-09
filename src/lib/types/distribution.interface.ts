@@ -1,4 +1,4 @@
 export interface Distribution {
 	account: string;
-	tokens: number | undefined;
+	tokens: number;
 }
