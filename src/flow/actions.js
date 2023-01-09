@@ -51,16 +51,16 @@ const deployContract = async () => {
 	console.log(data);
 	const rawContractCode = rawTokenCodes[data.tokenomics.tokenType];
 	let contractCode = rawContractCode
-								.replace('INSERT NAME', data.daoDetails.name)
-								.replace('INSERT DESCRIPTION', data.daoDetails.description)
-								.replace('INSERT SYMBOL', data.daoDetails.tokenName)
-								.replace('INSERT URL', data.daoDetails.website);
+		.replace('INSERT NAME', data.daoDetails.name)
+		.replace('INSERT DESCRIPTION', data.daoDetails.description)
+		.replace('INSERT SYMBOL', data.daoDetails.tokenName)
+		.replace('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.name.replace(/\s+/g, "");
 
 	if (data.tokenomics.tokenType == 'Financial') {
 		console.log(data.tokenomics.mintTokens);
-		contractCode = contractCode.replace('// INSERT MINTING HERE', data.tokenomics.mintTokens ? 
-		`pub fun mintTokens(amount: UFix64): @Vault {
+		contractCode = contractCode.replace('// INSERT MINTING HERE', data.tokenomics.mintTokens ?
+			`pub fun mintTokens(amount: UFix64): @Vault {
 			pre {
 			  amount > 0.0: "Amount minted must be greater than zero"
 			}
@@ -84,6 +84,7 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 		args: (arg, t) => [
 			arg(contractName, t.String),
 			arg(parseFloat(data.tokenomics.targetAmount).toFixed(2), t.UFix64),
+			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.reserveRate / 100.0).toFixed(2), t.UFix64),
 			arg(hexCode, t.String)

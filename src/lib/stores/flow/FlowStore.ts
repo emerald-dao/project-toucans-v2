@@ -47,6 +47,9 @@ const contractData = {
 		testnet: '0xb05b2abb42335e88',
 		mainnet: '0x233eb012d34b0070'
 	},
+	Toucans: {
+		emulator: '0xf8d6e0586b0a20c7'
+	},
 };
 
 export const user = writable(null);
@@ -66,5 +69,6 @@ export const addresses = derived([network], ([$network]) => {
 		FLOAT: contractData.FLOAT[$network],
 		FIND: contractData.FIND[$network],
 		FN: contractData.FN[$network],
+		Toucans: contractData.Toucans[$network]
 	};
 });
