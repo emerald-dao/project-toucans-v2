@@ -51,9 +51,14 @@
 		}
 
 		.project-sidebar-wrapper {
-			position: sticky;
-			top: var(--space-16);
-			height: fit-content;
+			position: relative;
+			top: 0;
+
+			@include mq(medium) {
+				position: sticky;
+				top: var(--space-16);
+				height: fit-content;
+			}
 		}
 
 		.secondary-wrapper {

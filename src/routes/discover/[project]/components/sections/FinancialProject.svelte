@@ -29,7 +29,7 @@
 			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
 		</div>
 		<div class="card column">
-			<div class="row justify-between">
+			<div class="data-wrapper">
 				<ChartTitle
 					title="Active Round"
 					data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
@@ -69,6 +69,17 @@
 </div>
 
 <style type="scss">
+	.data-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: var(--space-5);
+
+		@include mq(medium) {
+			flex-direction: row;
+			gap: 0;
+		}
+	}
 	.projections-wrapper {
 		gap: var(--space-2);
 
@@ -88,6 +99,14 @@
 			background-color: var(--clr-surface-primary);
 			border-top-right-radius: var(--radius-4);
 			border-bottom-right-radius: var(--radius-4);
+		}
+	}
+
+	.chart-wrapper {
+		margin-top: var(--space-7);
+
+		@include mq(small) {
+			width: auto;
 		}
 	}
 </style>
