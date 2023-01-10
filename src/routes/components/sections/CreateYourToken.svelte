@@ -36,11 +36,19 @@
 			intersecting: false
 		}
 	];
+
+	let activeStep: number | undefined = undefined;
+
+	const handleIntersection = (i: number) => {
+		activeStep = i;
+	};
+
+	$: stepsData.filter((e) => e.intersecting === false) ? (activeStep = undefined) : null;
 </script>
 
 <section class="container">
 	<div class="hide-on-mobile left-wrapper">
-		<CreateProjectStepsCard />
+		<CreateProjectStepsCard {activeStep} />
 	</div>
 	<div class="right-wrapper">
 		<div class="title-wrapper">
@@ -59,6 +67,7 @@
 					bind:intersecting={stepsData[i].intersecting}
 					threshold={1}
 					rootMargin="-115px"
+					on:intersect={() => handleIntersection(i)}
 				>
 					<div bind:this={stepsData[i].element} class="steps-wrapper">
 						<div class="row-3 align-center">
