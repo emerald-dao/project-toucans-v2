@@ -1,22 +1,19 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
 import MetadataViews from "./utility/MetadataViews.cdc"
-import TokenRegistry from "./TokenRegistry.cdc"
+import Toucans from "./Toucans.cdc"
  
 pub contract ExampleFinancial: FungibleToken {
 
-    // The total amount that have been sold off so far
-    pub var amountBought: UFix64
     // The amount of tokens in existance
     pub var totalSupply: UFix64
-    pub var currentFundingCycle: UInt32
-    access(self) var fundingCycles: [FundingCycle]
 
     // Paths
     pub let VaultStoragePath: StoragePath
     pub let ReceiverPublicPath: PublicPath
     pub let VaultPublicPath: PublicPath
-    pub let AdminStoragePath: StoragePath
+    pub let OwnerStoragePath: StoragePath
+    pub let OwnerPublicPath: PublicPath
 
     // Events
     pub event TokensInitialized(initialSupply: UFix64)
@@ -24,86 +21,8 @@ pub contract ExampleFinancial: FungibleToken {
     pub event TokensDeposited(amount: UFix64, to: Address?)
     pub event TokensMinted(amount: UFix64)
     pub event TokensBurned(amount: UFix64)
-    pub event NewFundingCycle(cycle: UInt32, info: FundingCycle)
-
-    pub struct PurchaseData {
-      pub let amount: UFix64
-      pub let buyer: Address
-      pub let tokenType: Type
-      pub let timestamp: UFix64
-      pub let volumesAfter: {Type: UFix64}
-
-      init(_ amount: UFix64, _ buyer: Address, _ tokenType: Type, _ volumesAfter: {Type: UFix64}) {
-        self.amount = amount
-        self.buyer = buyer
-        self.tokenType = tokenType
-        self.timestamp = getCurrentBlock().timestamp
-        self.volumesAfter = volumesAfter
-      }
-    }
-
-    pub struct CycleTimeFrame {
-      pub let startTime: UFix64
-      pub let endTime: UFix64
-
-      init(_ startTime: UFix64, _ endTime: UFix64) {
-        pre {
-          endTime > startTime: "The end time must be greater than the start time."
-        }
-        self.startTime = startTime
-        self.endTime = endTime
-      }
-    }
-
-    pub struct FundingCycle {
-      pub let currentCycle: UInt32
-      // nil if the funding target is infinity
-      pub let fundingTarget: UFix64?
-      pub let issuanceRates: {Type: UFix64}
-      // a tax on purchases
-      pub let reserveRate: UFix64
-      pub var amountPurchasedInRound: UFix64
-      pub let timeFrame: CycleTimeFrame?
-      pub let funders: {Address: {Type: UFix64}}
-      pub let amountRaised: {Type: UFix64}
-      pub let purchaseHistory: [PurchaseData]
-      pub let extra: {String: String}
-
-      pub fun trackPurchase(amount: UFix64, amountPaidOfTokenType: UFix64, tokenType: Type, payer: Address) {
-        self.amountPurchasedInRound = self.amountPurchasedInRound + amount
-        if let funderHistory: &{Type: UFix64} = &self.funders[payer] as &{Type: UFix64}? {
-          if funderHistory[tokenType] != nil {
-            funderHistory[tokenType] = funderHistory[tokenType]! + amountPaidOfTokenType
-          } else {
-            funderHistory[tokenType] = amountPaidOfTokenType
-          }
-        } else {
-          self.funders[payer] = {tokenType: amountPaidOfTokenType}
-        }
-
-        self.amountRaised[tokenType] = (self.amountRaised[tokenType] ?? 0.0) + amountPaidOfTokenType
-        self.purchaseHistory.append(PurchaseData(amount, payer, tokenType, self.amountRaised))
-      }
-
-      init(_fundingTarget: UFix64?, _issuanceRates: {Type: UFix64}, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?, _ extra: {String: String}) {
-        pre {
-          _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
-        }
-        self.currentCycle = ExampleFinancial.currentFundingCycle
-        self.issuanceRates = _issuanceRates
-        self.fundingTarget = _fundingTarget
-        self.reserveRate = _reserveRate
-        self.amountPurchasedInRound = 0.0
-        self.timeFrame = _timeFrame
-        self.funders = {}
-        self.amountRaised = {}
-        self.purchaseHistory = []
-        self.extra = extra
-      }
-    }
 
     pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, MetadataViews.Resolver {
-
         pub var balance: UFix64
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
@@ -186,109 +105,56 @@ pub contract ExampleFinancial: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-    pub resource Administrator {
+    pub resource interface OwnerPublic {
+      pub fun purchase(paymentTokens: @FungibleToken.Vault, recipient: Address)
+      pub fun getProjectPublic(): &Toucans.Project{Toucans.ProjectPublic}
+    }
+
+    pub resource Owner: OwnerPublic {
+      access(self) let toucanProject: @Toucans.Project
+
       // INSERT MINTING HERE
 
-      pub fun nextFundingCycle(fundingTarget: UFix64?, issuanceRates: {Type: UFix64}, reserveRate: UFix64, timeFrame: CycleTimeFrame?, extra: {String: String}) {
-        ExampleFinancial.currentFundingCycle = ExampleFinancial.currentFundingCycle + 1
-        let newFundingCycle: FundingCycle = FundingCycle(
-          _fundingTarget: fundingTarget,
-          _issuanceRates: issuanceRates,
-          _reserveRate: reserveRate,
-          _timeFrame: timeFrame,
-          extra
-        )
-
-        ExampleFinancial.fundingCycles.append(newFundingCycle)
-
-        emit NewFundingCycle(cycle: ExampleFinancial.currentFundingCycle, info: newFundingCycle)
+      pub fun purchase(paymentTokens: @FungibleToken.Vault, recipient: Address) {
+        let issuanceRate: UFix64 = self.toucanProject.getCurrentIssuanceRates()[paymentTokens.getType()] ?? panic("This token payment is not supported during this funding cycle.")
+        let amount: UFix64 = issuanceRate * paymentTokens.balance
+        self.toucanProject.purchase(mintedTokens: <- create Vault(balance: amount), paymentTokens: <- paymentTokens, recipient: recipient)
       }
-    }
 
-    pub fun purchase(amount: UFix64, tokens: @FungibleToken.Vault, recipient: &Vault{FungibleToken.Receiver}) {
-      let currentFundingCycle: ExampleFinancial.FundingCycle = self.getCurrentFundingCycle()
-      // Assert we have not raised more than the target
-      assert(
-        currentFundingCycle.fundingTarget == nil || (amount + currentFundingCycle.amountPurchasedInRound <= currentFundingCycle.fundingTarget!),
-        message: "You cannot purchase more than the reserve limit."
-      )
-      let currentTime: UFix64 = getCurrentBlock().timestamp
-      // Assert that if there is a time frame on the cycle, we are within it
-      assert(
-        currentFundingCycle.timeFrame == nil || (currentFundingCycle.timeFrame!.startTime <= currentTime && currentFundingCycle.timeFrame!.endTime >= currentTime),
-        message: "The current funding cycle has ended. The project owner must start a new one to further continue funding."
-      )
-      
-      let fundingCycleRef: &FundingCycle = self.getCurrentFundingCycleRef()
-      fundingCycleRef.trackPurchase(amount: amount, amountPaidOfTokenType: tokens.balance, tokenType: tokens.getType(), payer: recipient.owner!.address)
-      var issuanceRate: UFix64 = self.getCurrentIssuanceRates()[tokens.getType()] ?? panic("This token payment is not supported during this funding cycle.")
-      let tokenInfo = TokenRegistry.getRegistry()[tokens.getType()]!
-      let adminVault = self.account.getCapability(tokenInfo.receiverPath)
-                          .borrow<&{FungibleToken.Receiver}>() ?? panic("You do not have a ".concat(tokenInfo.contractName).concat(" Vault set up."))
-      assert(adminVault.getType().identifier == tokenInfo.identifier, message: "Wrong vault.")
-      adminVault.deposit(from: <- tokens)
+      pub fun getProject(): &Toucans.Project {
+        return &self.toucanProject as &Toucans.Project
+      }
 
-      // Mint amount of tokens according to issuance rate
-      let purchasedTokens: @Vault <- create Vault(balance: amount * issuanceRate)
+      pub fun getProjectPublic(): &Toucans.Project{Toucans.ProjectPublic} {
+        return &self.toucanProject as &Toucans.Project{Toucans.ProjectPublic}
+      }
 
-      // Tokens were minted, so increase supply
-      self.totalSupply = self.totalSupply + amount
-      // Tokens were purchased, so increment amount raised
-      self.amountBought = self.amountBought + amount
-      
-      // Tax the purchased tokens with reserve rate
-      let tax: @Vault <- purchasedTokens.withdraw(amount: purchasedTokens.balance * currentFundingCycle.reserveRate) as! @ExampleFinancial.Vault
-      let vault = self.account.getCapability(self.ReceiverPublicPath)
-                .borrow<&Vault{FungibleToken.Receiver}>()!
-      vault.deposit(from: <- tax)
+      init(_ toucanProject: @Toucans.Project) {
+        self.toucanProject <- toucanProject
+      }
 
-      // Return the rest after tax
-      recipient.deposit(from: <- purchasedTokens)
-    }
-
-    // Helper Functions
-
-    pub fun getCurrentIssuanceRates(): {Type: UFix64} {
-      return self.getCurrentFundingCycle().issuanceRates
-    }
-
-    pub fun getCurrentFundingCycle(): FundingCycle {
-      return self.fundingCycles[self.currentFundingCycle]
-    }
-
-    access(self) fun getCurrentFundingCycleRef(): &FundingCycle {
-      return &self.fundingCycles[self.currentFundingCycle] as &FundingCycle
-    }
-
-    pub fun getFundingCycles(): [FundingCycle] {
-      return self.fundingCycles
+      destroy() {
+        destroy self.toucanProject
+      }
     }
 
     init(
       _fundingTarget: UFix64,
       _issuanceRates: {Type: UFix64},
       _reserveRate: UFix64,
-      _timeFrame: CycleTimeFrame?,
+      _timeFrame: Toucans.CycleTimeFrame?,
       _extra: {String: String}
     ) {
 
       // Contract Variables
       self.totalSupply = 0.0
-      self.amountBought = 0.0
-      self.currentFundingCycle = 0
-      self.fundingCycles = [FundingCycle(
-        _fundingTarget: _fundingTarget,
-        _issuanceRates: _issuanceRates,
-        _reserveRate: _reserveRate,
-        _timeFrame: _timeFrame,
-        _extra
-      )]
 
       // Paths
       self.VaultStoragePath = /storage/ExampleFinancialVault
       self.ReceiverPublicPath = /public/ExampleFinancialReceiver
       self.VaultPublicPath = /public/ExampleFinancialMetadata
-      self.AdminStoragePath = /storage/ExampleFinancialAdmin
+      self.OwnerStoragePath = /storage/ExampleFinancialOwner
+      self.OwnerPublicPath = /public/ExampleFinancialOwner
 
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)
@@ -304,8 +170,10 @@ pub contract ExampleFinancial: FungibleToken {
           target: self.VaultStoragePath
       )
 
-      let admin <- create Administrator()
-      self.account.save(<-admin, to: self.AdminStoragePath)
+      let toucansProject <- Toucans.createProject(tokenType: Type<@Vault>())
+      toucansProject.nextFundingCycle(fundingTarget: _fundingTarget, issuanceRates: _issuanceRates, reserveRate: _reserveRate, timeFrame: _timeFrame, extra: _extra)
+      self.account.save(<- create Owner(<- toucansProject), to: self.OwnerStoragePath)
+      self.account.link<&Owner{OwnerPublic}>(self.OwnerPublicPath, target: self.OwnerStoragePath)
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)

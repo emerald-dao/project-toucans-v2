@@ -16,6 +16,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 		.replace('"../../utility/FUSD.cdc"', addressList.FUSD)
 		.replace('"../../utility/FungibleToken.cdc"', addressList.FungibleToken)
 		.replace('"../../utility/FLOAT.cdc"', addressList.FLOAT)
+		.replace('"../../Toucans.cdc"', addressList.Toucans)
 		// For Contract
 		.replace('"./utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
 		.replace('"./utility/MetadataViews.cdc"', addressList.MetadataViews)
@@ -23,6 +24,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 		.replace('"./utility/FungibleTokenMetadataViews.cdc"', addressList.FungibleTokenMetadataViews)
 		.replace('"./utility/FlowToken.cdc"', addressList.FlowToken)
 		.replace('"./utility/FUSD.cdc"', addressList.FUSD)
+		.replace('"./Toucans.cdc"', addressList.Toucans)
 		// For All
 		.replaceAll('ExampleFinancial', contractName)
 		.replaceAll('ExampleCommunity', contractName)

@@ -1,10 +1,12 @@
 import FungibleToken from "../../utility/FungibleToken.cdc"
 import FUSD from "../../utility/FUSD.cdc"
+import FlowToken from "../../utility/FlowToken.cdc"
 
 transaction(
   contractName: String,
   fundingTarget: UFix64, 
   initialFUSDIssuanceRate: UFix64,
+  initialFlowTokenIssuanceRate: UFix64,
   reserveRate: UFix64,
   contractCode: String
 ) {
@@ -23,7 +25,10 @@ transaction(
       name: contractName, 
       code: contractCode.decodeHex(),
       _fundingTarget: fundingTarget, 
-      _issuanceRates: {Type<@FUSD.Vault>(): initialFUSDIssuanceRate},
+      _issuanceRates: {
+        Type<@FUSD.Vault>(): initialFUSDIssuanceRate,
+        Type<@FlowToken.Vault>(): initialFlowTokenIssuanceRate
+      },
       _reserveRate: reserveRate,
       _timeFrame: nil
     )

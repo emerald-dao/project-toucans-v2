@@ -48,7 +48,8 @@
 				"testnet": "0xe223d8a629e49c68",
 				"mainnet": "0x3c5959b568896393"
 			}
-		}
+		},
+		"Toucans": "./src/flow/cadence/Toucans.cdc"
 	},
 	"accounts": {
 		"emulator-account": {
@@ -62,7 +63,8 @@
 				"NonFungibleToken",
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
-				"FUSD"
+				"FUSD",
+				"Toucans"
 			]
 		}
 	}
