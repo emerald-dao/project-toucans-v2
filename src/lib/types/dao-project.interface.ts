@@ -21,6 +21,7 @@ interface DaoInfo {
 
 export interface FinancialDao extends DaoInfo {
 	type: DaoType.Financial;
+	mainFunders: [string, number][];
 	rounds: Round[];
 	totalFusdRaised: number;
 }

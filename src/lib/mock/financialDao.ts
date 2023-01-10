@@ -21,6 +21,12 @@ export const financialDaoData: FinancialDao = {
 	maxSupply: 8000000,
 	circulatingSupply: 3000000,
 	totalFusdRaised: 2000,
+	mainFunders: [
+		['dene.find', 100000],
+		['jacob.find', 110000],
+		['mateo.find', 90000],
+		['bz.find', 130000]
+	],
 	rounds: [
 		{
 			status: 'active',
