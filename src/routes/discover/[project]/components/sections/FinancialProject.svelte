@@ -19,7 +19,7 @@
 
 <div class="column-10">
 	<div class="main-wrapper column-8">
-		<div class="row-4">
+		<div class="boxes-wrapper">
 			<DataCard
 				title="Total Funding"
 				icon="tabler:pig-money"
@@ -69,6 +69,16 @@
 </div>
 
 <style type="scss">
+	.boxes-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-5);
+
+		@include mq(small) {
+			flex-direction: row;
+		}
+	}
+
 	.data-wrapper {
 		display: flex;
 		flex-direction: column;
