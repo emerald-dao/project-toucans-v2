@@ -58,12 +58,16 @@
 		<TabList>
 			<Tab>Recent Activity</Tab>
 			<Tab>Main Funders</Tab>
+			<Tab>Rounds</Tab>
 		</TabList>
 		<TabPanel>
 			<RecentActivity />
 		</TabPanel>
 		<TabPanel>
-			<MainFunders />
+			<MainFunders {daoData} />
+		</TabPanel>
+		<TabPanel>
+			<!-- 	<RoundDetails {}/> -->
 		</TabPanel>
 	</Tabs>
 </div>
