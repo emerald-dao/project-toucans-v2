@@ -8,6 +8,7 @@
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
+	import Rounds from '../atoms/Rounds.svelte';
 
 	export let daoData: FinancialDao;
 
@@ -67,7 +68,22 @@
 			<MainFunders {daoData} />
 		</TabPanel>
 		<TabPanel>
-			<!-- 	<RoundDetails {}/> -->
+			<div class="rounds-wrapper">
+				<h5>Active</h5>
+				{#each daoData.rounds as round}
+					{#if round.status === 'active'}
+						<Rounds {round} />
+					{/if}
+				{/each}
+			</div>
+			<div class="rounds-wrapper">
+				<h5>Finished</h5>
+				{#each daoData.rounds as round}
+					{#if round.status != 'active'}
+						<Rounds {round} />
+					{/if}
+				{/each}
+			</div>
 		</TabPanel>
 	</Tabs>
 </div>
@@ -122,5 +138,13 @@
 		@include mq(small) {
 			width: auto;
 		}
+	}
+	.rounds-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+	}
+	.rounds-wrapper:not(:last-child) {
+		margin-bottom: 2rem;
 	}
 </style>
