@@ -65,6 +65,16 @@
 			@include mq(medium) {
 				border-left: 1px var(--clr-border-primary) solid;
 				padding-left: var(--space-7);
+				height: 100%;
+
+				p {
+					overflow: hidden;
+					text-overflow: ellipsis;
+					display: -webkit-box;
+					-webkit-line-clamp: 8;
+					line-clamp: 8;
+					-webkit-box-orient: vertical;
+				}
 			}
 
 			h4 {

@@ -2,16 +2,24 @@
 	import ProjectCard from '$components/cards/ProjectCard.svelte';
 </script>
 
-<section class="container">
-	<div class="column-8 align-center">
-		<h2>DAO of July</h2>
+<section class="container-small">
+	<div class="column-12 align-center">
+		<h3>DAO of July</h3>
 		<ProjectCard />
 	</div>
 </section>
 
-<section class="container">
-	<div class="column-8 align-center">
-		<h2>Trending Projects</h2>
+<section class="container-small">
+	<div class="column-12 align-center">
+		<h3>Trending Projects</h3>
+		<div class="row-6">
+			<ProjectCard story={false} />
+			<ProjectCard story={false} />
+		</div>
+		<div class="row-6">
+			<ProjectCard story={false} />
+			<ProjectCard story={false} />
+		</div>
 		<div class="row-6">
 			<ProjectCard story={false} />
 			<ProjectCard story={false} />
@@ -19,3 +27,9 @@
 		<div />
 	</div>
 </section>
+
+<style type="scss">
+	section:first-child {
+		border-bottom: 1px var(--clr-border-primary) solid;
+	}
+</style>
