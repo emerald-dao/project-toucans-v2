@@ -19,7 +19,7 @@
 
 <div in:fade={{ duration: 200 }}>
 	<div class="column-6 align-start">
-		<h3 class="w-medium">Fund Emerald DAO</h3>
+		<h4 class="w-medium">Fund Emerald DAO</h4>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
 			<InputWrapper
 				name="amount"

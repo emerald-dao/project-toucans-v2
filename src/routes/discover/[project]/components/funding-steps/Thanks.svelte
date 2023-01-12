@@ -7,13 +7,16 @@
 
 <div in:fade={{ duration: 200 }}>
 	<div class="column-8 align-center">
-		<h3 class="w-medium">Thank You!</h3>
+		<h4 class="w-medium">Thank You!</h4>
 		<p>
-			{`You funded ${$fundData.daoName} with $${$fundData.currency} ${$fundData.amount} and got $${
-				$fundData.tokenName
-			} ${($fundData.amount * $fundData.issuanceRate).toFixed(2)}`}
+			{`You funded ${$fundData.daoName} with`}
+			<span class="strong">{`$${$fundData.currency} ${$fundData.amount}`}</span>
+			and got
+			<span class="strong"
+				>{`$${$fundData.tokenName} ${($fundData.amount * $fundData.issuanceRate).toFixed(2)}`}</span
+			>
 		</p>
-		<div class="column-8 align-center">
+		<div class="column-3 align-center">
 			<span class="tagline-small">Share it!</span>
 			<div class="row-3">
 				<Button
@@ -43,11 +46,16 @@
 <style type="scss">
 	.tagline-small {
 		color: var(--clr-primary-main);
+		font-size: var(--font-size-1);
 	}
 
 	p {
 		text-align: center;
 		max-width: 30ch;
 		font-size: var(--fs-300);
+
+		span.strong {
+			color: var(--clr-heading-main);
+		}
 	}
 </style>
