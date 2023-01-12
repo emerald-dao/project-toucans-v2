@@ -1,13 +1,7 @@
 <script type="ts">
 	import type { Round } from '$lib/types/dao-project.interface';
 	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
-	import {
-		Button,
-		Currency,
-		Label,
-		ProgressBar,
-		StatusCircle
-	} from '@emerald-dao/component-library';
+	import { Button, Label, ProgressBar, StatusCircle } from '@emerald-dao/component-library';
 
 	export let round: Round;
 
@@ -41,23 +35,6 @@
 			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
 				{`${-daysOfDifference(new Date(), round.finishDate)} days left`}
 			</Label>
-		{:else if round.status === 'finished'}
-			<div class="row-2">
-				<Button
-					size="x-small"
-					type="ghost"
-					color="neutral"
-					state={round.distributed ? 'disabled' : 'active'}>Distribute reserve</Button
-				>
-				<Button
-					size="x-small"
-					type="ghost"
-					color="neutral"
-					state={round.withdrawn ? 'disabled' : 'active'}
-				>
-					Withdraw to treasury
-				</Button>
-			</div>
 		{/if}
 	</div>
 </div>
