@@ -34,6 +34,14 @@
 				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
 			element: undefined,
 			intersecting: false
+		},
+		{
+			number: 4,
+			title: 'Select your DAO details',
+			description:
+				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+			element: undefined,
+			intersecting: false
 		}
 	];
 
@@ -46,7 +54,7 @@
 	$: stepsData.filter((e) => e.intersecting === false) ? (activeStep = undefined) : null;
 </script>
 
-<section class="container">
+<section class="container-small">
 	<div class="hide-on-mobile left-wrapper">
 		<CreateProjectStepsCard {activeStep} />
 	</div>
@@ -88,29 +96,29 @@
 </section>
 
 <style type="scss">
-	.container {
+	.container-small {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		text-align: justify;
 		max-width: 45ch;
 
 		@include mq('medium') {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			max-width: none;
-			text-align: justify;
 			align-items: flex-start;
+			gap: 4rem;
 		}
 
 		.left-wrapper {
 			display: none;
+
 			@include mq('medium') {
 				position: sticky;
 				top: var(--space-20);
 				display: grid;
-				place-content: center;
+				place-content: left;
 			}
 		}
 
@@ -119,7 +127,7 @@
 			margin: var(--space-13) 0;
 
 			@include mq('medium') {
-				text-align: justify;
+				text-align: left;
 				margin-top: 0;
 				margin-bottom: var(--space-16);
 			}

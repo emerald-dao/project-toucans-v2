@@ -2,12 +2,12 @@
 	import CreateProjectStepsCard from '$components/cards/CreateProjectStepsCard.svelte';
 </script>
 
-<section class="container">
+<section class="container-medium">
 	<div class="left-wrapper">
 		<div class="title-wrapper">
 			<span class="tagline">No-code dao generator</span>
 			<h1 class="w-medium">Create a token.<br /> Launch a DAO</h1>
-			<p>
+			<p class="large">
 				Toucans is the first fungible token creation and management platform on the Flow blockchain
 				that makes it easy for internet communities unlock the power of human-centric coordination.
 			</p>
@@ -19,7 +19,7 @@
 </section>
 
 <style type="scss">
-	.container {
+	.container-medium {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -27,7 +27,7 @@
 
 		@include mq('medium') {
 			display: grid;
-			grid-template-columns: 2fr 1fr;
+			grid-template-columns: 1.5fr 1fr;
 		}
 
 		.left-wrapper {

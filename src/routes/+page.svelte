@@ -10,5 +10,5 @@
 <ToucansFeatures />
 <LeadingProjects />
 <CreateYourToken />
-<StatsSection />
+<StatsSection bordersColor="var(--clr-border-primary)" />
 <PoweredByECDAO />

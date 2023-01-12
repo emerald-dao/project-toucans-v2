@@ -18,14 +18,14 @@
 	];
 </script>
 
-<section class="container-large">
+<section class="container">
 	<div class="title-wrapper">
 		<span class="tagline">Why Start a DAO?</span>
 		<h2 class="w-medium">Tokens for any Community</h2>
 	</div>
 	<div class="cards-wrapper">
 		{#each toucansFeatures as feature}
-			<div class="card-primary">
+			<div class="card">
 				<div class="column-2 align-center">
 					<img src="/frame-125.png" alt="frame" />
 					<h3>{feature.title}</h3>
@@ -37,7 +37,7 @@
 </section>
 
 <style type="scss">
-	.container-large {
+	.container {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -45,7 +45,7 @@
 
 		.title-wrapper {
 			@include mq('medium') {
-				margin-bottom: var(--space-12);
+				margin-bottom: var(--space-6);
 			}
 
 			h2 {
@@ -55,15 +55,12 @@
 
 		.cards-wrapper {
 			@include mq('medium') {
-				display: flex;
-				flex-direction: row;
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: var(--space-8);
 			}
-			.card-primary {
+			.card {
 				margin: var(--space-6) 0px;
-
-				@include mq('medium') {
-					margin: 0px var(--space-4);
-				}
 			}
 		}
 	}

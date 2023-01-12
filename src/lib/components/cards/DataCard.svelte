@@ -30,6 +30,8 @@
 <style type="scss">
 	.card {
 		padding: var(--space-2) var(--space-3);
+		height: fit-content;
+
 		@include mq('small') {
 			padding: var(--space-5) var(--space-7);
 		}
