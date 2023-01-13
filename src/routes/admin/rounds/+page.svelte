@@ -4,7 +4,7 @@
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
-	import RoundDetail from './components/atoms/RoundDetail.svelte';
+	import RoundDetail from '../../../lib/components/atoms/RoundDetail.svelte';
 	import { Modal, getModal } from '@emerald-dao/component-library';
 
 	const daoData: FinancialDao = getContext('dao-data');

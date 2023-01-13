@@ -38,7 +38,7 @@
 			<RecentActivity />
 		</TabPanel>
 		<TabPanel>
-			<MainHolders />
+			<MainHolders {daoData} />
 		</TabPanel>
 	</Tabs>
 </div>
