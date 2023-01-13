@@ -11,7 +11,7 @@
 				<img src="/avatar-header.png" alt="avatar logo" />
 				<span class="holder-name">{holder[0]}</span>
 			</div>
-			<Currency amount={holder[1]} currency="USD" color="heading" fontSize="0.75rem" />
+			<Currency amount={holder[1]} currency={daoData.token} color="heading" fontSize="0.85rem" />
 		</div>
 	{/each}
 </div>

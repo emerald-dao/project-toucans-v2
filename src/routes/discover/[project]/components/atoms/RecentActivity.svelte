@@ -6,23 +6,23 @@
 <div class="column-2 align-start">
 	<div class="activity-wrapper">
 		<ActivityDetail activityType="success" walletAddress="0xdklnewnfeewf" date="14 of July" />
-		<Currency amount={3000} currency="USD" color="heading" fontSize="0.75rem" />
+		<Currency amount={3000} currency="USD" color="heading" fontSize="0.85rem" />
 	</div>
 	<div class="activity-wrapper">
 		<ActivityDetail activityType="alert" walletAddress="0xdklnewnfeewf" date="14 of July" />
-		<Currency amount={-20000} currency="USD" color="heading" fontSize="0.75rem" />
+		<Currency amount={-20000} currency="USD" color="heading" fontSize="0.85rem" />
 	</div>
 	<div class="activity-wrapper">
 		<ActivityDetail activityType="success" walletAddress="0xdklnewnfeewf" date="14 of July" />
-		<Currency amount={600000} currency="USD" color="heading" fontSize="0.75rem" />
+		<Currency amount={600000} currency="USD" color="heading" fontSize="0.85rem" />
 	</div>
 	<div class="activity-wrapper">
 		<ActivityDetail activityType="alert" walletAddress="0xdklnewnfeewf" date="14 of July" />
-		<Currency amount={-500} currency="USD" color="heading" fontSize="0.75rem" />
+		<Currency amount={-500} currency="USD" color="heading" fontSize="0.85rem" />
 	</div>
 	<div class="activity-wrapper">
 		<ActivityDetail activityType="alert" walletAddress="0xdklnewnfeewf" date="14 of July" />
-		<Currency amount={-500} currency="USD" color="heading" fontSize="0.75rem" />
+		<Currency amount={-500} currency="USD" color="heading" fontSize="0.85rem" />
 	</div>
 </div>
 

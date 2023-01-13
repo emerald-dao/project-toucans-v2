@@ -4,6 +4,7 @@
 	import { Button, Label, ProgressBar, StatusCircle } from '@emerald-dao/component-library';
 
 	export let round: Round;
+	export let discover: boolean = false;
 
 	const goalReached = round.goal < round.raised;
 </script>
@@ -35,6 +36,23 @@
 			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
 				{`${-daysOfDifference(new Date(), round.finishDate)} days left`}
 			</Label>
+		{:else if round.status === 'finished'}
+			<div class="row-2 buttons-wrapper" class:page={discover}>
+				<Button
+					size="x-small"
+					type="ghost"
+					color="neutral"
+					state={round.distributed ? 'disabled' : 'active'}>Distribute reserve</Button
+				>
+				<Button
+					size="x-small"
+					type="ghost"
+					color="neutral"
+					state={round.withdrawn ? 'disabled' : 'active'}
+				>
+					Withdraw to treasury
+				</Button>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -43,7 +61,7 @@
 	.main-wrapper {
 		display: grid;
 		grid-template-columns: 1fr auto;
-		padding-bottom: var(--space-4);
+		padding: var(--space-3) 0;
 		border-bottom: 1px var(--clr-border-primary) solid;
 		width: 100%;
 		gap: 2rem;
@@ -58,6 +76,10 @@
 			@include mq('medium') {
 				display: block;
 			}
+		}
+
+		.buttons-wrapper.page {
+			display: none;
 		}
 	}
 </style>
