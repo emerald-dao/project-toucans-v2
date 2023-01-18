@@ -1,4 +1,6 @@
-pub contract TokenRegistry {
+// These are tokens we allow to be used as payment.
+
+pub contract ToucanRegistry {
 
     access(self) let registry: {Type: TokenInfo}
 
@@ -40,7 +42,7 @@ pub contract TokenRegistry {
             contractName: String,
             others: {String: String}
         ) {
-            TokenRegistry.registry[type] = TokenInfo(
+            ToucanRegistry.registry[type] = TokenInfo(
                 receiverPath: receiverPath,
                 publicPath: publicPath,
                 storagePath: storagePath,
