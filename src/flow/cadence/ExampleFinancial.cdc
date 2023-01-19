@@ -105,12 +105,10 @@ pub contract ExampleFinancial: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-    pub fun purchase(paymentTokens: @FlowToken.Vault, recipient: Address) {
-        let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
-        let toucanProject = toucansProjectCollection.borrowProject(projectType: Type<@Vault>())!
-        let issuanceRate: UFix64 = toucanProject.getCurrentIssuanceRate()
-        let amount: UFix64 = issuanceRate * paymentTokens.balance
-        toucanProject.purchase(mintedTokens: <- create Vault(balance: amount), paymentTokens: <- paymentTokens, payer: recipient)
+    pub resource Minter: Toucans.Minter {
+        pub fun mint(amount: UFix64): @Vault {
+            return <- create Vault(balance: amount)
+        }
     }
 
     init(
@@ -150,7 +148,7 @@ pub contract ExampleFinancial: FungibleToken {
         self.account.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
       }
       let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
-      toucansProjectCollection.createProject(tokenType: Type<@Vault>(), publicPath: self.ReceiverPublicPath)
+      toucansProjectCollection.createProject(minter: <- create Minter())
       let ref = toucansProjectCollection.borrowProject(projectType: Type<@Vault>())!
       ref.configureFundingCycle(fundingTarget: _fundingTarget, issuanceRate: _issuanceRate, reserveRate: _reserveRate, timeFrame: _timeFrame, payouts: _payouts, extra: _extra)
 

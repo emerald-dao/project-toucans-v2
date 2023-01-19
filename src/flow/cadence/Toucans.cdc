@@ -4,10 +4,16 @@ import FlowToken from "./utility/FlowToken.cdc"
 
 pub contract Toucans {
 
-  pub let projects: {Type: UInt64}
-
   pub let CollectionStoragePath: StoragePath
   pub let CollectionPublicPath: PublicPath
+
+  pub resource interface Minter {
+    pub fun mint(amount: UFix64): @FungibleToken.Vault {
+      post {
+        result.balance == amount: "Did not mint correct number of tokens."
+      }
+    }
+  }
 
   pub enum Stage: UInt8 {
     pub case NOT_STARTED
@@ -122,7 +128,7 @@ pub contract Toucans {
       for payout in self.payouts {
         percentCount = percentCount + payout.percent
       }
-      assert(percentCount == 1.0, message: "Percents do not add up to 100%.")
+      assert(percentCount <= 1.0, message: "Percents cannot be more than 100%.")
     }
   }
 
@@ -135,6 +141,7 @@ pub contract Toucans {
 
     // Setters
     pub fun depositToTreasury(vault: @FungibleToken.Vault)
+    pub fun purchase(paymentTokens: @FlowToken.Vault, payerTokenVault: &{FungibleToken.Receiver})
     
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64
@@ -147,17 +154,13 @@ pub contract Toucans {
   pub resource Project: ProjectPublic {
     pub let projectId: UInt64
     pub let tokenType: Type
-    pub let publicPath: PublicPath
     pub var currentFundingCycle: UInt64
     pub var totalBought: UFix64
     pub var extra: {String: AnyStruct}
 
     access(self) var fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
-
-    pub fun addVaultTypeToTreasury(vault: @FungibleToken.Vault) {
-      self.treasury[vault.getType()] <-! vault
-    }
+    access(self) let minter: @{Minter}
 
     // NOTES:
     // If fundingTarget is nil, that means this is an on-going funding round,
@@ -200,10 +203,7 @@ pub contract Toucans {
     // mintedTokens comes from the wrapper `Owner` resource
     // present in every Toucans token contract.
     // Sheesh, you are so smart Jacob.
-    pub fun purchase(mintedTokens: @FungibleToken.Vault, paymentTokens: @FlowToken.Vault, payer: Address) {
-      pre {
-        mintedTokens.getType() == self.tokenType: "Minted tokens type does not match expected token type."
-      }
+    pub fun purchase(paymentTokens: @FlowToken.Vault, payerTokenVault: &{FungibleToken.Receiver}) {
       let fundingCycleRef: &FundingCycle = self.getCurrentFundingCycleRef()
       let currentTime: UFix64 = getCurrentBlock().timestamp
       let amountOfFlowSent: UFix64 = paymentTokens.balance
@@ -215,30 +215,27 @@ pub contract Toucans {
 
       let issuanceRate: UFix64 = self.getCurrentIssuanceRate()
       let amount: UFix64 = issuanceRate * amountOfFlowSent
+      let mintedTokens <- self.minter.mint(amount: amount)
+      assert(mintedTokens.getType() == self.tokenType, message: "Someone is messing with the minter. It's not minting the original type.")
       assert(amount == mintedTokens.balance, message: "Not enough tokens were minted.")
       
-      fundingCycleRef.trackPurchase(amount: amount, amountOfFlow: amountOfFlowSent, payer: payer)
+      fundingCycleRef.trackPurchase(amount: amount, amountOfFlow: amountOfFlowSent, payer: payerTokenVault.owner!.address)
       // Tokens were purchased, so increment amount raised
       self.totalBought = self.totalBought + amount
 
       // Tax the purchased tokens with reserve rate
       let tax: @FungibleToken.Vault <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.reserveRate)
       // Deposit new tokens to payer
-      Toucans.depositTokensToAccount(funds: <- mintedTokens, to: payer, publicPath: self.publicPath)
+      payerTokenVault.deposit(from: <- mintedTokens)
       // Deposit tax to project treasury
       self.depositToTreasury(vault: <- tax)
 
       // Calculate payouts
       for payout in fundingCycleRef.payouts {
-        let payoutTokens <- paymentTokens.withdraw(amount: amountOfFlowSent * payout.percent)
-        if payout.address == self.owner!.address {
-          self.depositToTreasury(vault: <- payoutTokens)
-        } else {
-          Toucans.depositTokensToAccount(funds: <- payoutTokens, to: payout.address, publicPath: /public/flowTokenReceiver)
-        }
+        Toucans.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountOfFlowSent * payout.percent), to: payout.address, publicPath: /public/flowTokenReceiver)
       }
-      assert(paymentTokens.balance == 0.0, message: "Not all funds were distributed.")
-      destroy paymentTokens
+      // Deposit the rest to treasury
+      self.depositToTreasury(vault: <- paymentTokens)
     }
 
     // Helper Functions
@@ -277,23 +274,21 @@ pub contract Toucans {
       return self.fundingCycles
     }
 
-    init(tokenType: Type, publicPath: PublicPath) {
-      pre {
-        !Toucans.projects.containsKey(tokenType): "A project already exists for this token type."
-      }
+    init(minter: @{Minter}) {
       self.projectId = self.uuid
       self.currentFundingCycle = 0
       self.fundingCycles = []
-      self.tokenType = tokenType
-      self.publicPath = publicPath
       self.totalBought = 0.0
       self.extra = {}
-      self.treasury <- {}
-      Toucans.projects[tokenType] = self.projectId
+      let testMint: @FungibleToken.Vault <- minter.mint(amount: 0.0)
+      self.tokenType = testMint.getType()
+      self.treasury <- {testMint.getType(): <- testMint}
+      self.minter <- minter
     }
 
     destroy() {
       destroy self.treasury
+      destroy self.minter
     }
   }
 
@@ -305,8 +300,8 @@ pub contract Toucans {
   pub resource Collection: CollectionPublic {
     pub let projects: @{Type: Project}
 
-    pub fun createProject(tokenType: Type, publicPath: PublicPath) {
-      let project <- create Project(tokenType: tokenType, publicPath: publicPath)
+    pub fun createProject(minter: @{Minter}) {
+      let project <- create Project(minter: <- minter)
       self.projects[project.tokenType] <-! project
     }
 
@@ -342,7 +337,6 @@ pub contract Toucans {
   }
 
   init() {
-    self.projects = {}
     self.CollectionStoragePath = /storage/ToucansCollection
     self.CollectionPublicPath = /public/ToucansCollection
   }

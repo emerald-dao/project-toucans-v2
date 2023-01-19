@@ -9,6 +9,7 @@ export const daoData: Writable<DaoData> = writable({
 		tokenName: '',
 		description: '',
 		website: '',
+		owner: '',
 		logo: undefined
 	},
 	tokenomics: {

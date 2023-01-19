@@ -5,6 +5,25 @@ import TokenType from '../../../routes/dao-generator/generate/components/generat
 import Tokenomics from '../../../routes/dao-generator/generate/components/generator-steps/Tokenomics.svelte';
 import ReviewAndDeploy from '../../../routes/dao-generator/generate/components/generator-steps/ReviewAndDeploy.svelte';
 import DaoDetails from '../../../routes/dao-generator/generate/components/generator-steps/DaoDetails.svelte';
+import { get } from 'svelte/store';
+import { daoData } from '$stores/generator/DaoDataStore';
+import { user } from '$stores/flow/FlowStore';
+
+const createToken = async () => {
+	const action = async () => {
+		const data = get(daoData);
+		data.daoDetails.owner = get(user).addr;
+		const response = await fetch('/api/add', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		console.log('Response', response);
+	}
+	deployContractExecution(action);
+}
 
 export const generatorSteps = createSteps([
 	{
@@ -35,7 +54,7 @@ export const generatorSteps = createSteps([
 		name: 'Review & Deploy',
 		slug: 'review',
 		component: ReviewAndDeploy,
-		action: deployContractExecution,
+		action: createToken,
 		form: false,
 		state: 'inactive'
 	}

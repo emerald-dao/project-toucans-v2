@@ -111,4 +111,4 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 	});
 }
 
-export const deployContractExecution = () => executeTransaction(deployContract);
+export const deployContractExecution = (action) => executeTransaction(deployContract, action);
