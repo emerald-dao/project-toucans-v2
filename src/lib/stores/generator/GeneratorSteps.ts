@@ -10,9 +10,10 @@ import { daoData } from '$stores/generator/DaoDataStore';
 import { user } from '$stores/flow/FlowStore';
 
 const createToken = async () => {
+	const data = get(daoData);
+	data.daoDetails.owner = get(user).addr;
+	data.daoDetails.contractName = data.daoDetails.name.replace(/\s+/g, "");
 	const action = async () => {
-		const data = get(daoData);
-		data.daoDetails.owner = get(user).addr;
 		const response = await fetch('/api/add', {
 			method: 'POST',
 			body: JSON.stringify(data),
@@ -22,7 +23,7 @@ const createToken = async () => {
 		});
 		console.log('Response', response);
 	}
-	deployContractExecution(action);
+	deployContractExecution(data, action);
 }
 
 export const generatorSteps = createSteps([

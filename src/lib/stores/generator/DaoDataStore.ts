@@ -10,6 +10,7 @@ export const daoData: Writable<DaoData> = writable({
 		description: '',
 		website: '',
 		owner: '',
+		contractName: '',
 		logo: undefined
 	},
 	tokenomics: {

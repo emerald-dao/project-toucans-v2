@@ -4,8 +4,6 @@ import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { user } from '$stores/flow/FlowStore';
 import { executeTransaction, replaceWithProperValues } from './utils';
-import { daoData } from '$stores/generator/DaoDataStore';
-import { get } from 'svelte/store';
 
 import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
 import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
@@ -46,8 +44,7 @@ const dummyTransaction = async () => {
 };
 export const dummyTransactionExecution = () => executeTransaction(dummyTransaction);
 
-const deployContract = async () => {
-	const data = get(daoData);
+const deployContract = async (data) => {
 	console.log(data);
 	const rawContractCode = rawTokenCodes[data.tokenomics.tokenType];
 	let contractCode = rawContractCode
@@ -55,7 +52,7 @@ const deployContract = async () => {
 		.replace('INSERT DESCRIPTION', data.daoDetails.description)
 		.replace('INSERT SYMBOL', data.daoDetails.tokenName)
 		.replace('INSERT URL', data.daoDetails.website);
-	const contractName = data.daoDetails.name.replace(/\s+/g, "");
+	const contractName = data.daoDetails.contractName;
 
 	if (data.tokenomics.tokenType == 'Financial') {
 		console.log(data.tokenomics.mintTokens);
@@ -78,7 +75,7 @@ const deployContract = async () => {
 };
 
 const deployFinancialContract = async (hexCode, contractName, data) => {
-	let payouts = [{ key: get(user).addr, value: "0.975" }]
+	let payouts = [{ key: data.daoDetails.owner, value: "0.975" }]
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
@@ -111,4 +108,4 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 	});
 }
 
-export const deployContractExecution = (action) => executeTransaction(deployContract, action);
+export const deployContractExecution = (data, action) => executeTransaction(() => deployContract(data), action);

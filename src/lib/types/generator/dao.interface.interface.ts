@@ -8,6 +8,7 @@ export interface DaoData {
 		description: string;
 		website: string;
 		owner: string;
+		contractName: string;
 		logo: File[] | undefined;
 	};
 	tokenomics: {
