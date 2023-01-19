@@ -1,13 +1,14 @@
 import FungibleToken from "../../utility/FungibleToken.cdc"
 import FUSD from "../../utility/FUSD.cdc"
 import FlowToken from "../../utility/FlowToken.cdc"
+import Toucans from "../../Toucans.cdc"
 
 transaction(
   contractName: String,
   fundingTarget: UFix64, 
-  initialFUSDIssuanceRate: UFix64,
   initialFlowTokenIssuanceRate: UFix64,
   reserveRate: UFix64,
+  payouts: {Address: UFix64},
   contractCode: String
 ) {
 
@@ -21,16 +22,21 @@ transaction(
       deployer.link<&FUSD.Vault{FungibleToken.Balance}>(/public/fusdBalance, target: /storage/fusdVault)
     }
 
+    let extra: {String: String} = {}
+    let payoutsArray: [Toucans.Payout] = []
+    for payoutAddr in payouts.keys {
+      payoutsArray.append(Toucans.Payout(address: payoutAddr, percent: payouts[payoutAddr]!))
+    }
+
     deployer.contracts.add(
-      name: contractName, 
+      name: contractName,
       code: contractCode.decodeHex(),
       _fundingTarget: fundingTarget, 
-      _issuanceRates: {
-        Type<@FUSD.Vault>(): initialFUSDIssuanceRate,
-        Type<@FlowToken.Vault>(): initialFlowTokenIssuanceRate
-      },
+      _issuanceRate: initialFlowTokenIssuanceRate,
       _reserveRate: reserveRate,
-      _timeFrame: nil
+      _timeFrame: nil,
+      _payouts: payoutsArray,
+      _extra: extra
     )
   }
 

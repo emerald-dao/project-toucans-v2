@@ -68,7 +68,6 @@ const deployContract = async () => {
 			emit TokensMinted(amount: amount)
 			return <- create Vault(balance: amount)
 		}` : '');
-		console.log(contractCode);
 		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 		return deployFinancialContract(hexCode, contractName, data);
 	} else if (data.tokenomics.tokenType == 'Community') {
@@ -79,14 +78,15 @@ const deployContract = async () => {
 };
 
 const deployFinancialContract = async (hexCode, contractName, data) => {
+	let payouts = [{ key: get(user).addr, value: "0.975" }]
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
 			arg(parseFloat(data.tokenomics.targetAmount).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
-			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.reserveRate / 100.0).toFixed(2), t.UFix64),
+			arg(payouts, t.Dictionary({ key: t.Address, value: t.UFix64 })),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,

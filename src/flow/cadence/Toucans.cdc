@@ -1,11 +1,13 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import FUSD from "./utility/FUSD.cdc"
 import FlowToken from "./utility/FlowToken.cdc" 
-import ToucanRegistry from "./ToucanRegistry.cdc"
 
 pub contract Toucans {
 
   pub let projects: {Type: UInt64}
+
+  pub let CollectionStoragePath: StoragePath
+  pub let CollectionPublicPath: PublicPath
 
   pub enum Stage: UInt8 {
     pub case NOT_STARTED
@@ -82,7 +84,7 @@ pub contract Toucans {
     pub var numOfFlowContributed: UFix64
     pub let purchaseHistory: [PurchaseData]
     pub var stage: Stage
-    pub let payouts: {Address: UFix64}
+    pub let payouts: [Payout]
     pub var extra: {String: AnyStruct}
 
     pub fun trackPurchase(amount: UFix64, amountOfFlow: UFix64, payer: Address) {
@@ -96,7 +98,7 @@ pub contract Toucans {
       self.stage = stage
     }
 
-    init(_currentCycle: UInt64, _fundingTarget: UFix64?, _issuanceRate: UFix64, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?, _payouts: {Address: UFix64}, _ extra: {String: String}) {
+    init(_currentCycle: UInt64, _fundingTarget: UFix64?, _issuanceRate: UFix64, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?, _payouts: [Payout], _ extra: {String: String}) {
       pre {
         _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
@@ -114,13 +116,11 @@ pub contract Toucans {
       }
       self.stage = Stage.NOT_STARTED
       self.extra = extra
-      _payouts.insert(key: Toucans.account.address, 0.025)
-      self.payouts = _payouts
+      self.payouts = _payouts.concat([Payout(address: Toucans.account.address, percent: 0.025)])
 
       var percentCount: UFix64 = 0.0
-      for payout in self.payouts.keys {
-        assert(self.payouts[payout]! > 0.0 && self.payouts[payout]! <= 0.975, message: "Payout percentage must be at least 0% and no higher than 97.5%.")
-        percentCount = percentCount + self.payouts[payout]!
+      for payout in self.payouts {
+        percentCount = percentCount + payout.percent
       }
       assert(percentCount == 1.0, message: "Percents do not add up to 100%.")
     }
@@ -164,7 +164,7 @@ pub contract Toucans {
     // and there is no limit. 
     // If this is the case, the project owner must continue to pass in 
     // projectTokens so users can receive them immediately when purchasing.
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeFrame: CycleTimeFrame?, payouts: {Address: UFix64}, extra: {String: String}) {
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeFrame: CycleTimeFrame?, payouts: [Payout], extra: {String: String}) {
       pre {
         Int(self.currentFundingCycle) + 1 > self.fundingCycles.length: "You cannot configure more than one funding cycle in the future."
       }
@@ -229,13 +229,12 @@ pub contract Toucans {
       self.depositToTreasury(vault: <- tax)
 
       // Calculate payouts
-      for payoutAddr in fundingCycleRef.payouts.keys {
-        let payoutPercent: UFix64 = fundingCycleRef.payouts[payoutAddr]!
-        let payoutTokens <- paymentTokens.withdraw(amount: amountOfFlowSent * payoutPercent)
-        if payoutAddr == self.owner!.address {
+      for payout in fundingCycleRef.payouts {
+        let payoutTokens <- paymentTokens.withdraw(amount: amountOfFlowSent * payout.percent)
+        if payout.address == self.owner!.address {
           self.depositToTreasury(vault: <- payoutTokens)
         } else {
-          Toucans.depositTokensToAccount(funds: <- payoutTokens, to: payoutAddr, publicPath: /public/flowTokenReceiver)
+          Toucans.depositTokensToAccount(funds: <- payoutTokens, to: payout.address, publicPath: /public/flowTokenReceiver)
         }
       }
       assert(paymentTokens.balance == 0.0, message: "Not all funds were distributed.")
@@ -298,8 +297,42 @@ pub contract Toucans {
     }
   }
 
-  pub fun createProject(tokenType: Type, publicPath: PublicPath): @Project {
-    return <- create Project(tokenType: tokenType, publicPath: publicPath)
+  pub resource interface CollectionPublic {
+    pub fun getProjectTypes(): [Type]
+    pub fun borrowProjectPublic(projectType: Type): &Project{ProjectPublic}?
+  }
+
+  pub resource Collection: CollectionPublic {
+    pub let projects: @{Type: Project}
+
+    pub fun createProject(tokenType: Type, publicPath: PublicPath) {
+      let project <- create Project(tokenType: tokenType, publicPath: publicPath)
+      self.projects[project.tokenType] <-! project
+    }
+
+    pub fun borrowProject(projectType: Type): &Project? {
+      return &self.projects[projectType] as &Project?
+    }
+
+    pub fun getProjectTypes(): [Type] {
+      return self.projects.keys
+    }
+
+    pub fun borrowProjectPublic(projectType: Type): &Project{ProjectPublic}? {
+      return &self.projects[projectType] as &Project{ProjectPublic}?
+    }
+
+    init() {
+      self.projects <- {}
+    }
+
+    destroy() {
+      destroy self.projects
+    }
+  }
+
+  pub fun createCollection(): @Collection {
+    return <- create Collection()
   }
 
   pub fun depositTokensToAccount(funds: @FungibleToken.Vault, to: Address, publicPath: PublicPath) {
@@ -310,6 +343,8 @@ pub contract Toucans {
 
   init() {
     self.projects = {}
+    self.CollectionStoragePath = /storage/ToucansCollection
+    self.CollectionPublicPath = /public/ToucansCollection
   }
 
 }
