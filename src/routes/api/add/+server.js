@@ -15,7 +15,7 @@ export async function POST({ request }) {
 
   const { error } = await supabase
     .from('projects')
-    .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.daoDetails.owner })
+    .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.daoDetails.owner, description: data.daoDetails.description, website: data.daoDetails.website })
 
   return json(error);
 }
