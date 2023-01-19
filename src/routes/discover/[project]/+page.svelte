@@ -11,20 +11,18 @@
 	export let data;
 	console.log(data);
 	let seeMore = false;
-
-	let daoData: FinancialDao | CommunityDao = financialDaoData;
 </script>
 
 <section class="container">
 	<div class="main-wrapper">
-		<div class="project-sidebar-wrapper">
-			<ProjectSidebarSection {daoData} />
-		</div>
+		<!-- <div class="project-sidebar-wrapper">
+			<ProjectSidebarSection daoData={data} />
+		</div> -->
 		<div class="secondary-wrapper">
-			{#if daoData.type === DaoType.Community}
-				<CommunityProject {daoData} />
-			{:else if daoData.type === DaoType.Financial}
-				<FinancialProject {daoData} />
+			{#if data.type === DaoType.Community}
+				<CommunityProject daoData={data} />
+			{:else if data.type === DaoType.Financial}
+				<FinancialProject daoData={data} />
 			{/if}
 		</div>
 	</div>

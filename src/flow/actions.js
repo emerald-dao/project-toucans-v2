@@ -10,6 +10,8 @@ import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
 
+import getProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
+
 const rawTokenCodes = {
 	'Financial': rawFinancialTokenCode,
 	'Community': rawCommunityTokenCode
@@ -109,3 +111,17 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 }
 
 export const deployContractExecution = (data, action) => executeTransaction(() => deployContract(data), action);
+
+export const getProjectInfo = async (contractName, contractAddress, owner) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
+			args: (arg, t) => [
+				arg(owner, t.Address)
+			]
+		});
+		return response;
+	} catch (e) {
+		console.log(e);
+	}
+}

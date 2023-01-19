@@ -10,52 +10,60 @@
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import RoundDetail from '$components/atoms/RoundDetail.svelte';
 
-	export let daoData: FinancialDao;
+	export let daoData;
+	console.log(daoData);
 
-	const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.rounds[0]]);
+	// const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
 
-	const months: string[] = fundingsPerMonth.map((x) => x[0]);
-	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
+	// const months: string[] = fundingsPerMonth.map((x) => x[0]);
+	// const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
-<div class="column-10">
-	<div class="main-wrapper column-8">
-		<div class="boxes-wrapper">
-			<DataCard
-				title="Total Funding"
-				icon="tabler:pig-money"
-				data={daoData.totalFusdRaised.toLocaleString()}
-			/>
-			<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.maxSupply.toLocaleString()} />
-			<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.rounds.length} />
-		</div>
-		<div class="card column">
-			<div class="data-wrapper">
-				<ChartTitle
-					title="Active Round"
-					data={`${daoData.rounds[0].raised.toLocaleString()} ${daoData.rounds[0].currency} raised`}
-					icon="tabler:activity-heartbeat"
+{#if daoData}
+	<div class="column-10">
+		<div class="main-wrapper column-8">
+			<div class="boxes-wrapper">
+				<DataCard
+					title="Total Funding"
+					icon="tabler:pig-money"
+					data={daoData.totalBought.toLocaleString()}
 				/>
-				<div class="row projections-wrapper">
-					<div class="column goal-wrapper">
-						<p class="xsmall">Goal</p>
-						<span class="large w-medium">{daoData.rounds[0].goal.toLocaleString()}</span>
-					</div>
-					<div class="column days-left-wrapper">
-						<p class="xsmall">Days left</p>
-						<span class="large w-medium"
-							>{daysOfDifference(new Date(), daoData.rounds[0].finishDate)}</span
-						>
+				<DataCard
+					title="Total Tokens"
+					icon="tabler:coin"
+					data={daoData.totalSupply.toLocaleString()}
+				/>
+				<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.fundingCycles.length} />
+			</div>
+			<div class="card column">
+				<div class="data-wrapper">
+					<ChartTitle
+						title="Active Round"
+						data={`${daoData.fundingCycles[0].numOfFlowContributed.toLocaleString()} $FLOW raised`}
+						icon="tabler:activity-heartbeat"
+					/>
+					<div class="row projections-wrapper">
+						<div class="column goal-wrapper">
+							<p class="xsmall">Goal</p>
+							<span class="large w-medium"
+								>{daoData.fundingCycles[0].fundingTarget.toLocaleString()}</span
+							>
+						</div>
+						<div class="column days-left-wrapper">
+							<p class="xsmall">Days left</p>
+							<!-- <span class="large w-medium"
+							>{daysOfDifference(new Date(), daoData.fundingCycles[0].finishDate)}</span
+						> -->
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="chart-wrapper">
-				<LineChart title="Active Round" chartData={amounts} labels={months} />
+				<div class="chart-wrapper">
+					<!-- <LineChart title="Active Round" chartData={amounts} labels={months} /> -->
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<Tabs>
+		<!-- <Tabs>
 		<TabList>
 			<Tab>Recent Activity</Tab>
 			<Tab>Main Funders</Tab>
@@ -85,8 +93,9 @@
 				{/each}
 			</div>
 		</TabPanel>
-	</Tabs>
-</div>
+	</Tabs> -->
+	</div>
+{/if}
 
 <style type="scss">
 	.boxes-wrapper {
