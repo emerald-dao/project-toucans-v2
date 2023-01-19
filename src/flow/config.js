@@ -5,5 +5,5 @@ config()
 	.put('flow.network', 'emulator')
 	.put('app.detail.title', dappInfo.title)
 	.put('app.detail.icon', dappInfo.icon)
-	.put('accessNode.api', 'http://localhost:8888')
+	.put('accessNode.api', 'http://127.0.0.1:8888')
 	.put('discovery.wallet', 'http://localhost:8701/fcl/authn');
