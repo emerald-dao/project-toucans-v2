@@ -109,7 +109,7 @@ pub contract ExampleFinancial: FungibleToken {
     pub fun purchase(paymentTokens: @FungibleToken.Vault, recipient: Address) {
         let issuanceRate: UFix64 = self.toucanProject.getCurrentIssuanceRates()[paymentTokens.getType()] ?? panic("This token payment is not supported during this funding cycle.")
         let amount: UFix64 = issuanceRate * paymentTokens.balance
-        self.toucanProject.purchase(mintedTokens: <- create Vault(balance: amount), paymentTokens: <- paymentTokens, recipient: recipient)
+        self.toucanProject.purchase(mintedTokens: <- create Vault(balance: amount), paymentTokens: <- paymentTokens, payer: recipient)
     }
 
     pub resource Administrator {
@@ -157,7 +157,7 @@ pub contract ExampleFinancial: FungibleToken {
       )
 
       let toucansProject: @Toucans.Project <- Toucans.createProject(tokenType: Type<@Vault>(), publicPath: self.ReceiverPublicPath)
-      toucansProject.nextFundingCycle(fundingTarget: _fundingTarget, threshold: _threshold, issuanceRates: _issuanceRates, reserveRate: _reserveRate, timeFrame: _timeFrame, extra: _extra)
+      toucansProject.configureFundingCycle(fundingTarget: _fundingTarget, threshold: _threshold, issuanceRates: _issuanceRates, reserveRate: _reserveRate, timeFrame: _timeFrame, extra: _extra)
       self.toucanProject <- toucansProject
 
       self.account.save(<- create Administrator(), to: self.OwnerStoragePath)
