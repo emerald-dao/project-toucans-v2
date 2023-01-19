@@ -9,8 +9,10 @@ import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
 import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
-
+import fundProjectTx from './cadence/transactions/financial/fund_project.cdc?raw';
 import getProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
+import { get } from 'svelte/store';
+import { fundData } from '$stores/fund/FundDataStore';
 
 const rawTokenCodes = {
 	'Financial': rawFinancialTokenCode,
@@ -77,7 +79,6 @@ const deployContract = async (data) => {
 };
 
 const deployFinancialContract = async (hexCode, contractName, data) => {
-	let payouts = [{ key: data.daoDetails.owner, value: "0.975" }]
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
@@ -85,7 +86,7 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 			arg(parseFloat(data.tokenomics.targetAmount).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
 			arg(parseFloat(data.tokenomics.initialRound.reserveRate / 100.0).toFixed(2), t.UFix64),
-			arg(payouts, t.Dictionary({ key: t.Address, value: t.UFix64 })),
+			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -111,6 +112,25 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 }
 
 export const deployContractExecution = (data, action) => executeTransaction(() => deployContract(data), action);
+
+const fundProject = async () => {
+	const contractName = get(fundData).contractName;
+	const projectOwner = get(fundData).daoAddress;
+	const amount = get(fundData).amount;
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(parseFloat(amount).toFixed(2), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+}
+
+export const fundProjectExecution = () => executeTransaction(fundProject);
 
 export const getProjectInfo = async (contractName, contractAddress, owner) => {
 	try {

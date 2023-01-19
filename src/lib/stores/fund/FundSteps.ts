@@ -1,9 +1,11 @@
 import { createActiveStep } from '$stores/steps/ActiveStep';
 import { createSteps } from '$stores/steps/Steps';
-import { dummyTransactionExecution } from '$flow/actions';
+import { dummyTransactionExecution, fundProjectExecution } from '$flow/actions';
 import Disclaimer from '../../../../src/routes/discover/[project]/components/funding-steps/Disclaimer.svelte';
 import Fund from '../../../../src/routes/discover/[project]/components/funding-steps/Fund.svelte';
 import Thanks from '../../../../src/routes/discover/[project]/components/funding-steps/Thanks.svelte';
+import { get } from 'svelte/store';
+import { fundData } from './FundDataStore';
 
 export const fundSteps = createSteps([
 	{
@@ -16,14 +18,14 @@ export const fundSteps = createSteps([
 	{
 		name: 'Fund',
 		component: Fund,
-		action: null,
+		action: fundProjectExecution,
 		form: false,
 		state: 'inactive'
 	},
 	{
 		name: 'Thank You!',
 		component: Thanks,
-		action: dummyTransactionExecution,
+		action: null,
 		form: false,
 		state: 'inactive'
 	}

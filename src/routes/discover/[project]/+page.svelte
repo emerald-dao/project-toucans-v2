@@ -15,9 +15,9 @@
 
 <section class="container">
 	<div class="main-wrapper">
-		<!-- <div class="project-sidebar-wrapper">
+		<div class="project-sidebar-wrapper">
 			<ProjectSidebarSection daoData={data} />
-		</div> -->
+		</div>
 		<div class="secondary-wrapper">
 			{#if data.type === DaoType.Community}
 				<CommunityProject daoData={data} />

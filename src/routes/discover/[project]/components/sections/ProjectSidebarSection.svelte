@@ -6,7 +6,7 @@
 	import Icon from '@iconify/svelte';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
 
-	export let daoData: CommunityDao | FinancialDao;
+	export let daoData;
 
 	const initFunding = () => {
 		fundActiveStep.reset();
@@ -14,8 +14,9 @@
 		getModal().open();
 
 		$fundData.daoName = daoData.name;
-		$fundData.daoAddress = daoData.address;
+		$fundData.daoAddress = daoData.owner;
 		$fundData.funderAddress = $user.addr;
+		$fundData.contractName = daoData.contract_name;
 		// $fundData.issuanceRate = daoData.issuanceRate;
 	};
 </script>
@@ -27,34 +28,34 @@
 			<h1 class="h3 w-medium">{daoData.name}</h1>
 		</div>
 		<div class="column-2">
-			{#if daoData.socials.twitter || daoData.socials.discord || daoData.socials.website}
+			{#if daoData.twitter || daoData.discord || daoData.website}
 				<div class="row-4">
-					{#if daoData.socials.twitter}
+					{#if daoData.twitter}
 						<a href="twitter" class="header-link" target="_blank">
 							<Icon icon="tabler:brand-twitter" width="24" />
 						</a>
 					{/if}
-					{#if daoData.socials.discord}
+					{#if daoData.discord}
 						<a href="discord" class="header-link" target="_blank">
 							<Icon icon="tabler:brand-discord" width="24" />
 						</a>
 					{/if}
-					{#if daoData.socials.website}
+					{#if daoData.website}
 						<a href="website" class="header-link" target="_blank">
 							<Icon icon="tabler:world" width="24" />
 						</a>
 					{/if}
 				</div>
 			{/if}
-			{#if daoData.tags.length > 0}
+			<!-- {#if daoData.tags.length > 0}
 				<div class="row-3">
 					{#each daoData.tags as tag}
 						<Label color="neutral" size="x-small">{tag}</Label>
 					{/each}
 				</div>
-			{/if}
+			{/if} -->
 		</div>
-		<p class="small">{daoData.description}s</p>
+		<p class="small">{daoData.description}</p>
 	</div>
 	<Button width="full-width" on:click={initFunding}><Icon icon="tabler:cash-banknote" />Fund</Button
 	>

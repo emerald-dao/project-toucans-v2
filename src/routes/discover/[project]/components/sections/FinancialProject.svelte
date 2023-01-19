@@ -13,10 +13,10 @@
 	export let daoData;
 	console.log(daoData);
 
-	// const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
+	const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
 
-	// const months: string[] = fundingsPerMonth.map((x) => x[0]);
-	// const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
+	const months: string[] = fundingsPerMonth.map((x) => x[0]);
+	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
 {#if daoData}
@@ -58,42 +58,42 @@
 					</div>
 				</div>
 				<div class="chart-wrapper">
-					<!-- <LineChart title="Active Round" chartData={amounts} labels={months} /> -->
+					<LineChart title="Active Round" chartData={amounts} labels={months} />
 				</div>
 			</div>
 		</div>
 
-		<!-- <Tabs>
-		<TabList>
-			<Tab>Recent Activity</Tab>
-			<Tab>Main Funders</Tab>
-			<Tab>Rounds</Tab>
-		</TabList>
-		<TabPanel>
-			<RecentActivity />
-		</TabPanel>
-		<TabPanel>
-			<MainFunders {daoData} />
-		</TabPanel>
-		<TabPanel>
-			<div class="rounds-wrapper">
-				<span class="heading">Active</span>
-				{#each daoData.rounds as round}
-					{#if round.status === 'active'}
-						<RoundDetail {round} />
-					{/if}
-				{/each}
-			</div>
-			<div class="rounds-wrapper">
-				<span class="heading">Finished</span>
-				{#each daoData.rounds as round}
-					{#if round.status != 'active'}
-						<RoundDetail {round} discover={true} />
-					{/if}
-				{/each}
-			</div>
-		</TabPanel>
-	</Tabs> -->
+		<Tabs>
+			<TabList>
+				<Tab>Recent Activity</Tab>
+				<Tab>Main Funders</Tab>
+				<Tab>Rounds</Tab>
+			</TabList>
+			<TabPanel>
+				<RecentActivity />
+			</TabPanel>
+			<TabPanel>
+				<MainFunders {daoData} />
+			</TabPanel>
+			<TabPanel>
+				<div class="rounds-wrapper">
+					<span class="heading">Active</span>
+					{#each daoData.fundingCycles as round}
+						{#if round.status === 'active'}
+							<RoundDetail {round} />
+						{/if}
+					{/each}
+				</div>
+				<div class="rounds-wrapper">
+					<span class="heading">Finished</span>
+					{#each daoData.fundingCycles as round}
+						{#if round.status != 'active'}
+							<RoundDetail {round} discover={true} />
+						{/if}
+					{/each}
+				</div>
+			</TabPanel>
+		</Tabs>
 	</div>
 {/if}
 

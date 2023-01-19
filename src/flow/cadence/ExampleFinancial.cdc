@@ -115,7 +115,7 @@ pub contract ExampleFinancial: FungibleToken {
       _fundingTarget: UFix64,
       _issuanceRate: UFix64,
       _reserveRate: UFix64,
-      _timeFrame: Toucans.CycleTimeFrame?,
+      _timeFrame: Toucans.CycleTimeFrame,
       _payouts: [Toucans.Payout],
       _extra: {String: String}
     ) {
@@ -138,7 +138,7 @@ pub contract ExampleFinancial: FungibleToken {
           target: self.VaultStoragePath
       )
 
-      self.account.link<&Vault{FungibleToken.Balance}>(
+      self.account.link<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
           self.VaultPublicPath,
           target: self.VaultStoragePath
       )

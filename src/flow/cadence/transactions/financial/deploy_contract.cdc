@@ -34,7 +34,7 @@ transaction(
       _fundingTarget: fundingTarget, 
       _issuanceRate: initialFlowTokenIssuanceRate,
       _reserveRate: reserveRate,
-      _timeFrame: nil,
+      _timeFrame: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
       _payouts: payoutsArray,
       _extra: extra
     )

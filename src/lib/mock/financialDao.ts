@@ -20,7 +20,7 @@ export const financialDaoData: FinancialDao = {
 	},
 	maxSupply: 8000000,
 	circulatingSupply: 3000000,
-	totalFusdRaised: 2000,
+	totalFlowRaised: 2000,
 	mainFunders: [
 		['dene.find', 100000],
 		['jacob.find', 110000],

@@ -52,11 +52,11 @@ pub contract Toucans {
 
   pub struct CycleTimeFrame {
     pub let startTime: UFix64
-    pub let endTime: UFix64
+    pub let endTime: UFix64?
 
-    init(_ startTime: UFix64, _ endTime: UFix64) {
+    init(_ startTime: UFix64, _ endTime: UFix64?) {
       pre {
-        endTime > startTime: "The end time must be greater than the start time."
+        endTime == nil || (endTime! > startTime): "The end time must be greater than the start time."
         startTime >= getCurrentBlock().timestamp: "Start time must be now or in the future."
       }
       self.startTime = startTime
@@ -78,14 +78,14 @@ pub contract Toucans {
   }
 
   pub struct FundingCycle {
-    pub let currentCycle: UInt64
+    pub let cycleNum: UInt64
     // nil if the funding target is infinity
     pub let fundingTarget: UFix64?
     pub let issuanceRate: UFix64
     // a tax on purchases
     pub let reserveRate: UFix64
     pub var numOfTokensPurchased: UFix64
-    pub let timeFrame: CycleTimeFrame?
+    pub let timeFrame: CycleTimeFrame
     pub let funders: {Address: UFix64}
     pub var numOfFlowContributed: UFix64
     pub let purchaseHistory: [PurchaseData]
@@ -104,11 +104,11 @@ pub contract Toucans {
       self.stage = stage
     }
 
-    init(_currentCycle: UInt64, _fundingTarget: UFix64?, _issuanceRate: UFix64, _reserveRate: UFix64, _timeFrame: CycleTimeFrame?, _payouts: [Payout], _ extra: {String: String}) {
+    init(_cycleNum: UInt64, _fundingTarget: UFix64?, _issuanceRate: UFix64, _reserveRate: UFix64, _timeFrame: CycleTimeFrame, _payouts: [Payout], _ extra: {String: String}) {
       pre {
         _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
-      self.currentCycle = _currentCycle
+      self.cycleNum = _cycleNum
       self.issuanceRate = _issuanceRate
       self.fundingTarget = _fundingTarget
       self.reserveRate = _reserveRate
@@ -167,14 +167,10 @@ pub contract Toucans {
     // and there is no limit. 
     // If this is the case, the project owner must continue to pass in 
     // projectTokens so users can receive them immediately when purchasing.
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeFrame: CycleTimeFrame?, payouts: [Payout], extra: {String: String}) {
-      pre {
-        Int(self.currentFundingCycle) + 1 > self.fundingCycles.length: "You cannot configure more than one funding cycle in the future."
-      }
-
-      let nextFundingCycleId: UInt64 = self.currentFundingCycle + 1
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeFrame: CycleTimeFrame, payouts: [Payout], extra: {String: String}) {
+      self.currentFundingCycle = UInt64(self.fundingCycles.length)
       let newFundingCycle: FundingCycle = FundingCycle(
-        _currentCycle: nextFundingCycleId,
+        _cycleNum: self.currentFundingCycle,
         _fundingTarget: fundingTarget,
         _issuanceRate: issuanceRate,
         _reserveRate: reserveRate,
@@ -188,7 +184,7 @@ pub contract Toucans {
       emit NewFundingCycle(
         projectId: self.projectId, 
         projectOwner: self.owner!.address, 
-        currentCycle: nextFundingCycleId,
+        currentCycle: self.currentFundingCycle,
         fundingTarget: newFundingCycle.fundingTarget,
         issuanceRate: newFundingCycle.issuanceRate,
         reserveRate: newFundingCycle.reserveRate,
@@ -209,7 +205,7 @@ pub contract Toucans {
       let amountOfFlowSent: UFix64 = paymentTokens.balance
       // Assert that if there is a time frame on the cycle, we are within it
       assert(
-        fundingCycleRef.timeFrame == nil || (fundingCycleRef.timeFrame!.startTime <= currentTime && fundingCycleRef.timeFrame!.endTime >= currentTime),
+        (fundingCycleRef.timeFrame.startTime <= currentTime && (fundingCycleRef.timeFrame.endTime == nil || fundingCycleRef.timeFrame.endTime! >= currentTime)),
         message: "The current funding cycle has either not begun or has ended. The project owner must start a new one to further continue funding."
       )
 
