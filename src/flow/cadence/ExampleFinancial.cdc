@@ -107,6 +107,7 @@ pub contract ExampleFinancial: FungibleToken {
 
     pub resource Minter: Toucans.Minter {
         pub fun mint(amount: UFix64): @Vault {
+            ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
             return <- create Vault(balance: amount)
         }
     }
@@ -148,9 +149,7 @@ pub contract ExampleFinancial: FungibleToken {
         self.account.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
       }
       let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
-      toucansProjectCollection.createProject(minter: <- create Minter())
-      let ref = toucansProjectCollection.borrowProject(projectType: Type<@Vault>())!
-      ref.configureFundingCycle(fundingTarget: _fundingTarget, issuanceRate: _issuanceRate, reserveRate: _reserveRate, timeFrame: _timeFrame, payouts: _payouts, extra: _extra)
+      toucansProjectCollection.createProject(minter: <- create Minter(), fundingTarget: _fundingTarget, issuanceRate: _issuanceRate, reserveRate: _reserveRate, timeFrame: _timeFrame, payouts: _payouts, extra: _extra)
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)
