@@ -1,6 +1,6 @@
 import { create, enforce, test, skipWhen, only } from 'vest';
 
-const daoDetailsSuite = create((data = {}, currentField) => {
+const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 	only(currentField);
 
 	test('name', 'Your DAO needs a name!', () => {
@@ -16,7 +16,7 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 			'name',
 			'Name already taken',
 			async () => {
-				return await dummyCheckDaoName(true);
+				await checkDaoName(data.name, daoProjects);
 			},
 			[data.name]
 		);
@@ -35,7 +35,7 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 			'tokenName',
 			'Token name already taken',
 			async () => {
-				return await dummyCheckDaoName(true);
+				await checkDaoToken(data.tokenName, daoProjects);
 			},
 			[data.tokenName]
 		);
@@ -54,16 +54,29 @@ const daoDetailsSuite = create((data = {}, currentField) => {
 	});
 });
 
-const dummyCheckDaoName = async (success: boolean): Promise<boolean> => {
+const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
-		setTimeout(() => {
-			if (success) {
-				resolve(true);
-			} else {
-				reject();
-			}
-		}, 1000);
+		if (daoProjects.some((obj) => obj.name === value)) {
+			reject();
+		} else {
+			resolve(true);
+		}
 	});
 };
+
+const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
+	return new Promise((resolve, reject) => {
+		if (daoProjects.some((obj) => obj.token_symbol === value)) {
+			reject();
+		} else {
+			resolve(true);
+		}
+	});
+};
+
+interface DaoProject {
+	name: string;
+	token_symbol: string;
+}
 
 export default daoDetailsSuite;

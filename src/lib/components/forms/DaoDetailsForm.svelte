@@ -3,11 +3,12 @@
 	import { daoData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
+	import { page } from '$app/stores';
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = daoDetailsSuite($daoData.daoDetails, target.name);
+		res = daoDetailsSuite($daoData.daoDetails, target.name, $page.data.data.body);
 
 		if (target.name === 'name') {
 			namePending = true;
