@@ -16,15 +16,19 @@ pub struct Info {
   pub let totalBought: UFix64
   pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
+  pub let actions: [{Toucans.Action}]
   pub let totalSupply: UFix64
+  pub let funders: {Address: UFix64}
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
     self.tokenType = info.tokenType
     self.currentFundingCycle = info.currentFundingCycle
     self.totalBought = info.totalBought
-    self.extra = info.extra
+    self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()
     self.totalSupply = ExampleFinancial.totalSupply
+    self.actions = info.getActions()
+    self.funders = info.getFunders()
   }
 }

@@ -46,7 +46,7 @@
 						<div class="column goal-wrapper">
 							<p class="xsmall">Goal</p>
 							<span class="large w-medium"
-								>{daoData.fundingCycles[0].fundingTarget.toLocaleString()}</span
+								>{daoData.fundingCycles[0].details.fundingTarget.toLocaleString()}</span
 							>
 						</div>
 						<div class="column days-left-wrapper">

@@ -24,6 +24,7 @@ pub contract Toucans {
 
   pub event NewFundingCycle(
     projectId: UInt64, 
+    tokenType: Type,
     projectOwner: Address, 
     currentCycle: UInt64,
     fundingTarget: UFix64?,
@@ -214,7 +215,6 @@ pub contract Toucans {
     pub let tokenType: Type
     pub var currentFundingCycle: UInt64
     pub var totalBought: UFix64
-    pub var extra: {String: AnyStruct}
 
     // Setters
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
@@ -227,6 +227,8 @@ pub contract Toucans {
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
     pub fun getActions(): [{Action}]
+    pub fun getExtra(): {String: AnyStruct}
+    pub fun getFunders(): {Address: UFix64}
   }
 
   pub resource Project: ProjectPublic {
@@ -234,13 +236,13 @@ pub contract Toucans {
     pub let tokenType: Type
     pub var currentFundingCycle: UInt64
     pub var totalBought: UFix64
-    pub let funders: {Address: UFix64}
-    pub var extra: {String: AnyStruct}
 
     access(self) var fundingCycles: [FundingCycle]
     access(self) let actions: [{Action}]
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let minter: @{Minter}
+    access(self) let funders: {Address: UFix64}
+    access(self) var extra: {String: AnyStruct}
 
     // NOTES:
     // If fundingTarget is nil, that means this is an on-going funding round,
@@ -265,6 +267,7 @@ pub contract Toucans {
 
       emit NewFundingCycle(
         projectId: self.projectId, 
+        tokenType: self.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.currentFundingCycle,
         fundingTarget: fundingTarget,
@@ -373,6 +376,14 @@ pub contract Toucans {
       return self.actions
     }
 
+    pub fun getExtra(): {String: AnyStruct} {
+      return self.extra
+    }
+
+    pub fun getFunders(): {Address: UFix64} {
+      return self.funders
+    }
+
     init(
       minter: @{Minter},
       fundingTarget: UFix64?, 
@@ -393,7 +404,6 @@ pub contract Toucans {
       self.minter <- minter
       self.funders = {}
       self.actions = []
-      self.configureFundingCycle(fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeFrame: timeFrame, payouts: payouts, extra: extra)
     }
 
     destroy() {
@@ -420,7 +430,11 @@ pub contract Toucans {
       extra: {String: String}
     ) {
       let project <- create Project(minter: <- minter, fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeFrame: timeFrame, payouts: payouts, extra: extra)
+      let tokenType: Type = project.tokenType
       self.projects[project.tokenType] <-! project
+      // we have to do it this weird way because of `self.owner!.address` in `configureFundingCycle`
+      let ref = self.borrowProject(projectType: tokenType)!
+      ref.configureFundingCycle(fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeFrame: timeFrame, payouts: payouts, extra: extra)
     }
 
     pub fun borrowProject(projectType: Type): &Project? {
