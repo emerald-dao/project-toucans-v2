@@ -11,12 +11,11 @@ import { user } from '$stores/flow/FlowStore';
 
 const createToken = async () => {
 	const data = get(daoData);
-	data.daoDetails.owner = get(user).addr;
 	data.daoDetails.contractName = data.daoDetails.name.replace(/\s+/g, "");
 	const action = async () => {
 		const response = await fetch('/api/add', {
 			method: 'POST',
-			body: JSON.stringify(data),
+			body: JSON.stringify({ user: get(user), ...data }),
 			headers: {
 				'content-type': 'application/json'
 			}

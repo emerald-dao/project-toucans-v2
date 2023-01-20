@@ -1,4 +1,5 @@
-import { writable, derived } from 'svelte/store';
+import { writable } from 'svelte/store';
+import { network } from '$flow/config.js';
 
 const contractData = {
 	NonFungibleToken: {
@@ -53,22 +54,19 @@ const contractData = {
 };
 
 export const user = writable(null);
-export const network = writable('emulator');
 export const profile = writable(null);
 // export const transactionStatus = writable({});
 // export const transactionInProgress = writable(false);
-export const addresses = derived([network], ([$network]) => {
-	return {
-		NonFungibleToken: contractData.NonFungibleToken[$network],
-		MetadataViews: contractData.MetadataViews[$network],
-		FungibleTokenMetadataViews: contractData.FungibleTokenMetadataViews[$network],
-		FungibleToken: contractData.FungibleToken[$network],
-		FlowToken: contractData.FlowToken[$network],
-		FUSD: contractData.FUSD[$network],
-		ECTreasury: contractData.ECTreasury[$network],
-		FLOAT: contractData.FLOAT[$network],
-		FIND: contractData.FIND[$network],
-		FN: contractData.FN[$network],
-		Toucans: contractData.Toucans[$network]
-	};
-});
+export const addresses = {
+	NonFungibleToken: contractData.NonFungibleToken[network],
+	MetadataViews: contractData.MetadataViews[network],
+	FungibleTokenMetadataViews: contractData.FungibleTokenMetadataViews[network],
+	FungibleToken: contractData.FungibleToken[network],
+	FlowToken: contractData.FlowToken[network],
+	FUSD: contractData.FUSD[network],
+	ECTreasury: contractData.ECTreasury[network],
+	FLOAT: contractData.FLOAT[network],
+	FIND: contractData.FIND[network],
+	FN: contractData.FN[network],
+	Toucans: contractData.Toucans[network]
+};

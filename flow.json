@@ -49,6 +49,7 @@
 				"mainnet": "0x3c5959b568896393"
 			}
 		},
+		"FCLCrypto": "./src/flow/cadence/utility/FCLCrypto.cdc",
 		"Toucans": "./src/flow/cadence/Toucans.cdc"
 	},
 	"accounts": {
@@ -60,6 +61,7 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
+				"FCLCrypto",
 				"NonFungibleToken",
 				"MetadataViews",
 				"FungibleTokenMetadataViews",

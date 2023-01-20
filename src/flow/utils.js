@@ -1,30 +1,29 @@
 import * as fcl from '@onflow/fcl';
-import { get } from 'svelte/store';
 import { transactionStore } from '$stores/flow/TransactionStore';
 import { addresses } from '$stores/flow/FlowStore';
+import { network } from './config';
 
 export function replaceWithProperValues(script, contractName = '', contractAddress = '') {
-	const addressList = get(addresses);
 	return script
 		// For Tx/Scripts
 		.replace('"../../ExampleFinancial.cdc"', contractAddress)
 		.replace('"../../ExampleCommunity.cdc"', contractAddress)
 		.replace('"../../ExampleToken.cdc"', contractAddress)
-		.replace('"../../utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
-		.replace('"../../utility/MetadataViews.cdc"', addressList.MetadataViews)
-		.replace('"../../utility/FlowToken.cdc"', addressList.FlowToken)
-		.replace('"../../utility/FUSD.cdc"', addressList.FUSD)
-		.replace('"../../utility/FungibleToken.cdc"', addressList.FungibleToken)
-		.replace('"../../utility/FLOAT.cdc"', addressList.FLOAT)
-		.replace('"../../Toucans.cdc"', addressList.Toucans)
+		.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
+		.replace('"../../utility/MetadataViews.cdc"', addresses.MetadataViews)
+		.replace('"../../utility/FlowToken.cdc"', addresses.FlowToken)
+		.replace('"../../utility/FUSD.cdc"', addresses.FUSD)
+		.replace('"../../utility/FungibleToken.cdc"', addresses.FungibleToken)
+		.replace('"../../utility/FLOAT.cdc"', addresses.FLOAT)
+		.replace('"../../Toucans.cdc"', addresses.Toucans)
 		// For Contract
-		.replace('"./utility/NonFungibleToken.cdc"', addressList.NonFungibleToken)
-		.replace('"./utility/MetadataViews.cdc"', addressList.MetadataViews)
-		.replace('"./utility/FungibleToken.cdc"', addressList.FungibleToken)
-		.replace('"./utility/FungibleTokenMetadataViews.cdc"', addressList.FungibleTokenMetadataViews)
-		.replace('"./utility/FlowToken.cdc"', addressList.FlowToken)
-		.replace('"./utility/FUSD.cdc"', addressList.FUSD)
-		.replace('"./Toucans.cdc"', addressList.Toucans)
+		.replace('"./utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
+		.replace('"./utility/MetadataViews.cdc"', addresses.MetadataViews)
+		.replace('"./utility/FungibleToken.cdc"', addresses.FungibleToken)
+		.replace('"./utility/FungibleTokenMetadataViews.cdc"', addresses.FungibleTokenMetadataViews)
+		.replace('"./utility/FlowToken.cdc"', addresses.FlowToken)
+		.replace('"./utility/FUSD.cdc"', addresses.FUSD)
+		.replace('"./Toucans.cdc"', addresses.Toucans)
 		// For All
 		.replaceAll('ExampleFinancial', contractName)
 		.replaceAll('ExampleCommunity', contractName)
@@ -55,7 +54,7 @@ export const getFindProfile = async (address) => {
 	try {
 		return await fcl.query({
 			cadence: `
-        import FIND from ${get(addresses).FIND}
+        import FIND from ${addresses.FIND}
         pub fun main(address: Address): Profile? {
             if let name = FIND.reverseLookup(address) {
               let profile = FIND.lookup(name)!
@@ -84,3 +83,14 @@ export const getFindProfile = async (address) => {
 		return null;
 	}
 };
+
+export const verifyAccountOwnership = async (userObject) => {
+	if (!userObject.loggedIn) {
+		return false;
+	}
+	const accountProofService = userObject.services.find(
+		(services) => services.type === 'account-proof'
+	);
+	const fclCryptoContract = network === 'emulator' ? '0xf8d6e0586b0a20c7' : null;
+	return await fcl.AppUtils.verifyAccountProof('Toucans', accountProofService.data, { fclCryptoContract });
+}

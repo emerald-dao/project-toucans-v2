@@ -12,6 +12,11 @@
 	import { getFindProfile } from '$flow/utils';
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
+	import * as fcl from '@onflow/fcl';
+
+	$: if ($user) {
+		console.log($user);
+	}
 </script>
 
 <TransactionModal
