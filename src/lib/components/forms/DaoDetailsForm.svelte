@@ -30,6 +30,8 @@
 	let tokenNamePendingMessage = ['Checking if token name already exists in Flow blockchain...'];
 
 	let res = daoDetailsSuite.get();
+
+	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '');
 </script>
 
 <form
@@ -53,6 +55,9 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
+
+	<label for="contractName">Contract Name</label>
+	<input type="text" readonly name="contractName" bind:value={$daoData.daoDetails.contractName} />
 
 	<InputWrapper
 		name="tokenName"
@@ -119,6 +124,15 @@
 
 		textarea {
 			min-height: 15rem;
+		}
+
+		input:read-only {
+			margin-bottom: var(--space-6);
+			cursor: not-allowed;
+
+			&:focus {
+				border: 1px var(--clr-border-primary) solid;
+			}
 		}
 	}
 </style>
