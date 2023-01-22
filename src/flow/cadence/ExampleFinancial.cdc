@@ -2,7 +2,6 @@ import FungibleToken from "./utility/FungibleToken.cdc"
 import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
 import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
-import FlowToken from "./utility/FlowToken.cdc"
  
 pub contract ExampleFinancial: FungibleToken {
 
@@ -13,7 +12,7 @@ pub contract ExampleFinancial: FungibleToken {
     pub let VaultStoragePath: StoragePath
     pub let ReceiverPublicPath: PublicPath
     pub let VaultPublicPath: PublicPath
-    pub let OwnerStoragePath: StoragePath
+    pub let MinterStoragePath: StoragePath
 
     // Events
     pub event TokensInitialized(initialSupply: UFix64)
@@ -27,14 +26,14 @@ pub contract ExampleFinancial: FungibleToken {
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
             self.balance = self.balance - amount
-            emit TokensWithdrawn(amount: amount, from: self.owner?.address)
+            emit TokensWithdrawn(amount: amount, from: self.owner!.address)
             return <-create Vault(balance: amount)
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @Vault
             self.balance = self.balance + vault.balance
-            emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
+            emit TokensDeposited(amount: vault.balance, to: self.owner!.address)
             
             // We set the balance to 0.0 here so that it doesn't
             // decrease the totalSupply in the `destroy` function.
@@ -128,7 +127,7 @@ pub contract ExampleFinancial: FungibleToken {
       self.VaultStoragePath = /storage/ExampleFinancialVault
       self.ReceiverPublicPath = /public/ExampleFinancialReceiver
       self.VaultPublicPath = /public/ExampleFinancialMetadata
-      self.OwnerStoragePath = /storage/ExampleFinancialOwner
+      self.MinterStoragePath = /storage/ExampleFinancialMinter
  
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)

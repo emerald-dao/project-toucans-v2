@@ -1,38 +1,44 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
 import MetadataViews from "./utility/MetadataViews.cdc"
- 
+
 pub contract ExampleCommunity: FungibleToken {
 
+    // The amount of tokens in existance
     pub var totalSupply: UFix64
+    access(self) let balances: {Address: UFix64}
 
     // Paths
     pub let VaultStoragePath: StoragePath
     pub let ReceiverPublicPath: PublicPath
     pub let VaultPublicPath: PublicPath
-    pub let AdminStoragePath: StoragePath
+    pub let MinterStoragePath: StoragePath
 
     // Events
     pub event TokensInitialized(initialSupply: UFix64)
     pub event TokensWithdrawn(amount: UFix64, from: Address?)
     pub event TokensDeposited(amount: UFix64, to: Address?)
-    pub event TokensMinted(amount: UFix64)
+    pub event TokensTransferred(amount: UFix64, from: Address, to: Address)
+    pub event TokensMinted(amount: UFix64, to: Address, by: Address)
     pub event TokensBurned(amount: UFix64)
 
     pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, MetadataViews.Resolver {
-
         pub var balance: UFix64
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
+            let owner = self.owner!.address
             self.balance = self.balance - amount
-            emit TokensWithdrawn(amount: amount, from: self.owner?.address)
-            return <-create Vault(balance: amount)
+            emit TokensWithdrawn(amount: amount, from: owner)
+            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+            return <- create Vault(balance: amount)
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
+            let owner = self.owner!.address
             let vault <- from as! @Vault
+            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? 0.0) + vault.balance
             self.balance = self.balance + vault.balance
-            emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
+            emit TokensDeposited(amount: vault.balance, to: owner)
             
             // We set the balance to 0.0 here so that it doesn't
             // decrease the totalSupply in the `destroy` function.
@@ -40,13 +46,14 @@ pub contract ExampleCommunity: FungibleToken {
             destroy vault
         }
 
-        init(balance: UFix64) {
-            self.balance = balance
-        }
-
-        destroy() {
-            ExampleCommunity.totalSupply = ExampleCommunity.totalSupply - self.balance
-            emit TokensBurned(amount: self.balance)
+        pub fun transfer(amount: UFix64, recipient: &Vault{FungibleToken.Receiver}) {
+            let owner = self.owner!.address
+            let recipientAddr = recipient.owner!.address
+            self.balance = self.balance - amount
+            emit TokensTransferred(amount: amount, from: owner, to: recipientAddr)
+            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+            ExampleCommunity.balances[recipientAddr] = (ExampleCommunity.balances[recipientAddr] ?? 0.0) + amount
+            recipient.deposit(from: <- create Vault(balance: amount))
         }
 
         pub fun getViews(): [Type]{
@@ -97,55 +104,68 @@ pub contract ExampleCommunity: FungibleToken {
             }
             return nil
         }
+
+        init(balance: UFix64) {
+            self.balance = balance
+        }
+
+        destroy() {
+            pre {
+                self.balance == 0.0: "Cannot destroy a vault that has funds in it."
+            }
+        }
     }
 
     pub fun createEmptyVault(): @Vault {
         return <-create Vault(balance: 0.0)
     }
 
-    pub resource Administrator {
-      pub fun mintTokens(amount: UFix64): @Vault {
-        pre {
-          amount > 0.0: "Amount minted must be greater than zero"
+    pub resource Minter {
+        pub fun mint(amount: UFix64, recipient: &Vault{FungibleToken.Receiver}) {
+            pre {
+                amount > 0.0: "Amount minted must be greater than zero"
+            }
+            ExampleCommunity.totalSupply = ExampleCommunity.totalSupply + amount
+            emit TokensMinted(amount: amount, to: recipient.owner!.address, by: self.owner!.address)
+            recipient.deposit(from: <- create Vault(balance: amount))
         }
-        ExampleCommunity.totalSupply = ExampleCommunity.totalSupply + amount
-        emit TokensMinted(amount: amount)
-        return <- create Vault(balance: amount)
-      }
+        pub fun createMinter(): @Minter {
+            return <- create Minter()
+        }
     }
 
     init(
-      _initialTotalSupply: UFix64
+        _initialTotalSupply: UFix64
     ) {
 
-      // Contract Variables
-      self.totalSupply = _initialTotalSupply
+        // Contract Variables
+        self.totalSupply = _initialTotalSupply
+        self.balances = {}
 
-      // Paths
-      self.VaultStoragePath = /storage/ExampleCommunityVault
-      self.ReceiverPublicPath = /public/ExampleCommunityReceiver
-      self.VaultPublicPath = /public/ExampleCommunityMetadata
-      self.AdminStoragePath = /storage/ExampleCommunityAdmin
+        // Paths
+        self.VaultStoragePath = /storage/ExampleCommunityVault
+        self.ReceiverPublicPath = /public/ExampleCommunityReceiver
+        self.VaultPublicPath = /public/ExampleCommunityMetadata
+        self.MinterStoragePath = /storage/ExampleCommunityMinter
 
-      // Admin Setup
-      let vault <- create Vault(balance: self.totalSupply)
-      self.account.save(<-vault, to: self.VaultStoragePath)
+        // Admin Setup
+        let vault <- create Vault(balance: self.totalSupply)
+        self.account.save(<-vault, to: self.VaultStoragePath)
 
-      self.account.link<&Vault{FungibleToken.Receiver}>(
-          self.ReceiverPublicPath,
-          target: self.VaultStoragePath
-      )
+        self.account.link<&Vault{FungibleToken.Receiver}>(
+            self.ReceiverPublicPath,
+            target: self.VaultStoragePath
+        )
 
-      self.account.link<&Vault{FungibleToken.Balance}>(
+        self.account.link<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
           self.VaultPublicPath,
           target: self.VaultStoragePath
-      )
+        )
 
-      let admin <- create Administrator()
-      self.account.save(<-admin, to: self.AdminStoragePath)
+        let minter <- create Minter()
+        self.account.save(<- minter, to: self.MinterStoragePath)
 
-      // Events
-      emit TokensInitialized(initialSupply: self.totalSupply)
+        // Events
+        emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
- 
