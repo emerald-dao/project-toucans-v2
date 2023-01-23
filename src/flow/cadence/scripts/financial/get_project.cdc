@@ -12,7 +12,7 @@ pub fun main(user: Address): Info {
 pub struct Info {
   pub let projectId: UInt64
   pub let tokenType: Type
-  pub let currentFundingCycle: UInt64
+  pub let currentFundingCycle: UInt64?
   pub let totalBought: UFix64
   pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
@@ -23,7 +23,7 @@ pub struct Info {
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
     self.tokenType = info.tokenType
-    self.currentFundingCycle = info.currentFundingCycle
+    self.currentFundingCycle = info.getCurrentFundingCycleNum()
     self.totalBought = info.totalBought
     self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()

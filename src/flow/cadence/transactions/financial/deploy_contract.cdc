@@ -9,6 +9,7 @@ transaction(
   initialFlowTokenIssuanceRate: UFix64,
   reserveRate: UFix64,
   payouts: {Address: UFix64},
+  editDelay: UFix64,
   contractCode: String
 ) {
 
@@ -36,6 +37,7 @@ transaction(
       _reserveRate: reserveRate,
       _timeFrame: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
       _payouts: payoutsArray,
+      _editDelay: editDelay,
       _extra: extra
     )
   }
