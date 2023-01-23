@@ -18,6 +18,7 @@ export const daoData: Writable<DaoData> = writable({
 		tokenType: TokenTypes.FINANCIAL,
 		totalSupply: undefined,
 		targetAmount: undefined,
+		editDelay: "259200.00",
 		mintTokens: false,
 		walletAddresses: [],
 		initialRound: {

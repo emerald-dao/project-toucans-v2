@@ -16,6 +16,7 @@ export interface DaoData {
 		tokenType: TokenTypes;
 		totalSupply: number | undefined;
 		targetAmount: number | undefined;
+		editDelay: number | undefined,
 		mintTokens: boolean;
 		walletAddresses: string[] | [];
 		initialRound: {

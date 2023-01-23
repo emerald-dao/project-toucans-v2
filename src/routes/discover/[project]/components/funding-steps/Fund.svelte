@@ -59,9 +59,8 @@
 				<input
 					name="receive"
 					type="text"
-					value="${(($fundData.amount ? $fundData.amount : 0) * $fundData.issuanceRate).toFixed(
-						2
-					)} {$fundData.tokenName}"
+					value="${($fundData.amount ? $fundData.amount : 0) *
+						$fundData.issuanceRate} {$fundData.tokenName}"
 					readonly
 					id="receive"
 				/>

@@ -85,10 +85,11 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(parseFloat(data.tokenomics.targetAmount).toFixed(2), t.UFix64),
-			arg(parseFloat(data.tokenomics.initialRound.issuanceRate).toFixed(2), t.UFix64),
-			arg(parseFloat(data.tokenomics.initialRound.reserveRate / 100.0).toFixed(2), t.UFix64),
+			arg(Number.parseFloat(data.tokenomics.targetAmount), t.UFix64),
+			arg(Number.parseFloat(data.tokenomics.initialRound.issuanceRate), t.UFix64),
+			arg(Number.parseFloat(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
 			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
+			arg(Number.parseFloat(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -103,7 +104,7 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 		cadence: replaceWithProperValues(deployCommunityTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(parseFloat(data.tokenomics.totalSupply).toFixed(2), t.UFix64),
+			arg(Number.parseFloat(data.tokenomics.totalSupply), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -123,7 +124,7 @@ const fundProject = async () => {
 		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
-			arg(parseFloat(amount).toFixed(2), t.UFix64)
+			arg(Number.parseFloat(amount), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

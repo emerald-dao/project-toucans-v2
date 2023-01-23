@@ -13,7 +13,7 @@
 			<span class="strong">{`$${$fundData.currency} ${$fundData.amount}`}</span>
 			and got
 			<span class="strong"
-				>{`$${$fundData.tokenName} ${($fundData.amount * $fundData.issuanceRate).toFixed(2)}`}</span
+				>{`$${$fundData.tokenName} ${$fundData.amount * $fundData.issuanceRate}`}</span
 			>
 		</p>
 		<div class="column-3 align-center">
@@ -24,7 +24,7 @@
 						$fundData.daoName
 					}%20DAO%20with%20$${$fundData.currency}%20${$fundData.amount}%20and%20got%20$${
 						$fundData.tokenName
-					}%20${($fundData.amount * $fundData.issuanceRate).toFixed(2)}
+					}%20${$fundData.amount * $fundData.issuanceRate}
 				`}
 					target="_blank"
 					type="ghost"
