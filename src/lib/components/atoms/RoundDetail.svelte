@@ -1,4 +1,5 @@
 <script type="ts">
+	import { Currencies } from '$lib/types/currencies.enum';
 	import type { Round } from '$lib/types/dao-project.interface';
 	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
 	import { Button, Label, ProgressBar, StatusCircle } from '@emerald-dao/component-library';
@@ -6,7 +7,8 @@
 	export let round: Round;
 	export let discover: boolean = false;
 
-	const goalReached = round.goal < round.raised;
+	const goalReached = round.details.fundingTarget < round.numOfFlowContributed;
+	console.log(round.details.fundingTarget, round.numOfFlowContributed);
 </script>
 
 <div class="main-wrapper">
@@ -18,23 +20,25 @@
 			/>
 			<div class="progress-bar-wrapper">
 				<ProgressBar
-					value={round.raised}
-					max={round.goal}
-					labelText={`$${round.raised.toLocaleString()} ${
-						round.currency
-					} raised from $${round.goal.toLocaleString()} goal`}
+					value={round.numOfFlowContributed}
+					max={round.details.fundingTarget}
+					labelText={`$${round.numOfFlowContributed.toLocaleString()} ${
+						Currencies.FLOW
+					} raised from $${round.details.fundingTarget.toLocaleString()} goal`}
 					size="x-small"
 				/>
 			</div>
 		</div>
 		<span class="xsmall display-handling"
-			>{`${formatDate(round.startDate)} to ${formatDate(round.finishDate)}`}</span
+			>{`${formatDate(round.details.timeFrame.startTime)} to ${formatDate(
+				round.details.timeFrame.endTime
+			)}`}</span
 		>
 	</div>
 	<div class="row-5 display-handling">
 		{#if round.status === 'active'}
 			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
-				{`${-daysOfDifference(new Date(), round.finishDate)} days left`}
+				{`${-daysOfDifference(new Date(), round.details.timeFrame.endTime)} days left`}
 			</Label>
 		{:else if round.status === 'finished'}
 			<div class="row-2 buttons-wrapper" class:page={discover}>

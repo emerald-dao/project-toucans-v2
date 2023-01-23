@@ -79,7 +79,7 @@
 				<div class="rounds-wrapper">
 					<span class="heading">Active</span>
 					{#each daoData.fundingCycles as round}
-						{#if round.status === 'active'}
+						{#if round.details.cycleNum === daoData.currentFundingCycle}
 							<RoundDetail {round} />
 						{/if}
 					{/each}
@@ -87,7 +87,7 @@
 				<div class="rounds-wrapper">
 					<span class="heading">Finished</span>
 					{#each daoData.fundingCycles as round}
-						{#if round.status != 'active'}
+						{#if round.details.cycleNum !== daoData.currentFundingCycle}
 							<RoundDetail {round} discover={true} />
 						{/if}
 					{/each}
