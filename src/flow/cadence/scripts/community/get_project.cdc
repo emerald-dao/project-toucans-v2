@@ -1,34 +1,15 @@
-import ExampleFinancial from "../../ExampleFinancial.cdc"
-import Toucans from "../../Toucans.cdc"
+import ExampleCommunity from "../../ExampleCommunity.cdc"
 
 pub fun main(user: Address): Info {
-  let projectCollection = getAccount(user).getCapability(Toucans.CollectionPublicPath)
-                .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
-                ?? panic("User does not have a Toucans Collection")
-
-  return Info(projectCollection.borrowProjectPublic(projectType: Type<@ExampleFinancial.Vault>())!)
+  return Info(ExampleCommunity.totalSupply, ExampleCommunity.getBalances())
 }
 
-pub struct Info {
-  pub let projectId: UInt64
-  pub let tokenType: Type
-  pub let currentFundingCycle: UInt64
-  pub let totalBought: UFix64
-  pub let extra: {String: AnyStruct}
-  pub let fundingCycles: [Toucans.FundingCycle]
-  pub let actions: [{Toucans.Action}]
+pub struct Info { 
   pub let totalSupply: UFix64
-  pub let funders: {Address: UFix64}
+  pub let balances: {Address: UFix64}
 
-  init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
-    self.projectId = info.projectId
-    self.tokenType = info.tokenType
-    self.currentFundingCycle = info.currentFundingCycle
-    self.totalBought = info.totalBought
-    self.extra = info.getExtra()
-    self.fundingCycles = info.getFundingCycles()
-    self.totalSupply = ExampleFinancial.totalSupply
-    self.actions = info.getActions()
-    self.funders = info.getFunders()
+  init(_ totalSupply: UFix64, _ balances: {Address: UFix64}) {
+    self.totalSupply = totalSupply
+    self.balances = balances
   }
 }

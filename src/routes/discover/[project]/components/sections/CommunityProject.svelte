@@ -7,9 +7,10 @@
 	import PieChart from '$components/charts/PieChart.svelte';
 
 	export let daoData: CommunityDao;
+	console.log(daoData);
 
-	const mainHolderNames: string[] = daoData.mainHolders.map((x) => x[0]);
-	const mainHolderAmounts: number[] = daoData.mainHolders.map((x) => x[1]);
+	const mainHolderNames: string[] = Object.keys(daoData.balances);
+	const mainHolderAmounts: number[] = Object.values(daoData.balances);
 </script>
 
 <div class="column-10">
@@ -17,12 +18,12 @@
 		<div class="column-8">
 			<ChartTitle
 				title="Token Distribution"
-				data={`${daoData.token} Token`}
+				data={`${daoData.token_symbol} Token`}
 				icon="tabler:activity-heartbeat"
 			/>
 			<div class="card-primary total-tokens-card column-0">
 				<span class="xsmall">Total Tokens</span>
-				<span class="large w-medium">{daoData.maxSupply.toLocaleString()}</span>
+				<span class="large w-medium">{daoData.totalSupply.toLocaleString()}</span>
 			</div>
 		</div>
 		<div class="chart-wrapper">

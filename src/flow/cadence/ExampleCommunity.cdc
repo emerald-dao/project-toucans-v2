@@ -134,6 +134,10 @@ pub contract ExampleCommunity: FungibleToken {
         }
     }
 
+    pub fun getBalances(): {Address: UFix64} {
+        return self.balances
+    }
+
     init(
         _initialTotalSupply: UFix64
     ) {

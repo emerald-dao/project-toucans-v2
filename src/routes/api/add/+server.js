@@ -23,7 +23,7 @@ export async function POST({ request }) {
 
   const { error } = await supabase
     .from('projects')
-    .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.daoDetails.owner, description: data.daoDetails.description, website: data.daoDetails.website, owner: data.user.addr, type: data.tokenomics.tokenType })
+    .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.user.addr, description: data.daoDetails.description, website: data.daoDetails.website, owner: data.user.addr, type: data.tokenomics.tokenType })
 
   return json(error);
 }

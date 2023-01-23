@@ -10,7 +10,8 @@ import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/financial/fund_project.cdc?raw';
-import getProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
+import getFinancialProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
+import getCommunityProjectScript from './cadence/scripts/community/get_project.cdc?raw';
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
 
@@ -132,10 +133,12 @@ const fundProject = async () => {
 
 export const fundProjectExecution = () => executeTransaction(fundProject);
 
-export const getProjectInfo = async (contractName, contractAddress, owner) => {
+export const getProjectInfo = async (contractName, contractAddress, owner, type) => {
+	const scriptCode = type === 'Financial' ? getFinancialProjectScript : getCommunityProjectScript;
+	console.log(replaceWithProperValues(scriptCode, contractName, contractAddress))
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
+			cadence: replaceWithProperValues(scriptCode, contractName, contractAddress),
 			args: (arg, t) => [
 				arg(owner, t.Address)
 			]
