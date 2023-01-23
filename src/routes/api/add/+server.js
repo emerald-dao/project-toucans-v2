@@ -24,5 +24,6 @@ export async function POST({ request }) {
     .from('projects')
     .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.user.addr, description: data.daoDetails.description, website: data.daoDetails.website, twitter: data.daoDetails.twitter, discord: data.daoDetails.discord, logo: data.logo, owner: data.user.addr, type: data.tokenomics.tokenType })
 
+  console.log(error);
   return json(error);
 }

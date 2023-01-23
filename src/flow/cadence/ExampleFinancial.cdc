@@ -26,14 +26,14 @@ pub contract ExampleFinancial: FungibleToken {
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
             self.balance = self.balance - amount
-            emit TokensWithdrawn(amount: amount, from: self.owner!.address)
+            emit TokensWithdrawn(amount: amount, from: self.owner?.address)
             return <-create Vault(balance: amount)
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @Vault
             self.balance = self.balance + vault.balance
-            emit TokensDeposited(amount: vault.balance, to: self.owner!.address)
+            emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             
             // We set the balance to 0.0 here so that it doesn't
             // decrease the totalSupply in the `destroy` function.

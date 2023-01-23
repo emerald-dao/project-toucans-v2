@@ -5,6 +5,7 @@
 	import { fundData } from '$stores/fund/FundDataStore';
 	import Icon from '@iconify/svelte';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
+	import { Currencies } from '$lib/types/currencies.enum';
 
 	export let daoData;
 
@@ -17,6 +18,10 @@
 		$fundData.daoAddress = daoData.owner;
 		$fundData.funderAddress = $user.addr;
 		$fundData.contractName = daoData.contract_name;
+		$fundData.currency = Currencies.FLOW;
+		$fundData.issuanceRate = Math.trunc(
+			daoData.fundingCycles[daoData.currentFundingCycle].details.issuanceRate
+		);
 		// $fundData.issuanceRate = daoData.issuanceRate;
 	};
 </script>

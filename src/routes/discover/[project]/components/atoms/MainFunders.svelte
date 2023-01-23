@@ -1,17 +1,19 @@
 <script type="ts">
+	import { Currencies } from '$lib/types/currencies.enum';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 	export let daoData: FinancialDao;
+	console.log(daoData);
 </script>
 
 <div class="column-2 align-start">
-	{#each daoData.mainFunders as funder}
+	{#each Object.entries(daoData.funders) as [funder, amount]}
 		<div class="activity-wrapper">
 			<div class="row-3 align-center">
 				<img src="/avatar-header.png" alt="avatar logo" />
-				<span class="funder-name">{funder[0]}</span>
+				<span class="funder-name">{funder}</span>
 			</div>
-			<Currency amount={funder[1]} currency={daoData.token} color="heading" fontSize="0.85rem" />
+			<Currency {amount} currency={Currencies.FLOW} color="heading" fontSize="0.85rem" />
 		</div>
 	{/each}
 </div>

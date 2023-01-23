@@ -8,6 +8,8 @@
 	import { Currencies } from '$lib/types/currencies.enum';
 	import { fade } from 'svelte/transition';
 
+	console.log($fundData);
+
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
@@ -19,7 +21,7 @@
 
 <div in:fade={{ duration: 200 }}>
 	<div class="column-6 align-start">
-		<h4 class="w-medium">Fund Emerald DAO</h4>
+		<h4 class="w-medium">Fund {$fundData.daoName}</h4>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
 			<InputWrapper
 				name="amount"

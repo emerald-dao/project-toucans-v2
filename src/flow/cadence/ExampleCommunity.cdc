@@ -26,19 +26,21 @@ pub contract ExampleCommunity: FungibleToken {
         pub var balance: UFix64
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
-            let owner = self.owner!.address
+            if let owner: Address = self.owner?.address {
+                ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+            }
             self.balance = self.balance - amount
-            emit TokensWithdrawn(amount: amount, from: owner)
-            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+            emit TokensWithdrawn(amount: amount, from: self.owner?.address)
             return <- create Vault(balance: amount)
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
-            let owner = self.owner!.address
             let vault <- from as! @Vault
-            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? 0.0) + vault.balance
+            if let owner: Address = self.owner?.address {
+                ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? 0.0) + vault.balance
+            }
             self.balance = self.balance + vault.balance
-            emit TokensDeposited(amount: vault.balance, to: owner)
+            emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             
             // We set the balance to 0.0 here so that it doesn't
             // decrease the totalSupply in the `destroy` function.

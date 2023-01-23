@@ -11,6 +11,6 @@ export const fundData: Writable<FundData> = writable({
 	currency: Currencies.FLOW,
 	amount: null,
 	specialMessage: '',
-	issuanceRate: 1.2,
+	issuanceRate: null,
 	funded: false
 });
