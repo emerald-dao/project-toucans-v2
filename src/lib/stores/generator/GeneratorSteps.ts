@@ -8,13 +8,20 @@ import DaoDetails from '../../../routes/dao-generator/generate/components/genera
 import { get } from 'svelte/store';
 import { daoData } from '$stores/generator/DaoDataStore';
 import { user } from '$stores/flow/FlowStore';
+import { NFTStorage } from "nft.storage";
+import { env as PublicEnv } from '$env/dynamic/public';
+
+const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
+const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
 const createToken = async () => {
 	const data = get(daoData);
 	const action = async () => {
+		const cid = await client.storeBlob(data.daoDetails.logo[0]);
+		const logo = `https://nftstorage.link/ipfs/${cid}`;
 		const response = await fetch('/api/add', {
 			method: 'POST',
-			body: JSON.stringify({ user: get(user), ...data }),
+			body: JSON.stringify({ user: get(user), ...data, logo }),
 			headers: {
 				'content-type': 'application/json'
 			}

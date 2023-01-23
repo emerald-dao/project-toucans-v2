@@ -24,24 +24,29 @@
 <div class="card-primary column-10">
 	<div class="column-10">
 		<div class="row-4 align-center">
-			<img src={daoData.logoUrl} alt="DAO Logo" />
+			<img src={daoData.logo} alt="DAO Logo" />
 			<h1 class="h3 w-medium">{daoData.name}</h1>
 		</div>
 		<div class="column-2">
 			{#if daoData.twitter || daoData.discord || daoData.website}
 				<div class="row-4">
 					{#if daoData.twitter}
-						<a href="twitter" class="header-link" target="_blank">
+						<a
+							href={`https://twitter.com/${daoData.twitter}`}
+							rel="noreferrer"
+							class="header-link"
+							target="_blank"
+						>
 							<Icon icon="tabler:brand-twitter" width="24" />
 						</a>
 					{/if}
 					{#if daoData.discord}
-						<a href="discord" class="header-link" target="_blank">
+						<a href={daoData.discord} rel="noreferrer" class="header-link" target="_blank">
 							<Icon icon="tabler:brand-discord" width="24" />
 						</a>
 					{/if}
 					{#if daoData.website}
-						<a href="website" class="header-link" target="_blank">
+						<a href={daoData.website} rel="noreferrer" class="header-link" target="_blank">
 							<Icon icon="tabler:world" width="24" />
 						</a>
 					{/if}

@@ -9,9 +9,8 @@ const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
   const data = await request.json();
-  console.log("IN THE SERVER!");
-  console.log(data);
 
+  // Make sure a valid user was passed in
   const verifyAccount = await verifyAccountOwnership(data.user);
   console.log(verifyAccount);
   if (!verifyAccount) {
@@ -23,7 +22,7 @@ export async function POST({ request }) {
 
   const { error } = await supabase
     .from('projects')
-    .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.user.addr, description: data.daoDetails.description, website: data.daoDetails.website, owner: data.user.addr, type: data.tokenomics.tokenType })
+    .insert({ name, token_symbol: tokenName, contract_name: data.daoDetails.contractName, contract_address: data.user.addr, description: data.daoDetails.description, website: data.daoDetails.website, twitter: data.daoDetails.twitter, discord: data.daoDetails.discord, logo: data.logo, owner: data.user.addr, type: data.tokenomics.tokenType })
 
   return json(error);
 }

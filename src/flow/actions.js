@@ -10,6 +10,7 @@ import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/financial/fund_project.cdc?raw';
+import transferTokensTx from './cadence/transactions/community/transfer_tokens.cdc?raw';
 import getFinancialProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
 import getCommunityProjectScript from './cadence/scripts/community/get_project.cdc?raw';
 import { get } from 'svelte/store';
@@ -133,6 +134,26 @@ const fundProject = async () => {
 
 export const fundProjectExecution = () => executeTransaction(fundProject);
 
+// const tranferTokens = async () => {
+// 	const amount = "10.0";
+// 	const recipient = "0x179b6b1cb6755e31"
+// 	const contractAddress = "";
+// 	const contractName = "";
+// 	return await fcl.mutate({
+// 		cadence: replaceWithProperValues(transferTokensTx, contractName, projectOwner),
+// 		args: (arg, t) => [
+// 			arg(amount, t.UFix64),
+// 			arg(recipient, t.Address)
+// 		],
+// 		proposer: fcl.authz,
+// 		payer: fcl.authz,
+// 		authorizations: [fcl.authz],
+// 		limit: 9999
+// 	});
+// }
+
+// export const fundProjectExecution = () => executeTransaction(fundProject);
+
 export const getProjectInfo = async (contractName, contractAddress, owner, type) => {
 	const scriptCode = type === 'Financial' ? getFinancialProjectScript : getCommunityProjectScript;
 	console.log(replaceWithProperValues(scriptCode, contractName, contractAddress))
@@ -148,3 +169,4 @@ export const getProjectInfo = async (contractName, contractAddress, owner, type)
 		console.log(e);
 	}
 }
+

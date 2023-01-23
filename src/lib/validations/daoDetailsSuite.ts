@@ -52,6 +52,10 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 	test('website', 'Must be a valid URL', () => {
 		enforce(data.website).matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
 	});
+
+	test('discord', 'Must be a valid URL', () => {
+		enforce(data.discord).matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
+	});
 });
 
 const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {

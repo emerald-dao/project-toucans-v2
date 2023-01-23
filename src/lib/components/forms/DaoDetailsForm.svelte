@@ -109,6 +109,38 @@
 		/>
 	</InputWrapper>
 
+	<InputWrapper
+		name="twitter"
+		label="Twitter"
+		icon="tabler:world"
+		errors={res.getErrors('twitter')}
+		isValid={res.isValid('twitter')}
+	>
+		<input
+			name="twitter"
+			type="text"
+			placeholder="@emerald_dao"
+			bind:value={$daoData.daoDetails.twitter}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+
+	<InputWrapper
+		name="discord"
+		label="Discord"
+		icon="tabler:world"
+		errors={res.getErrors('discord')}
+		isValid={res.isValid('discord')}
+	>
+		<input
+			name="discord"
+			type="text"
+			placeholder="https://discord.gg/emeraldcity"
+			bind:value={$daoData.daoDetails.discord}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+
 	<label for="logo">Logo</label>
 	<DropZone
 		name="logo"

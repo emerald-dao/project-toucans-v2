@@ -38,6 +38,8 @@
 		</div>
 		<RecapElement title="Description" data={$daoData.daoDetails.description} />
 		<RecapElement title="Website" data={$daoData.daoDetails.website} />
+		<RecapElement title="Twitter" data={$daoData.daoDetails.twitter} />
+		<RecapElement title="Discord" data={$daoData.daoDetails.discord} />
 	</RecapCard>
 	<RecapCard title="Token Type" stepNumber={1}>
 		<RecapElement data={$daoData.tokenomics.tokenType} />

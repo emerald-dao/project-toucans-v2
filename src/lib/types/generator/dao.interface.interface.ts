@@ -7,7 +7,8 @@ export interface DaoData {
 		tokenName: string;
 		description: string;
 		website: string;
-		owner: string;
+		twitter: string;
+		discord: string;
 		contractName: string;
 		logo: File[] | undefined;
 	};
