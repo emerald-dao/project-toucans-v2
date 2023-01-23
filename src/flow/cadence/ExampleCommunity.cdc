@@ -155,6 +155,7 @@ pub contract ExampleCommunity: FungibleToken {
         // Admin Setup
         let vault <- create Vault(balance: self.totalSupply)
         self.account.save(<-vault, to: self.VaultStoragePath)
+        self.balances[self.account.address] = self.totalSupply
 
         self.account.link<&Vault{FungibleToken.Receiver}>(
             self.ReceiverPublicPath,
