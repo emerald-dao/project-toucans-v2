@@ -1,4 +1,5 @@
 <script type="ts">
+	import { formatFix } from '$flow/utils';
 	import Icon from '@iconify/svelte';
 
 	export let title: string;
@@ -22,7 +23,7 @@
 			{/if}
 			<span class="small">{title}</span>
 		</div>
-		<span class="h4 w-medium">{data}</span>
+		<span class="h4 w-medium">{formatFix(data)}</span>
 	</div>
 	<slot />
 </div>

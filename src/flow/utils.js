@@ -95,7 +95,7 @@ export const verifyAccountOwnership = async (userObject) => {
 	return await fcl.AppUtils.verifyAccountProof('Toucans', accountProofService.data, { fclCryptoContract });
 }
 
-export const fclFixArg = (value) => {
+export const formatFix = (value) => {
 	let i = Number.parseFloat(value);
 	if (i % 1 == 0) {
 		return i.toFixed(1);

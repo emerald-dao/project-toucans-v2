@@ -3,7 +3,7 @@ import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { user } from '$stores/flow/FlowStore';
-import { executeTransaction, fclFixArg, replaceWithProperValues } from './utils';
+import { executeTransaction, formatFix, replaceWithProperValues } from './utils';
 
 import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
 import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
@@ -84,11 +84,11 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(fclFixArg(data.tokenomics.targetAmount), t.UFix64),
-			arg(fclFixArg(data.tokenomics.initialRound.issuanceRate), t.UFix64),
-			arg(fclFixArg(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
+			arg(formatFix(data.tokenomics.targetAmount), t.UFix64),
+			arg(formatFix(data.tokenomics.initialRound.issuanceRate), t.UFix64),
+			arg(formatFix(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
 			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
-			arg(fclFixArg(data.tokenomics.editDelay), t.UFix64),
+			arg(formatFix(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -103,7 +103,7 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 		cadence: replaceWithProperValues(deployCommunityTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(fclFixArg(data.tokenomics.totalSupply), t.UFix64),
+			arg(formatFix(data.tokenomics.totalSupply), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -123,7 +123,7 @@ const fundProject = async () => {
 		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
-			arg(fclFixArg(amount), t.UFix64)
+			arg(formatFix(amount), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

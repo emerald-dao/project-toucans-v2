@@ -1,4 +1,5 @@
 <script type="ts">
+	import { formatFix } from '$flow/utils';
 	import Icon from '@iconify/svelte';
 	export let title: string;
 	export let data: string;
@@ -10,7 +11,7 @@
 		<Icon {icon} />
 		<span>{title}</span>
 	</div>
-	<h4 class="heading w-medium">{data}</h4>
+	<h4 class="heading w-medium">{formatFix(data)}</h4>
 </div>
 
 <style type="scss">
