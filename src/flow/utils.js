@@ -94,3 +94,11 @@ export const verifyAccountOwnership = async (userObject) => {
 	const fclCryptoContract = network === 'emulator' ? '0xf8d6e0586b0a20c7' : null;
 	return await fcl.AppUtils.verifyAccountProof('Toucans', accountProofService.data, { fclCryptoContract });
 }
+
+export const fclFixArg = (value) => {
+	let i = Number.parseFloat(value);
+	if (i % 1 == 0) {
+		return i.toFixed(1);
+	}
+	return i;
+}

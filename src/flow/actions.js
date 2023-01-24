@@ -3,7 +3,7 @@ import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { user } from '$stores/flow/FlowStore';
-import { executeTransaction, replaceWithProperValues } from './utils';
+import { executeTransaction, fclFixArg, replaceWithProperValues } from './utils';
 
 import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
 import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
@@ -61,7 +61,6 @@ const deployContract = async (data) => {
 	const contractName = data.daoDetails.contractName;
 
 	if (data.tokenomics.tokenType == 'Financial') {
-		console.log(data.tokenomics.mintTokens);
 		contractCode = contractCode.replace('// INSERT MINTING HERE', data.tokenomics.mintTokens ?
 			`pub fun mintTokens(amount: UFix64): @Vault {
 			pre {
@@ -85,11 +84,11 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 		cadence: replaceWithProperValues(deployFinancialTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(Number.parseFloat(data.tokenomics.targetAmount), t.UFix64),
-			arg(Number.parseFloat(data.tokenomics.initialRound.issuanceRate), t.UFix64),
-			arg(Number.parseFloat(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
+			arg(fclFixArg(data.tokenomics.targetAmount), t.UFix64),
+			arg(fclFixArg(data.tokenomics.initialRound.issuanceRate), t.UFix64),
+			arg(fclFixArg(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
 			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
-			arg(Number.parseFloat(data.tokenomics.editDelay), t.UFix64),
+			arg(fclFixArg(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -104,7 +103,7 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 		cadence: replaceWithProperValues(deployCommunityTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(Number.parseFloat(data.tokenomics.totalSupply), t.UFix64),
+			arg(fclFixArg(data.tokenomics.totalSupply), t.UFix64),
 			arg(hexCode, t.String)
 		],
 		proposer: fcl.authz,
@@ -124,7 +123,7 @@ const fundProject = async () => {
 		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
-			arg(Number.parseFloat(amount), t.UFix64)
+			arg(fclFixArg(amount), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
