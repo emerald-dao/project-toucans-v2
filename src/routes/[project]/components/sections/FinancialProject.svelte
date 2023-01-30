@@ -12,7 +12,8 @@
 	import { formatFix } from '$flow/utils';
 
 	export let daoData;
-	console.log(daoData);
+
+	console.log('daoData', daoData);
 
 	const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
 
@@ -24,14 +25,18 @@
 	<div class="column-10">
 		<div class="main-wrapper column-8">
 			<div class="boxes-wrapper">
-				<DataCard title="Total Funding" icon="tabler:pig-money" data={daoData.totalBought} />
+				<DataCard
+					title="Total Funding"
+					icon="tabler:pig-money"
+					data={Number(daoData.totalBought).toLocaleString()}
+				/>
 				<DataCard title="Total Tokens" icon="tabler:coin" data={daoData.totalSupply} />
 				<DataCard title="Rounds" icon="tabler:rotate-dot" data={daoData.fundingCycles.length} />
 			</div>
 			<div class="card column">
 				<div class="data-wrapper">
 					<ChartTitle
-						title="Active Round"
+						title="Active Funding Round"
 						data={`${daoData.fundingCycles[0].numOfFlowContributed} $FLOW raised`}
 						icon="tabler:activity-heartbeat"
 					/>

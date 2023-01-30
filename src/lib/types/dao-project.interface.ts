@@ -31,17 +31,17 @@ export interface CommunityDao extends DaoInfo {
 	mainHolders: [string, number][];
 }
 
-export interface Round {
-	status: 'active' | 'finished';
-	currency: Currencies.FLOW | Currencies.FUSD;
-	goal: number;
-	raised: number;
-	startDate: Date;
-	finishDate: Date;
-	distributed: boolean;
-	withdrawn: boolean;
-	fundings: Funding[];
-}
+// export interface Round {
+// 	status: 'active' | 'finished';
+// 	currency: Currencies.FLOW | Currencies.FUSD;
+// 	goal: number;
+// 	raised: number;
+// 	startDate: Date;
+// 	finishDate: Date;
+// 	distributed: boolean;
+// 	withdrawn: boolean;
+// 	fundings: Funding[];
+// }
 
 export interface Activity {
 	type: 'entry' | 'expense';
@@ -64,4 +64,36 @@ export enum DaoTags {
 export enum DaoType {
 	'Community' = 'Community',
 	'Financial' = 'Financial'
+}
+
+export interface TimeFrame {
+	startTime: string;
+	endTime: string;
+}
+
+export interface Payout {
+	address: string;
+	percent: string;
+}
+
+export interface Extra {}
+
+export interface RoundDetails {
+	cycleNum: string;
+	fundingTarget: string;
+	issuanceRate: string;
+	reserveRate: string;
+	timeFrame: TimeFrame;
+	payouts: Payout[];
+	extra: Extra;
+}
+
+export interface Funders {}
+
+export interface Round {
+	details: RoundDetails;
+	numOfTokensPurchased: string;
+	funders: Funders;
+	numOfFlowContributed: string;
+	purchaseHistory: any[];
 }

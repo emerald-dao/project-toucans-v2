@@ -7,40 +7,45 @@
 	export let round: Round;
 	export let discover: boolean = false;
 
+	console.log('round', round);
+
+	console.log(formatDate(new Date(Number(round.details.timeFrame.startTime))));
+	console.log(formatDate(new Date(Number(round.details.timeFrame.startTime))));
+
 	const goalReached = round.details.fundingTarget < round.numOfFlowContributed;
-	console.log(round.details.fundingTarget, round.numOfFlowContributed);
+	const active = new Date(Number(round.details.timeFrame.startTime)) > new Date();
 </script>
 
 <div class="main-wrapper">
 	<div class="row-9 align-center">
 		<div class="row-4 align-center">
-			<StatusCircle
-				width="0.5rem"
-				status={round.status === 'active' ? 'active' : goalReached ? 'success' : 'alert'}
-			/>
+			<StatusCircle width="0.5rem" status={active ? 'active' : goalReached ? 'success' : 'alert'} />
 			<div class="progress-bar-wrapper">
 				<ProgressBar
-					value={round.numOfFlowContributed}
-					max={round.details.fundingTarget}
-					labelText={`$${round.numOfFlowContributed.toLocaleString()} ${
+					value={Number(round.numOfFlowContributed)}
+					max={Number(round.details.fundingTarget)}
+					labelText={`$${Number(round.numOfFlowContributed).toLocaleString()} ${
 						Currencies.FLOW
-					} raised from $${round.details.fundingTarget.toLocaleString()} goal`}
+					} raised from $${Number(round.details.fundingTarget).toLocaleString()} goal`}
 					size="x-small"
 				/>
 			</div>
 		</div>
 		<span class="xsmall display-handling"
-			>{`${formatDate(round.details.timeFrame.startTime)} to ${formatDate(
-				round.details.timeFrame.endTime
+			>{`${formatDate(new Date(Number(round.details.timeFrame.startTime)))} to ${formatDate(
+				new Date(Number(round.details.timeFrame.endTime))
 			)}`}</span
 		>
 	</div>
 	<div class="row-5 display-handling">
-		{#if round.status === 'active'}
+		{#if active}
 			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
-				{`${-daysOfDifference(new Date(), round.details.timeFrame.endTime)} days left`}
+				{`${-daysOfDifference(
+					new Date(),
+					new Date(Number(round.details.timeFrame.endTime))
+				)} days left`}
 			</Label>
-		{:else if round.status === 'finished'}
+		{:else}
 			<div class="row-2 buttons-wrapper" class:page={discover}>
 				<Button
 					size="x-small"
