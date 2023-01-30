@@ -4,33 +4,43 @@
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import Icon from '@iconify/svelte';
-	import ChartTitle from './ChartTitle.svelte';
+	import ChartTitle from '../../../routes/[project]/components/atoms/ChartTitle.svelte';
+	import type { Round } from '$lib/types/dao-project.interface';
 
-	export let daoData;
+	export let fundingCycleData: Round;
 
-	const fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
+	const daysLeft = daysOfDifference(
+		new Date(),
+		new Date(Number(fundingCycleData.details.timeFrame.endTime))
+	);
+
+	export let title: string = daysLeft > 0 ? 'Active Funding Round' : 'Last Funding Round';
+	export let hasBorder = true;
+
+	const fundingsPerMonth = getMonthlyFundingFromRounds([fundingCycleData]);
 
 	const months: string[] = fundingsPerMonth.map((x) => x[0]);
 	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
-<div class="card column">
+<div class:card={hasBorder}>
 	<div class="data-wrapper">
 		<div class="row-space-between">
-			<ChartTitle title="Active Funding Round" icon="tabler:activity-heartbeat" />
+			<ChartTitle {title} icon="tabler:activity-heartbeat" />
 			<span class="time-left xsmall">
 				<Icon icon="tabler:clock" />
-				{daysOfDifference(
-					new Date(),
-					new Date(Number(daoData.fundingCycles[0].details.timeFrame.endTime))
-				)} days left
+				{#if daysLeft < 0}
+					Finished {(-daysLeft).toLocaleString()} days ago
+				{:else}
+					{daysLeft.toLocaleString()} days left
+				{/if}
 			</span>
 		</div>
 		<div class="funding-stats-wrapper">
 			<div class="chart-data-card">
 				<p class="xsmall">Raised</p>
 				<Currency
-					amount={Number(daoData.fundingCycles[0].numOfFlowContributed)}
+					amount={Number(fundingCycleData.numOfFlowContributed)}
 					currency="FLOW"
 					fontSize="var(--font-size-1)"
 					color="heading"
@@ -39,7 +49,7 @@
 			<div class="chart-data-card">
 				<p class="xsmall">Goal</p>
 				<Currency
-					amount={Number(daoData.fundingCycles[0].details.fundingTarget)}
+					amount={Number(fundingCycleData.details.fundingTarget)}
 					currency="FLOW"
 					fontSize="var(--font-size-1)"
 					color="heading"
@@ -50,7 +60,7 @@
 					<p class="xsmall">Reserve rate</p>
 					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
-				<span class="small w-medium">{Number(daoData.fundingCycles[0].details.reserveRate)}</span>
+				<span class="small w-medium">{Number(fundingCycleData.details.reserveRate)}</span>
 			</div>
 			<div class="chart-data-card">
 				<div class="row-1">
@@ -58,13 +68,13 @@
 					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
 				<span class="small w-medium">
-					{Number(daoData.fundingCycles[0].details.issuanceRate)}
+					{Number(fundingCycleData.details.issuanceRate)}
 				</span>
 			</div>
 		</div>
 		<ProgressBar
-			value={Number(daoData.fundingCycles[0].numOfFlowContributed)}
-			max={Number(daoData.fundingCycles[0].details.fundingTarget)}
+			value={Number(fundingCycleData.numOfFlowContributed)}
+			max={Number(fundingCycleData.details.fundingTarget)}
 		/>
 	</div>
 	<div class="chart-wrapper">

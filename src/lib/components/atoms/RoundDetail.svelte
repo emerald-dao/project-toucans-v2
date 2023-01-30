@@ -1,11 +1,21 @@
 <script type="ts">
+	import Icon from '@iconify/svelte';
 	import { Currencies } from '$lib/types/currencies.enum';
 	import type { Round } from '$lib/types/dao-project.interface';
 	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
-	import { Button, Label, ProgressBar, StatusCircle } from '@emerald-dao/component-library';
+	import {
+		Button,
+		Label,
+		Modal,
+		getModal,
+		ProgressBar,
+		StatusCircle
+	} from '@emerald-dao/component-library';
+	import FundingStats from '$components/atoms/FundingStats.svelte';
 
 	export let round: Round;
 	export let discover: boolean = false;
+	export let i: number;
 
 	console.log('round', round);
 
@@ -63,8 +73,14 @@
 				</Button>
 			</div>
 		{/if}
+		<div class="header-link" on:click={() => getModal(`funding-stats-${i}`).open()} on:keydown>
+			<Icon icon="tabler:eye" />
+		</div>
 	</div>
 </div>
+<Modal background="var(--clr-background-secondary)" id={`funding-stats-${i}`}>
+	<FundingStats fundingCycleData={round} hasBorder={false} title="Funding round data" />
+</Modal>
 
 <style type="scss">
 	.main-wrapper {

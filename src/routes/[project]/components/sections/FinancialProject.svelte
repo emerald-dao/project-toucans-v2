@@ -4,9 +4,11 @@
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import RoundDetail from '$components/atoms/RoundDetail.svelte';
-	import ActiveFundingStats from '../atoms/ActiveFundingStats.svelte';
+	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 
 	export let daoData;
+
+	console.log(daoData);
 </script>
 
 {#if daoData}
@@ -28,7 +30,7 @@
 				/>
 			</div>
 		</div>
-		<ActiveFundingStats {daoData} />
+		<FundingStats fundingCycleData={daoData.fundingCycles[0]} />
 		<Tabs>
 			<TabList>
 				<Tab>Recent Activity</Tab>
@@ -52,9 +54,9 @@
 				</div>
 				<div class="rounds-wrapper">
 					<span class="heading">Finished</span>
-					{#each daoData.fundingCycles as round}
+					{#each daoData.fundingCycles as round, i}
 						{#if round.details.cycleNum !== daoData.currentFundingCycle}
-							<RoundDetail {round} discover={true} />
+							<RoundDetail {round} discover={true} {i} />
 						{/if}
 					{/each}
 				</div>
