@@ -1,9 +1,12 @@
 <script type="ts">
-	import { formatFix } from '$flow/utils';
+	import { Currency } from '@emerald-dao/component-library';
+	// import { formatFix } from '$flow/utils';
 	import Icon from '@iconify/svelte';
 
 	export let title: string;
 	export let data: string | number;
+	export let isCurrency = false;
+	export let currencyName: string = 'FLOW';
 	export let icon: string | null = null;
 	export let hasBackground: boolean = false;
 	export let width: '100%' | 'fit-content' = '100%';
@@ -12,26 +15,31 @@
 </script>
 
 <div
-	class="card column-6"
+	class="card"
 	class:card-primary={hasBackground}
 	style={`width: ${width}; padding: ${paddingBlock} ${paddingInline}`}
 >
-	<div class="column-1">
-		<div class="row-2">
-			{#if icon}
-				<Icon {icon} />
-			{/if}
-			<span class="small">{title}</span>
-		</div>
-		<span class="h4 w-medium">{formatFix(data)}</span>
+	<div class="row-2">
+		{#if icon}
+			<Icon {icon} />
+		{/if}
+		<span class="small">{title}</span>
 	</div>
+	{#if isCurrency}
+		<Currency amount={data} currency={currencyName} color="heading" fontSize="var(--font-size-6)" />
+	{:else}
+		<span class="h4 w-medium">{data}</span>
+	{/if}
 	<slot />
 </div>
 
 <style type="scss">
 	.card {
 		padding: var(--space-2) var(--space-3);
-		height: fit-content;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: var(--space-1);
 
 		@include mq('small') {
 			padding: var(--space-5) var(--space-7);
