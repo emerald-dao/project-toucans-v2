@@ -5,24 +5,29 @@
 	import { fundData } from '$stores/fund/FundDataStore';
 	import Icon from '@iconify/svelte';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
+	import { DaoType } from '$lib/types/dao-project.interface';
 	import { Currencies } from '$lib/types/currencies.enum';
 
-	export let daoData;
+	export let daoData: FinancialDao | CommunityDao;
 
 	const initFunding = () => {
-		fundActiveStep.reset();
+		if (daoData.type === DaoType.Financial && $user) {
+			fundActiveStep.reset();
 
-		getModal().open();
+			getModal().open();
 
-		$fundData.daoName = daoData.name;
-		$fundData.daoAddress = daoData.owner;
-		$fundData.funderAddress = $user.addr;
-		$fundData.contractName = daoData.contract_name;
-		$fundData.currency = Currencies.FLOW;
-		$fundData.issuanceRate = Math.trunc(
-			daoData.fundingCycles[daoData.currentFundingCycle].details.issuanceRate
-		);
-		// $fundData.issuanceRate = daoData.issuanceRate;
+			const dao = daoData as FinancialDao;
+
+			$fundData.daoName = dao.name;
+			$fundData.daoAddress = dao.owner;
+			$fundData.funderAddress = $user.addr;
+			$fundData.contractName = dao.contract_name;
+			$fundData.currency = Currencies.FLOW;
+			$fundData.issuanceRate = Math.trunc(
+				Number(dao.fundingCycles[Number(dao.currentFundingCycle)].details.issuanceRate)
+			);
+			// $fundData.issuanceRate = daoData.issuanceRate;
+		}
 	};
 </script>
 
@@ -67,8 +72,12 @@
 		</div>
 		<p class="small">{daoData.description}</p>
 	</div>
-	<Button width="full-width" on:click={initFunding}><Icon icon="tabler:cash-banknote" />Fund</Button
-	>
+	{#if daoData.type === DaoType.Financial}
+		<Button width="full-width" on:click={initFunding}
+			><Icon icon="tabler:cash-banknote" />
+			Fund
+		</Button>
+	{/if}
 </div>
 <Modal>
 	<div class="modal-content">

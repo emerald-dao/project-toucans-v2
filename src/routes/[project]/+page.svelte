@@ -8,8 +8,8 @@
 	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
 
-	export let data;
-	console.log(data);
+	export let data: CommunityDao | FinancialDao;
+
 	let seeMore = false;
 </script>
 

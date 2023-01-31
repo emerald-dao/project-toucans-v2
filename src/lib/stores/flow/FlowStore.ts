@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { network } from '$flow/config.js';
+import type { FlowUser } from '$lib/types/flow/user.interface';
 
 const contractData = {
 	NonFungibleToken: {
@@ -50,10 +51,10 @@ const contractData = {
 	},
 	Toucans: {
 		emulator: '0xf8d6e0586b0a20c7'
-	},
+	}
 };
 
-export const user = writable(null);
+export const user = writable<FlowUser | null>(null);
 export const profile = writable(null);
 // export const transactionStatus = writable({});
 // export const transactionInProgress = writable(false);
