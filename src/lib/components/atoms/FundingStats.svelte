@@ -42,7 +42,7 @@
 				<Currency
 					amount={Number(fundingCycleData.numOfFlowContributed)}
 					currency="FLOW"
-					fontSize="var(--font-size-1)"
+					fontSize="var(--font-size-2)"
 					color="heading"
 				/>
 			</div>
@@ -60,14 +60,14 @@
 					<p class="xsmall">Reserve rate</p>
 					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
-				<span class="small w-medium">{Number(fundingCycleData.details.reserveRate)}</span>
+				<span class="small">{Number(fundingCycleData.details.reserveRate)}</span>
 			</div>
 			<div class="chart-data-card">
 				<div class="row-1">
 					<p class="xsmall">Issuance</p>
 					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
-				<span class="small w-medium">
+				<span class="small">
 					{Number(fundingCycleData.details.issuanceRate)}
 				</span>
 			</div>

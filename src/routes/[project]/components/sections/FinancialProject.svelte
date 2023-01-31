@@ -30,7 +30,9 @@
 				/>
 			</div>
 		</div>
-		<FundingStats fundingCycleData={daoData.fundingCycles[0]} />
+		{#if daoData.fundingCycles.length > 0}
+			<FundingStats fundingCycleData={daoData.fundingCycles[0]} />
+		{/if}
 		<Tabs>
 			<TabList>
 				<Tab>Recent Activity</Tab>
@@ -48,7 +50,7 @@
 					<span class="heading">Active</span>
 					{#each daoData.fundingCycles as round}
 						{#if round.details.cycleNum === daoData.currentFundingCycle}
-							<RoundDetail {round} />
+							<RoundDetail {round} i={0} />
 						{/if}
 					{/each}
 				</div>
