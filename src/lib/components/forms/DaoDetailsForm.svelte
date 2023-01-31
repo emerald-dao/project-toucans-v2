@@ -5,18 +5,21 @@
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
 	import { page } from '$app/stores';
 
+	export let validForm = false;
+
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
-
-		res = daoDetailsSuite($daoData.daoDetails, target.name, $page.data.data.body);
 
 		if (target.name === 'name') {
 			namePending = true;
 		}
 
 		if (target.name === 'tokenName') {
+			$daoData.daoDetails.tokenName = $daoData.daoDetails.tokenName.toUpperCase();
 			tokenNamePending = true;
 		}
+
+		res = daoDetailsSuite($daoData.daoDetails, target.name, $page.data.data.body);
 
 		res.done((result) => {
 			res = result;
@@ -32,7 +35,11 @@
 
 	let res = daoDetailsSuite.get();
 
-	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '');
+	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name
+		.replace(/[^\w\s]|\s/gi, '')
+		.toLowerCase();
+
+	$: validForm = res.isValid() && $daoData.daoDetails.logo != undefined;
 </script>
 
 <form
@@ -42,7 +49,7 @@
 >
 	<InputWrapper
 		name="name"
-		label="What should we call this DAO?"
+		label="DAO name"
 		pending={namePending}
 		pendingMessage={namePendingMessage}
 		errors={res.getErrors('name')}
@@ -52,12 +59,13 @@
 			name="name"
 			type="text"
 			placeholder="Emerald DAO"
+			maxlength="30"
 			bind:value={$daoData.daoDetails.name}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
 
-	<label for="contractName">Contract Name</label>
+	<label for="contractName">Contract name</label>
 	<input type="text" readonly name="contractName" bind:value={$daoData.daoDetails.contractName} />
 
 	<InputWrapper
@@ -74,6 +82,7 @@
 			name="tokenName"
 			type="text"
 			placeholder="DAOcoin"
+			maxlength="4"
 			bind:value={$daoData.daoDetails.tokenName}
 			on:input={handleChange}
 		/>

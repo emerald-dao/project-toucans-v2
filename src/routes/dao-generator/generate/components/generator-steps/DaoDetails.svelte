@@ -3,8 +3,8 @@
 	import DaoDetailsForm from '$lib/components/forms/DaoDetailsForm.svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
 
-	console.log($page.data);
+	let validForm = false;
 </script>
 
-<DaoDetailsForm />
-<StepButtons active={true} />
+<DaoDetailsForm bind:validForm />
+<StepButtons active={validForm} />
