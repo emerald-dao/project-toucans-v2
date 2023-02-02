@@ -33,9 +33,9 @@ export interface Payout {
 	percent: string;
 }
 
-export interface Extra {}
+export interface Extra { }
 
-export interface Funders {}
+export interface Funders { }
 
 export interface Type {
 	kind: string;
@@ -59,12 +59,12 @@ export interface Details {
 	fundingTarget: string;
 	issuanceRate: string;
 	reserveRate: string;
-	timeFrame: TimeFrame;
+	timeframe: TimeFrame;
 	payouts: Payout[];
 	extra: Extra;
 }
 
-export interface Funders {}
+export interface Funders { }
 
 export interface FundingCycle {
 	details: Details;
@@ -79,7 +79,7 @@ export interface CycleInfo {
 	fundingTarget: string;
 	issuanceRate: string;
 	reserveRate: string;
-	timeFrame: TimeFrame;
+	timeframe: TimeFrame;
 	payouts: Payout[];
 	extra: Extra;
 }
@@ -113,7 +113,7 @@ export interface Dao {
 
 export interface FinancialDao extends Dao {
 	currentFundingCycle: string;
-	totalBought: string;
+	totalFunding: string;
 	fundingCycles: FundingCycle[];
 	funders: Funders;
 	type: DaoType.Financial;

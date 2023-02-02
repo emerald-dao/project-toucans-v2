@@ -11,7 +11,7 @@
 
 	const daysLeft = daysOfDifference(
 		new Date(),
-		new Date(Number(fundingCycleData.details.timeFrame.endTime))
+		new Date(Number(fundingCycleData.details.timeframe.endTime))
 	);
 
 	export let title: string = daysLeft > 0 ? 'Active Funding Round' : 'Last Funding Round';

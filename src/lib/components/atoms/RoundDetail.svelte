@@ -10,7 +10,7 @@
 	export let i: number;
 
 	const goalReached = round.details.fundingTarget < round.numOfFlowContributed;
-	const active = new Date(Number(round.details.timeFrame.startTime)) > new Date();
+	const active = new Date(Number(round.details.timeframe.startTime)) > new Date();
 </script>
 
 <div class="main-wrapper">
@@ -29,8 +29,8 @@
 			</div>
 		</div>
 		<span class="xsmall display-handling"
-			>{`${formatDate(new Date(Number(round.details.timeFrame.startTime)))} to ${formatDate(
-				new Date(Number(round.details.timeFrame.endTime))
+			>{`${formatDate(new Date(Number(round.details.timeframe.startTime)))} to ${formatDate(
+				new Date(Number(round.details.timeframe.endTime))
 			)}`}</span
 		>
 	</div>

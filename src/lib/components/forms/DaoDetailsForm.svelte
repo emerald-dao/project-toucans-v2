@@ -35,9 +35,7 @@
 
 	let res = daoDetailsSuite.get();
 
-	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name
-		.replace(/[^\w\s]|\s/gi, '')
-		.toLowerCase();
+	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '');
 
 	$: validForm = res.isValid() && $daoData.daoDetails.logo != undefined;
 </script>

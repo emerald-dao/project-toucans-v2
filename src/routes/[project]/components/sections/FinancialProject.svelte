@@ -17,7 +17,7 @@
 				<DataCard
 					title="Total Funding"
 					icon="tabler:pig-money"
-					data={Number(daoData.totalBought)}
+					data={Number(daoData.totalFunding)}
 					isCurrency
 				/>
 				<DataCard

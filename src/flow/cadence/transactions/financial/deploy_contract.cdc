@@ -35,7 +35,7 @@ transaction(
       _fundingTarget: fundingTarget, 
       _issuanceRate: initialFlowTokenIssuanceRate,
       _reserveRate: reserveRate,
-      _timeFrame: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
+      _timeframe: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
       _payouts: payoutsArray,
       _editDelay: editDelay,
       _extra: extra

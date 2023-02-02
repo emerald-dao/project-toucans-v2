@@ -25,7 +25,7 @@
 	<div class="data-card-display">
 		<DataCard
 			title="Circulating Supply"
-			data={Number(daoData.totalBought).toLocaleString()}
+			data={Number(daoData.totalFunding).toLocaleString()}
 			icon="tabler:home"
 		/>
 		<DataCard
@@ -43,7 +43,7 @@
 		title="Summary"
 		hasBackground={true}
 		paddingBlock="var(--space-8)"
-		data={`${(Number(daoData.totalBought) / Number(daoData.totalSupply)) * 100}%`}
+		data={`${(Number(daoData.totalFunding) / Number(daoData.totalSupply)) * 100}%`}
 	>
 		<ProgressBar
 			value={Number(daoData.totalSupply)}

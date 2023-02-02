@@ -2,9 +2,9 @@ import type { Round } from '../types/dao-project.interface';
 
 export const getMonthlyFundingFromRounds = (rounds: Round[]): [string, number][] => {
 	const monthlySums: [string, number][] = [];
-	const startDates = rounds.map((round) => Number(new Date(round.details.timeFrame.startTime * 1000.0)));
+	const startDates = rounds.map((round) => Number(new Date(round.details.timeframe.startTime * 1000.0)));
 	const firstMonth = new Date(Math.min(...startDates));
-	const finishDates = rounds.map((round) => Number(new Date(round.details.timeFrame.endTime * 1000.0)));
+	const finishDates = rounds.map((round) => Number(new Date(round.details.timeframe.endTime * 1000.0)));
 	const lastMonth = new Date(Math.max(...finishDates));
 
 	let currentDate = firstMonth;

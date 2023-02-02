@@ -24,7 +24,7 @@ pub contract Toucans {
     issuanceRate: UFix64,
     reserveRate: UFix64,
     numOfTokensPurchased: UFix64,
-    timeFrame: CycleTimeFrame?,
+    timeframe: CycleTimeFrame?,
     funders: {Address: UFix64},
     numOfFlowContributed: UFix64,
     purchaseHistory: [Purchase]
@@ -150,11 +150,11 @@ pub contract Toucans {
     pub let issuanceRate: UFix64
     // a tax on purchases
     pub let reserveRate: UFix64
-    pub let timeFrame: CycleTimeFrame
+    pub let timeframe: CycleTimeFrame
     pub let payouts: [Payout]
     pub var extra: {String: AnyStruct}
 
-    init(_cycleNum: UInt64, _fundingTarget: UFix64?, _issuanceRate: UFix64, _reserveRate: UFix64, _timeFrame: CycleTimeFrame, _payouts: [Payout], _ extra: {String: String}) {
+    init(_cycleNum: UInt64, _fundingTarget: UFix64?, _issuanceRate: UFix64, _reserveRate: UFix64, _timeframe: CycleTimeFrame, _payouts: [Payout], _ extra: {String: String}) {
       pre {
         _reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
@@ -162,7 +162,7 @@ pub contract Toucans {
       self.issuanceRate = _issuanceRate
       self.fundingTarget = _fundingTarget
       self.reserveRate = _reserveRate
-      self.timeFrame = _timeFrame
+      self.timeframe = _timeframe
       self.extra = extra
       self.payouts = _payouts.concat([Payout(address: Toucans.account.address, percent: 0.025)])
 
@@ -200,7 +200,7 @@ pub contract Toucans {
   pub resource interface ProjectPublic {
     pub let projectId: UInt64
     pub let tokenType: Type
-    pub var totalBought: UFix64
+    pub var totalFunding: UFix64
     pub let editDelay: UFix64
 
     // Setters
@@ -222,7 +222,7 @@ pub contract Toucans {
   pub resource Project: ProjectPublic {
     pub let projectId: UInt64
     pub let tokenType: Type
-    pub var totalBought: UFix64
+    pub var totalFunding: UFix64
     pub let editDelay: UFix64
 
     access(self) var fundingCycles: [FundingCycle]
@@ -237,17 +237,17 @@ pub contract Toucans {
     // and there is no limit. 
     // If this is the case, the project owner must continue to pass in 
     // projectTokens so users can receive them immediately when purchasing.
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeFrame: CycleTimeFrame, payouts: [Payout], extra: {String: String}) {
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], extra: {String: String}) {
       let cycleNum = UInt64(self.fundingCycles.length)
 
       if cycleNum >= 1 {
         let previousCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
         assert(
-          timeFrame.startTime > previousCycle.details.timeFrame.startTime,
+          timeframe.startTime > previousCycle.details.timeframe.startTime,
           message: "The new cycle must have a start time greater than the one before it."
         )
         assert(
-          previousCycle.details.timeFrame.endTime == nil || (timeFrame.startTime >= previousCycle.details.timeFrame.endTime!),
+          previousCycle.details.timeframe.endTime == nil || (timeframe.startTime >= previousCycle.details.timeframe.endTime!),
           message: "If the previous cycle's end time is set, the new cycle must have a start time >= the previous rounds end time."
         )
       }
@@ -257,7 +257,7 @@ pub contract Toucans {
         _fundingTarget: fundingTarget,
         _issuanceRate: issuanceRate,
         _reserveRate: reserveRate,
-        _timeFrame: timeFrame,
+        _timeframe: timeframe,
         _payouts: payouts,
         extra
       )
@@ -275,7 +275,7 @@ pub contract Toucans {
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
         numOfTokensPurchased: newFundingCycle.numOfTokensPurchased,
-        timeFrame: timeFrame,
+        timeframe: timeframe,
         funders: newFundingCycle.funders,
         numOfFlowContributed: newFundingCycle.numOfFlowContributed,
         purchaseHistory: newFundingCycle.purchaseHistory
@@ -289,7 +289,7 @@ pub contract Toucans {
       )
       let fundingCycle: &FundingCycle = self.getFundingCycleRef(cycleNum: cycleNum)
       assert(
-        getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeFrame.startTime,
+        getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeframe.startTime,
         message: "You are no longer allowed to edit this upcoming cycle because of your edit delay." 
       )
 
@@ -297,11 +297,11 @@ pub contract Toucans {
       if Int(cycleNum) < self.fundingCycles.length - 1 {
         let aboveCycle = self.getFundingCycle(cycleNum: cycleNum + 1)
         assert(
-          details.timeFrame.startTime < aboveCycle.details.timeFrame.startTime,
+          details.timeframe.startTime < aboveCycle.details.timeframe.startTime,
           message: "New start time must be less than the one after it."
         )
         assert(
-          details.timeFrame.endTime == nil || (details.timeFrame.endTime! < aboveCycle.details.timeFrame.startTime),
+          details.timeframe.endTime == nil || (details.timeframe.endTime! < aboveCycle.details.timeframe.startTime),
           message: "New end time must be nil or less than the starting time of the cycle after it."
         )
       }
@@ -310,11 +310,11 @@ pub contract Toucans {
       if cycleNum > 0 {
         let belowCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
         assert(
-          belowCycle.details.timeFrame.endTime == nil || details.timeFrame.startTime > belowCycle.details.timeFrame.endTime!,
+          belowCycle.details.timeframe.endTime == nil || details.timeframe.startTime > belowCycle.details.timeframe.endTime!,
           message: "New start time must be greater than the end time of the cycle before it."
         )
         assert(
-          belowCycle.details.timeFrame.startTime < details.timeFrame.startTime,
+          belowCycle.details.timeframe.startTime < details.timeframe.startTime,
           message: "New start time must be greater than the start time of the cycle before it."
         )
       }
@@ -352,7 +352,7 @@ pub contract Toucans {
 
       fundingCycleRef.trackPurchase(amount: amount, amountOfFlow: amountOfFlowSent, payer: payer)
       // Tokens were purchased, so increment amount raised
-      self.totalBought = self.totalBought + amount
+      self.totalFunding = self.totalFunding + amount
       self.funders[payer] = (self.funders[payer] ?? 0.0) + amount
       self.actions.append(Purchase(self.getCurrentFundingCycleNum(), amountOfFlowSent, payer))
     }
@@ -403,8 +403,8 @@ pub contract Toucans {
         let cycle = self.fundingCycles[i]
         // If at any time we're greater than the cycle we're inspecting's start
         // time, we will return something.
-        if currentTime >= cycle.details.timeFrame.startTime {
-          if (cycle.details.timeFrame.endTime == nil || currentTime <= cycle.details.timeFrame.endTime!){
+        if currentTime >= cycle.details.timeframe.startTime {
+          if (cycle.details.timeframe.endTime == nil || currentTime <= cycle.details.timeframe.endTime!){
             // In this case, we're in the middle of the latest one
             return cycle
           } else {
@@ -425,7 +425,7 @@ pub contract Toucans {
         let cycle = self.fundingCycles[i]
         // If at any time we're greater than the cycle we're inspecting's start
         // time, we will return something.
-        if currentTime >= cycle.details.timeFrame.startTime {
+        if currentTime >= cycle.details.timeframe.startTime {
           return i
         }
         i = i - 1
@@ -476,7 +476,7 @@ pub contract Toucans {
     ) {
       self.projectId = self.uuid
       self.fundingCycles = []
-      self.totalBought = 0.0
+      self.totalFunding = 0.0
       self.extra = {}
       let testMint: @FungibleToken.Vault <- minter.mint(amount: 0.0)
       self.tokenType = testMint.getType()
@@ -506,7 +506,7 @@ pub contract Toucans {
       fundingTarget: UFix64?, 
       issuanceRate: UFix64, 
       reserveRate: UFix64, 
-      timeFrame: CycleTimeFrame, 
+      timeframe: CycleTimeFrame, 
       payouts: [Payout], 
       editDelay: UFix64,
       extra: {String: String}
@@ -516,7 +516,7 @@ pub contract Toucans {
       self.projects[project.tokenType] <-! project
       // we have to do it this weird way because of `self.owner!.address` in `configureFundingCycle`
       let ref = self.borrowProject(projectType: tokenType)!
-      ref.configureFundingCycle(fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeFrame: timeFrame, payouts: payouts, extra: extra)
+      ref.configureFundingCycle(fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeframe: timeframe, payouts: payouts, extra: extra)
     }
 
     pub fun borrowProject(projectType: Type): &Project? {
