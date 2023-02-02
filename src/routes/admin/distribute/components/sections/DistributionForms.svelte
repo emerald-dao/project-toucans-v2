@@ -1,5 +1,5 @@
 <script type="ts">
-	import type { CommunityDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
 	import type { Distribution } from '$lib/types/distribution.interface';
 	import Papa from 'papaparse';
 	import { Button, DropZone } from '@emerald-dao/component-library';
@@ -7,8 +7,16 @@
 	import { getContext } from 'svelte';
 	import { InputWrapper, Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import distributionSuite from '$lib/validations/distributionSuite';
+	import type { Writable } from 'svelte/store';
 
-	const daoData: CommunityDao = getContext('dao-data');
+	const adminData: {
+		activeDao: Writable<number>;
+		userDaos: FinancialDao[] | CommunityDao[];
+	} = getContext('admin-data');
+
+	const activeDaoStore = adminData.activeDao;
+
+	$: activeDaoData = adminData.userDaos[$activeDaoStore] as CommunityDao;
 
 	let csvFile: File[] = [];
 
@@ -49,7 +57,7 @@
 
 	export let formDist: Distribution;
 	export let csvDist: Distribution[];
-	export let addToStaging: () => void;
+	export let addToStaging: (validForm: boolean) => void;
 </script>
 
 <Tabs>
@@ -85,7 +93,7 @@
 			<InputWrapper
 				name="amount"
 				label="Amount"
-				iconText={`$${daoData.token}`}
+				iconText={`$${activeDaoData.token_symbol}`}
 				errors={res.getErrors('amount')}
 				isValid={res.isValid('amount')}
 			>

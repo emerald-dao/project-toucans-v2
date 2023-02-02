@@ -1,34 +1,33 @@
 <script type="ts">
 	import { newRoundSteps, newRoundActiveStep } from '$lib/stores/rounds/RoundSteps';
 	import Icon from '@iconify/svelte';
-	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
-	import RoundDetail from '../../../lib/components/atoms/RoundDetail.svelte';
+	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';
 	import { Modal, getModal } from '@emerald-dao/component-library';
+	import type { Writable } from 'svelte/store';
 
-	const daoData: FinancialDao = getContext('dao-data');
+	const adminData: {
+		activeDao: Writable<number>;
+		userDaos: FinancialDao[] | CommunityDao[];
+	} = getContext('admin-data');
+
+	const activeDaoStore = adminData.activeDao;
+
+	$: activeDaoData = adminData.userDaos[$activeDaoStore] as FinancialDao;
 </script>
 
 <div class="card column-3">
 	<div class="rounds-wrapper">
-		<h5>Active</h5>
-		{#each daoData.rounds as round}
-			{#if round.status === 'active'}
-				<RoundDetail {round} />
-			{/if}
-		{/each}
+		{#if !activeDaoData.fundingCycles}
+			<span>This project has no funding rounds yet</span>
+		{:else}
+			{#each activeDaoData.fundingCycles as round, i}
+				<RoundDetail {round} {i} />
+			{/each}
+		{/if}
 	</div>
-
-	<div class="rounds-wrapper">
-		<h5>Finished</h5>
-		{#each daoData.rounds as round}
-			{#if round.status != 'active'}
-				<RoundDetail {round} />
-			{/if}
-		{/each}
-	</div>
-
 	<div class="create-round-wrapper">
 		<Button on:click={() => getModal().open()} width="extended"
 			><Icon icon="tabler:plus" />Create Round</Button
@@ -45,10 +44,6 @@
 	.card {
 		padding: var(--space-12);
 
-		h5 {
-			margin-bottom: var(--space-2);
-			margin-top: 0;
-		}
 		.rounds-wrapper {
 			display: flex;
 			flex-direction: column;

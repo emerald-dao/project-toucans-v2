@@ -1,25 +1,43 @@
 <script type="ts">
-	import { financialDaoData } from '$lib/mock/financialDao';
 	import { AdminNav } from './components';
 	import { setContext } from 'svelte';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
-	import { communityDaoData } from '$lib/mock/communityDao';
+	import { writable, type Writable } from 'svelte/store';
+	import { user } from '$stores/flow/FlowStore';
 
-	// TODO: Get all data from the blockchain and share it with a context
-	const daoData: FinancialDao | CommunityDao = financialDaoData;
-	setContext<FinancialDao | CommunityDao>('dao-data', daoData);
+	interface Data {
+		[daoNumber: number]: FinancialDao | CommunityDao;
+	}
+
+	export let data: Data;
+
+	const activeDao = writable(0);
+
+	setContext<{
+		activeDao: Writable<number>;
+		userDaos: FinancialDao[] | CommunityDao[];
+	}>('admin-data', {
+		userDaos: Object.values(data),
+		activeDao
+	});
 </script>
 
-<div class="section">
-	<div class="container">
-		<div class="main-wrapper">
-			<AdminNav daoType={daoData.type} />
-			<div class="content-wrapper">
-				<slot />
+{#if !$user}
+	<span>Connect Wallet</span>
+{:else if Object.values(data).length < 1}
+	<span>Create your first DAO</span>
+{:else}
+	<div class="section">
+		<div class="container">
+			<div class="main-wrapper">
+				<AdminNav />
+				<div class="content-wrapper">
+					<slot />
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style type="scss">
 	.main-wrapper {

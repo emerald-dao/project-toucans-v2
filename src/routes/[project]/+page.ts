@@ -1,13 +1,9 @@
+import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
 import { getProjectInfo } from '$flow/actions.js';
 import '$flow/config.js';
-import type { FinancialDao, CommunityDao } from '$lib/types/dao-project.interface';
 
-export async function load({
-	params
-}: {
-	params: { project: string };
-}): Promise<FinancialDao | CommunityDao> {
+export const load: PageLoad = async ({ params }) => {
 	const { data } = await supabase.from('projects').select().eq('contract_name', params.project);
 	if (!data || !data.length) {
 		throw new Error('No dao found');
@@ -27,7 +23,7 @@ export async function load({
 		...info,
 		...projectInfo
 	};
-}
+};
 
 // const fetchEvents = async () => {
 // 	const latestBlock = await fcl.send([fcl.getBlock(true)]).then(fcl.decode);

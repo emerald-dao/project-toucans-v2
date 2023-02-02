@@ -5,9 +5,9 @@
 	import LineChart from '$components/charts/LineChart.svelte';
 	import Icon from '@iconify/svelte';
 	import ChartTitle from '../../../routes/[project]/components/atoms/ChartTitle.svelte';
-	import type { Round } from '$lib/types/dao-project.interface';
+	import type { FundingCycle } from '$lib/types/dao-project.interface';
 
-	export let fundingCycleData: Round;
+	export let fundingCycleData: FundingCycle;
 
 	const daysLeft = daysOfDifference(
 		new Date(),

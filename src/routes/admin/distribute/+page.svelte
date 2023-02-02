@@ -1,13 +1,17 @@
 <script type="ts">
 	import type { Distribution } from '$lib/types/distribution.interface';
-	import type { CommunityDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
+	import type { Writable } from 'svelte/store';
 	import DistributionStaging from './components/sections/DistributionStaging.svelte';
 	import DistributionForms from './components/sections/DistributionForms.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
 	import { fly } from 'svelte/transition';
 
-	const daoData: CommunityDao = getContext('dao-data');
+	const adminData: {
+		activeDao: Writable<number>;
+		userDaos: FinancialDao[] | CommunityDao[];
+	} = getContext('admin-data');
 
 	let distStaging: Distribution[] = [];
 

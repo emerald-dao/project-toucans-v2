@@ -1,26 +1,13 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
 	import { Currencies } from '$lib/types/currencies.enum';
-	import type { Round } from '$lib/types/dao-project.interface';
-	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
-	import {
-		Button,
-		Label,
-		Modal,
-		getModal,
-		ProgressBar,
-		StatusCircle
-	} from '@emerald-dao/component-library';
+	import type { FundingCycle } from '$lib/types/dao-project.interface';
+	import { formatDate } from '$lib/utilities/formatDate';
+	import { Modal, getModal, ProgressBar, StatusCircle } from '@emerald-dao/component-library';
 	import FundingStats from '$components/atoms/FundingStats.svelte';
 
-	export let round: Round;
-	export let discover: boolean = false;
+	export let round: FundingCycle;
 	export let i: number;
-
-	console.log('round', round);
-
-	console.log(formatDate(new Date(Number(round.details.timeFrame.startTime))));
-	console.log(formatDate(new Date(Number(round.details.timeFrame.startTime))));
 
 	const goalReached = round.details.fundingTarget < round.numOfFlowContributed;
 	const active = new Date(Number(round.details.timeFrame.startTime)) > new Date();
@@ -47,35 +34,8 @@
 			)}`}</span
 		>
 	</div>
-	<div class="row-5 display-handling">
-		{#if active}
-			<Label color="transparent" iconLeft="tabler:clock-hour-5" size="x-small">
-				{`${-daysOfDifference(
-					new Date(),
-					new Date(Number(round.details.timeFrame.endTime))
-				)} days left`}
-			</Label>
-		{:else}
-			<div class="row-2 buttons-wrapper" class:page={discover}>
-				<Button
-					size="x-small"
-					type="ghost"
-					color="neutral"
-					state={round.distributed ? 'disabled' : 'active'}>Distribute reserve</Button
-				>
-				<Button
-					size="x-small"
-					type="ghost"
-					color="neutral"
-					state={round.withdrawn ? 'disabled' : 'active'}
-				>
-					Withdraw to treasury
-				</Button>
-			</div>
-		{/if}
-		<div class="header-link" on:click={() => getModal(`funding-stats-${i}`).open()} on:keydown>
-			<Icon icon="tabler:eye" />
-		</div>
+	<div class="header-link" on:click={() => getModal(`funding-stats-${i}`).open()} on:keydown>
+		<Icon icon="tabler:eye" />
 	</div>
 </div>
 <Modal background="var(--clr-background-secondary)" id={`funding-stats-${i}`}>
@@ -101,10 +61,6 @@
 			@include mq('medium') {
 				display: block;
 			}
-		}
-
-		.buttons-wrapper.page {
-			display: none;
 		}
 	}
 </style>

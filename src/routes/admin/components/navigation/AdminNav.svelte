@@ -1,28 +1,41 @@
 <script type="ts">
-	import { DaoType } from '$lib/types/dao-project.interface';
-
+	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
 	import Icon from '@iconify/svelte';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
-	export let daoType: DaoType;
+	const adminData: {
+		activeDao: Writable<number>;
+		userDaos: FinancialDao[] | CommunityDao[];
+	} = getContext('admin-data');
+
+	const activeDaoStore = adminData.activeDao;
+
+	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
 <nav class="column-12 align-start nav-wrapper">
 	<div class="row-4 align-center">
-		<img src="/ec-logo.png" alt="DAO Logo" />
-		<h1 class="h4">Emerald City DAO</h1>
+		<img src={activeDaoData.logo} alt="DAO Logo" />
+		<h1 class="h4">{activeDaoData.name}</h1>
 	</div>
+	<select name="daos" id="daos" bind:value={$activeDaoStore}>
+		{#each adminData.userDaos as dao, i}
+			<option value={i}>{dao.name}</option>
+		{/each}
+	</select>
 	<div class="column-10 align-start">
 		<a href="/admin" class="sidebar-link">
 			<Icon icon="tabler:chart-infographic" />
 			Stats
 		</a>
-		{#if daoType === DaoType.Financial}
+		{#if activeDaoData.type === DaoType.Financial}
 			<a href="/admin/rounds" class="sidebar-link">
 				<Icon icon="tabler:analyze" />
 				Rounds
 			</a>
 		{/if}
-		{#if daoType === DaoType.Community}
+		{#if activeDaoData.type === DaoType.Community}
 			<a href="/admin/distribute" class="sidebar-link distribute-display">
 				<Icon icon="tabler:arrows-maximize" />
 				Distribute

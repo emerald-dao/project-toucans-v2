@@ -5,13 +5,9 @@
 	import MainHolders from '../atoms/MainHolders.svelte';
 	import { Tabs, Tab, TabList, TabPanel, Currency } from '@emerald-dao/component-library';
 	import PieChart from '$components/charts/PieChart.svelte';
+	import { stringToNumber } from '$lib/utilities/stringToNumber';
 
 	export let daoData: CommunityDao;
-	console.log(daoData);
-
-	const stringToNumber = (value: string) => {
-		return +value;
-	};
 
 	const mainHolderNames: string[] = Object.keys(daoData.balances);
 	const mainHolderAmounts: number[] = Object.values(daoData.balances).map(stringToNumber);

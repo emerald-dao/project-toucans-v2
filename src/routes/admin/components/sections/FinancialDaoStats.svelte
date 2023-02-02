@@ -7,34 +7,47 @@
 
 	export let daoData: FinancialDao;
 
-	const fundingsPerMonth = getMonthlyFundingFromRounds(daoData.rounds);
+	let fundingsPerMonth;
 
-	const months: string[] = fundingsPerMonth.map((x) => x[0]);
-	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
+	let months: string[];
+	let amounts: number[];
+
+	if (daoData.fundingCycles) {
+		fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
+
+		months = fundingsPerMonth.map((x) => x[0]);
+		amounts = fundingsPerMonth.map((x) => x[1]);
+	}
 </script>
 
 <div class="main-wrapper">
-	<DataCard title="Token" data={daoData.token} hasBackground={true} />
+	<DataCard title="Token" data={`$${daoData.token_symbol}`} hasBackground={true} />
 	<div class="data-card-display">
 		<DataCard
 			title="Circulating Supply"
-			data={daoData.circulatingSupply.toLocaleString()}
+			data={Number(daoData.totalBought).toLocaleString()}
 			icon="tabler:home"
 		/>
-		<DataCard title="Max Supply" data={daoData.maxSupply.toLocaleString()} icon="tabler:home" />
-		<div class="chart-wrapper card">
-			<LineChart title="Funding" labels={months} chartData={amounts} />
-		</div>
+		<DataCard
+			title="Max Supply"
+			data={Number(daoData.totalSupply).toLocaleString()}
+			icon="tabler:home"
+		/>
+		{#if daoData.fundingCycles}
+			<div class="chart-wrapper card">
+				<LineChart title="Active Round" chartData={amounts} labels={months} />
+			</div>
+		{/if}
 	</div>
 	<DataCard
 		title="Summary"
 		hasBackground={true}
 		paddingBlock="var(--space-8)"
-		data={`${(daoData.circulatingSupply / daoData.maxSupply) * 100}%`}
+		data={`${(Number(daoData.totalBought) / Number(daoData.totalSupply)) * 100}%`}
 	>
 		<ProgressBar
-			value={daoData.circulatingSupply}
-			max={daoData.maxSupply}
+			value={Number(daoData.totalSupply)}
+			max={Number(daoData.totalSupply)}
 			labelText="Distribution"
 		/>
 		<Button width="full-width">Distribute Tokens</Button>
