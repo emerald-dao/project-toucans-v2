@@ -31,15 +31,14 @@
 	};
 </script>
 
-<div class="card-primary column-10">
-	<div class="column-10">
-		<div class="row-4 align-center">
-			<img src={daoData.logo} alt="DAO Logo" />
+<div class="card-primary column">
+	<img src="/toucans-illustration.png" alt="Background illustration" class="banner-image" />
+	<div class="content-wrapper column-14">
+		<div class="column-4">
+			<img src={daoData.logo} alt="DAO Logo" class="dao-logo" />
 			<h1 class="h3 w-medium">{daoData.name}</h1>
-		</div>
-		<div class="column-2">
 			{#if daoData.twitter || daoData.discord || daoData.website}
-				<div class="row-4">
+				<div class="row-3">
 					{#if daoData.twitter}
 						<a
 							href={`https://twitter.com/${daoData.twitter}`}
@@ -47,37 +46,30 @@
 							class="header-link"
 							target="_blank"
 						>
-							<Icon icon="tabler:brand-twitter" width="24" />
+							<Icon icon="tabler:brand-twitter" width="18" />
 						</a>
 					{/if}
 					{#if daoData.discord}
 						<a href={daoData.discord} rel="noreferrer" class="header-link" target="_blank">
-							<Icon icon="tabler:brand-discord" width="24" />
+							<Icon icon="tabler:brand-discord" width="18" />
 						</a>
 					{/if}
 					{#if daoData.website}
 						<a href={daoData.website} rel="noreferrer" class="header-link" target="_blank">
-							<Icon icon="tabler:world" width="24" />
+							<Icon icon="tabler:world" width="18" />
 						</a>
 					{/if}
 				</div>
 			{/if}
-			<!-- {#if daoData.tags.length > 0}
-				<div class="row-3">
-					{#each daoData.tags as tag}
-						<Label color="neutral" size="x-small">{tag}</Label>
-					{/each}
-				</div>
-			{/if} -->
+			<p class="small">{daoData.description}</p>
 		</div>
-		<p class="small">{daoData.description}</p>
+		{#if daoData.type === DaoType.Financial}
+			<Button size="large" width="full-width" on:click={initFunding}
+				><Icon icon="tabler:cash-banknote" />
+				Fund
+			</Button>
+		{/if}
 	</div>
-	{#if daoData.type === DaoType.Financial}
-		<Button width="full-width" on:click={initFunding}
-			><Icon icon="tabler:cash-banknote" />
-			Fund
-		</Button>
-	{/if}
 </div>
 <Modal>
 	<div class="modal-content">
@@ -88,16 +80,34 @@
 <style type="scss">
 	.card-primary {
 		height: fit-content;
-		padding: var(--space-10);
+		padding: 0;
+		overflow: hidden;
 
-		img {
-			max-width: 80px;
-			aspect-ratio: 1 / 1;
-			object-fit: contain;
+		.banner-image {
+			position: relative;
+			width: 100%;
+			height: 120px;
+			object-fit: cover;
+			opacity: 0.7;
+			border-bottom: 1px var(--clr-border-primary) solid;
 		}
 
-		.header-link {
-			font-size: var(--font-size-3);
+		.content-wrapper {
+			padding: 0 var(--space-10) var(--space-10) var(--space-10);
+			margin-top: -70px;
+			z-index: 2;
+
+			.dao-logo {
+				max-width: 140px;
+				aspect-ratio: 1 / 1;
+				object-fit: contain;
+				border-radius: var(--radius-2);
+				border: 1px var(--clr-border-primary) solid;
+			}
+
+			.header-link {
+				font-size: var(--font-size-3);
+			}
 		}
 	}
 

@@ -119,4 +119,8 @@ export interface FinancialDao extends Dao {
 	type: DaoType.Financial;
 }
 
-export interface CommunityDao extends Dao {}
+export interface CommunityDao extends Dao {
+	balances: {
+		[account: string]: string;
+	};
+}

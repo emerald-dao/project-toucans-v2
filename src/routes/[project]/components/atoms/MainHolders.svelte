@@ -1,17 +1,23 @@
 <script type="ts">
 	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
+
 	export let daoData: CommunityDao;
 </script>
 
 <div class="column-2 align-start">
-	{#each daoData.mainHolders as holder}
+	{#each Object.entries(daoData.balances) as balance}
 		<div class="activity-wrapper">
 			<div class="row-3 align-center">
 				<img src="/avatar-header.png" alt="avatar logo" />
-				<span class="holder-name">{holder[0]}</span>
+				<span class="holder-name">{balance[0]}</span>
 			</div>
-			<Currency amount={holder[1]} currency={daoData.token} color="heading" fontSize="0.85rem" />
+			<Currency
+				amount={Number(balance[1])}
+				currency={daoData.token_symbol}
+				color="heading"
+				fontSize="0.85rem"
+			/>
 		</div>
 	{/each}
 </div>

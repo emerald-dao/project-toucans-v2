@@ -3,27 +3,32 @@
 	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import MainHolders from '../atoms/MainHolders.svelte';
-	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
+	import { Tabs, Tab, TabList, TabPanel, Currency } from '@emerald-dao/component-library';
 	import PieChart from '$components/charts/PieChart.svelte';
 
 	export let daoData: CommunityDao;
 	console.log(daoData);
 
+	const stringToNumber = (value: string) => {
+		return +value;
+	};
+
 	const mainHolderNames: string[] = Object.keys(daoData.balances);
-	const mainHolderAmounts: number[] = Object.values(daoData.balances);
+	const mainHolderAmounts: number[] = Object.values(daoData.balances).map(stringToNumber);
 </script>
 
 <div class="column-10">
 	<div class="main-wrapper card">
 		<div class="column-8">
-			<ChartTitle
-				title="Token Distribution"
-				data={`${daoData.token_symbol} Token`}
-				icon="tabler:activity-heartbeat"
-			/>
+			<ChartTitle title="Token Distribution" icon="tabler:steam" />
 			<div class="card-primary total-tokens-card column-0">
-				<span class="xsmall">Total Tokens</span>
-				<span class="large w-medium">{daoData.totalSupply.toLocaleString()}</span>
+				<span class="xsmall">Circulating Supply</span>
+				<Currency
+					amount={Number(daoData.totalSupply)}
+					currency={daoData.token_symbol}
+					fontSize="1.3rem"
+					color="heading"
+				/>
 			</div>
 		</div>
 		<div class="chart-wrapper">
