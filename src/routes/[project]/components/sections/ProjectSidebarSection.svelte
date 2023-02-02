@@ -38,27 +38,30 @@
 			<img src={daoData.logo} alt="DAO Logo" class="dao-logo" />
 			<h1 class="h3 w-medium">{daoData.name}</h1>
 			{#if daoData.twitter || daoData.discord || daoData.website}
-				<div class="row-3">
-					{#if daoData.twitter}
-						<a
-							href={`https://twitter.com/${daoData.twitter}`}
-							rel="noreferrer"
-							class="header-link"
-							target="_blank"
-						>
-							<Icon icon="tabler:brand-twitter" width="18" />
-						</a>
-					{/if}
-					{#if daoData.discord}
-						<a href={daoData.discord} rel="noreferrer" class="header-link" target="_blank">
-							<Icon icon="tabler:brand-discord" width="18" />
-						</a>
-					{/if}
-					{#if daoData.website}
-						<a href={daoData.website} rel="noreferrer" class="header-link" target="_blank">
-							<Icon icon="tabler:world" width="18" />
-						</a>
-					{/if}
+				<div class="row-3 align-end">
+					<Label size="small" color="tertiary">{`$${daoData.token_symbol}`}</Label>
+					<div class="row-2 align-end">
+						{#if daoData.twitter}
+							<a
+								href={`https://twitter.com/${daoData.twitter}`}
+								rel="noreferrer"
+								class="header-link"
+								target="_blank"
+							>
+								<Icon icon="tabler:brand-twitter" width="18" />
+							</a>
+						{/if}
+						{#if daoData.discord}
+							<a href={daoData.discord} rel="noreferrer" class="header-link" target="_blank">
+								<Icon icon="tabler:brand-discord" width="18" />
+							</a>
+						{/if}
+						{#if daoData.website}
+							<a href={daoData.website} rel="noreferrer" class="header-link" target="_blank">
+								<Icon icon="tabler:world" width="18" />
+							</a>
+						{/if}
+					</div>
 				</div>
 			{/if}
 			<p class="small">{daoData.description}</p>
@@ -98,7 +101,7 @@
 			z-index: 2;
 
 			.dao-logo {
-				max-width: 140px;
+				width: 130px;
 				aspect-ratio: 1 / 1;
 				object-fit: contain;
 				border-radius: var(--radius-2);
