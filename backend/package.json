@@ -7,15 +7,15 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon main.js",
+    "start": "node main.js"
   },
-  "author": "",
+  "author": "Jacob Tucker",
   "license": "ISC",
   "dependencies": {
-    "@supabase/supabase-js": "^2.7.1",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "nodemon": "^2.0.20"
+    "@supabase/supabase-js": "^1.35.7",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15"
   }
 }
