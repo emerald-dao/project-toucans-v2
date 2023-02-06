@@ -18,13 +18,13 @@ pub contract Toucans {
   pub event ProjectCreated(
     projectId: UInt64,
     tokenType: Type,
-    projectOwner: Address
+    by: Address
   )
 
   pub event NewFundingCycle(
     projectId: UInt64, 
     tokenType: Type,
-    projectOwner: Address, 
+    by: Address, 
     currentCycle: UInt64?,
     cycleNum: UInt64,
     fundingTarget: UFix64?,
@@ -39,14 +39,14 @@ pub contract Toucans {
     projectOwner: Address, 
     currentCycle: UInt64,
     amount: UFix64,
-    buyer: Address,
+    by: Address,
     message: String
   )
 
   pub event Distribute(
     projectId: UInt64, 
     tokenType: Type,
-    projectOwner: Address, 
+    by: Address, 
     currentCycle: UInt64?,
     amounts: {Address: UFix64}
   )
@@ -66,7 +66,7 @@ pub contract Toucans {
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
-    to: Address
+    by: Address
   )
 
   pub struct CycleTimeFrame {
@@ -214,7 +214,7 @@ pub contract Toucans {
       emit NewFundingCycle(
         projectId: self.projectId, 
         tokenType: self.tokenType,
-        projectOwner: self.owner!.address, 
+        by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         cycleNum: cycleNum,
         fundingTarget: fundingTarget,
@@ -302,7 +302,7 @@ pub contract Toucans {
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum()!,
         amount: amountOfFlowSent,
-        buyer: payer,
+        by: payer,
         message: message
       )
     }
@@ -340,7 +340,7 @@ pub contract Toucans {
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: amount,
-        to: vault.owner!.address
+        by: vault.owner!.address
       )
       vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
     }
@@ -479,7 +479,7 @@ pub contract Toucans {
       emit ProjectCreated(
         projectId: projectId,
         tokenType: ref.tokenType,
-        projectOwner: self.owner!.address
+        by: self.owner!.address
       )
     }
 

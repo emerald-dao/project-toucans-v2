@@ -39,7 +39,7 @@
 				<Tab>Rounds</Tab>
 			</TabList>
 			<TabPanel>
-				<RecentActivity />
+				<RecentActivity actions={daoData.actions} />
 			</TabPanel>
 			<TabPanel>
 				<MainFunders {daoData} />

@@ -1,7 +1,7 @@
 <script type="ts">
 	import { Label, StatusCircle, Currency } from '@emerald-dao/component-library';
 
-	export let activityType: 'purchase' | 'withdraw' | 'new-cycle' | 'donate';
+	export let activityType: 'Purchase' | 'Withdraw' | 'NewFundingCycle' | 'Donate';
 	export let walletAddress: string;
 	export let date: string;
 	export let amount: number | undefined = undefined;
@@ -10,26 +10,26 @@
 
 <div class="main-wrapper">
 	<div class="row-3 align-center">
-		{#if activityType === 'purchase' || activityType === 'donate'}
+		{#if activityType === 'Purchase' || activityType === 'Donate'}
 			<StatusCircle status="success" width="8px" />
-		{:else if activityType === 'withdraw'}
+		{:else if activityType === 'Withdraw'}
 			<StatusCircle status="alert" width="8px" />
-		{:else if activityType === 'new-cycle'}
+		{:else if activityType === 'NewFundingCycle'}
 			<StatusCircle status="active" width="8px" />
 		{/if}
 		<div class="column info-wrapper">
 			<p class="address">{walletAddress}</p>
-			<span class="date">{date}</span>
+			<span class="date">{new Date(date * 1000).toLocaleDateString('en-US')}</span>
 		</div>
-		{#if activityType === 'purchase' || activityType === 'donate'}
+		{#if activityType === 'Purchase' || activityType === 'Donate'}
 			<Label size="xx-small" color="primary" hasBorder={false}>
 				{activityType}
 			</Label>
-		{:else if activityType === 'withdraw'}
+		{:else if activityType === 'Withdraw'}
 			<Label size="xx-small" color="alert" hasBorder={false}>
 				{activityType}
 			</Label>
-		{:else if activityType === 'new-cycle'}
+		{:else if activityType === 'NewFundingCycle'}
 			<Label size="xx-small" color="tertiary" hasBorder={false}>
 				{activityType}
 			</Label>
@@ -37,7 +37,7 @@
 	</div>
 	{#if currency && amount}
 		<Currency
-			amount={activityType === 'withdraw' ? -amount : amount}
+			amount={activityType === 'Withdraw' ? -amount : amount}
 			{currency}
 			color="heading"
 			fontSize="0.85rem"

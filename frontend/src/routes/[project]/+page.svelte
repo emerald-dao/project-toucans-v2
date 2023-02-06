@@ -9,6 +9,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let data: CommunityDao | FinancialDao;
+	console.log(data);
 
 	let seeMore = false;
 </script>

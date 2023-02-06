@@ -4,11 +4,12 @@ import { getProjectInfo } from '$flow/actions.js';
 import '$flow/config.js';
 
 export const load: PageLoad = async ({ params }) => {
-	const { data } = await supabase.from('projects').select().eq('contract_name', params.project);
-	if (!data || !data.length) {
+	// get project info
+	const { data: projectData } = await supabase.from('projects').select().eq('contract_name', params.project);
+	if (!projectData || !projectData.length) {
 		throw new Error('No dao found');
 	}
-	const [info] = data;
+	const [info] = projectData;
 
 	const projectInfo = await getProjectInfo(
 		info.contract_name,
@@ -18,28 +19,13 @@ export const load: PageLoad = async ({ params }) => {
 		info.project_id
 	);
 
-	// const thing = await fetchEvents();
+	// get actions
+	const { data: actionData } = await supabase.from('events').select().eq('project_id', info.project_id);
+	const [eventsData] = actionData;
 
 	return {
 		...info,
 		...projectInfo,
-		actions: []
+		actions: eventsData.actions.reverse()
 	};
 };
-
-// const fetchEvents = async () => {
-// 	const latestBlock = await fcl.send([fcl.getBlock(true)]).then(fcl.decode);
-
-// 	let end = latestBlock.height;
-
-// 	console.log('block', latestBlock);
-
-// 	// const response = await fcl.send([
-// 	//   fcl.getEvents("A.f8d6e0586b0a20c7.bummm.TokensTransferred", end - 100, end)
-// 	// ])
-// 	const response = await fcl.send(
-// 		await fcl.build([
-// 			fcl.getEventsAtBlockHeightRange('A.f8d6e0586b0a20c7.bummm.TokensTransferred', 0, end)
-// 		])
-// 	);
-// };
