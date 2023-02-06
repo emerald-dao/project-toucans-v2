@@ -1,29 +1,41 @@
-require('dotenv').config();
-
 const fcl = require("@onflow/fcl");
 const express = require('express');
 const { supabase } = require('./supabaseClient');
-// const { supabase } = require('./utils');
-
-const accessNode = 'http://127.0.0.1:8888';
-const discoveryWallet = 'http://localhost:8701/fcl/authn';
-fcl.config()
-    .put('accessNode.api', accessNode)
-    .put('discovery.wallet', discoveryWallet)
+require("./flow/config.js");
 
 const app = express();
 const port = process.env.PORT || 5000;
-console.log(port)
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
-
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-fcl.events('A.f8d6e0586b0a20c7.Toucans.Purchase').subscribe((event) => {
+const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`
+
+fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
     const { tokenType, projectId, ...rest } = event;
     appendAction(projectId, rest, 'Purchase')
+})
+
+fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
+    const { tokenType, projectId, ...rest } = event;
+    appendAction(projectId, rest, 'NewFundingCycle')
+})
+
+fcl.events(`${eventIdentifierPrefix}Distribute`).subscribe((event) => {
+    const { tokenType, projectId, ...rest } = event;
+    appendAction(projectId, rest, 'Distribute')
+})
+
+fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
+    const { tokenType, projectId, ...rest } = event;
+    appendAction(projectId, rest, 'Donate')
+})
+
+fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
+    const { tokenType, projectId, ...rest } = event;
+    appendAction(projectId, rest, 'Withdraw')
 })
 
 async function appendAction(projectId, eventData, type) {
@@ -32,7 +44,8 @@ async function appendAction(projectId, eventData, type) {
         _project_id: projectId,
         _action: {
             ...eventData,
-            type
+            type,
+            timestamp: Date.now() / 1000 // seconds
         }
     });
     console.log(result);
