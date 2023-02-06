@@ -16,12 +16,13 @@ const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
 const createToken = async () => {
 	const data = get(daoData);
-	const action = async () => {
+	const action = async (res) => {
+		const [projectCreatedEvent] = res.events.filter(event => event.type.includes('Toucans.ProjectCreated'))
 		const cid = await client.storeBlob(data.daoDetails.logo[0]);
 		const logo = `https://nftstorage.link/ipfs/${cid}`;
 		const response = await fetch('/api/add', {
 			method: 'POST',
-			body: JSON.stringify({ user: get(user), ...data, logo }),
+			body: JSON.stringify({ user: get(user), ...data, logo, projectId: projectCreatedEvent.data.projectId }),
 			headers: {
 				'content-type': 'application/json'
 			}

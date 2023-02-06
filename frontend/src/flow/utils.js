@@ -41,7 +41,7 @@ export const executeTransaction = async (transaction, actionAfterSucceed) => {
 			transactionStore.subscribeTransaction(res);
 			if (res.status === 4) {
 				if (res.statusCode === 0 && actionAfterSucceed != undefined) {
-					actionAfterSucceed();
+					actionAfterSucceed(res);
 				}
 				setTimeout(() => transactionStore.resetTransaction, 2000);
 			}

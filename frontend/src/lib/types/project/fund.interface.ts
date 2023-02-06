@@ -4,6 +4,7 @@ export interface FundData {
 	daoName: string;
 	daoAddress: string;
 	contractName: string;
+	projectId: string;
 	tokenName: string;
 	funderAddress: string;
 	currency: Currencies.FLOW | Currencies.FUSD;

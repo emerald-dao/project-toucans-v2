@@ -22,7 +22,8 @@ export const load: LayoutLoad = async () => {
 						project.contract_name,
 						project.contract_address,
 						project.owner,
-						project.type
+						project.type,
+						project.project_id
 					))
 				};
 			})

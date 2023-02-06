@@ -118,12 +118,16 @@ export const deployContractExecution = (data, action) => executeTransaction(() =
 const fundProject = async () => {
 	const contractName = get(fundData).contractName;
 	const projectOwner = get(fundData).daoAddress;
+	const projectId = get(fundData).projectId;
 	const amount = get(fundData).amount;
+	const message = get(fundData).specialMessage;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
-			arg(formatFix(amount), t.UFix64)
+			arg(projectId, t.UInt64),
+			arg(formatFix(amount), t.UFix64),
+			arg(message, t.String)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -154,15 +158,24 @@ export const fundProjectExecution = () => executeTransaction(fundProject);
 
 // export const fundProjectExecution = () => executeTransaction(fundProject);
 
-export const getProjectInfo = async (contractName, contractAddress, owner, type) => {
+export const getProjectInfo = async (contractName, contractAddress, owner, type, projectId) => {
 	const scriptCode = type === 'Financial' ? getFinancialProjectScript : getCommunityProjectScript;
-	console.log(replaceWithProperValues(scriptCode, contractName, contractAddress))
+
+	let args;
+	if (type === 'Financial') {
+		args = (arg, t) => [
+			arg(owner, t.Address),
+			arg(projectId, t.UInt64)
+		]
+	} else if (type === 'Community') {
+		args = (arg, t) => [
+			arg(owner, t.Address)
+		]
+	}
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(scriptCode, contractName, contractAddress),
-			args: (arg, t) => [
-				arg(owner, t.Address)
-			]
+			args
 		});
 		return response;
 	} catch (e) {

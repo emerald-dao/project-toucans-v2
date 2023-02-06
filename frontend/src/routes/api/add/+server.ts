@@ -30,8 +30,10 @@ export async function POST({ request }: { request: RequestHandler }) {
 		discord: data.daoDetails.discord,
 		logo: data.logo,
 		owner: data.user.addr,
-		type: data.tokenomics.tokenType
+		type: data.tokenomics.tokenType,
+		project_id: data.projectId
 	});
+	console.log(error);
 
 	return json(error);
 }

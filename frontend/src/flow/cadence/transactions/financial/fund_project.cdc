@@ -4,7 +4,7 @@ import Toucans from "../../Toucans.cdc"
 import ExampleFinancial from "../../ExampleFinancial.cdc"
 import MetadataViews from "../../utility/MetadataViews.cdc"
 
-transaction(projectOwner: Address, amount: UFix64) {
+transaction(projectOwner: Address, projectId: UInt64, amount: UFix64, message: String) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let Payment: @FlowToken.Vault
@@ -28,7 +28,7 @@ transaction(projectOwner: Address, amount: UFix64) {
     let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
                   .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                   ?? panic("This is an incorrect address for project owner.")
-    self.Project = projectCollection.borrowProjectPublic(projectType: Type<@ExampleFinancial.Vault>())
+    self.Project = projectCollection.borrowProjectPublic(projectId: projectId)
                   ?? panic("Project does not exist, at least in this collection.")
     
     self.Payment <- user.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
@@ -38,6 +38,6 @@ transaction(projectOwner: Address, amount: UFix64) {
   }
 
   execute {
-    self.Project.purchase(paymentTokens: <- self.Payment, payerTokenVault: self.PayerTokenVault)
+    self.Project.purchase(paymentTokens: <- self.Payment, payerTokenVault: self.PayerTokenVault, message: message)
   }
 }

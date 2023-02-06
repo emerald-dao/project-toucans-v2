@@ -17,7 +17,7 @@
 	export let title: string = daysLeft > 0 ? 'Active Funding Round' : 'Last Funding Round';
 	export let hasBorder = true;
 
-	const fundingsPerMonth = getMonthlyFundingFromRounds([fundingCycleData]);
+	const fundingsPerMonth = []; // getMonthlyFundingFromRounds([fundingCycleData]);
 
 	const months: string[] = fundingsPerMonth.map((x) => x[0]);
 	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);

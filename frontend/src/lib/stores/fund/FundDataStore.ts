@@ -5,6 +5,7 @@ import { Currencies } from '$lib/types/currencies.enum';
 export const fundData = writable<FundData>({
 	daoName: '',
 	daoAddress: '',
+	projectId: '',
 	tokenName: 'EMLD',
 	funderAddress: '',
 	contractName: '',

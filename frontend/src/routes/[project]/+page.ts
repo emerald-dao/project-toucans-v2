@@ -14,14 +14,16 @@ export const load: PageLoad = async ({ params }) => {
 		info.contract_name,
 		info.contract_address,
 		info.owner,
-		info.type
+		info.type,
+		info.project_id
 	);
 
 	// const thing = await fetchEvents();
 
 	return {
 		...info,
-		...projectInfo
+		...projectInfo,
+		actions: []
 	};
 };
 

@@ -15,6 +15,12 @@ pub contract Toucans {
     }
   }
 
+  pub event ProjectCreated(
+    projectId: UInt64,
+    tokenType: Type,
+    projectOwner: Address
+  )
+
   pub event NewFundingCycle(
     projectId: UInt64, 
     tokenType: Type,
@@ -33,7 +39,8 @@ pub contract Toucans {
     projectOwner: Address, 
     currentCycle: UInt64,
     amount: UFix64,
-    buyer: Address
+    buyer: Address,
+    message: String
   )
 
   pub event Distribute(
@@ -148,7 +155,7 @@ pub contract Toucans {
 
     // Setters
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
-    pub fun purchase(paymentTokens: @FlowToken.Vault, payerTokenVault: &{FungibleToken.Receiver})
+    pub fun purchase(paymentTokens: @FlowToken.Vault, payerTokenVault: &{FungibleToken.Receiver}, message: String)
     
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64?
@@ -176,8 +183,6 @@ pub contract Toucans {
     // NOTES:
     // If fundingTarget is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    // If this is the case, the project owner must continue to pass in 
-    // projectTokens so users can receive them immediately when purchasing.
     pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], extra: {String: String}) {
       let cycleNum = UInt64(self.fundingCycles.length)
 
@@ -262,7 +267,7 @@ pub contract Toucans {
     // mintedTokens comes from the wrapper `Owner` resource
     // present in every Toucans token contract.
     // Sheesh, you are so smart Jacob.
-    pub fun purchase(paymentTokens: @FlowToken.Vault, payerTokenVault: &{FungibleToken.Receiver}) {
+    pub fun purchase(paymentTokens: @FlowToken.Vault, payerTokenVault: &{FungibleToken.Receiver}, message: String) {
       let fundingCycleRef: &FundingCycle = self.getCurrentFundingCycleRef() ?? panic("There is no active cycle.")
       let amountOfFlowSent: UFix64 = paymentTokens.balance
       let payer: Address = payerTokenVault.owner!.address
@@ -297,7 +302,8 @@ pub contract Toucans {
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum()!,
         amount: amountOfFlowSent,
-        buyer: payer
+        buyer: payer,
+        message: message
       )
     }
 
@@ -447,12 +453,12 @@ pub contract Toucans {
   }
 
   pub resource interface CollectionPublic {
-    pub fun getProjectTypes(): [Type]
-    pub fun borrowProjectPublic(projectType: Type): &Project{ProjectPublic}?
+    pub fun getProjectIds(): [UInt64]
+    pub fun borrowProjectPublic(projectId: UInt64): &Project{ProjectPublic}?
   }
 
   pub resource Collection: CollectionPublic {
-    pub let projects: @{Type: Project}
+    pub let projects: @{UInt64: Project}
 
     pub fun createProject(
       minter: @{Minter},
@@ -465,23 +471,28 @@ pub contract Toucans {
       extra: {String: String}
     ) {
       let project <- create Project(minter: <- minter, editDelay: editDelay)
-      let tokenType: Type = project.tokenType
-      self.projects[project.tokenType] <-! project
+      let projectId: UInt64 = project.uuid
+      self.projects[projectId] <-! project
       // we have to do it this weird way because of `self.owner!.address` in `configureFundingCycle`
-      let ref = self.borrowProject(projectType: tokenType)!
+      let ref = self.borrowProject(projectId: projectId)!
       ref.configureFundingCycle(fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeframe: timeframe, payouts: payouts, extra: extra)
+      emit ProjectCreated(
+        projectId: projectId,
+        tokenType: ref.tokenType,
+        projectOwner: self.owner!.address
+      )
     }
 
-    pub fun borrowProject(projectType: Type): &Project? {
-      return &self.projects[projectType] as &Project?
+    pub fun borrowProject(projectId: UInt64): &Project? {
+      return &self.projects[projectId] as &Project?
     }
 
-    pub fun getProjectTypes(): [Type] {
+    pub fun getProjectIds(): [UInt64] {
       return self.projects.keys
     }
 
-    pub fun borrowProjectPublic(projectType: Type): &Project{ProjectPublic}? {
-      return &self.projects[projectType] as &Project{ProjectPublic}?
+    pub fun borrowProjectPublic(projectId: UInt64): &Project{ProjectPublic}? {
+      return &self.projects[projectId] as &Project{ProjectPublic}?
     }
 
     init() {

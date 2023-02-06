@@ -22,6 +22,7 @@
 			$fundData.daoAddress = dao.owner;
 			$fundData.funderAddress = $user.addr;
 			$fundData.contractName = dao.contract_name;
+			$fundData.projectId = dao.projectId;
 			$fundData.currency = Currencies.FLOW;
 			$fundData.issuanceRate = Math.trunc(
 				Number(dao.fundingCycles[Number(dao.currentFundingCycle)].details.issuanceRate)
