@@ -3,7 +3,6 @@
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 	export let daoData: FinancialDao;
-	console.log(daoData);
 </script>
 
 <div class="column-2 align-start">

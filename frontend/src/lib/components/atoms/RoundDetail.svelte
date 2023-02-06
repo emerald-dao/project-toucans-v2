@@ -29,8 +29,8 @@
 			</div>
 		</div>
 		<span class="xsmall display-handling"
-			>{`${formatDate(new Date(Number(round.details.timeframe.startTime)))} to ${formatDate(
-				new Date(Number(round.details.timeframe.endTime))
+			>{`${formatDate(new Date(round.details.timeframe.startTime * 1000))} to ${formatDate(
+				new Date(round.details.timeframe.endTime * 1000)
 			)}`}</span
 		>
 	</div>

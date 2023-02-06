@@ -1,4 +1,5 @@
 <script type="ts">
+	import { formatDate } from '$lib/utilities/formatDate';
 	import { Label, StatusCircle, Currency } from '@emerald-dao/component-library';
 
 	export let activityType: 'Purchase' | 'Withdraw' | 'NewFundingCycle' | 'Donate';
@@ -19,7 +20,7 @@
 		{/if}
 		<div class="column info-wrapper">
 			<p class="address">{walletAddress}</p>
-			<span class="date">{new Date(date * 1000).toLocaleDateString('en-US')}</span>
+			<span class="date">{formatDate(new Date(date * 1000))}</span>
 		</div>
 		{#if activityType === 'Purchase' || activityType === 'Donate'}
 			<Label size="xx-small" color="primary" hasBorder={false}>

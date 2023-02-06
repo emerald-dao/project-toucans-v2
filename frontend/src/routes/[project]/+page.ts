@@ -26,6 +26,7 @@ export const load: PageLoad = async ({ params }) => {
 	return {
 		...info,
 		...projectInfo,
-		actions: eventsData.actions.reverse()
+		actions: eventsData.actions.reverse(),
+		purchaseHistory: eventsData.actions.filter(action => action.type === 'Purchase')
 	};
 };

@@ -161,6 +161,7 @@ pub contract Toucans {
     pub fun getCurrentIssuanceRate(): UFix64?
     pub fun getCurrentFundingCycle(): FundingCycle?
     pub fun getCurrentFundingCycleNum(): UInt64?
+    pub fun getMostRecentCycle(): Int
     pub fun getFundingCycles(): [FundingCycle]
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
@@ -294,7 +295,7 @@ pub contract Toucans {
 
       fundingCycleRef.trackPurchase(amount: amount, amountOfFlow: amountOfFlowSent, payer: payer)
       // Tokens were purchased, so increment amount raised
-      self.totalFunding = self.totalFunding + amount
+      self.totalFunding = self.totalFunding + amountOfFlowSent
       self.funders[payer] = (self.funders[payer] ?? 0.0) + amount
       emit Purchase(
         projectId: self.projectId, 

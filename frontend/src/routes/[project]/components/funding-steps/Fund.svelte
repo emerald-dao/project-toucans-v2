@@ -8,8 +8,6 @@
 	import { Currencies } from '$lib/types/currencies.enum';
 	import { fade } from 'svelte/transition';
 
-	console.log($fundData);
-
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 

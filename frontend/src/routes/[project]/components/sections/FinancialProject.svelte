@@ -8,6 +8,15 @@
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 
 	export let daoData: FinancialDao;
+
+	const getRecentFundingCycleData = () => {
+		const fundingCycle = daoData.fundingCycles[daoData.mostRecentCycle];
+		const purchaseHistory = daoData.purchaseHistory.filter(
+			(purchase) => purchase.currentCycle === daoData.mostRecentCycle
+		);
+		return { ...fundingCycle, purchaseHistory };
+	};
+	const mostRecentCycle = getRecentFundingCycleData();
 </script>
 
 {#if daoData}
@@ -30,7 +39,7 @@
 			</div>
 		</div>
 		{#if daoData.fundingCycles.length > 0}
-			<FundingStats fundingCycleData={daoData.fundingCycles[0]} />
+			<FundingStats fundingCycleData={mostRecentCycle} />
 		{/if}
 		<Tabs>
 			<TabList>
