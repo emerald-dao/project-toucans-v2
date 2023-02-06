@@ -1,6 +1,6 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import FUSD from "./utility/FUSD.cdc"
-import FlowToken from "./utility/FlowToken.cdc" 
+import FlowToken from "./utility/FlowToken.cdc"
 
 pub contract Toucans {
 
@@ -19,102 +19,48 @@ pub contract Toucans {
     projectId: UInt64, 
     tokenType: Type,
     projectOwner: Address, 
-    currentCycle: UInt64,
+    currentCycle: UInt64?,
+    cycleNum: UInt64,
     fundingTarget: UFix64?,
     issuanceRate: UFix64,
     reserveRate: UFix64,
-    numOfTokensPurchased: UFix64,
-    timeframe: CycleTimeFrame?,
-    funders: {Address: UFix64},
-    numOfFlowContributed: UFix64,
-    purchaseHistory: [Purchase]
+    timeframe: CycleTimeFrame?
   )
 
-  pub struct interface Action {
-    pub let type: String
-    pub let timestamp: UFix64
-    pub let fundingCycle: UInt64?
-  }
+  pub event Purchase(
+    projectId: UInt64, 
+    tokenType: Type,
+    projectOwner: Address, 
+    currentCycle: UInt64,
+    amount: UFix64,
+    buyer: Address
+  )
 
-  pub struct Purchase: Action {
-    pub let type: String
-    pub let timestamp: UFix64
-    pub let fundingCycle: UInt64?
-    pub let amount: UFix64
-    pub let buyer: Address
+  pub event Distribute(
+    projectId: UInt64, 
+    tokenType: Type,
+    projectOwner: Address, 
+    currentCycle: UInt64?,
+    amounts: {Address: UFix64}
+  )
 
-    init(_ fundingCycle: UInt64?, _ amount: UFix64, _ buyer: Address) {
-      self.type = "Purchase"
-      self.timestamp = getCurrentBlock().timestamp
-      self.fundingCycle = fundingCycle
-      self.amount = amount
-      self.buyer = buyer
-    }
-  }
+  pub event Donate(
+    projectId: UInt64, 
+    tokenType: Type,
+    projectOwner: Address, 
+    currentCycle: UInt64?,
+    amount: UFix64,
+    by: Address
+  )
 
-  pub struct Distribute: Action {
-    pub let type: String
-    pub let timestamp: UFix64
-    pub let fundingCycle: UInt64?
-    pub let amounts: {Address: UFix64}
-
-    init(_ fundingCycle: UInt64?, _ amounts: {Address: UFix64}) {
-      self.type = "Distribute"
-      self.timestamp = getCurrentBlock().timestamp
-      self.fundingCycle = fundingCycle
-      self.amounts = amounts
-    }
-  }
-
-  pub struct NewCycle: Action {
-    pub let type: String
-    pub let timestamp: UFix64
-    pub let fundingCycle: UInt64?
-    pub let cycleInfo: FundingCycleDetails
-
-    init(_ fundingCycle: UInt64?, _ cycleInfo: FundingCycleDetails) {
-      self.type = "NewCycle"
-      self.timestamp = getCurrentBlock().timestamp
-      self.fundingCycle = fundingCycle
-      self.cycleInfo = cycleInfo
-    }
-  }
-
-  pub struct Donate: Action {
-    pub let type: String
-    pub let timestamp: UFix64
-    pub let fundingCycle: UInt64?
-    pub let tokenType: Type
-    pub let amount: UFix64
-    pub let by: Address
-
-    init(_ fundingCycle: UInt64?, _ tokenType: Type, _ amount: UFix64, _ by: Address) {
-      self.type = "Donate"
-      self.timestamp = getCurrentBlock().timestamp
-      self.fundingCycle = fundingCycle
-      self.tokenType = tokenType
-      self.amount = amount
-      self.by = by
-    }
-  }
-
-  pub struct Withdraw: Action {
-    pub let type: String
-    pub let timestamp: UFix64
-    pub let fundingCycle: UInt64?
-    pub let tokenType: Type
-    pub let amount: UFix64
-    pub let to: Address
-
-    init(_ fundingCycle: UInt64?, _ tokenType: Type, _ amount: UFix64, _ to: Address) {
-      self.type = "Withdraw"
-      self.timestamp = getCurrentBlock().timestamp
-      self.fundingCycle = fundingCycle
-      self.tokenType = tokenType
-      self.amount = amount
-      self.to = to
-    }
-  }
+  pub event Withdraw(
+    projectId: UInt64, 
+    tokenType: Type,
+    projectOwner: Address, 
+    currentCycle: UInt64?,
+    amount: UFix64,
+    to: Address
+  )
 
   pub struct CycleTimeFrame {
     pub let startTime: UFix64
@@ -179,13 +125,11 @@ pub contract Toucans {
     pub var numOfTokensPurchased: UFix64
     pub let funders: {Address: UFix64}
     pub var numOfFlowContributed: UFix64
-    pub let purchaseHistory: [Purchase]
 
     pub fun trackPurchase(amount: UFix64, amountOfFlow: UFix64, payer: Address) {
       self.numOfTokensPurchased = self.numOfTokensPurchased + amount
       self.funders[payer] = (self.funders[payer] ?? 0.0) + amountOfFlow
       self.numOfFlowContributed = self.numOfFlowContributed + amountOfFlow
-      self.purchaseHistory.append(Purchase(self.details.cycleNum, amount, payer))
     }
 
     init(_details: FundingCycleDetails) {
@@ -193,7 +137,6 @@ pub contract Toucans {
       self.numOfTokensPurchased = 0.0
       self.funders = {}
       self.numOfFlowContributed = 0.0
-      self.purchaseHistory = []
     }
   }
 
@@ -214,7 +157,6 @@ pub contract Toucans {
     pub fun getFundingCycles(): [FundingCycle]
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
-    pub fun getActions(): [{Action}]
     pub fun getExtra(): {String: AnyStruct}
     pub fun getFunders(): {Address: UFix64}
   }
@@ -226,7 +168,6 @@ pub contract Toucans {
     pub let editDelay: UFix64
 
     access(self) var fundingCycles: [FundingCycle]
-    access(self) let actions: [{Action}]
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let minter: @{Minter}
     access(self) let funders: {Address: UFix64}
@@ -264,21 +205,17 @@ pub contract Toucans {
       let newFundingCycle: FundingCycle = FundingCycle(_details: details)
 
       self.fundingCycles.append(newFundingCycle)
-      self.actions.append(NewCycle(cycleNum, details))
 
       emit NewFundingCycle(
         projectId: self.projectId, 
         tokenType: self.tokenType,
         projectOwner: self.owner!.address, 
-        currentCycle: cycleNum,
+        currentCycle: self.getCurrentFundingCycleNum(),
+        cycleNum: cycleNum,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
-        numOfTokensPurchased: newFundingCycle.numOfTokensPurchased,
-        timeframe: timeframe,
-        funders: newFundingCycle.funders,
-        numOfFlowContributed: newFundingCycle.numOfFlowContributed,
-        purchaseHistory: newFundingCycle.purchaseHistory
+        timeframe: timeframe
       )
     }
 
@@ -354,7 +291,14 @@ pub contract Toucans {
       // Tokens were purchased, so increment amount raised
       self.totalFunding = self.totalFunding + amount
       self.funders[payer] = (self.funders[payer] ?? 0.0) + amount
-      self.actions.append(Purchase(self.getCurrentFundingCycleNum(), amountOfFlowSent, payer))
+      emit Purchase(
+        projectId: self.projectId, 
+        tokenType: self.tokenType,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleNum()!,
+        amount: amountOfFlowSent,
+        buyer: payer
+      )
     }
 
     // Helper Functions
@@ -368,7 +312,14 @@ pub contract Toucans {
     }
 
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address) {
-      self.actions.append(Donate(self.getCurrentFundingCycleNum(), vault.getType(), vault.balance, payer))
+      emit Donate(
+        projectId: self.projectId, 
+        tokenType: self.tokenType,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleNum(),
+        amount: vault.balance,
+        by: payer
+      )
       if let existingVault = &self.treasury[vault.getType()] as &FungibleToken.Vault? {
         existingVault.deposit(from: <- vault)
       } else {
@@ -377,7 +328,14 @@ pub contract Toucans {
     }
 
     pub fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
-      self.actions.append(Withdraw(self.getCurrentFundingCycleNum(), vault.getType(), amount, vault.owner!.address))
+      emit Withdraw(
+        projectId: self.projectId, 
+        tokenType: self.tokenType,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleNum(),
+        amount: amount,
+        to: vault.owner!.address
+      )
       vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
     }
 
@@ -458,10 +416,6 @@ pub contract Toucans {
       return self.fundingCycles
     }
 
-    pub fun getActions(): [{Action}] {
-      return self.actions
-    }
-
     pub fun getExtra(): {String: AnyStruct} {
       return self.extra
     }
@@ -483,7 +437,6 @@ pub contract Toucans {
       self.treasury <- {testMint.getType(): <- testMint}
       self.minter <- minter
       self.funders = {}
-      self.actions = []
       self.editDelay = editDelay
     }
 
