@@ -6,17 +6,11 @@
 	import RoundDetail from '$components/atoms/RoundDetail.svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 
 	export let daoData: FinancialDao;
 
-	const getRecentFundingCycleData = () => {
-		const fundingCycle = daoData.fundingCycles[daoData.mostRecentCycle];
-		const purchaseHistory = daoData.purchaseHistory.filter(
-			(purchase) => purchase.currentCycle === daoData.mostRecentCycle
-		);
-		return { ...fundingCycle, purchaseHistory };
-	};
-	const mostRecentCycle = getRecentFundingCycleData();
+	const mostRecentCycle = getFundingCycleData(daoData, Number(daoData.mostRecentCycle));
 </script>
 
 {#if daoData}
@@ -57,7 +51,7 @@
 				<div class="rounds-wrapper">
 					<span class="heading">Active</span>
 					{#each daoData.fundingCycles as round}
-						{#if round.details.cycleNum === daoData.currentFundingCycle}
+						{#if round.cycleNum === daoData.currentFundingCycle}
 							<RoundDetail {round} i={0} />
 						{/if}
 					{/each}
@@ -65,7 +59,7 @@
 				<div class="rounds-wrapper">
 					<span class="heading">Finished</span>
 					{#each daoData.fundingCycles as round, i}
-						{#if round.details.cycleNum !== daoData.currentFundingCycle}
+						{#if round.cycleNum !== daoData.currentFundingCycle}
 							<RoundDetail {round} discover={true} {i} />
 						{/if}
 					{/each}

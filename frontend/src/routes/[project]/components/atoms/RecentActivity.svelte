@@ -1,18 +1,16 @@
 <script type="ts">
 	import ActivityDetail from '$components/activity/ActivityDetail.svelte';
+	import type { Action } from '$lib/types/actions/actions.type';
 
-	export let actions;
+	export let actions: Action[];
 </script>
 
 <div class="column-2 align-start">
-	{#each actions as action}
+	{#each actions as action, i}
 		<div class="activity-wrapper">
 			<ActivityDetail
-				activityType={action.type}
-				walletAddress={action.by}
-				date={action.timestamp}
-				amount={action.amount}
-				currency="$FLOW"
+				{action}
+				{i}
 			/>
 		</div>
 	{/each}

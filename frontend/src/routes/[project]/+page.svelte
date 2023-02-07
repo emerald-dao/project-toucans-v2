@@ -7,9 +7,12 @@
 	import { communityDaoData } from '$lib/mock/communityDao';
 	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
+	import type { FundingCycleAction } from '$lib/types/actions/funding-cycle-action.interface';
+	import type { PurchaseAction } from '$lib/types/actions/purchase-action.interface';
 
 	export let data: CommunityDao | FinancialDao;
-	console.log(data);
+
+	console.log('a', data);
 
 	let seeMore = false;
 </script>

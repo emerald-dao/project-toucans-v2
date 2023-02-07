@@ -1,45 +1,47 @@
 <script type="ts">
+	import Icon from '@iconify/svelte';
+	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
-	import { Label, StatusCircle, Currency } from '@emerald-dao/component-library';
+	import { Label, StatusCircle, Currency, Modal, getModal } from '@emerald-dao/component-library';
+	import type { Action } from '$lib/types/actions/actions.type';
+	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
+	import { daoData } from '$stores/generator/DaoDataStore';
 
-	export let activityType: 'Purchase' | 'Withdraw' | 'NewFundingCycle' | 'Donate';
-	export let walletAddress: string;
-	export let date: string;
-	export let amount: number | undefined = undefined;
-	export let currency: string | undefined = undefined;
+	export let action: Action;
+	export let i: number;
 </script>
 
 <div class="main-wrapper">
 	<div class="row-3 align-center">
-		{#if activityType === 'Purchase' || activityType === 'Donate'}
+		{#if action.type === 'Purchase' || action.type === 'Donate'}
 			<StatusCircle status="success" width="8px" />
-		{:else if activityType === 'Withdraw'}
+		{:else if action.type === 'Withdraw'}
 			<StatusCircle status="alert" width="8px" />
-		{:else if activityType === 'NewFundingCycle'}
+		{:else if action.type === 'NewFundingCycle'}
 			<StatusCircle status="active" width="8px" />
 		{/if}
 		<div class="column info-wrapper">
-			<p class="address">{walletAddress}</p>
-			<span class="date">{formatDate(new Date(date * 1000))}</span>
+			<p class="address">{action.by}</p>
+			<span class="date">{formatDate(new Date(action.timestamp * 1000))}</span>
 		</div>
-		{#if activityType === 'Purchase' || activityType === 'Donate'}
+		{#if action.type === 'Purchase' || action.type === 'Donate'}
 			<Label size="xx-small" color="primary" hasBorder={false}>
-				{activityType}
+				{action.type}
 			</Label>
-		{:else if activityType === 'Withdraw'}
+		{:else if action.type === 'Withdraw'}
 			<Label size="xx-small" color="alert" hasBorder={false}>
-				{activityType}
+				{action.type}
 			</Label>
-		{:else if activityType === 'NewFundingCycle'}
+		{:else if action.type === 'NewFundingCycle'}
 			<Label size="xx-small" color="tertiary" hasBorder={false}>
-				{activityType}
+				{action.type}
 			</Label>
 		{/if}
 	</div>
-	{#if currency && amount}
+	{#if action.type === 'Purchase' || action.type === 'Donate' || action.type === 'Withdraw'}
 		<Currency
-			amount={activityType === 'Withdraw' ? -amount : amount}
-			{currency}
+			amount={action.type === 'Withdraw' ? -Number(action.amount) : Number(action.amount)}
+			currency="FLOW"
 			color="heading"
 			fontSize="0.85rem"
 		/>

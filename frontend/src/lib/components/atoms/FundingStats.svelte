@@ -1,11 +1,12 @@
 <script type="ts">
 	import { daysOfDifference } from '$lib/utilities/formatDate';
 	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
-	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
+	// import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import Icon from '@iconify/svelte';
 	import ChartTitle from '../../../routes/[project]/components/atoms/ChartTitle.svelte';
-	import type { FundingCycle } from '$lib/types/dao-project.interface';
+	import type { FundingCycleAction } from '$lib/types/actions/funding-cycle-action.interface';
+	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
 
 	export let fundingCycleData: FundingCycle;
 
@@ -17,10 +18,10 @@
 	export let title: string = daysLeft > 0 ? 'Active Funding Round' : 'Last Funding Round';
 	export let hasBorder = true;
 
-	const fundingsPerMonth = getMonthlyFundingFromRounds([fundingCycleData]);
+	// const fundingsPerMonth = getMonthlyFundingFromRounds([fundingCycleData]);
 
-	const months: string[] = fundingsPerMonth.map((x) => x[0]);
-	const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
+	// const months: string[] = fundingsPerMonth.map((x) => x[0]);
+	// const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
 <div class:card={hasBorder}>
@@ -78,7 +79,7 @@
 		/>
 	</div>
 	<div class="chart-wrapper">
-		<LineChart title="Active Round" chartData={amounts} labels={months} />
+		<!-- <LineChart title="Active Round" chartData={amounts} labels={months} /> -->
 	</div>
 </div>
 

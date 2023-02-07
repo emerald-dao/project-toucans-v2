@@ -1,10 +1,16 @@
-import type { Round } from '../types/dao-project.interface';
+import { FundingCycleAction } from '../types/actions/funding-cycle-action.interface';
 
-export const getMonthlyFundingFromRounds = (rounds: Round[]): [string, number][] => {
+// TODO: refactor this function
+
+export const getMonthlyFundingFromRounds = (rounds: FundingCycleAction[]): [string, number][] => {
 	const monthlySums: [string, number][] = [];
-	const startDates = rounds.map((round) => Number(new Date(round.details.timeframe.startTime * 1000.0)));
+	const startDates = rounds.map((round) =>
+		Number(new Date(round.details.timeframe.startTime * 1000.0))
+	);
 	const firstMonth = new Date(Math.min(...startDates));
-	const finishDates = rounds.map((round) => Number(new Date(round.details.timeframe.endTime * 1000.0)));
+	const finishDates = rounds.map((round) =>
+		Number(new Date(round.details.timeframe.endTime * 1000.0))
+	);
 	const lastMonth = new Date(Math.max(...finishDates));
 
 	let currentDate = firstMonth;
@@ -17,8 +23,8 @@ export const getMonthlyFundingFromRounds = (rounds: Round[]): [string, number][]
 				continue;
 			}
 			const monthFundings = round.purchaseHistory.filter((funding) => {
-				const fundingYear = (new Date(funding.timestamp * 1000.0).getFullYear());
-				const fundingMonth = (new Date(funding.timestamp * 1000.0).getMonth());
+				const fundingYear = new Date(funding.timestamp * 1000.0).getFullYear();
+				const fundingMonth = new Date(funding.timestamp * 1000.0).getMonth();
 				const currentYear = currentDate.getFullYear();
 				const currentMonth = currentDate.getMonth();
 				return fundingYear === currentYear && fundingMonth === currentMonth;

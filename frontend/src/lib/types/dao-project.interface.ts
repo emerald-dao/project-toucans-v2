@@ -1,16 +1,6 @@
-import type { Currencies } from './currencies.enum';
-
-export interface Activity {
-	type: 'entry' | 'expense';
-	currency: Currencies.FLOW | Currencies.FUSD;
-	amount: number;
-	account: string;
-	date: Date;
-}
-
-export interface Funding extends Activity {
-	type: 'entry';
-}
+import type { FundingCycleAction } from './actions/funding-cycle-action.interface';
+import type { PurchaseAction } from './actions/purchase-action.interface';
+import type { Funders, FundingCycle } from './funding-cycle.interface';
 
 export enum DaoTags {
 	'Education' = 'Education',
@@ -22,20 +12,6 @@ export enum DaoType {
 	'Community' = 'Community',
 	'Financial' = 'Financial'
 }
-
-export interface TimeFrame {
-	startTime: string;
-	endTime: string;
-}
-
-export interface Payout {
-	address: string;
-	percent: string;
-}
-
-export interface Extra { }
-
-export interface Funders { }
 
 export interface Type {
 	kind: string;
@@ -54,41 +30,8 @@ export interface TokenType {
 	type: string;
 }
 
-export interface Details {
-	cycleNum: string;
-	fundingTarget: string;
-	issuanceRate: string;
-	reserveRate: string;
-	timeframe: TimeFrame;
-	payouts: Payout[];
-	extra: Extra;
-}
-
-export interface Funders { }
-
-export interface FundingCycle {
-	details: Details;
-	numOfTokensPurchased: string;
-	funders: Funders;
-	numOfFlowContributed: string;
-	purchaseHistory: any[];
-}
-
-export interface CycleInfo {
-	cycleNum: string;
-	fundingTarget: string;
-	issuanceRate: string;
-	reserveRate: string;
-	timeframe: TimeFrame;
-	payouts: Payout[];
-	extra: Extra;
-}
-
-export interface Action {
-	type: string;
-	timestamp: string;
-	fundingCycle: string;
-	cycleInfo: CycleInfo;
+interface Extra {
+	[extra: string]: string;
 }
 
 export interface Dao {
@@ -107,16 +50,18 @@ export interface Dao {
 	projectId: string;
 	tokenType: TokenType;
 	extra: Extra;
-	actions: Action[];
+	actions: [PurchaseAction | FundingCycleAction];
 	totalSupply: string;
 }
 
 export interface FinancialDao extends Dao {
 	currentFundingCycle: string;
+	mostRecentCycle: string;
 	totalFunding: string;
 	fundingCycles: FundingCycle[];
 	funders: Funders;
 	type: DaoType.Financial;
+	purchaseHistory: PurchaseAction[];
 }
 
 export interface CommunityDao extends Dao {
