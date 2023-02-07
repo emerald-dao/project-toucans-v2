@@ -24,18 +24,12 @@ export const load: PageLoad = async ({ params }) => {
 		info.project_id
 	);
 
-	console.log('projectInfo', projectInfo);
-
 	// get actions
 	const { data: actionData } = await supabase
 		.from('events')
 		.select()
 		.eq('project_id', info.project_id);
 	const [eventsData] = actionData;
-
-	console.log('eventsData', eventsData.actions.reverse());
-	console.log(info);
-	console.log(projectInfo);
 
 	return {
 		...info,
