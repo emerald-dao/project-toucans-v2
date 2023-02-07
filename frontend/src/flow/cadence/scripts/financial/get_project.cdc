@@ -18,6 +18,7 @@ pub struct Info {
   pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
   pub let totalSupply: UFix64
+  pub let balances: {Address: UFix64}
   pub let funders: {Address: UFix64}
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
@@ -28,6 +29,7 @@ pub struct Info {
     self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()
     self.totalSupply = ExampleFinancial.totalSupply
+    self.balances = ExampleFinancial.getBalances()
     self.funders = info.getFunders()
     self.mostRecentCycle = info.getMostRecentCycle()
   }

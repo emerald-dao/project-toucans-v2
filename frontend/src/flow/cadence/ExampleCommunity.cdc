@@ -112,9 +112,8 @@ pub contract ExampleCommunity: FungibleToken {
         }
 
         destroy() {
-            pre {
-                self.balance == 0.0: "Cannot destroy a vault that has funds in it."
-            }
+            ExampleCommunity.totalSupply = ExampleCommunity.totalSupply - self.balance
+            emit TokensBurned(amount: self.balance)
         }
     }
 

@@ -7,6 +7,7 @@ pub contract ExampleFinancial: FungibleToken {
 
     // The amount of tokens in existance
     pub var totalSupply: UFix64
+    access(self) let balances: {Address: UFix64}
 
     // Paths
     pub let VaultStoragePath: StoragePath
@@ -25,6 +26,9 @@ pub contract ExampleFinancial: FungibleToken {
         pub var balance: UFix64
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
+            if let owner: Address = self.owner?.address {
+                ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+            }
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
             return <-create Vault(balance: amount)
@@ -32,6 +36,9 @@ pub contract ExampleFinancial: FungibleToken {
 
         pub fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @Vault
+            if let owner: Address = self.owner?.address {
+                ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? 0.0) + vault.balance
+            }
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             
@@ -39,6 +46,16 @@ pub contract ExampleFinancial: FungibleToken {
             // decrease the totalSupply in the `destroy` function.
             vault.balance = 0.0
             destroy vault
+        }
+
+        pub fun transfer(amount: UFix64, recipient: &Vault{FungibleToken.Receiver}) {
+            let owner = self.owner!.address
+            let recipientAddr = recipient.owner!.address
+            self.balance = self.balance - amount
+            emit TokensTransferred(amount: amount, from: owner, to: recipientAddr)
+            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+            ExampleCommunity.balances[recipientAddr] = (ExampleCommunity.balances[recipientAddr] ?? 0.0) + amount
+            recipient.deposit(from: <- create Vault(balance: amount))
         }
 
         pub fun getViews(): [Type]{
@@ -104,9 +121,14 @@ pub contract ExampleFinancial: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
+    pub fun getBalances(): {Address: UFix64} {
+        return self.balances
+    }
+
     pub resource Minter: Toucans.Minter {
         pub fun mint(amount: UFix64): @Vault {
             ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
+            emit TokensMinted(amount: amount, to: recipient.owner!.address, by: self.owner!.address)
             return <- create Vault(balance: amount)
         }
     }

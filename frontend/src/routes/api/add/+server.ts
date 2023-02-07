@@ -33,6 +33,7 @@ export async function POST({ request }: { request: RequestHandler }) {
 		type: data.tokenomics.tokenType,
 		project_id: data.projectId
 	});
+	console.log('Error adding new project', error)
 
 	return json(error);
 }
