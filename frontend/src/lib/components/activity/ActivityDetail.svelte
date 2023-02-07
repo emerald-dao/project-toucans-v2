@@ -1,14 +1,21 @@
 <script type="ts">
+	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Label, StatusCircle, Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import type { Action } from '$lib/types/actions/actions.type';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
-	import { daoData } from '$stores/generator/DaoDataStore';
+	import type { Dao } from '$lib/types/dao-project.interface';
+	import { getContext } from 'svelte';
 
 	export let action: Action;
 	export let i: number;
+
+	let daoData: Dao = getContext('daoData');
+
+	console.log('ctx', daoData);
+	
 </script>
 
 <div class="main-wrapper">
@@ -45,6 +52,13 @@
 			color="heading"
 			fontSize="0.85rem"
 		/>
+	{:else if action.type === 'NewFundingCycle'}
+		<div class="header-link" on:click={() => getModal(`funding-stats-activity-${i}`).open()} on:keydown>
+			<Icon icon="tabler:eye" />
+		</div>
+		<Modal background="var(--clr-background-secondary)" id={`funding-stats-activity-${i}`}>
+			<FundingStats fundingCycleData={getFundingCycleData(daoData, action.cycleNum)} hasBorder={false} title="Funding round data" />
+		</Modal>
 	{/if}
 </div>
 

@@ -3,16 +3,15 @@
 	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
 	import { ProjectSidebarSection } from './components';
 	import FinancialProject from './components/sections/FinancialProject.svelte';
-	import { financialDaoData } from '$lib/mock/financialDao';
-	import { communityDaoData } from '$lib/mock/communityDao';
 	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
-	import type { FundingCycleAction } from '$lib/types/actions/funding-cycle-action.interface';
-	import type { PurchaseAction } from '$lib/types/actions/purchase-action.interface';
+	import { setContext } from 'svelte';
 
 	export let data: CommunityDao | FinancialDao;
 
-	console.log('a', data);
+	setContext('daoData', 
+		data
+	);
 
 	let seeMore = false;
 </script>
