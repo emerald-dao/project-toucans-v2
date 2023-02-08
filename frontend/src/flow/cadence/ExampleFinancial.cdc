@@ -19,6 +19,7 @@ pub contract ExampleFinancial: FungibleToken {
     pub event TokensInitialized(initialSupply: UFix64)
     pub event TokensWithdrawn(amount: UFix64, from: Address?)
     pub event TokensDeposited(amount: UFix64, to: Address?)
+    pub event TokensTransferred(amount: UFix64, from: Address, to: Address)
     pub event TokensMinted(amount: UFix64)
     pub event TokensBurned(amount: UFix64)
 
@@ -27,7 +28,7 @@ pub contract ExampleFinancial: FungibleToken {
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
             if let owner: Address = self.owner?.address {
-                ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
+                ExampleFinancial.balances[owner] = (ExampleFinancial.balances[owner] ?? amount) - amount
             }
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
@@ -37,7 +38,7 @@ pub contract ExampleFinancial: FungibleToken {
         pub fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @Vault
             if let owner: Address = self.owner?.address {
-                ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? 0.0) + vault.balance
+                ExampleFinancial.balances[owner] = (ExampleFinancial.balances[owner] ?? 0.0) + vault.balance
             }
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
@@ -53,8 +54,8 @@ pub contract ExampleFinancial: FungibleToken {
             let recipientAddr = recipient.owner!.address
             self.balance = self.balance - amount
             emit TokensTransferred(amount: amount, from: owner, to: recipientAddr)
-            ExampleCommunity.balances[owner] = (ExampleCommunity.balances[owner] ?? amount) - amount
-            ExampleCommunity.balances[recipientAddr] = (ExampleCommunity.balances[recipientAddr] ?? 0.0) + amount
+            ExampleFinancial.balances[owner] = (ExampleFinancial.balances[owner] ?? amount) - amount
+            ExampleFinancial.balances[recipientAddr] = (ExampleFinancial.balances[recipientAddr] ?? 0.0) + amount
             recipient.deposit(from: <- create Vault(balance: amount))
         }
 
@@ -128,7 +129,7 @@ pub contract ExampleFinancial: FungibleToken {
     pub resource Minter: Toucans.Minter {
         pub fun mint(amount: UFix64): @Vault {
             ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
-            emit TokensMinted(amount: amount, to: recipient.owner!.address, by: self.owner!.address)
+            emit TokensMinted(amount: amount)
             return <- create Vault(balance: amount)
         }
     }
@@ -145,6 +146,7 @@ pub contract ExampleFinancial: FungibleToken {
 
       // Contract Variables
       self.totalSupply = 0.0
+      self.balances = {}
 
       // Paths
       self.VaultStoragePath = /storage/ExampleFinancialVault
