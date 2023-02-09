@@ -1,43 +1,89 @@
-import { FundingCycleAction } from '../types/actions/funding-cycle-action.interface';
+import type { Action } from '$lib/types/actions/actions.type';
 
-// TODO: refactor this function
+export const getMonthlyFundingFromRounds = (actions: Action[]) => {
+	const timeOrderedActions = actions.sort((a, b) => a.timestamp - b.timestamp);
 
-export const getMonthlyFundingFromRounds = (rounds: FundingCycleAction[]): [string, number][] => {
-	const monthlySums: [string, number][] = [];
-	const startDates = rounds.map((round) =>
-		Number(new Date(round.details.timeframe.startTime * 1000.0))
-	);
-	const firstMonth = new Date(Math.min(...startDates));
-	const finishDates = rounds.map((round) =>
-		Number(new Date(round.details.timeframe.endTime * 1000.0))
-	);
-	const lastMonth = new Date(Math.max(...finishDates));
+	const generateDatesArray = () => {
+		const firstMonth = timeOrderedActions[0];
+		const lastMonth = timeOrderedActions[timeOrderedActions.length - 1];
 
-	let currentDate = firstMonth;
-	let totalSum = 0;
+		const firstDate = new Date(firstMonth.timestamp * 1000);
+		const lastDate = new Date(lastMonth.timestamp * 1000);
 
-	while (currentDate <= lastMonth) {
-		let monthSum = 0;
-		for (const round of rounds) {
-			if (currentDate < round.startDate || currentDate > round.finishDate) {
-				continue;
+		const firstMonthNumber = firstDate.getMonth();
+		const firstYearNumber = firstDate.getFullYear();
+
+		const lastMonthNumber = lastDate.getMonth();
+		const lastYearNumber = lastDate.getFullYear();
+
+		const datesArray = [];
+
+		for (let i = firstYearNumber; i <= lastYearNumber; i++) {
+			const startMonth = i === firstYearNumber ? firstMonthNumber : 0;
+			const endMonth = i === lastYearNumber ? lastMonthNumber : 11;
+
+			for (let j = startMonth; j <= endMonth; j++) {
+				datesArray.push(`${j}-${i}`);
 			}
-			const monthFundings = round.purchaseHistory.filter((funding) => {
-				const fundingYear = new Date(funding.timestamp * 1000.0).getFullYear();
-				const fundingMonth = new Date(funding.timestamp * 1000.0).getMonth();
-				const currentYear = currentDate.getFullYear();
-				const currentMonth = currentDate.getMonth();
-				return fundingYear === currentYear && fundingMonth === currentMonth;
-			});
-			monthSum += monthFundings.reduce((total, funding) => total + funding.amount, 0);
 		}
-		totalSum += monthSum;
-		monthlySums.push([
-			currentDate.toLocaleString('default', { month: 'long' }) + ' ' + currentDate.getFullYear(),
-			totalSum
-		]);
-		currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-	}
 
-	return monthlySums;
+		return datesArray;
+	};
+
+	const allDatesArray = generateDatesArray();
+
+	const fundingPerMonth = timeOrderedActions.reduce(
+		(
+			acc: {
+				[key: string]: number;
+			},
+			action
+		) => {
+			if (action.type === 'Purchase') {
+				const date = new Date(action.timestamp * 1000);
+				const month = date.getMonth();
+				const year = date.getFullYear();
+
+				const key = `${month}-${year}`;
+
+				if (acc[key]) {
+					acc[key] += Number(action.amount);
+				} else {
+					acc[key] = Number(action.amount);
+				}
+			}
+			return acc;
+		},
+		{}
+	);
+
+	const labels = Object.keys(fundingPerMonth);
+	const data = Object.values(fundingPerMonth);
+
+	const combineFundingWithAllDates = (
+		fundingPerMonth: {
+			labels: string[];
+			data: number[];
+		},
+		allDatesArray: string[]
+	) => {
+		const combinedLabels: string[] = [];
+		const combinedData: number[] = [];
+
+		allDatesArray.forEach((date) => {
+			if (fundingPerMonth.labels.includes(date)) {
+				combinedLabels.push(date);
+				combinedData.push(fundingPerMonth.data[fundingPerMonth.labels.indexOf(date)]);
+			} else {
+				combinedLabels.push(date);
+				combinedData.push(0);
+			}
+		});
+
+		return { labels: combinedLabels, data: combinedData };
+	};
+
+	const chartData = combineFundingWithAllDates({ labels, data }, allDatesArray);
+
+	return { labels: chartData.labels, data: chartData.data };
 };

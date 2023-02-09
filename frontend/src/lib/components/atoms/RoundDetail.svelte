@@ -1,7 +1,7 @@
 <script type="ts">
+	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
 	import Icon from '@iconify/svelte';
 	import { Currencies } from '$lib/types/currencies.enum';
-	import type { FundingCycle } from '$lib/types/dao-project.interface';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Modal, getModal, ProgressBar, StatusCircle } from '@emerald-dao/component-library';
 	import FundingStats from '$components/atoms/FundingStats.svelte';
@@ -29,8 +29,8 @@
 			</div>
 		</div>
 		<span class="xsmall display-handling"
-			>{`${formatDate(new Date(round.details.timeframe.startTime * 1000))} to ${formatDate(
-				new Date(round.details.timeframe.endTime * 1000)
+			>{`${formatDate(new Date(Number(round.details.timeframe.startTime) * 1000))} to ${formatDate(
+				new Date(Number(round.details.timeframe.endTime) * 1000)
 			)}`}</span
 		>
 	</div>

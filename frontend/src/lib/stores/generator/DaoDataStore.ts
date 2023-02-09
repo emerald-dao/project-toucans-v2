@@ -1,4 +1,4 @@
-import type { DaoData } from '$lib/types/generator/dao.interface.interface';
+import type { DaoData } from '$lib/types/generator/dao.interface';
 import { writable, type Writable } from 'svelte/store';
 import { TokenTypes } from '$lib/types/token-types.enum';
 import { Currencies } from '$lib/types/currencies.enum';
@@ -18,7 +18,7 @@ export const daoData: Writable<DaoData> = writable({
 		tokenType: TokenTypes.FINANCIAL,
 		totalSupply: undefined,
 		targetAmount: undefined,
-		editDelay: "259200.00",
+		editDelay: '259200.00',
 		mintTokens: false,
 		walletAddresses: [],
 		initialRound: {

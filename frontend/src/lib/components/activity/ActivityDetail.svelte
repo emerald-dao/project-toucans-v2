@@ -43,7 +43,7 @@
 		{/if}
 	</div>
 	<div class="row-3">
-		{#if action.type === 'Purchase'}
+		{#if action.type === 'Purchase' && action.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>

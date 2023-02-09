@@ -1,18 +1,46 @@
 <script type="ts">
+	import type { Action } from '$lib/types/actions/actions.type';
 	import { Currencies } from '$lib/types/currencies.enum';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
+
 	export let daoData: FinancialDao;
+
+	const getFunders = (actions: Action[]) => {
+		const funders = actions.reduce((acc: {
+			[key: string]: number;
+		}, action) => {
+			if (action.type === "Purchase") {
+				if (acc[action.by]) {
+					acc[action.by] += Number(action.amount);
+				} else {
+					acc[action.by] = Number(action.amount);
+				}
+			}
+			return acc;
+		}, {});
+
+		const fundersArray = Object.keys(funders).map((funder) => {
+			return {
+				name: funder,
+				amount: funders[funder]
+			}
+		});
+
+		return fundersArray.sort((a, b) => b.amount - a.amount);
+	}
+
+	const mainFunders = getFunders(daoData.actions).slice(0, 5);
 </script>
 
 <div class="column-2 align-start">
-	{#each Object.entries(daoData.funders) as [funder, amount]}
+	{#each Object.values(mainFunders) as funder}
 		<div class="activity-wrapper">
 			<div class="row-3 align-center">
 				<img src="/avatar-header.png" alt="avatar logo" />
-				<span class="funder-name">{funder}</span>
+				<span class="funder-name">{funder.name}</span>
 			</div>
-			<Currency {amount} currency={Currencies.FLOW} color="heading" fontSize="0.85rem" />
+			<Currency amount={Number(funder.amount)} currency={Currencies.FLOW} color="heading" fontSize="0.85rem" />
 		</div>
 	{/each}
 </div>

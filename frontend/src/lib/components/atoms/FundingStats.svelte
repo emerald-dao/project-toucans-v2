@@ -8,14 +8,18 @@
 	import type { FundingCycleAction } from '$lib/types/actions/funding-cycle-action.interface';
 	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
 
-	export let fundingCycleData: FundingCycle;
+	export let fundingCycleData: FundingCycle | null;
 
-	const daysLeft = daysOfDifference(
-		new Date(),
-		new Date(Number(fundingCycleData.details.timeframe.endTime))
-	);
+	let daysLeft: number;
 
-	export let title: string = daysLeft > 0 ? 'Active Funding Round' : 'Last Funding Round';
+	if (fundingCycleData) {
+		daysLeft = daysOfDifference(
+			new Date(),
+			new Date(Number(fundingCycleData.details.timeframe.endTime))
+		);
+	}
+
+	export let title = 'Active Funding Round';
 	export let hasBorder = true;
 
 	// const fundingsPerMonth = getMonthlyFundingFromRounds([fundingCycleData]);
@@ -24,66 +28,69 @@
 	// const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
-<div class:card={hasBorder}>
-	<div class="data-wrapper">
-		<div class="row-space-between">
-			<ChartTitle {title} icon="tabler:activity-heartbeat" />
-			<span class="time-left xsmall">
-				<Icon icon="tabler:clock" />
-				{#if daysLeft < 0}
-					Finished {(-daysLeft).toLocaleString()} days ago
-				{:else}
-					{daysLeft.toLocaleString()} days left
-				{/if}
-			</span>
-		</div>
-		<div class="funding-stats-wrapper">
-			<div class="chart-data-card">
-				<p class="xsmall">Raised</p>
-				<Currency
-					amount={Number(fundingCycleData.numOfFlowContributed)}
-					currency="FLOW"
-					fontSize="var(--font-size-2)"
-					color="heading"
-				/>
-			</div>
-			<div class="chart-data-card">
-				<p class="xsmall">Goal</p>
-				<Currency
-					amount={Number(fundingCycleData.details.fundingTarget)}
-					currency="FLOW"
-					fontSize="var(--font-size-1)"
-					color="heading"
-				/>
-			</div>
-			<div class="chart-data-card">
-				<div class="row-1">
-					<p class="xsmall">Reserve rate</p>
-					<TooltipIcon width={0.7} tooltip="description" />
-				</div>
-				<span class="small">{Number(fundingCycleData.details.reserveRate)}</span>
-			</div>
-			<div class="chart-data-card">
-				<div class="row-1">
-					<p class="xsmall">Issuance</p>
-					<TooltipIcon width={0.7} tooltip="description" />
-				</div>
-				<span class="small">
-					{Number(fundingCycleData.details.issuanceRate)}
+{#if fundingCycleData}
+	<div class:card={hasBorder}>
+		<div class="data-wrapper">
+			<div class="row-space-between">
+				<ChartTitle {title} icon="tabler:activity-heartbeat" />
+				<span class="time-left xsmall">
+					<Icon icon="tabler:clock" />
+					{#if daysLeft < 0}
+						Finished {(-daysLeft).toLocaleString()} days ago
+					{:else}
+						{daysLeft.toLocaleString()} days left
+					{/if}
 				</span>
 			</div>
+			<div class="funding-stats-wrapper">
+				<div class="chart-data-card">
+					<p class="xsmall">Raised</p>
+					<Currency
+						amount={Number(fundingCycleData.numOfFlowContributed)}
+						currency="FLOW"
+						fontSize="var(--font-size-2)"
+						color="heading"
+					/>
+				</div>
+				<div class="chart-data-card">
+					<p class="xsmall">Goal</p>
+					<Currency
+						amount={Number(fundingCycleData.details.fundingTarget)}
+						currency="FLOW"
+						fontSize="var(--font-size-1)"
+						color="heading"
+					/>
+				</div>
+				<div class="chart-data-card">
+					<div class="row-1">
+						<p class="xsmall">Reserve rate</p>
+						<TooltipIcon width={0.7} tooltip="description" />
+					</div>
+					<span class="small">{Number(fundingCycleData.details.reserveRate)}</span>
+				</div>
+				<div class="chart-data-card">
+					<div class="row-1">
+						<p class="xsmall">Issuance</p>
+						<TooltipIcon width={0.7} tooltip="description" />
+					</div>
+					<span class="small">
+						{Number(fundingCycleData.details.issuanceRate)}
+					</span>
+				</div>
+			</div>
+			<ProgressBar
+				value={Number(fundingCycleData.numOfFlowContributed)}
+				max={Number(fundingCycleData.details.fundingTarget)}
+				size="large"
+			/>
 		</div>
-		<ProgressBar
-			value={Number(fundingCycleData.numOfFlowContributed)}
-			max={Number(fundingCycleData.details.fundingTarget)}
-		/>
 	</div>
-	<div class="chart-wrapper">
-		<!-- <LineChart title="Active Round" chartData={amounts} labels={months} /> -->
-	</div>
-</div>
+{/if}
 
 <style type="scss">
+	.card {
+		background-color: var(--clr-background-secondary);
+	}
 	.data-wrapper {
 		display: flex;
 		flex-direction: column;
