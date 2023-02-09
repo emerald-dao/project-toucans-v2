@@ -2,6 +2,7 @@ import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
 import { getProjectInfo } from '$flow/actions.js';
 import '$flow/config.js';
+import { Action } from '../../lib/types/actions/actions.type';
 
 export const load: PageLoad = async ({ params }) => {
 	// get project info
@@ -35,6 +36,6 @@ export const load: PageLoad = async ({ params }) => {
 		...info,
 		...projectInfo,
 		actions: eventsData.actions.reverse(),
-		purchaseHistory: eventsData.actions.filter((action) => action.type === 'Purchase')
+		purchaseHistory: eventsData.actions.filter((action: Action) => action.type === 'Purchase')
 	};
 };

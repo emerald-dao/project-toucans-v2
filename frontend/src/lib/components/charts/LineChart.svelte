@@ -36,7 +36,7 @@
 
 	$: $theme && updateChart();
 
-	const data = {
+	$: data = {
 		labels,
 		datasets: [
 			{

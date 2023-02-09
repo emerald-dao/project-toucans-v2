@@ -1,31 +1,26 @@
 <script type="ts">
 	import { daysOfDifference } from '$lib/utilities/formatDate';
 	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
-	// import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
-	import LineChart from '$components/charts/LineChart.svelte';
 	import Icon from '@iconify/svelte';
 	import ChartTitle from '../../../routes/[project]/components/atoms/ChartTitle.svelte';
-	import type { FundingCycleAction } from '$lib/types/actions/funding-cycle-action.interface';
 	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
 
 	export let fundingCycleData: FundingCycle | null;
+
+	console.log(fundingCycleData);
+	
 
 	let daysLeft: number;
 
 	if (fundingCycleData) {
 		daysLeft = daysOfDifference(
 			new Date(),
-			new Date(Number(fundingCycleData.details.timeframe.endTime))
+			new Date(Number(fundingCycleData.details.timeframe.endTime) * 1000)
 		);
 	}
 
 	export let title = 'Active Funding Round';
 	export let hasBorder = true;
-
-	// const fundingsPerMonth = getMonthlyFundingFromRounds([fundingCycleData]);
-
-	// const months: string[] = fundingsPerMonth.map((x) => x[0]);
-	// const amounts: number[] = fundingsPerMonth.map((x) => x[1]);
 </script>
 
 {#if fundingCycleData}
@@ -37,6 +32,8 @@
 					<Icon icon="tabler:clock" />
 					{#if daysLeft < 0}
 						Finished {(-daysLeft).toLocaleString()} days ago
+					{:else if daysLeft === 0}
+						Finishes today
 					{:else}
 						{daysLeft.toLocaleString()} days left
 					{/if}
@@ -97,7 +94,7 @@
 		gap: var(--space-3);
 
 		.time-left {
-			color: var(--clr-alert-main);
+			color: var(--clr-tertiary-main);
 			display: flex;
 			align-items: center;
 			gap: var(--space-1);

@@ -7,17 +7,7 @@
 
 	export let daoData: FinancialDao;
 
-	let fundingsPerMonth;
-
-	let months: string[];
-	let amounts: number[];
-
-	if (daoData.fundingCycles) {
-		fundingsPerMonth = getMonthlyFundingFromRounds([daoData.fundingCycles[0]]);
-
-		months = fundingsPerMonth.map((x) => x[0]);
-		amounts = fundingsPerMonth.map((x) => x[1]);
-	}
+	$: fundingsPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory);
 </script>
 
 <div class="main-wrapper">
@@ -35,7 +25,7 @@
 		/>
 		{#if daoData.fundingCycles}
 			<div class="chart-wrapper card">
-				<LineChart title="Active Round" chartData={amounts} labels={months} />
+				<LineChart title={`${daoData.name} Funding`} chartData={fundingsPerMonth.data} labels={fundingsPerMonth.labels} />
 			</div>
 		{/if}
 	</div>

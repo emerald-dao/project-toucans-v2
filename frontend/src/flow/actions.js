@@ -17,9 +17,9 @@ import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
 
 const rawTokenCodes = {
-	'Financial': rawFinancialTokenCode,
-	'Community': rawCommunityTokenCode
-}
+	Financial: rawFinancialTokenCode,
+	Community: rawCommunityTokenCode
+};
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -61,22 +61,29 @@ const deployContract = async (data) => {
 	const contractName = data.daoDetails.contractName;
 
 	if (data.tokenomics.tokenType == 'Financial') {
-		contractCode = contractCode.replace('// INSERT MINTING HERE', data.tokenomics.mintTokens ?
-			`pub fun mintTokens(amount: UFix64): @Vault {
+		contractCode = contractCode.replace(
+			'// INSERT MINTING HERE',
+			data.tokenomics.mintTokens
+				? `pub fun mintTokens(amount: UFix64): @Vault {
 			pre {
 			  amount > 0.0: "Amount minted must be greater than zero"
 			}
 			ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
 			emit TokensMinted(amount: amount)
 			return <- create Vault(balance: amount)
-		}` : '');
-		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
+		}`
+				: ''
+		);
+		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString(
+			'hex'
+		);
 		return deployFinancialContract(hexCode, contractName, data);
 	} else if (data.tokenomics.tokenType == 'Community') {
-		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
+		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString(
+			'hex'
+		);
 		return deployCommunityContract(hexCode, contractName, data);
 	}
-
 };
 
 const deployFinancialContract = async (hexCode, contractName, data) => {
@@ -96,7 +103,7 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 		authorizations: [fcl.authz],
 		limit: 9999
 	});
-}
+};
 
 const deployCommunityContract = async (hexCode, contractName, data) => {
 	return await fcl.mutate({
@@ -111,9 +118,10 @@ const deployCommunityContract = async (hexCode, contractName, data) => {
 		authorizations: [fcl.authz],
 		limit: 9999
 	});
-}
+};
 
-export const deployContractExecution = (data, action) => executeTransaction(() => deployContract(data), action);
+export const deployContractExecution = (data, action) =>
+	executeTransaction(() => deployContract(data), action);
 
 const fundProject = async () => {
 	const contractName = get(fundData).contractName;
@@ -134,7 +142,7 @@ const fundProject = async () => {
 		authorizations: [fcl.authz],
 		limit: 9999
 	});
-}
+};
 
 export const fundProjectExecution = () => executeTransaction(fundProject);
 
@@ -163,14 +171,9 @@ export const getProjectInfo = async (contractName, contractAddress, owner, type,
 
 	let args;
 	if (type === 'Financial') {
-		args = (arg, t) => [
-			arg(owner, t.Address),
-			arg(projectId, t.UInt64)
-		]
+		args = (arg, t) => [arg(owner, t.Address), arg(projectId, t.UInt64)];
 	} else if (type === 'Community') {
-		args = (arg, t) => [
-			arg(owner, t.Address)
-		]
+		args = (arg, t) => [arg(owner, t.Address)];
 	}
 	try {
 		const response = await fcl.query({
@@ -181,5 +184,4 @@ export const getProjectInfo = async (contractName, contractAddress, owner, type,
 	} catch (e) {
 		console.log(e);
 	}
-}
-
+};

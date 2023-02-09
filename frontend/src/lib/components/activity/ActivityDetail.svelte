@@ -1,5 +1,4 @@
 <script type="ts">
-	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';

@@ -10,6 +10,7 @@
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
+	import { getTotalFundingFromActions } from '$lib/utilities/getTotalFundingFromActions';
 
 	export let daoData: FinancialDao;
 		
@@ -18,14 +19,9 @@
 
 	const currentFundingCycleData = daoData.currentFundingCycle ? getFundingCycleData(daoData, Number(daoData.currentFundingCycle)) : null;
 
-	const fundingPerMonth = getMonthlyFundingFromRounds(daoData.actions)
+	const fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory)
 	const recentActivity = daoData.actions.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6);
-	const totalFundingFromActions = daoData.actions.reduce((acc, action) => {
-		if (action.type === "Purchase") {
-			acc += Number(action.amount);
-		}
-		return acc;
-	}, 0);
+	const totalFunding = getTotalFundingFromActions(daoData.purchaseHistory)
 </script>
 
 {#if daoData}
@@ -34,7 +30,7 @@
 			<DataCard
 				title="Total Funding"
 				icon="tabler:pig-money"
-				data={Number(totalFundingFromActions)}
+				data={totalFunding}
 				isCurrency
 			/>
 			<DataCard

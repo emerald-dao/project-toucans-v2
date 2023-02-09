@@ -47,7 +47,7 @@ export interface Dao {
 	logo: string;
 	twitter: string;
 	discord: string;
-	projectId: string;
+	project_id: string;
 	tokenType: TokenType;
 	extra: Extra;
 	actions: [PurchaseAction | FundingCycleAction];

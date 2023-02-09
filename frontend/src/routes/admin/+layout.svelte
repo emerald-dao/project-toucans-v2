@@ -6,7 +6,7 @@
 	import { user } from '$stores/flow/FlowStore';
 
 	interface Data {
-		[daoNumber: number]: FinancialDao | CommunityDao;
+		projects: (FinancialDao | CommunityDao)[]
 	}
 
 	export let data: Data;
@@ -15,30 +15,31 @@
 
 	setContext<{
 		activeDao: Writable<number>;
-		userDaos: FinancialDao[] | CommunityDao[];
+		userDaos: (FinancialDao | CommunityDao)[];
 	}>('admin-data', {
-		userDaos: Object.values(data),
+		userDaos: data.projects,
 		activeDao
 	});
 </script>
 
-{#if !$user}
-	<span>Connect Wallet</span>
-{:else if Object.values(data).length < 1}
-	<span>Create your first DAO</span>
-{:else}
-	<div class="section">
-		<div class="container">
-			<div class="main-wrapper">
-				<AdminNav />
-				<div class="content-wrapper">
-					<slot />
-				</div>
+<div class="section">
+	<div class="container">
+		<div class="main-wrapper">
+			{#if !$user}
+				<span>Connect Wallet</span>
+			{:else if data.projects.length < 1}
+				<span>Create your first DAO</span>
+			{:else}
+			<AdminNav />
+			<div class="content-wrapper">
+				<slot />
 			</div>
+			{/if}
 		</div>
 	</div>
-{/if}
+</div>
 
+				
 <style type="scss">
 	.main-wrapper {
 		display: flex;

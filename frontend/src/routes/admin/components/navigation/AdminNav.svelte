@@ -6,7 +6,7 @@
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: FinancialDao[] | CommunityDao[];
+		userDaos: (FinancialDao | CommunityDao)[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
