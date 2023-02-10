@@ -41,9 +41,13 @@
 
 	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '').toLowerCase();
 
-	$: validForm = res.isValid() && $daoData.daoDetails.logo != undefined;	
+	$: validForm = res.isValid() && $daoData.daoDetails.logo ? $daoData.daoDetails.logo.length > 0 : false;	
 </script>
 
+<span>
+	{$daoData.daoDetails.logo}
+</span>
+<button on:click={() => console.log($daoData.daoDetails.logo)}>ds</button>
 <form
 	id={$generatorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
@@ -97,6 +101,16 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
+
+	<div class="drop-zone-wrapper">
+		<label for="logo">Logo</label>
+		<DropZone
+		name="logo"
+		accept="image/png"
+		maxAmountOfFiles={1}
+		bind:bindValue={$daoData.daoDetails.logo}
+		/>
+	</div>
 
 	<InputWrapper
 		name="description"
@@ -159,20 +173,16 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
-
-	<label for="logo">Logo</label>
-	<DropZone
-		name="logo"
-		accept="image/png"
-		maxAmountOfFiles={1}
-		bind:bindValue={$daoData.daoDetails.logo}
-	/>
 </form>
 
 <style type="scss">
 	form {
 		display: flex;
 		flex-direction: column;
+
+		.drop-zone-wrapper {
+			margin-bottom: var(--space-7);
+		}
 
 		textarea {
 			min-height: 15rem;
