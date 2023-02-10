@@ -12,6 +12,7 @@
 
 		if (target.name === 'name') {
 			namePending = true;
+			contractNamePending = true;
 		}
 
 		if (target.name === 'tokenName') {
@@ -24,6 +25,7 @@
 		res.done((result) => {
 			res = result;
 			namePending = false;
+			contractNamePending = false;
 			tokenNamePending = false;
 		});
 	};
@@ -39,10 +41,7 @@
 
 	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '').toLowerCase();
 
-	$: validForm = res.isValid() && $daoData.daoDetails.logo != undefined;
-
-	console.log($page.data.data.body);
-	
+	$: validForm = res.isValid() && $daoData.daoDetails.logo != undefined;	
 </script>
 
 <form
@@ -147,7 +146,7 @@
 
 	<InputWrapper
 		name="discord"
-		label="Discord"
+		label="Discord invite"
 		icon="tabler:world"
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord')}

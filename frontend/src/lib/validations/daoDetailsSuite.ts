@@ -1,8 +1,10 @@
-import { create, enforce, test, skipWhen, only, include } from 'vest';
+import { create, enforce, test, skipWhen, only, include, optional } from 'vest';
 
 const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 	only(currentField);
 	include('contractName').when(() => currentField === 'name');
+
+	optional(['website', 'discord', 'twitter']);
 
 	test('name', 'Your DAO needs a name!', () => {
 		enforce(data.name).isNotBlank();
@@ -65,8 +67,20 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 		enforce(data.website).matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
 	});
 
-	test('discord', 'Must be a valid URL', () => {
-		enforce(data.discord).matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
+	test('twitter', 'Must start with @', () => {
+		enforce(data.twitter).matches(/^@/);
+	});
+
+	test('twitter', 'Must be longer than 3 chars', () => {
+		enforce(data.twitter).longerThan(3);
+	});
+
+	test('discord', 'Must be a valid discord link', () => {
+		enforce(data.discord).matches(/^https:\/\/(discord\.(gg|com)\/)/i);
+	});
+
+	test('discord', 'Must be longer than 22 chars', () => {
+		enforce(data.discord).longerThan(22);
 	});
 });
 
