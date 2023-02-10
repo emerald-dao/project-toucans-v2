@@ -44,10 +44,6 @@
 	$: validForm = res.isValid() && $daoData.daoDetails.logo ? $daoData.daoDetails.logo.length > 0 : false;	
 </script>
 
-<span>
-	{$daoData.daoDetails.logo}
-</span>
-<button on:click={() => console.log($daoData.daoDetails.logo)}>ds</button>
 <form
 	id={$generatorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
