@@ -22,7 +22,6 @@
 		<div class="header-wrapper">
 			<div
 				class="icon-wrapper"
-				class:active={$daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 			>
 				<Icon icon="tabler:pig-money" width="1.1em" />
 			</div>
@@ -44,7 +43,6 @@
 		<div class="header-wrapper">
 			<div
 				class="icon-wrapper"
-				class:active={$daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
 			>
 				<Icon icon="tabler:affiliate" width="1.1em" />
 			</div>
@@ -71,14 +69,14 @@
 
 		label {
 			padding: 2rem;
-			border: 2px var(--clr-neutral-300) solid;
+			border: 1px var(--clr-border-primary) solid;
 			width: 100%;
 			border-radius: 1rem;
 			cursor: pointer;
-			font-size: var(--fs-300);
 			--font-weight: 300;
-			background-color: var(--clr-neutral-300-t9);
+			background-color: var(--clr-background-secondary);
 			transition: 0.2s;
+			color: var(--clr-text-off);
 
 			.header-wrapper {
 				display: flex;
@@ -86,30 +84,37 @@
 				align-items: center;
 				justify-content: flex-start;
 				margin-bottom: 0.8rem;
-				gap: 0.7em;
+				gap: var(--space-3);
 
 				.icon-wrapper {
-					background-color: red;
 					display: grid;
 					place-content: center;
 					padding: 0.4em;
 					border-radius: 50%;
-					background-color: var(--clr-neutral-300-t7);
-					transition: 0.2s;
-				}
-				.icon-wrapper.active {
-					background-color: var(--clr-primary-main-t9);
-					color: var(--clr-primary-main);
+					transition: 0.6s;
+					border: 1px var(--clr-border-primary) solid;
 				}
 
 				h4 {
-					font-size: var(--fs-400);
+					font-size: var(--font-size-4);
+					color: var(--clr-font-text);
 				}
 			}
 		}
 
 		input:checked + label {
-			border-color: var(--clr-primary-main);
+			border-color: var(--clr-font-header);
+			color: var(--clr-text-primary);
+
+			.icon-wrapper {
+				background-color: var(--clr-tertiary-badge);
+				color: var(--clr-tertiary-main);
+				border: 1px var(--clr-tertiary-main) solid;
+			}
+
+			h4 {
+				color: var(--clr-heading-main);
+			}
 		}
 	}
 </style>
