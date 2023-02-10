@@ -64,7 +64,7 @@
 	</InputWrapper>
 
 	<label for="contractName">Contract name</label>
-	<input type="text" readonly name="contractName" bind:value={$daoData.daoDetails.contractName} />
+	<input type="text" readonly name="contractName" placeholder="emeralddao" bind:value={$daoData.daoDetails.contractName} />
 
 	<InputWrapper
 		name="tokenName"

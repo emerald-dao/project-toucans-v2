@@ -1,9 +1,12 @@
-import type { DaoData } from '$lib/types/generator/dao.interface';
+import type {
+	CommunityDaoGeneratorData,
+	FinancialDaoGeneratorData
+} from '$lib/types/generator/dao-generator-data.interface';
 import { writable, type Writable } from 'svelte/store';
 import { TokenTypes } from '$lib/types/token-types.enum';
 import { Currencies } from '$lib/types/currencies.enum';
 
-export const daoData: Writable<DaoData> = writable({
+export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGeneratorData> = writable({
 	daoDetails: {
 		name: '',
 		tokenName: '',

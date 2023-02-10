@@ -1,7 +1,7 @@
 import type { TokenTypes } from '$lib/types/token-types.enum';
 import type { Currencies } from '$lib/types/currencies.enum';
 
-export interface DaoData {
+export interface DaoGeneratorData {
 	daoDetails: {
 		name: string;
 		tokenName: string;
@@ -15,8 +15,16 @@ export interface DaoData {
 	tokenomics: {
 		tokenType: TokenTypes;
 		totalSupply: number | undefined;
+		editDelay: string | undefined;
+	};
+}
+
+export interface FinancialDaoGeneratorData extends DaoGeneratorData {
+	tokenomics: {
+		tokenType: TokenTypes.FINANCIAL;
+		totalSupply: number | undefined;
+		editDelay: string | undefined;
 		targetAmount: number | undefined;
-		editDelay: number | undefined,
 		mintTokens: boolean;
 		walletAddresses: string[] | [];
 		initialRound: {
@@ -24,5 +32,13 @@ export interface DaoData {
 			issuanceRate: number | undefined;
 			reserveRate: number | undefined;
 		};
+	};
+}
+
+export interface CommunityDaoGeneratorData extends DaoGeneratorData {
+	tokenomics: {
+		tokenType: TokenTypes.COMMUNITY;
+		totalSupply: number | undefined;
+		editDelay: string | undefined;
 	};
 }
