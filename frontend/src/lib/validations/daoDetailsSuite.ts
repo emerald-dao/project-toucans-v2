@@ -40,8 +40,8 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 		enforce(data.tokenName).isNotBlank();
 	});
 
-	test('tokenName', 'Token name should be shorter than 5 chars', () => {
-		enforce(data.tokenName).shorterThan(5);
+	test('tokenName', 'Token name should be shorter than 6 chars', () => {
+		enforce(data.tokenName).shorterThan(6);
 	});
 
 	skipWhen(daoDetailsSuite.get().hasErrors('tokenName'), () => {

@@ -52,7 +52,7 @@
 								<Icon icon="tabler:brand-twitter" width="18" />
 							</a>
 						{/if}
-						{#if daoData.discord}
+						{#if daoData.discord && daoData.discord != 'https://discord.gg/'}
 							<a href={daoData.discord} rel="noreferrer" class="header-link" target="_blank">
 								<Icon icon="tabler:brand-discord" width="18" />
 							</a>

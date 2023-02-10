@@ -91,8 +91,8 @@
 		<input
 			name="tokenName"
 			type="text"
-			placeholder="DAOcoin"
-			maxlength="4"
+			placeholder="EMLD"
+			maxlength="5"
 			bind:value={$daoData.daoDetails.tokenName}
 			on:input={handleChange}
 		/>
@@ -131,7 +131,7 @@
 	<InputWrapper
 		name="twitter"
 		label="Twitter"
-		icon="tabler:world"
+		icon="tabler:brand-twitter"
 		errors={res.getErrors('twitter')}
 		isValid={res.isValid('twitter')}
 	>
@@ -147,7 +147,7 @@
 	<InputWrapper
 		name="discord"
 		label="Discord invite"
-		icon="tabler:world"
+		icon="tabler:brand-discord"
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord')}
 	>

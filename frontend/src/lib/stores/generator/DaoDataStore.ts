@@ -13,7 +13,7 @@ export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGenerator
 		description: '',
 		website: '',
 		twitter: '',
-		discord: '',
+		discord: 'https://discord.gg/',
 		contractName: '',
 		logo: undefined
 	},
