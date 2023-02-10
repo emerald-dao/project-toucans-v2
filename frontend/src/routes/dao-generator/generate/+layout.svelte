@@ -12,7 +12,6 @@
 	</div>
 	<div class="content-wrapper">
 		<Container width="small" --container-s="34ch">
-			<h2>{$generatorSteps[$generatorActiveStep].name}</h2>
 			<slot />
 		</Container>
 	</div>
@@ -28,11 +27,5 @@
 	}
 	.content-wrapper {
 		margin-top: 2.8rem;
-
-		h2 {
-			font-size: var(--fs-400);
-			font-family: var(--ff-main);
-			margin-bottom: 2.4rem;
-		}
 	}
 </style>

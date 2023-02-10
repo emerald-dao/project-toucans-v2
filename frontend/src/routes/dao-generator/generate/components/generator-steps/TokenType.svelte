@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Row } from '@mateoroldos/svelte.bones';
+	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { daoData } from '$stores/generator/DaoDataStore';
@@ -10,6 +10,7 @@
 <form
 	id={$generatorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
+	in:fly="{{ y: 30, duration: 400 }}"
 >
 	<input
 		type="radio"
@@ -25,7 +26,7 @@
 			>
 				<Icon icon="tabler:pig-money" width="1.1em" />
 			</div>
-			<h4>Financial</h4>
+			<h4>Financial Token</h4>
 		</div>
 		<span>
 			Consectetur esse aliqua mollit sit sint sunt irure ad excepteur et amet irure. Eiusmod culpa
@@ -46,7 +47,7 @@
 			>
 				<Icon icon="tabler:affiliate" width="1.1em" />
 			</div>
-			<h4>Community</h4>
+			<h4>Community Token</h4>
 		</div>
 		<span>
 			Consectetur esse aliqua mollit sit sint sunt irure ad excepteur et amet irure. Eiusmod culpa

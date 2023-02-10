@@ -6,18 +6,18 @@
 	export let stepNumber: number;
 </script>
 
-<div class="card-primary">
+<div class="card">
 	<h4>{title}</h4>
 	<div class="column-3 align-start">
 		<slot />
 	</div>
-	<div class="edit-wrapper" on:click={() => generatorActiveStep.goToStep(stepNumber)} on:keydown>
-		<Icon icon="tabler:edit" color="var(--clr-primary-main)" />
+	<div class="edit-wrapper header-link" on:click={() => generatorActiveStep.goToStep(stepNumber)} on:keydown>
+		<Icon icon="tabler:edit"/>
 	</div>
 </div>
 
 <style type="scss">
-	.card-primary {
+	.card {
 		position: relative;
 		display: flex;
 		flex-direction: column;
@@ -26,7 +26,7 @@
 		width: 100%;
 
 		h4 {
-			font-size: var(--fs-400);
+			font-size: var(--font-size-3);
 		}
 
 		.edit-wrapper {

@@ -2,10 +2,10 @@
 	import RecapElement from './atoms/RecapElement.svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { daoData } from '$stores/generator/DaoDataStore';
-	import { Column, Row } from '@mateoroldos/svelte.bones';
 	import { TokenTypes } from '$lib/types/token-types.enum';
 	import RecapCard from './atoms/RecapCard.svelte';
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	onMount(() => {
 		if ($daoData.daoDetails.logo) {
@@ -25,7 +25,7 @@
 	let logoElement: HTMLImageElement;
 </script>
 
-<div class="column-6">
+<div class="column-6" in:fly="{{ y: 30, duration: 400 }}">
 	<RecapCard title="DAO Details" stepNumber={0}>
 		<div class="row-5">
 			{#if $daoData.daoDetails.logo}
@@ -38,7 +38,7 @@
 		</div>
 		<RecapElement title="Description" data={$daoData.daoDetails.description} />
 		{#if $daoData.daoDetails.website}
-		<RecapElement title="Website" data={$daoData.daoDetails.website} />
+			<RecapElement title="Website" data={$daoData.daoDetails.website} />
 		{/if}
 		{#if $daoData.daoDetails.twitter}
 			<RecapElement title="Twitter" data={$daoData.daoDetails.twitter} />
@@ -47,8 +47,8 @@
 			<RecapElement title="Discord" data={$daoData.daoDetails.discord} />
 		{/if}
 	</RecapCard>
-	<RecapCard title="Token Type" stepNumber={1}>
-		<RecapElement data={$daoData.tokenomics.tokenType} />
+	<RecapCard title="Token" stepNumber={1}>
+		<RecapElement title="Token type" data={$daoData.tokenomics.tokenType} />
 	</RecapCard>
 	<RecapCard title="Tokenomics" stepNumber={2}>
 		{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}

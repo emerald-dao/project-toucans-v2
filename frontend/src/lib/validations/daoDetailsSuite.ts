@@ -64,23 +64,35 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 	});
 
 	test('website', 'Must be a valid URL', () => {
-		enforce(data.website).matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
+		if (data.website.length > 0) {
+			enforce(data.website).matches(
+				/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+			);
+		}
 	});
 
 	test('twitter', 'Must start with @', () => {
-		enforce(data.twitter).matches(/^@/);
+		if (data.twitter.length > 0) {
+			enforce(data.twitter).matches(/^@/);
+		}
 	});
 
 	test('twitter', 'Must be longer than 3 chars', () => {
-		enforce(data.twitter).longerThan(3);
+		if (data.twitter.length > 0) {
+			enforce(data.twitter).longerThan(3);
+		}
 	});
 
 	test('discord', 'Must be a valid discord link', () => {
-		enforce(data.discord).matches(/^https:\/\/(discord\.(gg|com)\/)/i);
+		if (data.discord.length > 0 || data.discord == 'https://discord.gg/') {
+			enforce(data.discord).matches(/^https:\/\/(discord\.(gg|com)\/)/i);
+		}
 	});
 
 	test('discord', 'Must be longer than 22 chars', () => {
-		enforce(data.discord).longerThan(22);
+		if (data.discord.length > 0 || data.discord == 'https://discord.gg/') {
+			enforce(data.discord).longerThan(22);
+		}
 	});
 });
 

@@ -127,7 +127,7 @@
 		label="Website"
 		icon="tabler:world"
 		errors={res.getErrors('website')}
-		isValid={res.isValid('website')}
+		isValid={res.isValid('website') && $daoData.daoDetails.website.length > 0}
 	>
 		<input
 			name="website"
@@ -143,7 +143,7 @@
 		label="Twitter"
 		icon="tabler:brand-twitter"
 		errors={res.getErrors('twitter')}
-		isValid={res.isValid('twitter')}
+		isValid={res.isValid('twitter') && $daoData.daoDetails.twitter.length > 0}
 	>
 		<input
 			name="twitter"
@@ -159,7 +159,7 @@
 		label="Discord invite"
 		icon="tabler:brand-discord"
 		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord')}
+		isValid={res.isValid('discord') && $daoData.daoDetails.discord !==	'https://discord.gg/'}
 	>
 		<input
 			name="discord"

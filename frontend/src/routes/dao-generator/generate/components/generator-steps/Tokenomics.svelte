@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { InputWrapper, Range, TooltipIcon } from '@emerald-dao/component-library';
 	import { daoData } from '$stores/generator/DaoDataStore';
@@ -21,6 +22,7 @@
 	id={$generatorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
 	autocomplete="off"
+	in:fly="{{ y: 30, duration: 400 }}"
 >
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 		<InputWrapper
