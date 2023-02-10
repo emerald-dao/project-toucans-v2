@@ -37,9 +37,15 @@
 			</div>
 		</div>
 		<RecapElement title="Description" data={$daoData.daoDetails.description} />
+		{#if $daoData.daoDetails.website}
 		<RecapElement title="Website" data={$daoData.daoDetails.website} />
-		<RecapElement title="Twitter" data={$daoData.daoDetails.twitter} />
-		<RecapElement title="Discord" data={$daoData.daoDetails.discord} />
+		{/if}
+		{#if $daoData.daoDetails.twitter}
+			<RecapElement title="Twitter" data={$daoData.daoDetails.twitter} />
+		{/if}
+		{#if $daoData.daoDetails.discord && $daoData.daoDetails.discord !== 'https://discord.gg/'}
+			<RecapElement title="Discord" data={$daoData.daoDetails.discord} />
+		{/if}
 	</RecapCard>
 	<RecapCard title="Token Type" stepNumber={1}>
 		<RecapElement data={$daoData.tokenomics.tokenType} />
@@ -71,6 +77,6 @@
 		aspect-ratio: 1 / 1;
 		border-radius: 0.3rem;
 		object-fit: contain;
-		border: 1px var(--clr-neutral-400) solid;
+		border: 1px var(--clr-border-primary) solid;
 	}
 </style>
