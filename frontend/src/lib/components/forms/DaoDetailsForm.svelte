@@ -32,12 +32,17 @@
 	let namePendingMessage = ['Checking if name already exists in Flow blockchain...'];
 	let tokenNamePending: boolean;
 	let tokenNamePendingMessage = ['Checking if token name already exists in Flow blockchain...'];
+	let contractNamePending: boolean;
+	let contractNamePendingMessage = ['Checking if contract name already exists in Flow blockchain...'];
 
 	let res = daoDetailsSuite.get();
 
-	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '');
+	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '').toLowerCase();
 
 	$: validForm = res.isValid() && $daoData.daoDetails.logo != undefined;
+
+	console.log($page.data.data.body);
+	
 </script>
 
 <form
@@ -63,8 +68,16 @@
 		/>
 	</InputWrapper>
 
-	<label for="contractName">Contract name</label>
-	<input type="text" readonly name="contractName" placeholder="emeralddao" bind:value={$daoData.daoDetails.contractName} />
+	<InputWrapper
+		name="contractName"
+		label="Contract name"
+		pending={contractNamePending}
+		pendingMessage={contractNamePendingMessage}
+		errors={res.getErrors('contractName')}
+		isValid={res.isValid('contractName')}
+	>
+		<input type="text" readonly name="contractName" placeholder="emeralddao" bind:value={$daoData.daoDetails.contractName} />
+	</InputWrapper>
 
 	<InputWrapper
 		name="tokenName"
@@ -167,8 +180,8 @@
 		}
 
 		input:read-only {
-			margin-bottom: var(--space-6);
 			cursor: not-allowed;
+			color: var(--clr-text-off);
 
 			&:focus {
 				border: 1px var(--clr-border-primary) solid;

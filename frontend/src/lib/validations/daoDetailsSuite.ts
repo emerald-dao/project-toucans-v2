@@ -1,7 +1,8 @@
-import { create, enforce, test, skipWhen, only } from 'vest';
+import { create, enforce, test, skipWhen, only, include } from 'vest';
 
 const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 	only(currentField);
+	include('contractName').when(() => currentField === 'name');
 
 	test('name', 'Your DAO needs a name!', () => {
 		enforce(data.name).isNotBlank();
@@ -19,6 +20,17 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 				await checkDaoName(data.name, daoProjects);
 			},
 			[data.name]
+		);
+	});
+
+	skipWhen(daoDetailsSuite.get().hasErrors('name'), () => {
+		test.memo(
+			'contractName',
+			'Contract name already taken',
+			async () => {
+				await checkDaoContract(data.contractName, daoProjects);
+			},
+			[data.contractName]
 		);
 	});
 
@@ -68,6 +80,16 @@ const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<b
 	});
 };
 
+const checkDaoContract = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
+	return new Promise((resolve, reject) => {
+		if (daoProjects.some((obj) => obj.contract_name === value)) {
+			reject();
+		} else {
+			resolve(true);
+		}
+	});
+};
+
 const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
 		if (daoProjects.some((obj) => obj.token_symbol === value)) {
@@ -81,6 +103,7 @@ const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<
 interface DaoProject {
 	name: string;
 	token_symbol: string;
+	contract_name: string;
 }
 
 export default daoDetailsSuite;
