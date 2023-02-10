@@ -54,7 +54,7 @@
 	$: stepsData.filter((e) => e.intersecting === false) ? (activeStep = undefined) : null;
 </script>
 
-<section class="container-small">
+<section class="container-small section-large">
 	<div class="hide-on-mobile left-wrapper">
 		<CreateProjectStepsCard {activeStep} />
 	</div>

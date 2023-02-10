@@ -39,22 +39,28 @@
 	];
 </script>
 
-<section class="container">
-	<div class="title-wrapper">
-		<span class="tagline">Explore</span>
-		<h2 class="w-medium">Leading Projects</h2>
-	</div>
-	<div class="projects-wrapper">
-		<AdaptableGrid gap="small">
-			{#each testDaos as testDao, i}
+<section class="section-large">
+	<div class="container">
+		<div class="title-wrapper">
+			<span class="tagline">Explore</span>
+			<h2 class="w-medium">Leading Projects</h2>
+		</div>
+		<div class="projects-wrapper">
+			<AdaptableGrid gap="small">
+				{#each testDaos as testDao, i}
 				<LeadingProjectCard daoData={testDao} number={i + 1} />
-			{/each}
-		</AdaptableGrid>
+				{/each}
+			</AdaptableGrid>
+		</div>
 	</div>
 </section>
 
 <style type="scss">
-	.container {
+	section {
+		background-color: var(--clr-background-secondary);
+		border-block: 1px solid var(--clr-border-primary);
+
+		.container {
 		display: flex;
 		flex-direction: column;
 
@@ -67,4 +73,6 @@
 			}
 		}
 	}
+	}
+	
 </style>
