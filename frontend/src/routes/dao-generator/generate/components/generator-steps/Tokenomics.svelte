@@ -8,7 +8,10 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
-		res = tokenomicsSuite($daoData.tokenomics, target.name);
+		
+		if (target?.name) {
+			res = tokenomicsSuite($daoData.tokenomics, target.name);
+		}
 	};
 
 	let res = tokenomicsSuite.get();
@@ -46,7 +49,6 @@
 				bind:value={$daoData.tokenomics.initialRound.reserveRate}
 				suffix="%"
 				id="reserveRate"
-				on:change={handleChange}
 			/>
 		</div>
 
