@@ -98,7 +98,7 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 
 const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
-		if (daoProjects.some((obj) => obj.name === value)) {
+		if (daoProjects.some((obj) => obj.name.toUpperCase() === value.toUpperCase())) {
 			reject();
 		} else {
 			resolve(true);
@@ -108,7 +108,7 @@ const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<b
 
 const checkDaoContract = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
-		if (daoProjects.some((obj) => obj.contract_name === value)) {
+		if (daoProjects.some((obj) => obj.contract_name.toUpperCase() === value.toUpperCase())) {
 			reject();
 		} else {
 			resolve(true);
@@ -118,7 +118,7 @@ const checkDaoContract = async (value: string, daoProjects: DaoProject[]): Promi
 
 const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
-		if (daoProjects.some((obj) => obj.token_symbol === value)) {
+		if (daoProjects.some((obj) => obj.token_symbol.toUpperCase() === value.toUpperCase())) {
 			reject();
 		} else {
 			resolve(true);

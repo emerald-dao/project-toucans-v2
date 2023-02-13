@@ -14,14 +14,25 @@
 
 	export let daoData: FinancialDao;
 		
+	console.log(daoData);
+
 	const mainHoldersAmountMock = [100, 100, 100];
 	const mainHoldersNamesMock = ['mateo.find', 'jacob.find', 'dene.find'];
 
 	const currentFundingCycleData = daoData.currentFundingCycle ? getFundingCycleData(daoData, Number(daoData.currentFundingCycle)) : null;
 
-	const fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory)
+	let fundingPerMonth: {
+		labels: string[];
+		data: number[];
+	} | null = null;
+	let totalFunding = 0;
+	
+	if (daoData.purchaseHistory.length > 0) {
+		fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory)
+		totalFunding = getTotalFundingFromActions(daoData.purchaseHistory)
+	}
+
 	const recentActivity = daoData.actions.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6);
-	const totalFunding = getTotalFundingFromActions(daoData.purchaseHistory)
 </script>
 
 {#if daoData}
@@ -48,7 +59,9 @@
 			<Tabs>
 				<TabList>
 					<Tab>Main holders</Tab>
-					<Tab>Fundrising history</Tab>
+					{#if fundingPerMonth}
+						<Tab>Fundrising history</Tab>
+					{/if}
 				</TabList>
 				<TabPanel>
 					<div class="panel-container">
@@ -57,26 +70,32 @@
 						</div>
 					</div>
 				</TabPanel>
-				<TabPanel>
-					<div class="chart-wrapper">
-						<LineChart title="Fundrising history" chartData={fundingPerMonth.data} labels={fundingPerMonth.labels} />
-					</div>
-				</TabPanel>
+				{#if fundingPerMonth}
+					<TabPanel>
+						<div class="chart-wrapper">
+							<LineChart title="Fundrising history" chartData={fundingPerMonth.data} labels={fundingPerMonth.labels} />
+						</div>
+					</TabPanel>
+				{/if}
 			</Tabs>
 		</div>
 		<div class="tabs-wrapper">
 			<Tabs>
 				<TabList>
 					<Tab>Recent Activity</Tab>
-					<Tab>Main Funders</Tab>
+					{#if fundingPerMonth}
+						<Tab>Main Funders</Tab>
+					{/if}
 					<Tab>Rounds</Tab>
 				</TabList>
 				<TabPanel>
 					<RecentActivity actions={recentActivity} />
 				</TabPanel>
-				<TabPanel>
-					<MainFunders {daoData} />
-				</TabPanel>
+				{#if fundingPerMonth}
+					<TabPanel>
+						<MainFunders {daoData} />
+					</TabPanel>
+				{/if}
 				<TabPanel>
 					<div class="rounds-wrapper">
 						{#if daoData.currentFundingCycle}

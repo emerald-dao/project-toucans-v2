@@ -10,12 +10,14 @@ import { daoData } from '$stores/generator/DaoDataStore';
 import { user } from '$stores/flow/FlowStore';
 import { NFTStorage } from 'nft.storage';
 import { env as PublicEnv } from '$env/dynamic/public';
+import { goto } from '$app/navigation';
 
 const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
 const createToken = async () => {
 	const data = get(daoData);
+
 	const action = async (res) => {
 		console.log('Response', res);
 
@@ -25,7 +27,7 @@ const createToken = async () => {
 		const cid = await client.storeBlob(data.daoDetails.logo[0]);
 		const logo = `https://nftstorage.link/ipfs/${cid}`;
 
-		console.log('Project Created Event', data);
+		console.log('Project Created Event', projectCreatedEvent);
 
 		const response = await fetch('/api/add', {
 			method: 'POST',
@@ -38,9 +40,12 @@ const createToken = async () => {
 			headers: {
 				'content-type': 'application/json'
 			}
+		}).then(() => {
+			goto(`/${data.daoDetails.contractName}`);
 		});
 		console.log('Response', response);
 	};
+
 	deployContractExecution(data, action);
 };
 

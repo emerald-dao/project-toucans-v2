@@ -56,6 +56,7 @@
 		pendingMessage={namePendingMessage}
 		errors={res.getErrors('name')}
 		isValid={res.isValid('name')}
+		required={true}
 	>
 		<input
 			name="name"
@@ -74,6 +75,7 @@
 		pendingMessage={contractNamePendingMessage}
 		errors={res.getErrors('contractName')}
 		isValid={res.isValid('contractName')}
+		required={true}
 	>
 		<input type="text" readonly name="contractName" placeholder="emeralddao" bind:value={$daoData.daoDetails.contractName} />
 	</InputWrapper>
@@ -87,6 +89,7 @@
 		errors={res.getErrors('tokenName')}
 		isValid={res.isValid('tokenName')}
 		tooltip="Add any helper text here"
+		required={true}
 	>
 		<input
 			name="tokenName"
@@ -99,7 +102,7 @@
 	</InputWrapper>
 
 	<div class="drop-zone-wrapper">
-		<label for="logo">Logo</label>
+		<label for="logo">Logo *</label>
 		<DropZone
 		name="logo"
 		accept="image/png"
@@ -113,6 +116,7 @@
 		label="Description"
 		errors={res.getErrors('description')}
 		isValid={res.isValid('description')}
+		required={true}
 	>
 		<textarea
 			name="description"

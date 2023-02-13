@@ -32,18 +32,25 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 	);
 }
 
-export const executeTransaction = async (transaction, actionAfterSucceed) => {
+export const executeTransaction = async (
+	transaction: () => Promise<any>,
+	actionAfterSucceed: () => Promise<any>
+) => {
 	transactionStore.initTransaction();
+
 	try {
 		const transactionId = await transaction();
-		console.log(transactionId);
-		fcl.tx(transactionId).subscribe((res) => {
+
+		fcl.tx(transactionId).subscribe(async (res) => {
 			transactionStore.subscribeTransaction(res);
+
 			if (res.status === 4) {
 				if (res.statusCode === 0 && actionAfterSucceed != undefined) {
-					actionAfterSucceed(res);
+					await actionAfterSucceed(res);
+					transactionStore.resetTransaction();
+					return;
 				}
-				setTimeout(() => transactionStore.resetTransaction, 2000);
+				setTimeout(() => transactionStore.resetTransaction(), 2000);
 			}
 		});
 	} catch (e) {
@@ -52,7 +59,7 @@ export const executeTransaction = async (transaction, actionAfterSucceed) => {
 	}
 };
 
-export const getFindProfile = async (address) => {
+export const getFindProfile = async (address: string) => {
 	try {
 		return await fcl.query({
 			cadence: `

@@ -2,14 +2,14 @@ import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
 import { getProjectInfo } from '$flow/actions.js';
 import '$flow/config.js';
-import { Action } from '../../lib/types/actions/actions.type';
+import type { Action } from '$lib/types/actions/actions.type';
 
 export const load: PageLoad = async ({ params }) => {
 	// get project info
 	const { data: projectData } = await supabase
 		.from('projects')
 		.select()
-		.eq('contract_name', params.project);
+		.eq('contract_name', params.contractName);
 
 	if (!projectData || !projectData.length) {
 		throw new Error('No dao found');

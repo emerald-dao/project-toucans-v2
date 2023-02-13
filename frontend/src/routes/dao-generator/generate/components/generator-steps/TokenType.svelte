@@ -92,7 +92,7 @@
 					place-content: center;
 					padding: 0.4em;
 					border-radius: 50%;
-					transition: 0.6s;
+					transition: 0.2s;
 					border: 1px var(--clr-border-primary) solid;
 				}
 
