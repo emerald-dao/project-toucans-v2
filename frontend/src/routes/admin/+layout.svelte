@@ -42,7 +42,7 @@
 		
 		@include mq(medium) {
 			display: grid;
-			grid-template-columns: 200px auto;
+			grid-template-columns: 220px auto;
 			gap: var(--space-16);
 		}
 	}

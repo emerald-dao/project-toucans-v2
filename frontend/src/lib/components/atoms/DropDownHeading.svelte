@@ -38,17 +38,21 @@
   </div>
   {#if displayDropDown}
     <div class="drop-down" bind:this={dropDown} transition:fly|local={{ y: 15, duration: 400 }}>
-      <ul>
-        {#each headings as heading, index}
-          {#if index !== value}
-            <li>
-              <a class="header-link" href="" on:click={() => (value = index)}>
-                {heading}
-              </a>
-            </li>
-          {/if}
-        {/each}
-      </ul>
+      <slot name="top"/>
+      {#if headings.length > 1}
+        <ul>
+          {#each headings as heading, index}
+            {#if index !== value}
+              <li>
+                <a class="header-link" href="" on:click={() => (value = index)}>
+                  {heading}
+                </a>
+              </li>
+            {/if}
+          {/each}
+        </ul>
+      {/if}
+      <slot name="bottom"/>
     </div>
   {/if}
 </div>
@@ -84,8 +88,7 @@
       min-width: 180px;
       background-color: var(--clr-surface-primary);
       border-radius: var(--radius-2);
-
-      border-radius: var(--radius-1);
+      padding: var(--space-5) var(--space-6);
       z-index: 1;
 
       ul {
@@ -94,7 +97,7 @@
         margin: 0;
 
         li {
-          padding: var(--space-2) var(--space-6);
+          padding: var(--space-2) var(--space-3);
         }
       }
     }
