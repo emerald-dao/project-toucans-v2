@@ -107,7 +107,7 @@ export const verifyAccountOwnership = async (userObject) => {
 };
 
 export const formatFix = (value) => {
-	let i = Number.parseFloat(value);
+	const i = Number.parseFloat(value);
 	if (i % 1 == 0) {
 		return i.toFixed(1);
 	}

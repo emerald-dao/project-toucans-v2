@@ -1,5 +1,6 @@
 <script type="ts">
 	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
+	import { Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -14,10 +15,11 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
-<nav class="column-12 align-start nav-wrapper">
-	<div class="row-4 align-center">
+<nav class="column-12 align-start">
+	<div class="column-2">
 		<img src={activeDaoData.logo} alt="DAO Logo" />
-		<h1 class="h4">{activeDaoData.name}</h1>
+		<h1 class="h3">{activeDaoData.name}</h1>
+		<Label size="small" color="tertiary">{`$${activeDaoData.token_symbol}`}</Label>
 	</div>
 	<select name="daos" id="daos" bind:value={$activeDaoStore}>
 		{#each adminData.userDaos as dao, i}
@@ -49,7 +51,7 @@
 </nav>
 
 <style type="scss">
-	.nav-wrapper {
+	nav {
 		padding-bottom: var(--space-5);
 		border-bottom: 1px solid var(--clr-neutral-400);
 
@@ -57,6 +59,12 @@
 			border-bottom: none;
 		}
 
+		h1 {
+			overflow-wrap: break-word;
+			white-space: normal;
+			max-width: 220px;
+		}
+	
 		.distribute-display {
 			display: none;
 
@@ -64,12 +72,13 @@
 				display: block;
 			}
 		}
-	}
-	nav {
+	
 		img {
-			max-width: 80px;
+			max-width: 100%;
 			aspect-ratio: 1 / 1;
 			object-fit: contain;
+			border: 1px solid var(--clr-border-primary);
+			border-radius: var(--radius-3);
 		}
 	}
 </style>

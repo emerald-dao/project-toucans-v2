@@ -4,30 +4,43 @@
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import { Button, ProgressBar } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
 
 	export let daoData: FinancialDao;
 
-	$: fundingsPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory);
+	$: fundingsPerMonth = daoData.purchaseHistory.length > 0 ? getMonthlyFundingFromRounds(daoData.purchaseHistory): null;
 </script>
 
 <div class="main-wrapper">
 	<DataCard title="Token" data={`$${daoData.token_symbol}`} hasBackground={true} />
-	<div class="data-card-display">
+	<DataCard
+		title="Circulating Supply"
+		data={Number(daoData.totalFunding).toLocaleString()}
+		icon="tabler:home"
+	/>
+	<DataCard
+		title="Max Supply"
+		data={Number(daoData.totalSupply).toLocaleString()}
+		icon="tabler:home"
+	/>
+	<div class="chart-card-wrapper">
 		<DataCard
-			title="Circulating Supply"
-			data={Number(daoData.totalFunding).toLocaleString()}
-			icon="tabler:home"
-		/>
-		<DataCard
-			title="Max Supply"
-			data={Number(daoData.totalSupply).toLocaleString()}
-			icon="tabler:home"
-		/>
-		{#if daoData.fundingCycles}
-			<div class="chart-wrapper card">
-				<LineChart title={`${daoData.name} Funding`} chartData={fundingsPerMonth.data} labels={fundingsPerMonth.labels} />
-			</div>
-		{/if}
+			title="Funding History"
+			paddingBlock="var(--space-8)"
+			icon="tabler:chart-line"
+			height="100%"
+		>
+			{#if daoData.fundingCycles && fundingsPerMonth}
+				<div class="chart-wrapper">
+					<LineChart title={`${daoData.name} Funding`} chartData={fundingsPerMonth.data} labels={fundingsPerMonth.labels} />
+				</div>
+			{:else}
+				<div class="no-funding-wrapper">
+					<Icon width="1.6rem" icon="tabler:mood-empty" />
+					<span>No funding history</span>
+				</div>
+			{/if}
+		</DataCard>
 	</div>
 	<DataCard
 		title="Summary"
@@ -49,26 +62,43 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-10);
+		height: 100%;
 
 		@include mq('medium') {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			grid-template-rows: repeat(2, auto);
+			grid-template-rows: auto 1fr;
 			grid-column-gap: var(--space-5);
 			grid-row-gap: var(--space-6);
+			grid-template-areas:
+				'card-1 card-2 card-3'
+				'chart-card chart-card summary';
 		}
 
-		.data-card-display {
-			display: none;
-			height: fit-content;
+		.chart-card-wrapper {
+			grid-area: chart-card;
 
-			@include mq('medium') {
-				display: contents;
+			.chart-wrapper {
+				width: auto;
+				height: 100%;
+				display: grid;
+				place-items: center;
 			}
-		}
 
-		.chart-wrapper {
-			grid-area: 2 / 1 / 3 / 3;
+			.no-funding-wrapper {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: var(--space-1);
+				color: var(--clr-text-off);
+
+				span {
+					font-size: var(--font-size-2);
+					font-style: italic;
+				}
+			}
 		}
 	}
 </style>

@@ -22,33 +22,27 @@
 	});
 </script>
 
-<div class="section">
-	<div class="container">
-		<div class="main-wrapper">
-			{#if !$user}
-				<span>Connect Wallet</span>
-			{:else if data.projects.length < 1}
-				<span>Create your first DAO</span>
-			{:else}
-			<AdminNav />
-			<div class="content-wrapper">
-				<slot />
-			</div>
-			{/if}
-		</div>
-	</div>
-</div>
+<section class="container">
+	{#if !$user}
+		<span>Connect Wallet</span>
+	{:else if data.projects.length < 1}
+		<span>Create your first DAO</span>
+	{:else}
+		<AdminNav />
+		<slot />
+	{/if}
+</section>
 
 				
 <style type="scss">
-	.main-wrapper {
+	section {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-8);
-
+		
 		@include mq(medium) {
 			display: grid;
-			grid-template-columns: 1fr 4fr;
+			grid-template-columns: 200px auto;
 			gap: var(--space-16);
 		}
 	}

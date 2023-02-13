@@ -162,5 +162,5 @@
 
 	.tabs-wrapper {
 		min-height: 400px;
-}
+	}
 </style>

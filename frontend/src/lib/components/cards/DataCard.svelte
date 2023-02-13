@@ -4,12 +4,13 @@
 	import Icon from '@iconify/svelte';
 
 	export let title: string;
-	export let data: string | number;
+	export let data: string | number | null = null;
 	export let isCurrency = false;
 	export let currencyName: string = 'FLOW';
 	export let icon: string | null = null;
 	export let hasBackground: boolean = false;
 	export let width: '100%' | 'fit-content' = '100%';
+	export let height: '100%' | 'fit-content' = 'fit-content';
 	export let paddingInline = 'var(--space-7)';
 	export let paddingBlock = 'var(--space-5)';
 </script>
@@ -17,7 +18,7 @@
 <div
 	class="card"
 	class:card-primary={hasBackground}
-	style={`width: ${width}; padding: ${paddingBlock} ${paddingInline}`}
+	style={`width: ${width}; height: ${height}; padding: ${paddingBlock} ${paddingInline}`}
 >
 	<div class="row-2">
 		{#if icon}
@@ -25,10 +26,12 @@
 		{/if}
 		<span class="small">{title}</span>
 	</div>
-	{#if isCurrency}
-		<Currency amount={data} currency={currencyName} color="heading" fontSize="var(--font-size-6)" />
-	{:else}
-		<span class="h4 w-medium">{data}</span>
+	{#if data}
+		{#if isCurrency}
+			<Currency amount={data} currency={currencyName} color="heading" fontSize="var(--font-size-6)" />
+		{:else}
+			<span class="h4 w-medium">{data}</span>
+		{/if}
 	{/if}
 	<slot />
 </div>
@@ -38,7 +41,6 @@
 		padding: var(--space-2) var(--space-3);
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
 		gap: var(--space-1);
 
 		@include mq('small') {
