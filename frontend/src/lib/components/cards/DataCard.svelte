@@ -13,6 +13,7 @@
 	export let height: '100%' | 'fit-content' = 'fit-content';
 	export let paddingInline = 'var(--space-7)';
 	export let paddingBlock = 'var(--space-5)';
+	export let color: 'heading' | 'text' | 'primary' | 'secondary' | 'tertiary' = 'heading';
 </script>
 
 <div
@@ -30,7 +31,7 @@
 		{#if isCurrency}
 			<Currency amount={data} currency={currencyName} color="heading" fontSize="var(--font-size-6)" />
 		{:else}
-			<span class="h4 w-medium">{data}</span>
+			<span class={`h4 w-medium color-${color}`}>{data}</span>
 		{/if}
 	{/if}
 	<slot />
@@ -45,6 +46,26 @@
 
 		@include mq('small') {
 			padding: var(--space-5) var(--space-7);
+		}
+
+		.color-heading {
+			color: var(--clr-heading-main);
+		}
+
+		.color-text {
+			color: var(--clr-text-primary);
+		}
+
+		.color-primary {
+			color: var(--clr-primary-main);
+		}
+
+		.color-secondary {
+			color: var(--clr-secondary-main);
+		}
+
+		.color-tertiary {
+			color: var(--clr-tertiary-main);
 		}
 	}
 </style>

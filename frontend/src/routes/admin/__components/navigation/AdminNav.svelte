@@ -4,6 +4,7 @@
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import DropDownHeading from '$lib/components/atoms/DropDownHeading.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -12,20 +13,21 @@
 
 	const activeDaoStore = adminData.activeDao;
 
+	const userDaosNames = adminData.userDaos.map((dao) => dao.name);
+
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
 <nav class="column-12 align-start">
-	<div class="column-2">
+	<div class="column-4">
 		<img src={activeDaoData.logo} alt="DAO Logo" />
-		<h1 class="h3">{activeDaoData.name}</h1>
-		<Label size="small" color="tertiary">{`$${activeDaoData.token_symbol}`}</Label>
+		{#if userDaosNames.length > 1}
+			<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}/>
+		{:else}
+			<h1 class="h3">{activeDaoData.name}</h1>
+		{/if}
+		<Label color="neutral" size="small">{activeDaoData.type} DAO</Label>
 	</div>
-	<select name="daos" id="daos" bind:value={$activeDaoStore}>
-		{#each adminData.userDaos as dao, i}
-			<option value={i}>{dao.name}</option>
-		{/each}
-	</select>
 	<div class="column-10 align-start">
 		<a href="/admin" class="sidebar-link">
 			<Icon icon="tabler:chart-infographic" />
@@ -74,7 +76,7 @@
 		}
 	
 		img {
-			max-width: 100%;
+			max-width: 180px;
 			aspect-ratio: 1 / 1;
 			object-fit: contain;
 			border: 1px solid var(--clr-border-primary);
