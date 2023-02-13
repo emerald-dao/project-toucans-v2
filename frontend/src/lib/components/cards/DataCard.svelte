@@ -27,7 +27,7 @@
 		{/if}
 		<span class="small">{title}</span>
 	</div>
-	{#if data}
+	{#if data !== null}
 		{#if isCurrency}
 			<Currency amount={data} currency={currencyName} color="heading" fontSize="var(--font-size-6)" />
 		{:else}
