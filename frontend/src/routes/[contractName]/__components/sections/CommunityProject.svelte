@@ -1,5 +1,5 @@
 <script type="ts">
-	import ChartTitle from './../atoms/ChartTitle.svelte';
+	import ChartTitle from '../atoms/ChartTitle.svelte';
 	import type { CommunityDao } from '$lib/types/dao-project.interface';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import MainHolders from '../atoms/MainHolders.svelte';

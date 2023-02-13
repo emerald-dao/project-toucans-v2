@@ -1,9 +1,9 @@
 <script type="ts">
-	import CommunityProject from './components/sections/CommunityProject.svelte';
+	import CommunityProject from './__components/sections/CommunityProject.svelte';
 	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
-	import { ProjectSidebarSection } from './components';
-	import FinancialProject from './components/sections/FinancialProject.svelte';
-	import SeeMoreSidebar from './components/atoms/SeeMoreSidebar.svelte';
+	import { ProjectSidebarSection } from './__components';
+	import FinancialProject from './__components/sections/FinancialProject.svelte';
+	import SeeMoreSidebar from './__components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
 	import { setContext } from 'svelte';
 

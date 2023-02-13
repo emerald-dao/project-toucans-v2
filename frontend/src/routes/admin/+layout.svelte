@@ -1,5 +1,5 @@
 <script type="ts">
-	import { AdminNav } from './components';
+	import { AdminNav } from './__components';
 	import { setContext } from 'svelte';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';

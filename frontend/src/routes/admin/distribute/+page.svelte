@@ -2,8 +2,8 @@
 	import type { Distribution } from '$lib/types/distribution.interface';
 	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
 	import type { Writable } from 'svelte/store';
-	import DistributionStaging from './components/sections/DistributionStaging.svelte';
-	import DistributionForms from './components/sections/DistributionForms.svelte';
+	import DistributionStaging from './__components/sections/DistributionStaging.svelte';
+	import DistributionForms from './__components/sections/DistributionForms.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
 	import { fly } from 'svelte/transition';

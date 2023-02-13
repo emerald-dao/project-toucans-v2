@@ -1,10 +1,10 @@
 import { createActiveStep } from '$stores/steps/ActiveStep';
 import { createSteps } from '$stores/steps/Steps';
 import { deployContractExecution, dummyTransactionExecution } from '$flow/actions';
-import TokenType from '../../../routes/dao-generator/generate/components/generator-steps/TokenType.svelte';
-import Tokenomics from '../../../routes/dao-generator/generate/components/generator-steps/Tokenomics.svelte';
-import ReviewAndDeploy from '../../../routes/dao-generator/generate/components/generator-steps/ReviewAndDeploy.svelte';
-import DaoDetails from '../../../routes/dao-generator/generate/components/generator-steps/DaoDetails.svelte';
+import TokenType from '../../../routes/dao-generator/generate/__components/generator-steps/TokenType.svelte';
+import Tokenomics from '../../../routes/dao-generator/generate/__components/generator-steps/Tokenomics.svelte';
+import ReviewAndDeploy from '../../../routes/dao-generator/generate/__components/generator-steps/ReviewAndDeploy.svelte';
+import DaoDetails from '../../../routes/dao-generator/generate/__components/generator-steps/DaoDetails.svelte';
 import { get } from 'svelte/store';
 import { daoData } from '$stores/generator/DaoDataStore';
 import { user } from '$stores/flow/FlowStore';

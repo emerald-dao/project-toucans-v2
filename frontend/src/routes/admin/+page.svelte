@@ -2,8 +2,8 @@
 	import { type CommunityDao, DaoType, type FinancialDao } from '$lib/types/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import CommunityDaoStats from './components/sections/CommunityDaoStats.svelte';
-	import FinancialDaoStats from './components/sections/FinancialDaoStats.svelte';
+	import CommunityDaoStats from './__components/sections/CommunityDaoStats.svelte';
+	import FinancialDaoStats from './__components/sections/FinancialDaoStats.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;

@@ -2,7 +2,7 @@
 	import { daysOfDifference } from '$lib/utilities/formatDate';
 	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import ChartTitle from '../../../routes/[contractName]/components/atoms/ChartTitle.svelte';
+	import ChartTitle from '../../../routes/[contractName]/__components/atoms/ChartTitle.svelte';
 	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
 
 	export let fundingCycleData: FundingCycle | null;
