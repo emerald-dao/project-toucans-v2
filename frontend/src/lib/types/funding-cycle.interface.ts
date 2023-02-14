@@ -22,12 +22,12 @@ export interface Details {
 	extra: Extra;
 }
 
-export interface Funders {}
+export interface Funders { }
 
 export interface FundingCycle {
 	details: Details;
-	numOfTokensPurchased: string;
+	projectTokensPurchased: string;
 	funders: Funders;
-	numOfFlowContributed: string;
+	paymentTokensSent: string;
 	purchaseHistory: any[];
 }

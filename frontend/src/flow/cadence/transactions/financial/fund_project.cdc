@@ -8,7 +8,7 @@ transaction(projectOwner: Address, projectId: UInt64, amount: UFix64, message: S
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let Payment: @FlowToken.Vault
-  let PayerTokenVault: &ExampleFinancial.Vault{FungibleToken.Receiver}
+  let ProjectTokenReceiver: &ExampleFinancial.Vault{FungibleToken.Receiver}
 
   prepare(user: AuthAccount) {
     // Setup User Account
@@ -33,11 +33,11 @@ transaction(projectOwner: Address, projectId: UInt64, amount: UFix64, message: S
     
     self.Payment <- user.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
     
-    self.PayerTokenVault = user.getCapability(ExampleFinancial.ReceiverPublicPath)
+    self.ProjectTokenReceiver = user.getCapability(ExampleFinancial.ReceiverPublicPath)
                   .borrow<&ExampleFinancial.Vault{FungibleToken.Receiver}>()!
   }
 
   execute {
-    self.Project.purchase(paymentTokens: <- self.Payment, payerTokenVault: self.PayerTokenVault, message: message)
+    self.Project.purchase(paymentTokens: <- self.Payment, projectTokenReceiver: self.ProjectTokenReceiver, message: message)
   }
 }

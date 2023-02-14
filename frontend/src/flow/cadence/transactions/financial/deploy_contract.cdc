@@ -10,7 +10,13 @@ transaction(
   reserveRate: UFix64,
   payouts: {Address: UFix64},
   editDelay: UFix64,
-  contractCode: String
+  contractCode: String,
+  // PAYMENT TOKEN INFO
+  ptContractName: String,
+  ptContractAddress: Address,
+  ptReceiverPath: PublicPath,
+  ptPublicPath: PublicPath,
+  ptStoragePath: StoragePath
 ) {
 
   prepare(deployer: AuthAccount) {
@@ -32,6 +38,7 @@ transaction(
     deployer.contracts.add(
       name: contractName,
       code: contractCode.decodeHex(),
+      _paymentTokenInfo: Toucans.TokenInfo(ptContractName, ptContractAddress, ptReceiverPath, ptPublicPath, ptStoragePath),
       _fundingTarget: fundingTarget, 
       _issuanceRate: initialFlowTokenIssuanceRate,
       _reserveRate: reserveRate,

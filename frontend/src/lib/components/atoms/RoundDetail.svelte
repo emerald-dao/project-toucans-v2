@@ -9,7 +9,7 @@
 	export let round: FundingCycle;
 	export let i: number;
 
-	const goalReached = round.details.fundingTarget < round.numOfFlowContributed;
+	const goalReached = round.details.fundingTarget < round.paymentTokensSent;
 	const active = new Date(Number(round.details.timeframe.startTime)) > new Date();
 </script>
 
@@ -19,9 +19,9 @@
 			<StatusCircle width="0.5rem" status={active ? 'active' : goalReached ? 'success' : 'alert'} />
 			<div class="progress-bar-wrapper">
 				<ProgressBar
-					value={Number(round.numOfFlowContributed)}
+					value={Number(round.paymentTokensSent)}
 					max={Number(round.details.fundingTarget)}
-					labelText={`$${Number(round.numOfFlowContributed).toLocaleString()} ${
+					labelText={`$${Number(round.paymentTokensSent).toLocaleString()} ${
 						Currencies.FLOW
 					} raised from $${Number(round.details.fundingTarget).toLocaleString()} goal`}
 					size="x-small"

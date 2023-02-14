@@ -6,7 +6,7 @@
 	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
 
 	export let fundingCycleData: FundingCycle | null;
-	
+
 	let daysLeft: number;
 
 	if (fundingCycleData) {
@@ -40,7 +40,7 @@
 				<div class="chart-data-card">
 					<p class="xsmall">Raised</p>
 					<Currency
-						amount={Number(fundingCycleData.numOfFlowContributed)}
+						amount={Number(fundingCycleData.paymentTokensSent)}
 						currency="FLOW"
 						fontSize="var(--font-size-2)"
 						color="heading"
@@ -73,7 +73,7 @@
 				</div>
 			</div>
 			<ProgressBar
-				value={Number(fundingCycleData.numOfFlowContributed)}
+				value={Number(fundingCycleData.paymentTokensSent)}
 				max={Number(fundingCycleData.details.fundingTarget)}
 				size="large"
 				showPercentage={true}

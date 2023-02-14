@@ -2,7 +2,7 @@ import './config';
 import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
-import { user } from '$stores/flow/FlowStore';
+import { addresses, user } from '$stores/flow/FlowStore';
 import { executeTransaction, formatFix, replaceWithProperValues } from './utils';
 
 import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
@@ -96,7 +96,13 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 			arg(formatFix(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
 			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
 			arg(formatFix(data.tokenomics.editDelay), t.UFix64),
-			arg(hexCode, t.String)
+			arg(hexCode, t.String),
+			arg("FlowToken", t.String),
+			arg(addresses.FlowToken, t.Address),
+			arg({ domain: "public", identifier: "flowTokenReceiver" }, t.Path),
+			arg({ domain: "public", identifier: "flowTokenBalance" }, t.Path),
+			arg({ domain: "storage", identifier: "flowTokenVault" }, t.Path),
+
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

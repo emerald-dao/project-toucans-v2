@@ -21,7 +21,7 @@ export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGenerator
 		tokenType: TokenTypes.FINANCIAL,
 		totalSupply: undefined,
 		targetAmount: undefined,
-		editDelay: '259200.00',
+		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: [],
 		initialRound: {

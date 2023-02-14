@@ -13,7 +13,6 @@ pub struct Info {
   pub let projectId: UInt64
   pub let tokenType: Type
   pub let currentFundingCycle: UInt64?
-  pub let mostRecentCycle: Int
   pub let totalFunding: UFix64
   pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
@@ -23,7 +22,7 @@ pub struct Info {
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
-    self.tokenType = info.tokenType
+    self.tokenType = info.projectTokenInfo.tokenType
     self.currentFundingCycle = info.getCurrentFundingCycleNum()
     self.totalFunding = info.totalFunding
     self.extra = info.getExtra()
@@ -31,6 +30,5 @@ pub struct Info {
     self.totalSupply = ExampleFinancial.totalSupply
     self.balances = ExampleFinancial.getBalances()
     self.funders = info.getFunders()
-    self.mostRecentCycle = info.getMostRecentCycle()
   }
 }

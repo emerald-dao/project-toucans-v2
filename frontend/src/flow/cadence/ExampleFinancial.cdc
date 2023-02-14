@@ -135,6 +135,7 @@ pub contract ExampleFinancial: FungibleToken {
     }
 
     init(
+      _paymentTokenInfo: Toucans.TokenInfo,
       _fundingTarget: UFix64,
       _issuanceRate: UFix64,
       _reserveRate: UFix64,
@@ -172,8 +173,20 @@ pub contract ExampleFinancial: FungibleToken {
         self.account.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
         self.account.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
       }
+
       let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
-      toucansProjectCollection.createProject(minter: <- create Minter(), fundingTarget: _fundingTarget, issuanceRate: _issuanceRate, reserveRate: _reserveRate, timeframe: _timeframe, payouts: _payouts, editDelay: _editDelay, extra: _extra)
+      toucansProjectCollection.createProject(
+        projectTokenInfo: Toucans.TokenInfo("ExampleFinancial", self.account.address, self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
+        paymentTokenInfo: _paymentTokenInfo, 
+        minter: <- create Minter(), 
+        fundingTarget: _fundingTarget, 
+        issuanceRate: _issuanceRate, 
+        reserveRate: _reserveRate, 
+        timeframe: _timeframe, 
+        payouts: _payouts, 
+        editDelay: _editDelay, 
+        extra: _extra
+    )
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)
