@@ -8,5 +8,6 @@ export interface Currency {
 	contractAddress: string,
 	receiverPath: string,
 	publicPath: string,
-	storagePath: string
+	storagePath: string,
+	image: string
 }

@@ -8,6 +8,7 @@ export const currencies: { [key: Currencies]: Currency } = writable({
         contractAddress: addresses.FlowToken,
         receiverPath: "/public/flowTokenReceiver",
         publicPath: "/public/flowTokenBalance",
-        storagePath: "/storage/flowTokenVault"
+        storagePath: "/storage/flowTokenVault",
+        image: "flow-logo.png"
     }
 });
