@@ -13,23 +13,23 @@
 	import { getTotalFundingFromActions } from '$lib/utilities/getTotalFundingFromActions';
 
 	export let daoData: FinancialDao;
-		
+
 	console.log(daoData);
 
 	const mainHoldersAmountMock = [100, 100, 100];
 	const mainHoldersNamesMock = ['mateo.find', 'jacob.find', 'dene.find'];
 
-	const currentFundingCycleData = daoData.currentFundingCycle ? getFundingCycleData(daoData, Number(daoData.currentFundingCycle)) : null;
+	const currentFundingCycleData = daoData.currentFundingCycle
+		? getFundingCycleData(daoData, Number(daoData.currentFundingCycle))
+		: null;
 
 	let fundingPerMonth: {
 		labels: string[];
 		data: number[];
 	} | null = null;
-	let totalFunding = 0;
-	
+
 	if (daoData.purchaseHistory.length > 0) {
-		fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory)
-		totalFunding = getTotalFundingFromActions(daoData.purchaseHistory)
+		fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory);
 	}
 
 	const recentActivity = daoData.actions.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6);
@@ -41,7 +41,7 @@
 			<DataCard
 				title="Total Funding"
 				icon="tabler:pig-money"
-				data={totalFunding}
+				data={Number(daoData.totalFunding)}
 				isCurrency
 			/>
 			<DataCard
@@ -66,14 +66,22 @@
 				<TabPanel>
 					<div class="panel-container">
 						<div class="chart-wrapper">
-							<PieChart title="Token distribution" chartData={mainHoldersAmountMock} labels={mainHoldersNamesMock} />
+							<PieChart
+								title="Token distribution"
+								chartData={mainHoldersAmountMock}
+								labels={mainHoldersNamesMock}
+							/>
 						</div>
 					</div>
 				</TabPanel>
 				{#if fundingPerMonth}
 					<TabPanel>
 						<div class="chart-wrapper">
-							<LineChart title="Fundrising history" chartData={fundingPerMonth.data} labels={fundingPerMonth.labels} />
+							<LineChart
+								title="Fundrising history"
+								chartData={fundingPerMonth.data}
+								labels={fundingPerMonth.labels}
+							/>
 						</div>
 					</TabPanel>
 				{/if}
@@ -141,7 +149,7 @@
 			position: relative;
 			width: 40vw;
 			align-self: center;
-	
+
 			@include mq('medium') {
 				width: auto;
 				max-width: 400px;

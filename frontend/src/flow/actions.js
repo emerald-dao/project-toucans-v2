@@ -13,6 +13,7 @@ import fundProjectTx from './cadence/transactions/financial/fund_project.cdc?raw
 import transferTokensTx from './cadence/transactions/community/transfer_tokens.cdc?raw';
 import getFinancialProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
 import getCommunityProjectScript from './cadence/scripts/community/get_project.cdc?raw';
+import getFinancialTokenBalanceScript from './cadence/scripts/financial/get_token_balance.cdc?raw';
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
 
@@ -191,3 +192,18 @@ export const getProjectInfo = async (contractName, contractAddress, owner, type,
 		console.log(e);
 	}
 };
+
+export const getFinancialTokenBalance = async (contractName, contractAddress, user) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getFinancialTokenBalanceScript, contractName, contractAddress),
+			args: (arg, t) => [
+				arg(user, t.Address)
+			]
+		})
+		return response;
+	} catch (e) {
+		console.log(e);
+		return '0.0';
+	}
+}

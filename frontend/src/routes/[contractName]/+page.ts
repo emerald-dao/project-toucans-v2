@@ -1,8 +1,10 @@
 import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
-import { getProjectInfo } from '$flow/actions.js';
+import { getFinancialTokenBalance, getProjectInfo } from '$flow/actions.js';
 import '$flow/config.js';
 import type { Action } from '$lib/types/actions/actions.type';
+import { get } from 'svelte/store';
+import { user } from '$stores/flow/FlowStore';
 
 export const load: PageLoad = async ({ params }) => {
 	// get project info
@@ -25,6 +27,12 @@ export const load: PageLoad = async ({ params }) => {
 		info.project_id
 	);
 
+	const userBalance = await getFinancialTokenBalance(
+		info.contract_name,
+		info.contract_address,
+		get(user).addr
+	)
+
 	// get actions
 	const { data: actionData } = await supabase
 		.from('events')
@@ -35,6 +43,7 @@ export const load: PageLoad = async ({ params }) => {
 	return {
 		...info,
 		...projectInfo,
+		userBalance,
 		actions: eventsData.actions.reverse(),
 		purchaseHistory: eventsData.actions.filter((action: Action) => action.type === 'Purchase')
 	};

@@ -187,6 +187,7 @@ pub contract Toucans {
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
     pub fun getExtra(): {String: AnyStruct}
     pub fun getFunders(): {Address: UFix64}
+    pub fun getOverflowBalance(): UFix64
   }
 
   pub resource Project: ProjectPublic {
@@ -464,6 +465,10 @@ pub contract Toucans {
 
     pub fun getFunders(): {Address: UFix64} {
       return self.funders
+    }
+
+    pub fun getOverflowBalance(): UFix64 {
+      return self.overflow.balance
     }
 
     init(

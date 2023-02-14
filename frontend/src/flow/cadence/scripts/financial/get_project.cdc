@@ -1,8 +1,8 @@
 import ExampleFinancial from "../../ExampleFinancial.cdc"
 import Toucans from "../../Toucans.cdc"
 
-pub fun main(user: Address, projectId: UInt64): Info {
-  let projectCollection = getAccount(user).getCapability(Toucans.CollectionPublicPath)
+pub fun main(projectOwner: Address, projectId: UInt64): Info {
+  let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
                 .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                 ?? panic("User does not have a Toucans Collection")
 
@@ -17,6 +17,7 @@ pub struct Info {
   pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
   pub let totalSupply: UFix64
+  pub let overflowBalance: UFix64
   pub let balances: {Address: UFix64}
   pub let funders: {Address: UFix64}
 
@@ -30,5 +31,6 @@ pub struct Info {
     self.totalSupply = ExampleFinancial.totalSupply
     self.balances = ExampleFinancial.getBalances()
     self.funders = info.getFunders()
+    self.overflowBalance = info.getOverflowBalance()
   }
 }

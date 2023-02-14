@@ -52,6 +52,7 @@ export interface Dao {
 	extra: Extra;
 	actions: [PurchaseAction | FundingCycleAction];
 	totalSupply: string;
+	userBalance: string;
 }
 
 export interface FinancialDao extends Dao {
@@ -62,6 +63,7 @@ export interface FinancialDao extends Dao {
 	funders: Funders;
 	type: DaoType.Financial;
 	purchaseHistory: PurchaseAction[];
+	overflowBalance: string;
 }
 
 export interface CommunityDao extends Dao {

@@ -54,7 +54,7 @@ const contractData = {
 	}
 };
 
-export const user = writable<FlowUser | null>(null);
+export const user = writable<FlowUser>({ loggedIn: false });
 export const profile = writable(null);
 // export const transactionStatus = writable({});
 // export const transactionInProgress = writable(false);
