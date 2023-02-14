@@ -1,6 +1,6 @@
 import { createActiveStep } from '$stores/steps/ActiveStep';
 import { createSteps } from '$stores/steps/Steps';
-import { deployContractExecution, dummyTransactionExecution } from '$flow/actions';
+import { deployContractExecution } from '$flow/actions';
 import TokenType from '../../../routes/dao-generator/generate/__components/generator-steps/TokenType.svelte';
 import Tokenomics from '../../../routes/dao-generator/generate/__components/generator-steps/Tokenomics.svelte';
 import ReviewAndDeploy from '../../../routes/dao-generator/generate/__components/generator-steps/ReviewAndDeploy.svelte';
@@ -28,6 +28,8 @@ const createToken = async () => {
 		const logo = `https://nftstorage.link/ipfs/${cid}`;
 
 		console.log('Project Created Event', projectCreatedEvent);
+
+		console.log('datita', data);
 
 		const response = await fetch('/api/add', {
 			method: 'POST',

@@ -5,11 +5,6 @@ export const navElements = [
 		prefetch: true
 	},
 	{
-		name: 'Admin',
-		url: '/admin',
-		prefetch: true
-	},
-	{
 		name: 'Discover',
 		url: '/discover',
 		prefetch: true
@@ -49,5 +44,20 @@ export const socialMedia = [
 		name: 'Github ',
 		url: 'https://github.com/emerald-dao',
 		icon: 'ion:logo-github'
+	}
+];
+
+export const avatarDropdownNav = [
+	{
+		name: 'Dashboard',
+		url: '/admin',
+		prefetch: true,
+		icon: 'tabler:home'
+	},
+	{
+		name: 'Create new DAO',
+		url: '/dao-generator',
+		prefetch: true,
+		icon: 'tabler:square-rounded-plus'
 	}
 ];
