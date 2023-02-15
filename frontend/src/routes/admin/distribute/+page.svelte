@@ -13,6 +13,10 @@
 		userDaos: FinancialDao[] | CommunityDao[];
 	} = getContext('admin-data');
 
+	const activeDaoStore = adminData.activeDao;
+
+	$: activeDaoData = adminData.userDaos[$activeDaoStore];
+
 	let distStaging: Distribution[] = [];
 
 	let formDist: Distribution = {
@@ -38,12 +42,12 @@
 	<div class="forms-wrapper sub-wrapper">
 		<div class="introduction">
 			<h5>Distribute</h5>
-			<p class="small">Distribute tokens within the members of it's community.</p>
+			<p class="small">Distribute tokens within the members of your community.</p>
 		</div>
 		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
 	</div>
 	<div class="dist-wrapper sub-wrapper card">
-		<DistributionStaging bind:distStaging />
+		<DistributionStaging bind:distStaging tokenName={activeDaoData.token_symbol}/>
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
 				<Button width="full-width" on:click={distributeTokens}>Distribute</Button>

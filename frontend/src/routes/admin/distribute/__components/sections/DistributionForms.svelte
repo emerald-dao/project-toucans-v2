@@ -16,7 +16,7 @@
 
 	const activeDaoStore = adminData.activeDao;
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore] as CommunityDao;
+	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 
 	let csvFile: File[] = [];
 

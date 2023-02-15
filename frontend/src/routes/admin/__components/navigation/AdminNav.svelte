@@ -62,12 +62,12 @@
 				Rounds
 			</a>
 		{/if}
-		{#if activeDaoData.type === DaoType.Community}
+		<!-- {#if activeDaoData.type === DaoType.Community} -->
 			<a href="/admin/distribute" class="sidebar-link distribute-display" class:active={$page.url.pathname.includes('distribute')}>
 				<Icon icon="tabler:arrows-maximize" />
 				Distribute
 			</a>
-		{/if}
+		<!-- {/if} -->
 		<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
 			<Icon icon="tabler:bolt" />
 			Edit Info
