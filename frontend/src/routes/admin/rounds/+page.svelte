@@ -18,7 +18,7 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore] as FinancialDao;
 </script>
 
-<div class="card column-3">
+<div class="card column-space-between">
 	<div class="rounds-wrapper">
 		{#if !activeDaoData.fundingCycles}
 			<span>This project has no funding rounds yet</span>

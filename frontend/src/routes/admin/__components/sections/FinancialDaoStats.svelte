@@ -42,19 +42,6 @@
 			{/if}
 		</DataCard>
 	</div>
-	<DataCard
-		title="Summary"
-		hasBackground={true}
-		paddingBlock="var(--space-8)"
-		data={`${(Number(daoData.totalFunding) / Number(daoData.totalSupply)) * 100}%`}
-	>
-		<ProgressBar
-			value={Number(daoData.totalSupply)}
-			max={Number(daoData.totalSupply)}
-			labelText="Distribution"
-		/>
-		<Button width="full-width">Distribute Tokens</Button>
-	</DataCard>
 </div>
 
 <style type="scss">
@@ -72,7 +59,7 @@
 			grid-row-gap: var(--space-6);
 			grid-template-areas:
 				'card-1 card-2 card-3'
-				'chart-card chart-card summary';
+				'chart-card chart-card chart-card';
 		}
 
 		.chart-card-wrapper {

@@ -56,7 +56,6 @@
 				display: grid;
 				grid-template-columns: 220px auto;
 				gap: var(--space-16);
-				place-content: center;
 			}
 
 			.card-primary {

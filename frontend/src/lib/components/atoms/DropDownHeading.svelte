@@ -42,13 +42,11 @@
       {#if headings.length > 1}
         <ul>
           {#each headings as heading, index}
-            {#if index !== value}
-              <li>
-                <a class="header-link" href="" on:click={() => (value = index)}>
-                  {heading}
-                </a>
-              </li>
-            {/if}
+            <li>
+              <a class="header-link" class:selected={index === value} href="" on:click={() => (value = index)}>
+                {heading}
+              </a>
+            </li>
           {/each}
         </ul>
       {/if}
@@ -98,6 +96,10 @@
 
         li {
           padding: var(--space-2) var(--space-3);
+
+          .selected {
+            color: var(--clr-heading-main)
+          }
         }
       }
     }

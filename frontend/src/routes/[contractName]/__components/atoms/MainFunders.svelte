@@ -37,7 +37,7 @@
 	{#each Object.values(mainFunders) as funder}
 		<div class="activity-wrapper">
 			<div class="row-3 align-center">
-				<img src="/avatar-header.png" alt="avatar logo" />
+				<img src="/avatar-2.png" alt="avatar logo" />
 				<span class="funder-name">{funder.name}</span>
 			</div>
 			<Currency amount={Number(funder.amount)} currency={Currencies.FLOW} color="heading" fontSize="0.85rem" />
@@ -53,9 +53,16 @@
 		width: 100%;
 		padding: var(--space-2);
 		border-bottom: 1px solid var(--clr-border-primary);
-	}
-	.funder-name {
-		color: var(--clr-heading-main);
-		font-size: var(--font-size-1);
+
+		img {
+			width: 30px;
+			border-radius: 100%;
+			aspect-ratio: 1/1;
+		}
+
+		.funder-name {
+			color: var(--clr-heading-main);
+			font-size: var(--font-size-1);
+		}
 	}
 </style>

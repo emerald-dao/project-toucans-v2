@@ -106,21 +106,8 @@
 				{/if}
 				<TabPanel>
 					<div class="rounds-wrapper">
-						{#if daoData.currentFundingCycle}
-							<span>Active</span>
-							{#each daoData.fundingCycles as round}
-								{#if round.details.cycleNum === daoData.currentFundingCycle}
-									<RoundDetail {round} i={0} />
-								{/if}
-							{/each}
-						{/if}
-					</div>
-					<div class="rounds-wrapper">
-						<span>Finished</span>
-						{#each daoData.fundingCycles as round, i}
-							{#if round.details.cycleNum !== daoData.currentFundingCycle}
-								<RoundDetail {round} {i} />
-							{/if}
+						{#each daoData.fundingCycles as round}
+							<RoundDetail {round} i={0} />
 						{/each}
 					</div>
 				</TabPanel>

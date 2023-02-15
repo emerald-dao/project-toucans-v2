@@ -1,4 +1,5 @@
 <script type="ts">
+	import { page } from '$app/stores';
 	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
 	import { Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
@@ -51,23 +52,23 @@
 		<Label color="tertiary" size="small">{activeDaoData.type} DAO</Label>
 	</div>
 	<div class="column-10 align-start">
-		<a href="/admin" class="sidebar-link">
+		<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 			<Icon icon="tabler:chart-infographic" />
 			Stats
 		</a>
 		{#if activeDaoData.type === DaoType.Financial}
-			<a href="/admin/rounds" class="sidebar-link">
+			<a href="/admin/rounds" class="sidebar-link" class:active={$page.url.pathname.includes('rounds')}>
 				<Icon icon="tabler:analyze" />
 				Rounds
 			</a>
 		{/if}
 		{#if activeDaoData.type === DaoType.Community}
-			<a href="/admin/distribute" class="sidebar-link distribute-display">
+			<a href="/admin/distribute" class="sidebar-link distribute-display" class:active={$page.url.pathname.includes('distribute')}>
 				<Icon icon="tabler:arrows-maximize" />
 				Distribute
 			</a>
 		{/if}
-		<a href="/admin/info" class="sidebar-link">
+		<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
 			<Icon icon="tabler:bolt" />
 			Edit Info
 		</a>
