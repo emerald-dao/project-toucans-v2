@@ -50,6 +50,6 @@ export interface FlowUser {
 	addr: string;
 	cid: string;
 	loggedIn: boolean;
-	expiresAt?: any;
+	expiresAt: any;
 	services: Service[];
 }

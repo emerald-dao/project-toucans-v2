@@ -1,5 +1,5 @@
 <script type="ts">
-	import { profile } from './../lib/stores/flow/FlowStore.ts';
+	import { network } from '$flow/config.js';
 	import '../app.postcss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
 	import '@emerald-dao/design-system/build/variables-light.css';
@@ -13,16 +13,10 @@
 	import { getFindProfile } from '$flow/utils';
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
-	import * as fcl from '@onflow/fcl';
 
 	$: if ($user) {
 		console.log($user);
 	}
-	$: if ($profile) {
-		console.log($profile);
-	}
-
-	
 </script>
 
 <TransactionModal
@@ -38,6 +32,8 @@
 	{navElements}
 	sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
 	avatarDropDownNavigation={avatarDropdownNav}
+	{network}
+	transactionInProgress={$transactionStore.progress}
 />
 <main>
 	<slot />
