@@ -10,12 +10,14 @@ import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
 import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
 import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/financial/fund_project.cdc?raw';
+import newRoundTx from './cadence/transactions/financial/new_round.cdc?raw';
 import transferTokensTx from './cadence/transactions/community/transfer_tokens.cdc?raw';
 import getFinancialProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
 import getCommunityProjectScript from './cadence/scripts/community/get_project.cdc?raw';
 import getFinancialTokenBalanceScript from './cadence/scripts/financial/get_token_balance.cdc?raw';
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
+import { roundData } from '$stores/rounds/RoundData';
 
 const rawTokenCodes = {
 	Financial: rawFinancialTokenCode,
@@ -152,6 +154,36 @@ const fundProject = async () => {
 };
 
 export const fundProjectExecution = () => executeTransaction(fundProject);
+
+const newRound = async () => {
+	const newRoundData = get(roundData);
+	console.log(newRoundData)
+	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
+	const startTime = formatFix(Math.floor(new Date(newRoundData.startDate).getTime() / 1000));
+	const endTime = newRoundData.infiniteDuration ? null : formatFix(Math.floor(new Date(newRoundData.endDate).getTime() / 1000));
+	const [, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
+	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) => formatFix(x[1] / 100));
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(newRoundTx),
+		args: (arg, t) => [
+			arg(newRoundData.projectId, t.UInt64),
+			arg(fundingGoal, t.Optional(t.UFix64)),
+			arg(formatFix(newRoundData.issuanceRate), t.UFix64),
+			arg(formatFix(newRoundData.reserveRate / 100.0), t.UFix64),
+			arg(startTime, t.UFix64),
+			arg(endTime, t.Optional(t.UFix64)),
+			arg(distributionAddresses, t.Array(t.Address)),
+			arg(distributionPercentages, t.Array(t.UFix64)),
+			arg([], t.Dictionary({ key: t.String, value: t.String }))
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const newRoundExecution = () => executeTransaction(newRound);
 
 // const tranferTokens = async () => {
 // 	const amount = "10.0";

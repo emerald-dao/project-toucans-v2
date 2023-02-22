@@ -5,7 +5,6 @@ import type {
 import { writable, type Writable } from 'svelte/store';
 import { TokenTypes } from '$lib/types/token-types.enum';
 import { Currencies } from '$lib/types/currencies.enum';
-import { currencies } from '$stores/flow/TokenStore';
 
 export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGeneratorData> = writable({
 	daoDetails: {
@@ -20,16 +19,20 @@ export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGenerator
 	},
 	tokenomics: {
 		tokenType: TokenTypes.FINANCIAL,
-		paymentCurrency: currencies[Currencies.FLOW],
+		paymentCurrency: Currencies.FLOW,
 		totalSupply: undefined,
 		targetAmount: undefined,
 		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: [],
 		initialRound: {
-			token: Currencies.FLOW,
+			currency: Currencies.FLOW,
 			issuanceRate: undefined,
-			reserveRate: undefined
+			reserveRate: undefined,
+			startDate: '',
+			endDate: '',
+			infiniteDuration: false,
+			infiniteFundingGoal: false
 		}
 	}
 });

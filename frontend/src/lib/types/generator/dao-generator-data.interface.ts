@@ -29,9 +29,13 @@ export interface FinancialDaoGeneratorData extends DaoGeneratorData {
 		mintTokens: boolean;
 		walletAddresses: string[] | [];
 		initialRound: {
-			token: Currencies;
+			currency: Currencies;
 			issuanceRate: number | undefined;
 			reserveRate: number | undefined;
+			startDate: string,
+			endDate: string,
+			infiniteDuration: boolean,
+			infiniteFundingGoal: boolean
 		};
 	};
 }

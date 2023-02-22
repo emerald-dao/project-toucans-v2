@@ -64,6 +64,7 @@ export interface FinancialDao extends Dao {
 	type: DaoType.Financial;
 	purchaseHistory: PurchaseAction[];
 	overflowBalance: string;
+	editDelay: string;
 }
 
 export interface CommunityDao extends Dao {

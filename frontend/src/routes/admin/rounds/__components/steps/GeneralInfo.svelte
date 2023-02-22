@@ -2,50 +2,43 @@
 	import { Currencies } from '$lib/types/currencies.enum';
 	import { onMount } from 'svelte';
 	import newRoundSuite from '$lib/validations/newRoundSuite';
-	import { InputWrapper, Button } from '@emerald-dao/component-library';
+	import { InputWrapper, Button, Range } from '@emerald-dao/component-library';
 	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
+	import { roundData } from '$stores/rounds/RoundData';
+	import { user } from '$stores/flow/FlowStore';
 
-	let now = new Date();
-	let nowString = now.toISOString().split('T')[0];
-	let oneMonthForwardSting = new Date(new Date().setMonth(new Date().getMonth() + 1))
-		.toISOString()
-		.split('T')[0];
+	export let tokenSymbol: string;
+	export let projectId: string;
+	export let editDelay: string;
 
-	let infiniteDuration = false;
-	let infiniteFundingGoal = false;
+	// TODO: Consider edit delay with start time
 
-	let formData: FormData = {
+	// initial time is 5 minutes from now, plus edit delay (which is in seconds)
+	let now = new Date(new Date().getTime() + 5 * 60000 + Number(editDelay));
+	let nowString = now.toISOString().split('.')[0];
+	let oneMonthForwardString = new Date(now.getTime() + 2629743000).toISOString().split('.')[0];
+
+	roundData.set({
 		startDate: nowString,
-		endDate: oneMonthForwardSting,
-		fundingGoal: 0,
-		currency: Currencies.FLOW
-	};
-	const currenciesOptions = [
-		{
-			name: Currencies.FLOW,
-			value: Currencies.FLOW,
-			text: '$FLOW'
-		},
-		{
-			name: Currencies.FUSD,
-			value: Currencies.FUSD,
-			text: '$FUSD'
-		}
-	];
-	interface FormData {
-		startDate: string;
-		endDate: string;
-		fundingGoal: number;
-		currency: Currencies;
-	}
+		endDate: oneMonthForwardString,
+		fundingGoal: undefined,
+		currency: Currencies.FLOW,
+		infiniteFundingGoal: false,
+		infiniteDuration: false,
+		distributionList: [[$user.addr, 100]],
+		reserveRate: undefined,
+		issuanceRate: undefined,
+		projectId
+	});
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = newRoundSuite(formData, target.name);
+		res = newRoundSuite($roundData, target.name);
 	};
 
 	onMount(() => {
+		console.log(nowString);
 		startDateInput.min = nowString;
 	});
 
@@ -54,13 +47,17 @@
 
 	let res = newRoundSuite.get();
 
-	$: if (endDateInput) endDateInput.min = formData.startDate;
-	$: if (new Date(formData.startDate) > new Date(formData.endDate))
-		formData.endDate = new Date(
-			new Date(formData.startDate).setMonth(new Date(formData.startDate).getMonth() + 1)
+	$: if (endDateInput) {
+		endDateInput.min = $roundData.startDate;
+		console.log($roundData.startDate);
+	}
+	$: if (new Date($roundData.startDate) > new Date($roundData.endDate)) {
+		$roundData.endDate = new Date(
+			new Date($roundData.startDate).setMonth(new Date($roundData.startDate).getMonth() + 1)
 		)
 			.toISOString()
 			.split('T')[0];
+	}
 </script>
 
 <div class="column-6">
@@ -73,7 +70,7 @@
 					type="checkbox"
 					name="infinite-duration"
 					id="infinite-duration"
-					bind:checked={infiniteDuration}
+					bind:checked={$roundData.infiniteDuration}
 				/>
 				<span class="slider" />
 				Infinite
@@ -86,16 +83,14 @@
 						isValid={res.isValid('startDate')}
 						label="Start date"
 						statusIcons={false}
-						disabled={infiniteDuration}
 					>
 						<input
-							type="date"
+							type="datetime-local"
 							name="startDate"
 							id="startDate"
 							bind:this={startDateInput}
-							bind:value={formData.startDate}
+							bind:value={$roundData.startDate}
 							on:input={handleChange}
-							disabled={infiniteDuration}
 						/>
 					</InputWrapper>
 				</div>
@@ -106,75 +101,95 @@
 						isValid={res.isValid('endDate')}
 						label="End date"
 						statusIcons={false}
-						disabled={infiniteDuration}
+						disabled={$roundData.infiniteDuration}
 					>
 						<input
-							type="date"
+							type="datetime-local"
 							name="endDate"
 							id="endDate"
 							bind:this={endDateInput}
-							bind:value={formData.endDate}
+							bind:value={$roundData.endDate}
 							on:input={handleChange}
-							disabled={infiniteDuration}
+							disabled={$roundData.infiniteDuration}
 						/>
 					</InputWrapper>
 				</div>
 			</div>
 		</div>
 		<div class="form-section-wrapper">
+			<label for="currencies">Currency</label>
+			<div class="radio-tabs" id="currencies">
+				<label>
+					$FLOW
+					<input
+						type="radio"
+						id="flow"
+						name="currency"
+						value={Currencies.FLOW}
+						bind:group={$roundData.currency}
+					/>
+				</label>
+				<label>
+					$FUSD
+					<input
+						type="radio"
+						id="fusd"
+						name="currency"
+						value={Currencies.FUSD}
+						bind:group={$roundData.currency}
+					/>
+				</label>
+			</div>
 			<span>Funding round goal</span>
 			<label for="infinite-goal" class="switch">
 				<input
 					type="checkbox"
 					name="infinite-goal"
 					id="infinite-goal"
-					bind:checked={infiniteFundingGoal}
+					bind:checked={$roundData.infiniteFundingGoal}
 				/>
 				<span class="slider" />
 				Infinite
 			</label>
-
-			<div>
-				<label for="currencies" class:disabled={infiniteFundingGoal}>Currency</label>
-				<div class="radio-tabs" id="currencies">
-					<label class:disabled={infiniteFundingGoal}>
-						$FLOW
-						<input
-							type="radio"
-							id="flow"
-							name="currency"
-							value={Currencies.FLOW}
-							bind:group={formData['currency']}
-						/>
-					</label>
-					<label class:disabled={infiniteFundingGoal}>
-						$FUSD
-						<input
-							type="radio"
-							id="fusd"
-							name="currency"
-							value={Currencies.FUSD}
-							bind:group={formData['currency']}
-						/>
-					</label>
-				</div>
-				<InputWrapper
+			<InputWrapper
+				name="fundingGoal"
+				iconUrl={$roundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
+				errors={res.getErrors('fundingGoal')}
+				isValid={res.isValid('fundingGoal')}
+				label="Amount"
+				disabled={$roundData.infiniteFundingGoal}
+			>
+				<input
+					type="text"
 					name="fundingGoal"
-					iconUrl={formData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
-					errors={res.getErrors('fundingGoal')}
-					isValid={res.isValid('fundingGoal')}
-					label="Amount"
-					disabled={infiniteFundingGoal}
-				>
-					<input
-						type="text"
-						name="fundingGoal"
-						placeholder="1000"
-						bind:value={formData.fundingGoal}
-						on:input={handleChange}
-						disabled={infiniteFundingGoal}
-					/>
-				</InputWrapper>
+					placeholder="1000"
+					bind:value={$roundData.fundingGoal}
+					on:input={handleChange}
+					disabled={$roundData.infiniteFundingGoal}
+				/>
+			</InputWrapper>
+		</div>
+		<div class="form-section-wrapper">
+			<InputWrapper
+				name="issuanceRate"
+				errors={res.getErrors('issuanceRate')}
+				isValid={res.isValid('issuanceRate')}
+				label="Issuance Rate"
+			>
+				<input
+					type="text"
+					name="issuanceRate"
+					min="0"
+					placeholder={`e.g. 1 ${tokenSymbol} - 1 ${$roundData.currency}`}
+					bind:value={$roundData.issuanceRate}
+					on:input={handleChange}
+				/>
+			</InputWrapper>
+			<div class="range-wrapper">
+				<div class="row-2">
+					<label for="reserveRate">Reserve rate </label>
+				</div>
+				<Range bind:value={$roundData.reserveRate} suffix="%" id="reserveRate" />
 			</div>
 		</div>
 		<div class="button-wrapper">
@@ -189,7 +204,7 @@
 
 <style type="scss">
 	form {
-		max-width: 400px;
+		max-width: 600px;
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
@@ -207,6 +222,10 @@
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				gap: var(--space-4);
+			}
+
+			.range-wrapper {
+				margin-bottom: var(--space-7);
 			}
 
 			.radio-tabs {

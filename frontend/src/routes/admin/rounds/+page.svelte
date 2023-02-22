@@ -29,14 +29,23 @@
 		{/if}
 	</div>
 	<div class="create-round-wrapper">
-		<Button on:click={() => getModal().open()} width="extended"
-			><Icon icon="tabler:plus" />Create Round</Button
+		<Button
+			on:click={() => {
+				getModal().open();
+				newRoundActiveStep.goToStep(0);
+			}}
+			width="extended"><Icon icon="tabler:plus" />Create Round</Button
 		>
 	</div>
 </div>
 <Modal>
 	<div class="column-4 align-end">
-		<svelte:component this={$newRoundSteps[$newRoundActiveStep].component} />
+		<svelte:component
+			this={$newRoundSteps[$newRoundActiveStep].component}
+			tokenSymbol={activeDaoData.token_symbol}
+			projectId={activeDaoData.project_id}
+			editDelay={activeDaoData.editDelay}
+		/>
 	</div>
 </Modal>
 

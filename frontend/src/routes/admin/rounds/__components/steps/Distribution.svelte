@@ -1,16 +1,16 @@
 <script type="ts">
 	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
+	import { roundData } from '$stores/rounds/RoundData';
 	import Icon from '@iconify/svelte';
 	import { Button, InputWrapper, Range } from '@emerald-dao/component-library';
 	import roundDistributionSuite from '$lib/validations/roundDistributionSuite';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import type { SvelteComponent } from 'svelte';
 
-	let distributionList: [string, number][] = [['Treasury Wallet', 100]];
 	let distributionData: [string, number] = ['', 0];
 
-	let distributionAddresses: string[] = distributionList.map((x) => x[0]);
-	let distributionPercentages: number[] = distributionList.map((x) => x[1]);
+	let distributionAddresses: string[] = $roundData.distributionList.map((x) => x[0]);
+	let distributionPercentages: number[] = $roundData.distributionList.map((x) => x[1]);
 
 	let chart: SvelteComponent;
 
@@ -29,13 +29,13 @@
 
 		chart.updateChartData(distributionData[0], distributionData[1]);
 
-		distributionList = [...distributionList, distributionData];
+		$roundData.distributionList = [...$roundData.distributionList, distributionData];
 		distributionData = ['', 0];
 	};
 
 	const deleteFromDistributionList = (i: number) => {
-		distributionList.splice(i, 1);
-		distributionList = distributionList;
+		$roundData.distributionList.splice(i, 1);
+		$roundData.distributionList = $roundData.distributionList;
 	};
 
 	let res = roundDistributionSuite.get();
@@ -47,11 +47,11 @@
 			distributedPercentage = distributedPercentage + newList[index][1];
 		}
 
-		distributionList[0][1] = 100 - distributedPercentage;
+		$roundData.distributionList[0][1] = 100 - distributedPercentage;
 	};
 
 	$: {
-		onDistributionListChange(distributionList);
+		onDistributionListChange($roundData.distributionList);
 	}
 </script>
 
@@ -82,7 +82,7 @@
 					<label for="distribution-percentage">Percentage to distribute</label>
 					<Range
 						bind:value={distributionData[1]}
-						max={distributionList[0][1]}
+						max={$roundData.distributionList[0][1]}
 						suffix="%"
 						id="distribution-percentage"
 						on:change={handleChange}

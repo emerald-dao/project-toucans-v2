@@ -9,7 +9,7 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
-		
+
 		if (target?.name) {
 			res = tokenomicsSuite($daoData.tokenomics, target.name);
 		}
@@ -22,7 +22,7 @@
 	id={$generatorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
 	autocomplete="off"
-	in:fly="{{ y: 30, duration: 400 }}"
+	in:fly={{ y: 30, duration: 400 }}
 >
 	{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
 		<InputWrapper
@@ -65,7 +65,7 @@
 				name="issuanceRate"
 				type="text"
 				min="0"
-				placeholder={`e.g. 1 ${$daoData.daoDetails.tokenName} - 1 ${$daoData.tokenomics.initialRound.token}`}
+				placeholder={`e.g. 1 ${$daoData.daoDetails.tokenName} - 1 ${$daoData.tokenomics.initialRound.currency}`}
 				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
 				on:input={handleChange}
 			/>

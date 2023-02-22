@@ -14,6 +14,7 @@ pub struct Info {
   pub let tokenType: Type
   pub let currentFundingCycle: UInt64?
   pub let totalFunding: UFix64
+  pub let editDelay: UFix64
   pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
   pub let totalSupply: UFix64
@@ -26,6 +27,7 @@ pub struct Info {
     self.tokenType = info.projectTokenInfo.tokenType
     self.currentFundingCycle = info.getCurrentFundingCycleNum()
     self.totalFunding = info.totalFunding
+    self.editDelay = info.editDelay
     self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()
     self.totalSupply = ExampleFinancial.totalSupply
