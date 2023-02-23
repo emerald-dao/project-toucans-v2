@@ -221,6 +221,7 @@ export const getProjectInfo = async (contractName, contractAddress, owner, type,
 		});
 		return response;
 	} catch (e) {
+		console.log('Error in getProjectInfo')
 		console.log(e);
 	}
 };
@@ -235,6 +236,7 @@ export const getFinancialTokenBalance = async (contractName, contractAddress, us
 		})
 		return response;
 	} catch (e) {
+		console.log('Error in getFinancialTokenBalance')
 		console.log(e);
 		return '0.0';
 	}

@@ -38,7 +38,6 @@
 	};
 
 	onMount(() => {
-		console.log(nowString);
 		startDateInput.min = nowString;
 	});
 
@@ -49,7 +48,6 @@
 
 	$: if (endDateInput) {
 		endDateInput.min = $roundData.startDate;
-		console.log($roundData.startDate);
 	}
 	$: if (new Date($roundData.startDate) > new Date($roundData.endDate)) {
 		$roundData.endDate = new Date(

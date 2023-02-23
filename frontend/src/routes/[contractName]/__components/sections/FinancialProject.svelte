@@ -14,8 +14,6 @@
 
 	export let daoData: FinancialDao;
 
-	console.log(daoData);
-
 	const mainHoldersAmountMock = [100, 100, 100];
 	const mainHoldersNamesMock = ['mateo.find', 'jacob.find', 'dene.find'];
 

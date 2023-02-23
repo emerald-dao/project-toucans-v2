@@ -19,17 +19,12 @@ const createToken = async () => {
 	const data = get(daoData);
 
 	const action = async (res) => {
-		console.log('Response', res);
 
 		const [projectCreatedEvent] = res.events.filter((event) =>
 			event.type.includes('Toucans.ProjectCreated')
 		);
 		const cid = await client.storeBlob(data.daoDetails.logo[0]);
 		const logo = `https://nftstorage.link/ipfs/${cid}`;
-
-		console.log('Project Created Event', projectCreatedEvent);
-
-		console.log('datita', data);
 
 		const response = await fetch('/api/add', {
 			method: 'POST',
@@ -45,7 +40,6 @@ const createToken = async () => {
 		}).then(() => {
 			goto(`/${data.daoDetails.contractName}`);
 		});
-		console.log('Response', response);
 	};
 
 	deployContractExecution(data, action);

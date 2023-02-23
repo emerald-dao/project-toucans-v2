@@ -38,7 +38,7 @@ export const load: PageLoad = async ({ params }) => {
 		.from('events')
 		.select()
 		.eq('project_id', info.project_id);
-	const [eventsData] = actionData;
+	const [eventsData] = actionData || [];
 
 	return {
 		...info,
