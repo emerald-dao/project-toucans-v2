@@ -35,11 +35,5 @@ export async function POST({ request }: { request: RequestHandler }) {
 	});
 	console.log('Error adding new project', ProjectError);
 
-	const { error: EventsError } = await supabase.from('events').insert({
-		project_id: data.projectId
-	});
-
-	console.log('Error adding new project', EventsError);
-
-	return json({ ProjectError, EventsError });
+	return json({ ProjectError });
 }
