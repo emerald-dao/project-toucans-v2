@@ -58,7 +58,7 @@
 				<TabList>
 					<Tab>Main holders</Tab>
 					{#if fundingPerMonth}
-						<Tab>Fundrising history</Tab>
+						<Tab>Fundraising history</Tab>
 					{/if}
 				</TabList>
 				<TabPanel>

@@ -48,4 +48,5 @@ async function appendAction(projectId, eventData, type) {
       timestamp: Date.now() / 1000, // seconds
     },
   });
+  console.log('Result:', result);
 }
