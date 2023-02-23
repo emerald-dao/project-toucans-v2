@@ -53,6 +53,7 @@ export interface Dao {
 	actions: [PurchaseAction | FundingCycleAction];
 	totalSupply: string;
 	userBalance: string;
+	balances: {};
 }
 
 export interface FinancialDao extends Dao {

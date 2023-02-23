@@ -14,8 +14,8 @@
 
 	export let daoData: FinancialDao;
 
-	const mainHoldersAmountMock = Object.values(daoData.funders); // [100, 100, 100];
-	const mainHoldersNamesMock = Object.keys(daoData.funders); // ['mateo.find', 'jacob.find', 'dene.find'];
+	const mainHoldersAmountMock = Object.values(daoData.balances); // [100, 100, 100];
+	const mainHoldersNamesMock = Object.keys(daoData.balances); // ['mateo.find', 'jacob.find', 'dene.find'];
 
 	const currentFundingCycleData = daoData.currentFundingCycle
 		? getFundingCycleData(daoData, Number(daoData.currentFundingCycle))
