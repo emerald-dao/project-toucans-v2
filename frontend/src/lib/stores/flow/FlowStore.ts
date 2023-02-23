@@ -50,7 +50,8 @@ const contractData = {
 		mainnet: '0x233eb012d34b0070'
 	},
 	Toucans: {
-		emulator: '0xf8d6e0586b0a20c7'
+		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '0x47229acfcf393905'
 	}
 };
 
