@@ -38,10 +38,10 @@ export const load: LayoutLoad = async () => {
 						project.type,
 						project.project_id
 					)),
-					actions: eventsData?.actions.reverse(),
+					actions: eventsData?.actions.reverse() || [],
 					purchaseHistory: eventsData?.actions.filter(
 						(action: Action) => action.type === 'Purchase'
-					)
+					) || []
 				};
 			})
 		);
