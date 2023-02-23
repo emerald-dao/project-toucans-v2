@@ -6,6 +6,8 @@ import type { Action } from '$lib/types/actions/actions.type';
 import { get } from 'svelte/store';
 import { user } from '$stores/flow/FlowStore';
 
+export const ssr = false;
+
 export const load: PageLoad = async ({ params }) => {
 	// get project info
 	const { data: projectData } = await supabase
