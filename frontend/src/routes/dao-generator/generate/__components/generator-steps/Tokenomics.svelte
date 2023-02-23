@@ -36,7 +36,7 @@
 				name="targetAmount"
 				type="text"
 				min="1"
-				placeholder="e.g. 1.000.000"
+				placeholder="e.g. 1000000"
 				bind:value={$daoData.tokenomics.targetAmount}
 				on:input={handleChange}
 			/>
@@ -81,7 +81,7 @@
 			<input
 				type="text"
 				name="supply"
-				placeholder="e.g. 1.000.000"
+				placeholder="e.g. 1000000"
 				bind:value={$daoData.tokenomics.totalSupply}
 				on:input={handleChange}
 			/>
@@ -93,7 +93,7 @@
 				type="checkbox"
 				name="mint-tokens"
 				id="mint-tokens"
-				placeholder="e.g. 1.000.000"
+				placeholder="e.g. 1000000"
 				bind:checked={$daoData.tokenomics.mintTokens}
 			/>
 			<span class="slider" />
