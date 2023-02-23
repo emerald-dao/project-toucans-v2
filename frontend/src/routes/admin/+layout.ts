@@ -7,6 +7,8 @@ import { get } from 'svelte/store';
 import type { FinancialDao, CommunityDao } from '$lib/types/dao-project.interface';
 import type { Action } from '$lib/types/actions/actions.type';
 
+export let ssr = false;
+
 export const load: LayoutLoad = async () => {
 	const userObj = get(user);
 	console.log("user obj", userObj)
