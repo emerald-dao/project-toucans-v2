@@ -8,8 +8,10 @@ import type { FinancialDao, CommunityDao } from '$lib/types/dao-project.interfac
 import type { Action } from '$lib/types/actions/actions.type';
 
 export const load: LayoutLoad = async () => {
-	if (get(user)) {
-		const { data } = await supabase.from('projects').select().eq('owner', get(user)?.addr);
+	const userObj = get(user);
+	console.log("user obj", userObj)
+	if (userObj.loggedIn) {
+		const { data } = await supabase.from('projects').select().eq('owner', userObj.addr);
 
 		if (!data || !data.length) {
 			return {
