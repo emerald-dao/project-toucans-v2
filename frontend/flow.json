@@ -58,7 +58,8 @@
 			"key": "fc49a771829ff480841164af13b18a68cd697b6e79c80af7f8470a9e651dfac5"
 		},
 		"testnet-account": {
-			"fromFile": "testnet-account.private.json"
+			"address": "3ae53cb6e3f42a79",
+			"key": "12332967fd2bd75234ae9037dd4694c1f00baad63a10c35172bf65fbb8ad1111"
 		}
 	},
 	"deployments": {
@@ -73,9 +74,7 @@
 			]
 		},
 		"testnet": {
-			"testnet-account": [
-				"Toucans"
-			]
+			"testnet-account": ["Toucans"]
 		}
 	}
 }

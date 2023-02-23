@@ -39,7 +39,7 @@
 	</div>
 </div>
 <Modal>
-	<div class="column-4 align-end">
+	<div class="round-modal-wrapper">
 		<svelte:component
 			this={$newRoundSteps[$newRoundActiveStep].component}
 			tokenSymbol={activeDaoData.token_symbol}
@@ -71,5 +71,10 @@
 				width: 100%;
 			}
 		}
+	}
+
+	.round-modal-wrapper {
+		width: 500px;
+		height: 500px;
 	}
 </style>

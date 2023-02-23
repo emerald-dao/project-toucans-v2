@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly, fade } from 'svelte/transition';
 	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
 	import { roundData } from '$stores/rounds/RoundData';
 	import Icon from '@iconify/svelte';
@@ -6,6 +7,7 @@
 	import roundDistributionSuite from '$lib/validations/roundDistributionSuite';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import type { SvelteComponent } from 'svelte';
+	import StepTitle from '../atoms/StepTitle.svelte';
 
 	let distributionData: [string, number] = ['', 0];
 
@@ -55,67 +57,91 @@
 	}
 </script>
 
-<div class="main-wrapper">
-	<span>Distribution</span>
-	<div class="secondary-wrapper">
-		<div class="left-wrapper">
+<div class="main-wrapper" in:fade={{ duration: 300}}>
+	<div>
+		<StepTitle title="Round distribution" stepNumber={3}>
 			<p class="xsmall">
 				You can optionally set a percentage of this round to be distributed between different
 				wallets. Please add all the wallets you want to distribute to with their respective
 				percentage.
 			</p>
-			<form class="card-primary">
-				<InputWrapper
-					name="address"
-					label="Address"
-					isValid={res.isValid('address')}
-					errors={res.getErrors('address')}
-				>
-					<input
-						type="text"
-						id="address"
-						bind:value={distributionData[0]}
-						on:input={handleChange}
-					/>
-				</InputWrapper>
-				<div class="range-wrapper">
-					<label for="distribution-percentage">Percentage to distribute</label>
-					<Range
-						bind:value={distributionData[1]}
-						max={$roundData.distributionList[0][1]}
-						suffix="%"
-						id="distribution-percentage"
-						on:change={handleChange}
-					/>
-				</div>
-				<Button
-					width="full-width"
-					type="ghost"
-					color="neutral"
-					on:click={handleSubmit}
-					state={res.isValid() ? 'active' : 'disabled'}><Icon icon="tabler:plus" /> Add</Button
-				>
-			</form>
+		</StepTitle>
+		<div class="secondary-wrapper">
+			<div class="left-wrapper">
+				<form class="card-primary">
+					<InputWrapper
+						name="address"
+						label="Address"
+						isValid={res.isValid('address')}
+						errors={res.getErrors('address')}
+					>
+						<input
+							type="text"
+							id="address"
+							bind:value={distributionData[0]}
+							on:input={handleChange}
+						/>
+					</InputWrapper>
+					<div class="range-wrapper">
+						<label for="distribution-percentage">Percentage to distribute</label>
+						<Range
+							bind:value={distributionData[1]}
+							max={$roundData.distributionList[0][1]}
+							suffix="%"
+							id="distribution-percentage"
+							on:change={handleChange}
+						/>
+					</div>
+					<Button
+						width="full-width"
+						type="ghost"
+						color="neutral"
+						on:click={handleSubmit}
+						state={res.isValid() ? 'active' : 'disabled'}><Icon icon="tabler:plus" /> Add</Button
+					>
+				</form>
+			</div>
+			<div class="right-wrapper">
+				<PieChart
+					title="distribution"
+					chartData={distributionPercentages}
+					labels={distributionAddresses}
+					bind:this={chart}
+				/>
+				<div />
+			</div>
 		</div>
-		<div class="right-wrapper">
-			<PieChart
-				title="distribution"
-				chartData={distributionPercentages}
-				labels={distributionAddresses}
-				bind:this={chart}
-			/>
-			<div />
 		</div>
-	</div>
 	<div class="button-wrapper">
-		<Button on:click={newRoundActiveStep.increment} width="extended">Distribute</Button>
+		<Button
+			on:click={newRoundActiveStep.decrement}
+			type="transparent"
+			color="neutral"
+			size="small"
+		>
+			<Icon icon="tabler:arrow-left" />
+			Back
+		</Button>
+		<Button
+			size="large"
+			on:click={newRoundActiveStep.increment}
+			state={res.isValid() ? 'active' : 'disabled'}
+		>
+			Launch round
+		</Button>
 	</div>
 </div>
 
 <style type="scss">
 	.main-wrapper {
-		max-width: 800px;
-		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
+
+		p {
+			max-width: 60ch;
+		}
 
 		.secondary-wrapper {
 			display: grid;
@@ -145,15 +171,10 @@
 		}
 
 		.button-wrapper {
-			width: 100%;
+			min-width: 100%;
 			display: flex;
-			justify-content: flex-end;
+			justify-content: space-between;
 			margin-top: var(--space-3);
-		}
-
-		span {
-			color: var(--clr-heading-main);
-			margin-bottom: var(--space-2);
 		}
 	}
 </style>
