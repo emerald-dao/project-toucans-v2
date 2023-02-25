@@ -113,7 +113,7 @@
 		<div class="wrapper">
 			<DropZone
 				name="distribution-csv"
-				accept="text/csv"
+				accept={['text/csv']}
 				bind:bindValue={csvFile}
 				maxAmountOfFiles={1}
 			/>

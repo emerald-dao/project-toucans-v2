@@ -35,13 +35,18 @@
 	let tokenNamePending: boolean;
 	let tokenNamePendingMessage = ['Checking if token name already exists in Flow blockchain...'];
 	let contractNamePending: boolean;
-	let contractNamePendingMessage = ['Checking if contract name already exists in Flow blockchain...'];
+	let contractNamePendingMessage = [
+		'Checking if contract name already exists in Flow blockchain...'
+	];
 
 	let res = daoDetailsSuite.get();
 
-	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name.replace(/[^\w\s]|\s/gi, '').toLowerCase();
+	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name
+		.replace(/[^\w\s]|\s/gi, '')
+		.toLowerCase();
 
-	$: validForm = res.isValid() && $daoData.daoDetails.logo ? $daoData.daoDetails.logo.length > 0 : false;	
+	$: validForm =
+		res.isValid() && $daoData.daoDetails.logo ? $daoData.daoDetails.logo.length > 0 : false;
 </script>
 
 <form
@@ -77,7 +82,13 @@
 		isValid={res.isValid('contractName')}
 		required={true}
 	>
-		<input type="text" readonly name="contractName" placeholder="emeralddao" bind:value={$daoData.daoDetails.contractName} />
+		<input
+			type="text"
+			readonly
+			name="contractName"
+			placeholder="emeralddao"
+			bind:value={$daoData.daoDetails.contractName}
+		/>
 	</InputWrapper>
 
 	<InputWrapper
@@ -104,10 +115,10 @@
 	<div class="drop-zone-wrapper">
 		<label for="logo">Logo *</label>
 		<DropZone
-		name="logo"
-		accept="image/png"
-		maxAmountOfFiles={1}
-		bind:bindValue={$daoData.daoDetails.logo}
+			name="logo"
+			accept={['image/png']}
+			maxAmountOfFiles={1}
+			bind:bindValue={$daoData.daoDetails.logo}
 		/>
 	</div>
 
@@ -163,7 +174,7 @@
 		label="Discord invite"
 		icon="tabler:brand-discord"
 		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord') && $daoData.daoDetails.discord !==	'https://discord.gg/'}
+		isValid={res.isValid('discord') && $daoData.daoDetails.discord !== 'https://discord.gg/'}
 	>
 		<input
 			name="discord"
