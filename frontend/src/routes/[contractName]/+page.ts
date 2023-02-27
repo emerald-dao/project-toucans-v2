@@ -46,7 +46,7 @@ export const load: PageLoad = async ({ params }) => {
 		...info,
 		...projectInfo,
 		userBalance,
-		actions: eventsData.actions.reverse(),
-		purchaseHistory: eventsData.actions.filter((action: Action) => action.type === 'Purchase')
+		actions: !eventsData ? [] : eventsData.actions.reverse(),
+		purchaseHistory: !eventsData ? [] : eventsData.actions.filter((action: Action) => action.type === 'Purchase')
 	};
 };

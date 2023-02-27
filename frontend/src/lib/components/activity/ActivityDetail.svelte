@@ -20,7 +20,7 @@
 			<StatusCircle status="success" width="8px" />
 		{:else if action.type === 'Withdraw'}
 			<StatusCircle status="alert" width="8px" />
-		{:else if action.type === 'NewFundingCycle'}
+		{:else if action.type === 'NewFundingCycle' || action.type === 'ProjectCreated'}
 			<StatusCircle status="active" width="8px" />
 		{/if}
 		<div class="column info-wrapper">
@@ -35,7 +35,7 @@
 			<Label size="xx-small" color="alert" hasBorder={false}>
 				{action.type}
 			</Label>
-		{:else if action.type === 'NewFundingCycle'}
+		{:else if action.type === 'NewFundingCycle' || action.type === 'ProjectCreated'}
 			<Label size="xx-small" color="tertiary" hasBorder={false}>
 				{action.type}
 			</Label>
@@ -60,11 +60,19 @@
 				fontSize="0.85rem"
 			/>
 		{:else if action.type === 'NewFundingCycle'}
-			<div class="header-link" on:click={() => getModal(`funding-stats-activity-${i}`).open()} on:keydown>
+			<div
+				class="header-link"
+				on:click={() => getModal(`funding-stats-activity-${i}`).open()}
+				on:keydown
+			>
 				<Icon icon="tabler:eye" />
 			</div>
 			<Modal background="var(--clr-background-secondary)" id={`funding-stats-activity-${i}`}>
-				<FundingStats fundingCycleData={getFundingCycleData(daoData, action.cycleNum)} hasBorder={false} title="Funding round data" />
+				<FundingStats
+					fundingCycleData={getFundingCycleData(daoData, action.cycleNum)}
+					hasBorder={false}
+					title="Funding round data"
+				/>
 			</Modal>
 		{/if}
 	</div>

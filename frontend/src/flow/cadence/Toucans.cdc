@@ -541,6 +541,11 @@ pub contract Toucans {
       let projectId: UInt64 = project.uuid
       self.projects[projectId] <-! project
 
+      emit ProjectCreated(
+        projectId: projectId,
+        tokenType: projectTokenInfo.tokenType,
+        by: self.owner!.address
+      )
       emit NewFundingCycle(
         projectId: projectId, 
         tokenType: projectTokenInfo.tokenType,
@@ -551,11 +556,6 @@ pub contract Toucans {
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
         timeframe: timeframe
-      )
-      emit ProjectCreated(
-        projectId: projectId,
-        tokenType: projectTokenInfo.tokenType,
-        by: self.owner!.address
       )
     }
 

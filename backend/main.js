@@ -13,14 +13,19 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
 
-fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
+fcl.events(`${eventIdentifierPrefix}ProjectCreated`).subscribe((event) => {
   const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Purchase');
+  appendAction(projectId, rest, 'ProjectCreated');
 });
 
 fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
   const { tokenType, projectId, ...rest } = event;
   appendAction(projectId, rest, 'NewFundingCycle');
+});
+
+fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
+  const { tokenType, projectId, ...rest } = event;
+  appendAction(projectId, rest, 'Purchase');
 });
 
 fcl.events(`${eventIdentifierPrefix}Distribute`).subscribe((event) => {
@@ -48,5 +53,7 @@ async function appendAction(projectId, eventData, type) {
       timestamp: Date.now() / 1000, // seconds
     },
   });
-  console.log('Result:', result);
+  if (result.error) {
+    console.log('Result Error:', result);
+  }
 }

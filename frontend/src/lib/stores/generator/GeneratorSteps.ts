@@ -23,8 +23,10 @@ const createToken = async () => {
 		const [projectCreatedEvent] = res.events.filter((event) =>
 			event.type.includes('Toucans.ProjectCreated')
 		);
+		console.log('ProjectCreatedEvent', projectCreatedEvent);
 		const cid = await client.storeBlob(data.daoDetails.logo[0]);
 		const logo = `https://nftstorage.link/ipfs/${cid}`;
+		console.log('CID', cid);
 
 		const response = await fetch('/api/add', {
 			method: 'POST',
