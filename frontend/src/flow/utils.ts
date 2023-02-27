@@ -34,7 +34,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 
 export const executeTransaction = async (
 	transaction: () => Promise<any>,
-	actionAfterSucceed: () => Promise<any>
+	actionAfterSucceed?: () => Promise<any>
 ) => {
 	transactionStore.initTransaction();
 

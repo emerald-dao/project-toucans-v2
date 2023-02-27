@@ -14,8 +14,11 @@
 
 	let chart: ChartJS | undefined;
 
+	// get a random number to make chart unique
+	let random = Math.floor(Math.random() * 1000);
+
 	onMount(() => {
-		chart = ChartJS.getChart(`pie-chart-${hyphenateAndLowerCase(title)}`) as ChartJS;
+		chart = ChartJS.getChart(`pie-chart-${hyphenateAndLowerCase(title)}-${random}`) as ChartJS;
 		setPieChartColors(chart);
 	});
 
@@ -70,4 +73,4 @@
 	};
 </script>
 
-<Doughnut {data} {options} id={`pie-chart-${hyphenateAndLowerCase(title)}`} />
+<Doughnut {data} {options} id={`pie-chart-${hyphenateAndLowerCase(title)}-${random}`} />

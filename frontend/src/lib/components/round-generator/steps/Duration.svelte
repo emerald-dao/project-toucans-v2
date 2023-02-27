@@ -11,7 +11,7 @@
 	import StepTitle from '../atoms/StepTitle.svelte';
 
 	export let tokenSymbol: string;
-	export let projectId: string;
+	export let projectId: string | undefined;
 	export let editDelay: string;
 
 	// TODO: Consider edit delay with start time

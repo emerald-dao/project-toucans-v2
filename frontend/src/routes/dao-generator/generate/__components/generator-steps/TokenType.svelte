@@ -2,7 +2,7 @@
 	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
-	import { daoData } from '$stores/generator/DaoDataStore';
+	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import { TokenTypes } from '$lib/types/token-types.enum';
 </script>
@@ -16,7 +16,7 @@
 		type="radio"
 		id="financial"
 		name="tokenType"
-		bind:group={$daoData.tokenomics.tokenType}
+		bind:group={$daoGeneratorData.tokenomics.tokenType}
 		value={TokenTypes.FINANCIAL}
 	/>
 	<label for="financial">
@@ -37,7 +37,7 @@
 		type="radio"
 		id="community"
 		name="tokenType"
-		bind:group={$daoData.tokenomics.tokenType}
+		bind:group={$daoGeneratorData.tokenomics.tokenType}
 		value={TokenTypes.COMMUNITY}
 	/>
 	<label for="community">

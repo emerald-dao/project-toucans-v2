@@ -1,15 +1,16 @@
 <script type="ts">
 	import RecapElement from './atoms/RecapElement.svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
-	import { daoData } from '$stores/generator/DaoDataStore';
+	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
 	import { TokenTypes } from '$lib/types/token-types.enum';
 	import RecapCard from './atoms/RecapCard.svelte';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import { generatorActiveStep } from '$stores/generator/GeneratorSteps';
 
 	onMount(() => {
-		if ($daoData.daoDetails.logo) {
-			displayLogo($daoData.daoDetails.logo[0]);
+		if ($daoGeneratorData.daoDetails.logo) {
+			displayLogo($daoGeneratorData.daoDetails.logo[0]);
 		}
 	});
 
@@ -26,46 +27,46 @@
 </script>
 
 <div class="column-6" in:fly="{{ y: 30, duration: 400 }}">
-	<RecapCard title="DAO Details" stepNumber={0}>
+	<RecapCard title="DAO Details" onEdit={() => generatorActiveStep.goToStep(0)}>
 		<div class="row-5">
-			{#if $daoData.daoDetails.logo}
+			{#if $daoGeneratorData.daoDetails.logo}
 				<img bind:this={logoElement} class="logo" alt="Dao logo" />
 			{/if}
 			<div class="column">
-				<RecapElement title="Dao Name" data={$daoData.daoDetails.name} />
-				<RecapElement title="Token Name" data={$daoData.daoDetails.tokenName} />
+				<RecapElement title="Dao Name" data={$daoGeneratorData.daoDetails.name} />
+				<RecapElement title="Token Name" data={$daoGeneratorData.daoDetails.tokenName} />
 			</div>
 		</div>
-		<RecapElement title="Description" data={$daoData.daoDetails.description} />
-		{#if $daoData.daoDetails.website}
-			<RecapElement title="Website" data={$daoData.daoDetails.website} />
+		<RecapElement title="Description" data={$daoGeneratorData.daoDetails.description} />
+		{#if $daoGeneratorData.daoDetails.website}
+			<RecapElement title="Website" data={$daoGeneratorData.daoDetails.website} />
 		{/if}
-		{#if $daoData.daoDetails.twitter}
-			<RecapElement title="Twitter" data={$daoData.daoDetails.twitter} />
+		{#if $daoGeneratorData.daoDetails.twitter}
+			<RecapElement title="Twitter" data={$daoGeneratorData.daoDetails.twitter} />
 		{/if}
-		{#if $daoData.daoDetails.discord && $daoData.daoDetails.discord !== 'https://discord.gg/'}
-			<RecapElement title="Discord" data={$daoData.daoDetails.discord} />
+		{#if $daoGeneratorData.daoDetails.discord && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
+			<RecapElement title="Discord" data={$daoGeneratorData.daoDetails.discord} />
 		{/if}
 	</RecapCard>
-	<RecapCard title="Token" stepNumber={1}>
-		<RecapElement title="Token type" data={$daoData.tokenomics.tokenType} />
+	<RecapCard title="Token" onEdit={() => generatorActiveStep.goToStep(1)}>
+		<RecapElement title="Token type" data={$daoGeneratorData.tokenomics.tokenType} />
 	</RecapCard>
-	<RecapCard title="Tokenomics" stepNumber={2}>
-		{#if $daoData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-			<RecapElement title="Target amount" data={$daoData.tokenomics.targetAmount} />
+	<RecapCard title="Tokenomics" onEdit={() => generatorActiveStep.goToStep(2)}>
+		{#if $daoGeneratorData.tokenomics.tokenType === TokenTypes.FINANCIAL}
+			<RecapElement title="Target amount" data={$daoGeneratorData.tokenomics.targetAmount} />
 			<RecapElement
 				title="Issuance rate"
-				data={`${$daoData.tokenomics.initialRound.issuanceRate} ${$daoData.daoDetails.tokenName} = 1 ${$daoData.tokenomics.initialRound.token}`}
+				data={`${$daoGeneratorData.tokenomics.initialRound.issuanceRate} ${$daoGeneratorData.daoDetails.tokenName} = 1 ${$daoGeneratorData.tokenomics.initialRound.token}`}
 			/>
 			<RecapElement
 				title="Reserve rate"
-				data={$daoData.tokenomics.initialRound.reserveRate + '%'}
+				data={$daoGeneratorData.tokenomics.initialRound.reserveRate + '%'}
 			/>
-		{:else if $daoData.tokenomics.tokenType === TokenTypes.COMMUNITY}
-			<RecapElement title="Total supply" data={$daoData.tokenomics.totalSupply} />
+		{:else if $daoGeneratorData.tokenomics.tokenType === TokenTypes.COMMUNITY}
+			<RecapElement title="Total supply" data={$daoGeneratorData.tokenomics.totalSupply} />
 		{/if}
 		<div class="row-6">
-			<RecapElement title="Token minting" data={$daoData.tokenomics.mintTokens} />
+			<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
 		</div>
 	</RecapCard>
 </div>

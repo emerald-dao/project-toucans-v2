@@ -107,15 +107,10 @@
 		</div>
 	</form>
 	<div class="button-wrapper">
-		<Button
-			on:click={newRoundActiveStep.decrement}
-			type="transparent"
-			color="neutral"
-			size="small"
-		>
+		<a href="#" class="header-link row-2 align-center" on:click={newRoundActiveStep.decrement}>
 			<Icon icon="tabler:arrow-left" />
 			Back
-		</Button>
+		</a>
 		<Button
 			on:click={newRoundActiveStep.increment}
 			state={res.isValid() ? 'active' : 'disabled'}
@@ -203,6 +198,7 @@
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
+			align-items: center;
 			margin-top: var(--space-3);
 		}
 	}

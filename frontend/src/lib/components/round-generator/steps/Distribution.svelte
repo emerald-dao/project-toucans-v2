@@ -1,5 +1,5 @@
 <script type="ts">
-	import { fly, fade } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
 	import { roundData } from '$stores/rounds/RoundData';
 	import Icon from '@iconify/svelte';
@@ -113,15 +113,10 @@
 		</div>
 		</div>
 	<div class="button-wrapper">
-		<Button
-			on:click={newRoundActiveStep.decrement}
-			type="transparent"
-			color="neutral"
-			size="small"
-		>
+		<a href="#" class="header-link row-2 align-center" on:click={newRoundActiveStep.decrement}>
 			<Icon icon="tabler:arrow-left" />
 			Back
-		</Button>
+		</a>
 		<Button
 			size="large"
 			on:click={newRoundActiveStep.increment}
@@ -174,6 +169,7 @@
 			min-width: 100%;
 			display: flex;
 			justify-content: space-between;
+			align-items: center;
 			margin-top: var(--space-3);
 		}
 	}

@@ -7,6 +7,7 @@
 	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';
 	import { Modal, getModal } from '@emerald-dao/component-library';
 	import type { Writable } from 'svelte/store';
+	import RoundGeneratorModal from '$components/round-generator/RoundGeneratorModal.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -29,25 +30,9 @@
 		{/if}
 	</div>
 	<div class="create-round-wrapper">
-		<Button
-			on:click={() => {
-				getModal().open();
-				newRoundActiveStep.goToStep(0);
-			}}
-			width="extended"><Icon icon="tabler:plus" />Create Round</Button
-		>
+		<RoundGeneratorModal daoData={activeDaoData} />
 	</div>
 </div>
-<Modal>
-	<div class="round-modal-wrapper">
-		<svelte:component
-			this={$newRoundSteps[$newRoundActiveStep].component}
-			tokenSymbol={activeDaoData.token_symbol}
-			projectId={activeDaoData.project_id}
-			editDelay={activeDaoData.editDelay}
-		/>
-	</div>
-</Modal>
 
 <style type="scss">
 	.card {
@@ -71,10 +56,5 @@
 				width: 100%;
 			}
 		}
-	}
-
-	.round-modal-wrapper {
-		width: 500px;
-		height: 500px;
 	}
 </style>
