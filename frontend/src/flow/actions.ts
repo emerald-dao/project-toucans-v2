@@ -167,7 +167,7 @@ export const getProjectInfo = async (contractName: string, contractAddress: stri
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
-			args = (arg, t) => [arg(owner, t.Address), arg(projectId, t.UInt64)]
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.UInt64)]
 		});
 		return response;
 	} catch (e) {
