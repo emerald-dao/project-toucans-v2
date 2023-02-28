@@ -1,7 +1,7 @@
-import FungibleToken from "../../utility/FungibleToken.cdc"
-import FUSD from "../../utility/FUSD.cdc"
-import FlowToken from "../../utility/FlowToken.cdc"
-import Toucans from "../../Toucans.cdc"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import FUSD from "../utility/FUSD.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import Toucans from "../Toucans.cdc"
 
 transaction(
   contractName: String,
@@ -16,7 +16,11 @@ transaction(
   ptContractAddress: Address,
   ptReceiverPath: PublicPath,
   ptPublicPath: PublicPath,
-  ptStoragePath: StoragePath
+  ptStoragePath: StoragePath,
+  // DAO TREASURY
+  signers: [Address],
+  threshold: UInt64,
+  minting: Bool
 ) {
 
   prepare(deployer: AuthAccount) {
@@ -45,6 +49,9 @@ transaction(
       _timeframe: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
       _payouts: payoutsArray,
       _editDelay: editDelay,
+      _signers: signers,
+      _threshold: threshold,
+      _minting: minting,
       _extra: extra
     )
   }

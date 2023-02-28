@@ -13,13 +13,15 @@ pub contract ToucansTreasuryActions {
 
     pub fun execute(_ params: {String: AnyStruct}) {
       let treasuryRef: &Toucans.Project = params["treasury"]! as! &Toucans.Project
+      let vault: &{FungibleToken.Receiver} = self.recipientVault.borrow() ?? panic("Invalid recipient capability.")
 
-      let vaultRef: &FungibleToken.Vault = treasuryRef.borrowVault(type: self.recipientVault.borrow()!.getType())!
-      let withdrawnTokens <- vaultRef.withdraw(amount: self.amount)
-      self.recipientVault.borrow()!.deposit(from: <- withdrawnTokens)
+      treasuryRef.withdrawFromTreasury(vault: vault, amount: self.amount)
     }
 
     init(_recipientVault: Capability<&{FungibleToken.Receiver}>, _amount: UFix64) {
+      pre {
+        _recipientVault.check(): "Invalid recipient capability."
+      }
       self.intent = "Withdraw "
                         .concat(_amount.toString())
                         .concat(" ")
@@ -97,8 +99,12 @@ pub contract ToucansTreasuryActions {
     }
 
     init(_cap: Capability<&FungibleToken.Vault>) {
+      pre {
+        _cap.check(): "check"
+      }
       self.intent = "Testing"
       self.cap = _cap
     }
   }
 }
+ 

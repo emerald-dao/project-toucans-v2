@@ -1,10 +1,6 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import ToucansMultiSign from "./ToucansMultiSign.cdc"
 
-// TODO
-// 1. Add Distribute option and figure out minting
-// 2. Figure out Withdraw event
-
 pub contract Toucans {
 
   pub let CollectionStoragePath: StoragePath
@@ -405,8 +401,16 @@ pub contract Toucans {
       return &self.multiSignManager as &ToucansMultiSign.Manager
     }
 
-    access(account) fun borrowVault(type: Type): &FungibleToken.Vault? {
-      return &self.treasury[type] as &FungibleToken.Vault?
+    access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
+      emit Withdraw(
+        projectId: self.projectId, 
+        tokenType: self.projectTokenInfo.tokenType,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleNum(),
+        amount: amount,
+        by: vault.owner!.address
+      )
+      vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
     }
 
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address) {

@@ -77,7 +77,9 @@ const deployContract = async (data) => {
 			arg({ domain: "public", identifier: "flowTokenReceiver" }, t.Path),
 			arg({ domain: "public", identifier: "flowTokenBalance" }, t.Path),
 			arg({ domain: "storage", identifier: "flowTokenVault" }, t.Path),
-
+			arg([], t.Array(t.Address)),
+			arg('0', t.UInt64),
+			arg(false, t.Bool)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

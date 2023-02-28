@@ -1,27 +1,27 @@
-import FungibleToken from "../../utility/FungibleToken.cdc"
-import FlowToken from "../../utility/FlowToken.cdc"
-import Toucans from "../../Toucans.cdc"
-import ExampleFinancial from "../../ExampleFinancial.cdc"
-import MetadataViews from "../../utility/MetadataViews.cdc"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import Toucans from "../Toucans.cdc"
+import ExampleToken from "../ExampleToken.cdc"
+import MetadataViews from "../utility/MetadataViews.cdc"
 
 transaction(projectOwner: Address, projectId: UInt64, amount: UFix64, message: String) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let Payment: @FlowToken.Vault
-  let ProjectTokenReceiver: &ExampleFinancial.Vault{FungibleToken.Receiver}
+  let ProjectTokenReceiver: &ExampleToken.Vault{FungibleToken.Receiver}
 
   prepare(user: AuthAccount) {
     // Setup User Account
-    if user.borrow<&ExampleFinancial.Vault>(from: ExampleFinancial.VaultStoragePath) == nil {
-      user.save(<- ExampleFinancial.createEmptyVault(), to: ExampleFinancial.VaultStoragePath)
-      user.link<&ExampleFinancial.Vault{FungibleToken.Receiver}>(
-          ExampleFinancial.ReceiverPublicPath,
-          target: ExampleFinancial.VaultStoragePath
+    if user.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) == nil {
+      user.save(<- ExampleToken.createEmptyVault(), to: ExampleToken.VaultStoragePath)
+      user.link<&ExampleToken.Vault{FungibleToken.Receiver}>(
+          ExampleToken.ReceiverPublicPath,
+          target: ExampleToken.VaultStoragePath
       )
 
-      user.link<&ExampleFinancial.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
-          ExampleFinancial.VaultPublicPath,
-          target: ExampleFinancial.VaultStoragePath
+      user.link<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
+          ExampleToken.VaultPublicPath,
+          target: ExampleToken.VaultStoragePath
       )
     }
 
@@ -33,8 +33,8 @@ transaction(projectOwner: Address, projectId: UInt64, amount: UFix64, message: S
     
     self.Payment <- user.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
     
-    self.ProjectTokenReceiver = user.getCapability(ExampleFinancial.ReceiverPublicPath)
-                  .borrow<&ExampleFinancial.Vault{FungibleToken.Receiver}>()!
+    self.ProjectTokenReceiver = user.getCapability(ExampleToken.ReceiverPublicPath)
+                  .borrow<&ExampleToken.Vault{FungibleToken.Receiver}>()!
   }
 
   execute {
