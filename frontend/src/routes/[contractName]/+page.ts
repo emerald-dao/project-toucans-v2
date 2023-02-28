@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
-import { getFinancialTokenBalance, getProjectInfo } from '$flow/actions.js';
+import { getFinancialTokenBalance, getProjectInfo } from '$flow/actions';
 import '$flow/config.js';
 import type { Action } from '$lib/types/actions/actions.type';
 import { get } from 'svelte/store';

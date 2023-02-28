@@ -1,6 +1,6 @@
 import type { LayoutLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
-import { getProjectInfo } from '$flow/actions.js';
+import { getProjectInfo } from '$flow/actions';
 import '$flow/config.js';
 import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';

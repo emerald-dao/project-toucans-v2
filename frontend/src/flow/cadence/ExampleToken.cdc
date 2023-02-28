@@ -3,7 +3,7 @@ import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc
 import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
  
-pub contract ExampleFinancial: FungibleToken {
+pub contract ExampleToken: FungibleToken {
 
     // The amount of tokens in existance
     pub var totalSupply: UFix64
@@ -28,7 +28,7 @@ pub contract ExampleFinancial: FungibleToken {
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
             if let owner: Address = self.owner?.address {
-                ExampleFinancial.balances[owner] = (ExampleFinancial.balances[owner] ?? amount) - amount
+                ExampleToken.balances[owner] = (ExampleToken.balances[owner] ?? amount) - amount
             }
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
@@ -38,7 +38,7 @@ pub contract ExampleFinancial: FungibleToken {
         pub fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @Vault
             if let owner: Address = self.owner?.address {
-                ExampleFinancial.balances[owner] = (ExampleFinancial.balances[owner] ?? 0.0) + vault.balance
+                ExampleToken.balances[owner] = (ExampleToken.balances[owner] ?? 0.0) + vault.balance
             }
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
@@ -54,8 +54,8 @@ pub contract ExampleFinancial: FungibleToken {
             let recipientAddr = recipient.owner!.address
             self.balance = self.balance - amount
             emit TokensTransferred(amount: amount, from: owner, to: recipientAddr)
-            ExampleFinancial.balances[owner] = (ExampleFinancial.balances[owner] ?? amount) - amount
-            ExampleFinancial.balances[recipientAddr] = (ExampleFinancial.balances[recipientAddr] ?? 0.0) + amount
+            ExampleToken.balances[owner] = (ExampleToken.balances[owner] ?? amount) - amount
+            ExampleToken.balances[recipientAddr] = (ExampleToken.balances[recipientAddr] ?? 0.0) + amount
             recipient.deposit(from: <- create Vault(balance: amount))
         }
 
@@ -93,15 +93,15 @@ pub contract ExampleFinancial: FungibleToken {
                     )
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
                     return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: ExampleFinancial.VaultStoragePath,
-                        receiverPath: ExampleFinancial.ReceiverPublicPath,
-                        metadataPath: ExampleFinancial.VaultPublicPath,
+                        storagePath: ExampleToken.VaultStoragePath,
+                        receiverPath: ExampleToken.ReceiverPublicPath,
+                        metadataPath: ExampleToken.VaultPublicPath,
                         providerPath: /private/ExampleFinancialVault,
                         receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
                         metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
                         providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
                         createEmptyVaultFunction: (fun (): @Vault {
-                            return <- ExampleFinancial.createEmptyVault()
+                            return <- ExampleToken.createEmptyVault()
                         })
                     )
             }
@@ -113,7 +113,7 @@ pub contract ExampleFinancial: FungibleToken {
         }
 
         destroy() {
-            ExampleFinancial.totalSupply = ExampleFinancial.totalSupply - self.balance
+            ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
             emit TokensBurned(amount: self.balance)
         }
     }
@@ -128,7 +128,7 @@ pub contract ExampleFinancial: FungibleToken {
 
     pub resource Minter: Toucans.Minter {
         pub fun mint(amount: UFix64): @Vault {
-            ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
+            ExampleToken.totalSupply = ExampleToken.totalSupply + amount
             emit TokensMinted(amount: amount)
             return <- create Vault(balance: amount)
         }
@@ -142,6 +142,9 @@ pub contract ExampleFinancial: FungibleToken {
       _timeframe: Toucans.CycleTimeFrame,
       _payouts: [Toucans.Payout],
       _editDelay: UFix64,
+      _signers: [Address],
+      _threshold: UInt64,
+      _minting: Bool,
       _extra: {String: String}
     ) {
 
@@ -185,8 +188,13 @@ pub contract ExampleFinancial: FungibleToken {
         timeframe: _timeframe, 
         payouts: _payouts, 
         editDelay: _editDelay, 
+        signers: _signers,
+        threshold: _threshold,
+        minting: _minting,
         extra: _extra
-    )
+      )
+
+      // INSERT MINTING HERE
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)

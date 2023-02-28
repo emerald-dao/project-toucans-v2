@@ -18,7 +18,7 @@
 	<div class="row-3 align-center">
 		{#if action.type === 'Purchase' || action.type === 'Donate'}
 			<StatusCircle status="success" width="8px" />
-		{:else if action.type === 'Withdraw'}
+		{:else if action.type === 'Withdraw' || action.type === 'Distribute'}
 			<StatusCircle status="alert" width="8px" />
 		{:else if action.type === 'NewFundingCycle' || action.type === 'ProjectCreated'}
 			<StatusCircle status="active" width="8px" />
@@ -31,7 +31,7 @@
 			<Label size="xx-small" color="primary" hasBorder={false}>
 				{action.type}
 			</Label>
-		{:else if action.type === 'Withdraw'}
+		{:else if action.type === 'Withdraw' || action.type === 'Distribute'}
 			<Label size="xx-small" color="alert" hasBorder={false}>
 				{action.type}
 			</Label>
@@ -52,9 +52,11 @@
 			</Modal>
 		{/if}
 
-		{#if action.type === 'Purchase' || action.type === 'Donate' || action.type === 'Withdraw'}
+		{#if action.type === 'Purchase' || action.type === 'Donate' || action.type === 'Withdraw' || action.type === 'Distribute'}
 			<Currency
-				amount={action.type === 'Withdraw' ? -Number(action.amount) : Number(action.amount)}
+				amount={action.type === 'Withdraw' || action.type === 'Distribute'
+					? -Number(action.amount)
+					: Number(action.amount)}
 				currency="FLOW"
 				color="heading"
 				fontSize="0.85rem"
