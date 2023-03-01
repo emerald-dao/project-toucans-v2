@@ -8,8 +8,7 @@ transaction(
     startTime: UFix64,
     endTime: UFix64?,
     payoutAddresses: [Address], 
-    payoutAmounts: [UFix64], 
-    extra: {String: String}
+    payoutAmounts: [UFix64]
 ) {
 
   let Project: &Toucans.Project
@@ -25,6 +24,7 @@ transaction(
   }
 
   execute {
+    let extra: {String: AnyStruct} = {}
     let timeframe = Toucans.CycleTimeFrame(startTime, endTime)
     let payouts: [Toucans.Payout] = []
     for i, payoutAddress in payoutAddresses {

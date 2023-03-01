@@ -78,10 +78,6 @@ const deployContract = async (data) => {
 		cadence: replaceWithProperValues(deployExampleTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
-			arg(formatFix(data.tokenomics.targetAmount), t.UFix64),
-			arg(formatFix(data.tokenomics.initialRound.issuanceRate), t.UFix64),
-			arg(formatFix(data.tokenomics.initialRound.reserveRate / 100.0), t.UFix64),
-			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
 			arg(formatFix(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String),
 			arg(paymentCurrencyInfo.contractName, t.String),
@@ -147,8 +143,7 @@ const newRound = async () => {
 			arg(startTime, t.UFix64),
 			arg(endTime, t.Optional(t.UFix64)),
 			arg(distributionAddresses, t.Array(t.Address)),
-			arg(distributionPercentages, t.Array(t.UFix64)),
-			arg([], t.Dictionary({ key: t.String, value: t.String }))
+			arg(distributionPercentages, t.Array(t.UFix64))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

@@ -136,16 +136,11 @@ pub contract ExampleToken: FungibleToken {
 
     init(
       _paymentTokenInfo: Toucans.TokenInfo,
-      _fundingTarget: UFix64,
-      _issuanceRate: UFix64,
-      _reserveRate: UFix64,
-      _timeframe: Toucans.CycleTimeFrame,
-      _payouts: [Toucans.Payout],
       _editDelay: UFix64,
       _signers: [Address],
       _threshold: UInt64,
       _minting: Bool,
-      _extra: {String: String}
+      _extra: {String: AnyStruct}
     ) {
 
       // Contract Variables
@@ -182,11 +177,6 @@ pub contract ExampleToken: FungibleToken {
         projectTokenInfo: Toucans.TokenInfo("ExampleToken", self.account.address, self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 
         minter: <- create Minter(), 
-        fundingTarget: _fundingTarget, 
-        issuanceRate: _issuanceRate, 
-        reserveRate: _reserveRate, 
-        timeframe: _timeframe, 
-        payouts: _payouts, 
         editDelay: _editDelay, 
         signers: _signers,
         threshold: _threshold,

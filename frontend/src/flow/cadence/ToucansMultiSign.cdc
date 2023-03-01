@@ -236,6 +236,9 @@ pub contract ToucansMultiSign {
         }
 
         pub fun updateThreshold(newThreshold: UInt64) {
+            pre {
+                Int(newThreshold) <= self.signers.length: "Threshold cannot be bigger than the amount of signers."
+            }
             self.threshold = newThreshold
         }
 
@@ -260,6 +263,9 @@ pub contract ToucansMultiSign {
         }
 
         init(_initialSigners: [Address], _initialThreshold: UInt64) {
+            pre {
+                Int(_initialThreshold) <= _initialSigners.length: "Threshold cannot be bigger than the amount of signers."
+            }
             self.signers = {}
             self.actions <- {}
             self.threshold = _initialThreshold
