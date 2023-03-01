@@ -1,10 +1,11 @@
 import ToucansTreasuryActions from "../../ToucansTreasuryActions.cdc"
 import Toucans from "../../Toucans.cdc"
 import FungibleToken from "../../utility/FungibleToken.cdc"
+import FlowToken from "../../utility/FlowToken.cdc"
 
 // An example of proposing an action.
 //
-// Proposed ACTION: Withdraw `amount` `paymentTokenType` from the treasury
+// Proposed ACTION: Withdraw `amount` `Flow Token` from the treasury
 // at `projectOwner` to `recipientAddr`
 
 transaction(projectOwner: Address, projectId: UInt64, recipientAddr: Address, amount: UFix64) {
@@ -17,8 +18,8 @@ transaction(projectOwner: Address, projectId: UInt64, recipientAddr: Address, am
                     .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
-    let paymentTokenType = self.Project.paymentTokenInfo
-    self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(paymentTokenType.publicPath)
+    self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+    assert(self.RecipientVault.getType() == Type<&FlowToken.Vault>(), message: "This is not an FlowToken Vault.")
   }
 
   execute {

@@ -9,6 +9,9 @@ import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
+import proposePaymentTokenWithdrawTx from './cadence/transactions/propose_payment_token_withdraw.cdc?raw';
+import proposeFUSDWithdrawTx from './cadence/transactions/propose_fusd_withdraw.cdc?raw';
+import proposeFlowTokenWithdrawTx from './cadence/transactions/propose_flow_token_withdraw.cdc?raw';
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import { get } from 'svelte/store';
@@ -142,6 +145,26 @@ const newRound = async () => {
 };
 
 export const newRoundExecution = () => executeTransaction(newRound);
+
+// TODO: IMPLEMENT FOR FLOW TOKEN AND FUSD
+const proposeWithdraw = async (projectOwner: string, projectId: string, recipient: string, amount: string) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(proposePaymentTokenWithdrawTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.UInt64),
+			arg(recipient, t.Address),
+			arg(amount, t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const proposeWithdrawExecution = (projectOwner: string, projectId: string, recipient: string, amount: string) =>
+	executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
 
 // const tranferTokens = async () => {
 // 	const amount = "10.0";
