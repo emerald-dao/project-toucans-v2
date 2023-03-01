@@ -6,7 +6,7 @@ import { writable, type Writable } from 'svelte/store';
 import { TokenTypes } from '$lib/types/token-types.enum';
 import { Currencies } from '$lib/types/currencies.enum';
 
-export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGeneratorData> = writable({
+export const emptyDaoGeneratorData = {
 	daoDetails: {
 		name: '',
 		tokenName: '',
@@ -21,7 +21,6 @@ export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGenerator
 		tokenType: TokenTypes.FINANCIAL,
 		paymentCurrency: Currencies.FLOW,
 		totalSupply: undefined,
-		targetAmount: undefined,
 		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: [],
@@ -32,7 +31,13 @@ export const daoData: Writable<CommunityDaoGeneratorData | FinancialDaoGenerator
 			startDate: '',
 			endDate: '',
 			infiniteDuration: false,
-			infiniteFundingGoal: false
+			infiniteFundingGoal: false,
+			fundingGoal: undefined
 		}
 	}
-});
+};
+
+export const daoGeneratorData: Writable<CommunityDaoGeneratorData | FinancialDaoGeneratorData> =
+	writable(emptyDaoGeneratorData) as Writable<
+		CommunityDaoGeneratorData | FinancialDaoGeneratorData
+	>;

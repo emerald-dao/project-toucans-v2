@@ -22,8 +22,8 @@ import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
-import { roundData } from '$stores/rounds/RoundData';
 import { currencies } from '$stores/flow/TokenStore';
+import { roundData } from '$components/round-generator/stores/RoundData';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -127,12 +127,16 @@ export const fundProjectExecution = () => executeTransaction(fundProject);
 
 const newRound = async () => {
 	const newRoundData = get(roundData);
-	console.log(newRoundData)
+	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	const startTime = formatFix(Math.floor(new Date(newRoundData.startDate).getTime() / 1000));
-	const endTime = newRoundData.infiniteDuration ? null : formatFix(Math.floor(new Date(newRoundData.endDate).getTime() / 1000));
+	const endTime = newRoundData.infiniteDuration
+		? null
+		: formatFix(Math.floor(new Date(newRoundData.endDate).getTime() / 1000));
 	const [, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
-	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) => formatFix(x[1] / 100));
+	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
+		formatFix(x[1] / 100)
+	);
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(newRoundTx),
 		args: (arg, t) => [
@@ -204,7 +208,7 @@ export const getProjectInfo = async (contractName: string, contractAddress: stri
 		});
 		return response;
 	} catch (e) {
-		console.log('Error in getProjectInfo')
+		console.log('Error in getProjectInfo');
 		console.log(e);
 	}
 };
@@ -219,8 +223,8 @@ export const getFinancialTokenBalance = async (contractName: string, contractAdd
 		})
 		return response;
 	} catch (e) {
-		console.log('Error in getFinancialTokenBalance')
+		console.log('Error in getFinancialTokenBalance');
 		console.log(e);
 		return '0.0';
 	}
-}
+};

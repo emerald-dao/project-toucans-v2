@@ -1,6 +1,6 @@
 <script type="ts">
 	import { InputWrapper, DropZone } from '@emerald-dao/component-library';
-	import { daoData } from '$stores/generator/DaoDataStore';
+	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
 	import { page } from '$app/stores';
@@ -16,11 +16,11 @@
 		}
 
 		if (target.name === 'tokenName') {
-			$daoData.daoDetails.tokenName = $daoData.daoDetails.tokenName.toUpperCase();
+			$daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName.toUpperCase();
 			tokenNamePending = true;
 		}
 
-		res = daoDetailsSuite($daoData.daoDetails, target.name, $page.data.data.body);
+		res = daoDetailsSuite($daoGeneratorData.daoDetails, target.name, $page.data.data.body);
 
 		res.done((result) => {
 			res = result;
@@ -41,12 +41,12 @@
 
 	let res = daoDetailsSuite.get();
 
-	$: $daoData.daoDetails.contractName = $daoData.daoDetails.name
+	$: $daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
 		.replace(/[^\w\s]|\s/gi, '')
 		.toLowerCase();
 
 	$: validForm =
-		res.isValid() && $daoData.daoDetails.logo ? $daoData.daoDetails.logo.length > 0 : false;
+		res.isValid() && $daoGeneratorData.daoDetails.logo ? $daoGeneratorData.daoDetails.logo.length > 0 : false;
 </script>
 
 <form
@@ -68,7 +68,7 @@
 			type="text"
 			placeholder="Emerald DAO"
 			maxlength="30"
-			bind:value={$daoData.daoDetails.name}
+			bind:value={$daoGeneratorData.daoDetails.name}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
@@ -87,7 +87,7 @@
 			readonly
 			name="contractName"
 			placeholder="emeralddao"
-			bind:value={$daoData.daoDetails.contractName}
+			bind:value={$daoGeneratorData.daoDetails.contractName}
 		/>
 	</InputWrapper>
 
@@ -107,7 +107,7 @@
 			type="text"
 			placeholder="EMLD"
 			maxlength="5"
-			bind:value={$daoData.daoDetails.tokenName}
+			bind:value={$daoGeneratorData.daoDetails.tokenName}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
@@ -116,9 +116,9 @@
 		<label for="logo">Logo *</label>
 		<DropZone
 			name="logo"
-			accept={['image/png']}
+			accept={['image/png', 'image/jpeg', 'image/jpg']}
 			maxAmountOfFiles={1}
-			bind:bindValue={$daoData.daoDetails.logo}
+			bind:bindValue={$daoGeneratorData.daoDetails.logo}
 		/>
 	</div>
 
@@ -132,7 +132,7 @@
 		<textarea
 			name="description"
 			placeholder="A DAO for the people"
-			bind:value={$daoData.daoDetails.description}
+			bind:value={$daoGeneratorData.daoDetails.description}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
@@ -142,13 +142,13 @@
 		label="Website"
 		icon="tabler:world"
 		errors={res.getErrors('website')}
-		isValid={res.isValid('website') && $daoData.daoDetails.website.length > 0}
+		isValid={res.isValid('website') && $daoGeneratorData.daoDetails.website.length > 0}
 	>
 		<input
 			name="website"
 			type="text"
 			placeholder="alphadao.com"
-			bind:value={$daoData.daoDetails.website}
+			bind:value={$daoGeneratorData.daoDetails.website}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
@@ -158,13 +158,13 @@
 		label="Twitter"
 		icon="tabler:brand-twitter"
 		errors={res.getErrors('twitter')}
-		isValid={res.isValid('twitter') && $daoData.daoDetails.twitter.length > 0}
+		isValid={res.isValid('twitter') && $daoGeneratorData.daoDetails.twitter.length > 0}
 	>
 		<input
 			name="twitter"
 			type="text"
 			placeholder="@emerald_dao"
-			bind:value={$daoData.daoDetails.twitter}
+			bind:value={$daoGeneratorData.daoDetails.twitter}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
@@ -174,13 +174,13 @@
 		label="Discord invite"
 		icon="tabler:brand-discord"
 		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord') && $daoData.daoDetails.discord !== 'https://discord.gg/'}
+		isValid={res.isValid('discord') && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
 	>
 		<input
 			name="discord"
 			type="text"
 			placeholder="https://discord.gg/emeraldcity"
-			bind:value={$daoData.daoDetails.discord}
+			bind:value={$daoGeneratorData.daoDetails.discord}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
