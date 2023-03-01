@@ -7,8 +7,17 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 	return (
 		script
 			// For Tx/Scripts
-			.replace('"../../ExampleFinancial.cdc"', contractAddress)
-			.replace('"../../ExampleCommunity.cdc"', contractAddress)
+			.replace('"../ExampleToken.cdc"', contractAddress)
+			.replace('"../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
+			.replace('"../utility/MetadataViews.cdc"', addresses.MetadataViews)
+			.replace('"../utility/FlowToken.cdc"', addresses.FlowToken)
+			.replace('"../utility/FUSD.cdc"', addresses.FUSD)
+			.replace('"../utility/FungibleToken.cdc"', addresses.FungibleToken)
+			.replace('"../utility/FLOAT.cdc"', addresses.FLOAT)
+			.replace('"../Toucans.cdc"', addresses.Toucans)
+			.replace('"../ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"../ToucansMultiSign.cdc"', addresses.Toucans)
+			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
 			.replace('"../../utility/MetadataViews.cdc"', addresses.MetadataViews)
@@ -17,6 +26,8 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"../../utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"../../utility/FLOAT.cdc"', addresses.FLOAT)
 			.replace('"../../Toucans.cdc"', addresses.Toucans)
+			.replace('"../../ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"../../ToucansMultiSign.cdc"', addresses.Toucans)
 			// For Contract
 			.replace('"./utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
 			.replace('"./utility/MetadataViews.cdc"', addresses.MetadataViews)
@@ -25,9 +36,9 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"./utility/FlowToken.cdc"', addresses.FlowToken)
 			.replace('"./utility/FUSD.cdc"', addresses.FUSD)
 			.replace('"./Toucans.cdc"', addresses.Toucans)
+			.replace('"./ToucansMultiSign.cdc"', addresses.Toucans)
+			.replace('"./ToucansTreasuryActions.cdc"', addresses.Toucans)
 			// For All
-			.replaceAll('ExampleFinancial', contractName)
-			.replaceAll('ExampleCommunity', contractName)
 			.replaceAll('ExampleToken', contractName)
 	);
 }
@@ -55,6 +66,7 @@ export const executeTransaction = async (
 		});
 	} catch (e) {
 		transactionStore.resetTransaction();
+		console.log(e);
 		throw e;
 	}
 };

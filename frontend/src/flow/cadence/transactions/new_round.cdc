@@ -1,4 +1,4 @@
-import Toucans from "../../Toucans.cdc"
+import Toucans from "../Toucans.cdc"
 
 transaction(
     projectId: UInt64,

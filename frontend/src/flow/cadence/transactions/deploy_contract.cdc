@@ -1,7 +1,7 @@
-import FungibleToken from "../../utility/FungibleToken.cdc"
-import FUSD from "../../utility/FUSD.cdc"
-import FlowToken from "../../utility/FlowToken.cdc"
-import Toucans from "../../Toucans.cdc"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import FUSD from "../utility/FUSD.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import Toucans from "../Toucans.cdc"
 
 transaction(
   contractName: String,
@@ -16,7 +16,11 @@ transaction(
   ptContractAddress: Address,
   ptReceiverPath: PublicPath,
   ptPublicPath: PublicPath,
-  ptStoragePath: StoragePath
+  ptStoragePath: StoragePath,
+  // DAO TREASURY
+  signers: [Address],
+  threshold: UInt64,
+  minting: Bool
 ) {
 
   prepare(deployer: AuthAccount) {
@@ -29,10 +33,19 @@ transaction(
       deployer.link<&FUSD.Vault{FungibleToken.Balance}>(/public/fusdBalance, target: /storage/fusdVault)
     }
 
+    // Blank empty for now
     let extra: {String: String} = {}
+
+    // Configure payouts
     let payoutsArray: [Toucans.Payout] = []
     for payoutAddr in payouts.keys {
       payoutsArray.append(Toucans.Payout(address: payoutAddr, percent: payouts[payoutAddr]!))
+    }
+
+    // Make sure the initial signers includes the deployer
+    var initialSigners: [Address] = signers
+    if initialSigners.contains(deployer.address) {
+      initialSigners.append(deployer.address)
     }
 
     deployer.contracts.add(
@@ -45,6 +58,9 @@ transaction(
       _timeframe: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
       _payouts: payoutsArray,
       _editDelay: editDelay,
+      _signers: initialSigners,
+      _threshold: threshold,
+      _minting: minting,
       _extra: extra
     )
   }

@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { network } from '$flow/config.js';
 import type { FlowUser } from '$lib/types/flow/user.interface';
+import { env } from '$env/dynamic/public';
 
 const contractData = {
 	NonFungibleToken: {
@@ -51,7 +52,7 @@ const contractData = {
 	},
 	Toucans: {
 		emulator: '0xf8d6e0586b0a20c7',
-		testnet: '0x47229acfcf393905'
+		testnet: env.PUBLIC_TOUCANS_CONTRACT_ADDRESS
 	}
 };
 

@@ -1,5 +1,6 @@
-import ExampleFinancial from "../../ExampleFinancial.cdc"
-import Toucans from "../../Toucans.cdc"
+import ExampleToken from "../ExampleToken.cdc"
+import Toucans from "../Toucans.cdc"
+import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
 
 pub fun main(projectOwner: Address, projectId: UInt64): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -21,6 +22,8 @@ pub struct Info {
   pub let overflowBalance: UFix64
   pub let balances: {Address: UFix64}
   pub let funders: {Address: UFix64}
+  pub let signers: [Address]
+  pub let actions: {UInt64: String}
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -30,9 +33,13 @@ pub struct Info {
     self.editDelay = info.editDelay
     self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()
-    self.totalSupply = ExampleFinancial.totalSupply
-    self.balances = ExampleFinancial.getBalances()
+    self.totalSupply = ExampleToken.totalSupply
+    self.balances = ExampleToken.getBalances()
     self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
+
+    let manager = info.borrowManagerPublic()
+    self.signers = manager.getSigners()
+    self.actions = manager.getIntents()
   }
 }
