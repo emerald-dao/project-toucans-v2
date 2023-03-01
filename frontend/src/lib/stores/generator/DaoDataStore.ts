@@ -1,10 +1,10 @@
 import type {
 	CommunityDaoGeneratorData,
 	FinancialDaoGeneratorData
-} from '$lib/types/generator/dao-generator-data.interface';
+} from '$lib/types/dao-generator/dao-generator-data.interface';
 import { writable, type Writable } from 'svelte/store';
-import { TokenTypes } from '$lib/types/token-types.enum';
-import { Currencies } from '$lib/types/currencies.enum';
+import { TokenTypes } from '$lib/types/common/token-types.enum';
+import { ECurrencies } from '$lib/types/common/enums';
 
 export const emptyDaoGeneratorData = {
 	daoDetails: {
@@ -19,13 +19,13 @@ export const emptyDaoGeneratorData = {
 	},
 	tokenomics: {
 		tokenType: TokenTypes.FINANCIAL,
-		paymentCurrency: Currencies.FLOW,
+		paymentCurrency: ECurrencies.FLOW,
 		totalSupply: undefined,
 		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: [],
 		initialRound: {
-			currency: Currencies.FLOW,
+			currency: ECurrencies.FLOW,
 			issuanceRate: undefined,
 			reserveRate: undefined,
 			startDate: '',

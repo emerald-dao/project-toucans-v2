@@ -1,4 +1,4 @@
-import type { Step } from '$lib/types/generator/generator-step.interface';
+import type { Step } from '$lib/types/dao-generator/generator-step.interface';
 import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
 import { writable } from 'svelte/store';
 

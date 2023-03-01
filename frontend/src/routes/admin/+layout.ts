@@ -4,14 +4,14 @@ import { getProjectInfo } from '$flow/actions';
 import '$flow/config.js';
 import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';
-import type { FinancialDao, CommunityDao } from '$lib/types/dao-project.interface';
-import type { Action } from '$lib/types/actions/actions.type';
+import type { FinancialDao, CommunityDao } from '$lib/types/dao-project/dao-project.interface';
+import type { TDaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 
 export let ssr = false;
 
 export const load: LayoutLoad = async () => {
 	const userObj = get(user);
-	console.log("user obj", userObj)
+	console.log('user obj', userObj);
 	if (userObj.loggedIn) {
 		const { data } = await supabase.from('projects').select().eq('owner', userObj.addr);
 
@@ -38,9 +38,8 @@ export const load: LayoutLoad = async () => {
 						project.project_id
 					)),
 					actions: eventsData?.actions.reverse() || [],
-					purchaseHistory: eventsData?.actions.filter(
-						(action: Action) => action.type === 'Purchase'
-					) || []
+					purchaseHistory:
+						eventsData?.actions.filter((action: TDaoEvent) => action.type === 'Purchase') || []
 				};
 			})
 		);

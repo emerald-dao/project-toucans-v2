@@ -71,9 +71,7 @@ const deployContract = async (data) => {
 			? `self.account.save(<- create Minter(), to: self.MinterStoragePath)`
 			: ''
 	);
-	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString(
-		'hex'
-	);
+	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployExampleTokenTx),
 		args: (arg, t) => [
@@ -86,9 +84,9 @@ const deployContract = async (data) => {
 			arg(hexCode, t.String),
 			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses.FlowToken, t.Address),
-			arg({ domain: "public", identifier: paymentCurrencyInfo.receiverPath }, t.Path),
-			arg({ domain: "public", identifier: paymentCurrencyInfo.publicPath }, t.Path),
-			arg({ domain: "storage", identifier: paymentCurrencyInfo.storagePath }, t.Path),
+			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
+			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
+			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg('0', t.UInt64),
 			arg(data.tokenomics.mintTokens, t.Bool)
@@ -100,7 +98,8 @@ const deployContract = async (data) => {
 	});
 };
 
-export const deployContractExecution = (data, action) => executeTransaction(() => deployContract(data), action);
+export const deployContractExecution = (data, actionAfterSucceed) =>
+	executeTransaction(() => deployContract(data), actionAfterSucceed);
 
 const fundProject = async () => {
 	const contractName = get(fundData).contractName;
@@ -160,7 +159,12 @@ const newRound = async () => {
 export const newRoundExecution = () => executeTransaction(newRound);
 
 // TODO: IMPLEMENT FOR FLOW TOKEN AND FUSD
-const proposeWithdraw = async (projectOwner: string, projectId: string, recipient: string, amount: string) => {
+const proposeWithdraw = async (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string
+) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(proposePaymentTokenWithdrawTx),
 		args: (arg, t) => [
@@ -176,8 +180,12 @@ const proposeWithdraw = async (projectOwner: string, projectId: string, recipien
 	});
 };
 
-export const proposeWithdrawExecution = (projectOwner: string, projectId: string, recipient: string, amount: string) =>
-	executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
+export const proposeWithdrawExecution = (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string
+) => executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
 
 // const tranferTokens = async () => {
 // 	const amount = "10.0";
@@ -199,8 +207,13 @@ export const proposeWithdrawExecution = (projectOwner: string, projectId: string
 
 // export const fundProjectExecution = () => executeTransaction(fundProject);
 
-export const getProjectInfo = async (contractName: string, contractAddress: string, owner: string, projectId: string) => {
-	console.log(projectId)
+export const getProjectInfo = async (
+	contractName: string,
+	contractAddress: string,
+	owner: string,
+	projectId: string
+) => {
+	console.log(projectId);
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
@@ -213,14 +226,16 @@ export const getProjectInfo = async (contractName: string, contractAddress: stri
 	}
 };
 
-export const getTokenBalance = async (contractName: string, contractAddress: string, user: string) => {
+export const getTokenBalance = async (
+	contractName: string,
+	contractAddress: string,
+	user: string
+) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getTokenBalanceScript, contractName, contractAddress),
-			args: (arg, t) => [
-				arg(user, t.Address)
-			]
-		})
+			args: (arg, t) => [arg(user, t.Address)]
+		});
 		return response;
 	} catch (e) {
 		console.log('Error in getTokenBalance');

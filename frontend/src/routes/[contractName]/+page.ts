@@ -2,7 +2,7 @@ import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
 import { getTokenBalance, getProjectInfo } from '$flow/actions';
 import '$flow/config.js';
-import type { Action } from '$lib/types/actions/actions.type';
+import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 import { get } from 'svelte/store';
 import { user } from '$stores/flow/FlowStore';
 
@@ -32,7 +32,7 @@ export const load: PageLoad = async ({ params }) => {
 		info.contract_name,
 		info.contract_address,
 		get(user).addr
-	)
+	);
 
 	// get actions
 	const { data: actionData } = await supabase
@@ -46,6 +46,8 @@ export const load: PageLoad = async ({ params }) => {
 		...projectInfo,
 		userBalance,
 		actions: !eventsData ? [] : eventsData.actions.reverse(),
-		purchaseHistory: !eventsData ? [] : eventsData.actions.filter((action: Action) => action.type === 'Purchase')
+		purchaseHistory: !eventsData
+			? []
+			: eventsData.actions.filter((action: DaoEvent) => action.type === 'Purchase')
 	};
 };

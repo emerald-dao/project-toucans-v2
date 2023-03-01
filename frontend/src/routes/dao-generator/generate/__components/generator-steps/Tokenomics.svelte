@@ -1,6 +1,6 @@
 <script type="ts">
 	import RecapElement from './atoms/RecapElement.svelte';
-	import type { FinancialDaoGeneratorData } from '$lib/types/generator/dao-generator-data.interface';
+	import type { FinancialDaoGeneratorData } from '$lib/types/dao-generator/dao-generator-data.interface';
 	import RoundGeneratorModal from '$components/round-generator/RoundGeneratorModal.svelte';
 	import { fly } from 'svelte/transition';
 	import StepButtons from './atoms/StepButtons.svelte';
@@ -8,7 +8,7 @@
 	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
 	import tokenomicsSuite from '$lib/validations/tokenomicsSuite';
-	import { TokenTypes } from '$lib/types/token-types.enum';
+	import { TokenTypes } from '$lib/types/common/token-types.enum';
 	import { Currencies } from '$lib/types/currencies.enum';
 	import RecapCard from './atoms/RecapCard.svelte';
 	import type { Writable } from 'svelte/store';

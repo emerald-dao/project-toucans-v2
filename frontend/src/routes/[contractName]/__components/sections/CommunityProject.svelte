@@ -1,6 +1,6 @@
 <script type="ts">
 	import ChartTitle from '../atoms/ChartTitle.svelte';
-	import type { CommunityDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao } from '$lib/types/dao-project/dao-project.interface';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
 	import MainHolders from '../atoms/MainHolders.svelte';
 	import { Tabs, Tab, TabList, TabPanel, Currency } from '@emerald-dao/component-library';

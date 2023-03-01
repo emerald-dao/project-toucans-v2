@@ -6,7 +6,7 @@
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import RoundDetail from '$components/atoms/RoundDetail.svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
-	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import type { FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';

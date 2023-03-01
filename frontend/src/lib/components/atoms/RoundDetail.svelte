@@ -1,5 +1,5 @@
 <script type="ts">
-	import type { FundingCycle } from '$lib/types/funding-cycle.interface';
+	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import Icon from '@iconify/svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Modal, getModal, ProgressBar, StatusCircle, Currency } from '@emerald-dao/component-library';

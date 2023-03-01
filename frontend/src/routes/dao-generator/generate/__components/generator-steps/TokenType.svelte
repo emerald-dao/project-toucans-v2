@@ -4,7 +4,7 @@
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
 	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
-	import { TokenTypes } from '$lib/types/token-types.enum';
+	import { TokenTypes } from '$lib/types/common/token-types.enum';
 </script>
 
 <form

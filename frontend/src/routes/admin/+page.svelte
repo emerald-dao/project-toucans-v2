@@ -1,5 +1,5 @@
 <script type="ts">
-	import { type CommunityDao, DaoType, type FinancialDao } from '$lib/types/dao-project.interface';
+	import { type CommunityDao, DaoType, type FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import CommunityDaoStats from './__components/sections/CommunityDaoStats.svelte';

@@ -1,7 +1,7 @@
 <script type="ts">
 	import { newRoundSteps, newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
 	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
 	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';

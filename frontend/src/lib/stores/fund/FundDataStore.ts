@@ -1,6 +1,6 @@
 import type { FundData } from '$lib/types/project/fund.interface';
 import { writable } from 'svelte/store';
-import { Currencies } from '$lib/types/currencies.enum';
+import { ECurrencies } from '$lib/types/common/enums';
 
 export const fundData = writable<FundData>({
 	daoName: '',
@@ -9,7 +9,7 @@ export const fundData = writable<FundData>({
 	tokenName: 'EMLD',
 	funderAddress: '',
 	contractName: '',
-	currency: Currencies.FLOW,
+	currency: ECurrencies.FLOW,
 	amount: undefined,
 	specialMessage: '',
 	issuanceRate: undefined,

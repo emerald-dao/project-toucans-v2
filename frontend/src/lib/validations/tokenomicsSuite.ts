@@ -1,5 +1,5 @@
 import { create, enforce, test, only, group } from 'vest';
-import { TokenTypes } from '../types/token-types.enum';
+import { TokenTypes } from '../types/common/token-types.enum';
 
 const tokenomicsSuite = create((data = {}, currentField) => {
 	only(currentField);

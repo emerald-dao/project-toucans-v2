@@ -1,5 +1,5 @@
 <script type="ts">
-	import type { CommunityDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 
 	export let daoData: CommunityDao;

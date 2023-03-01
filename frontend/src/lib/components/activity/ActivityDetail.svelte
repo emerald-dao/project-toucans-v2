@@ -3,9 +3,9 @@
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Label, StatusCircle, Currency, Modal, getModal } from '@emerald-dao/component-library';
-	import type { Action } from '$lib/types/actions/actions.type';
+	import type { Action } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
-	import type { Dao } from '$lib/types/dao-project.interface';
+	import type { Dao } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 
 	export let action: Action;

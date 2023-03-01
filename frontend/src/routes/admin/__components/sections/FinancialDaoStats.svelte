@@ -1,7 +1,7 @@
 <script type="ts">
 	import DataCard from '$components/cards/DataCard.svelte';
 	import LineChart from '$components/charts/LineChart.svelte';
-	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import type { FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import { Button, ProgressBar } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';

@@ -1,7 +1,7 @@
 <script type="ts">
 	import { roundData } from '$components/round-generator/stores/RoundData';
-	import type { FinancialDao } from '$lib/types/dao-project.interface';
-	import type { FinancialDaoGeneratorData } from '$lib/types/generator/dao-generator-data.interface';
+	import type { FinancialDao } from '$lib/types/dao-project/dao-project.interface';
+	import type { FinancialDaoGeneratorData } from '$lib/types/dao-generator/dao-generator-data.interface';
 	import { newRoundActiveStep, newRoundSteps } from "$components/round-generator/stores/RoundSteps";
 	import { Button, getModal, Modal } from "@emerald-dao/component-library";
 	import Icon from "@iconify/svelte";

@@ -1,6 +1,6 @@
 <script type="ts">
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
-	import type { Distribution } from '$lib/types/distribution.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
+	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import Papa from 'papaparse';
 	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';

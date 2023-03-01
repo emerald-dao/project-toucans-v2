@@ -1,6 +1,6 @@
 <script type="ts">
 	import ActivityDetail from '$components/activity/ActivityDetail.svelte';
-	import type { Action } from '$lib/types/actions/actions.type';
+	import type { Action } from '$lib/types/dao-project/dao-event/dao-event.type';
 
 	export let actions: Action[];
 </script>

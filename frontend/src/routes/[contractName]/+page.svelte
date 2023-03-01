@@ -1,6 +1,6 @@
 <script type="ts">
 	import CommunityProject from './__components/sections/CommunityProject.svelte';
-	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
+	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { ProjectSidebarSection } from './__components';
 	import FinancialProject from './__components/sections/FinancialProject.svelte';
 	import SeeMoreSidebar from './__components/atoms/SeeMoreSidebar.svelte';

@@ -4,8 +4,8 @@
 	import { fundSteps, fundActiveStep } from '$stores/fund/FundSteps';
 	import { fundData } from '$stores/fund/FundDataStore';
 	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
-	import { DaoType } from '$lib/types/dao-project.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
+	import { DaoType } from '$lib/types/dao-project/dao-project.interface';
 	import { Currencies } from '$lib/types/currencies.enum';
 
 	export let daoData: FinancialDao | CommunityDao;

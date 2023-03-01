@@ -1,7 +1,7 @@
 <script type="ts">
 	import DataCard from '$components/cards/DataCard.svelte';
 	import PieChart from '$components/charts/PieChart.svelte';
-	import type { CommunityDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao } from '$lib/types/dao-project/dao-project.interface';
 	import { stringToNumber } from '$lib/utilities/stringToNumber';
 	import { Button, ProgressBar } from '@emerald-dao/component-library';
 

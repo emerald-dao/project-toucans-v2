@@ -2,7 +2,7 @@
 	import RecapElement from './atoms/RecapElement.svelte';
 	import StepButtons from './atoms/StepButtons.svelte';
 	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
-	import { TokenTypes } from '$lib/types/token-types.enum';
+	import { TokenTypes } from '$lib/types/common/token-types.enum';
 	import RecapCard from './atoms/RecapCard.svelte';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';

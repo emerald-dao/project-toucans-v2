@@ -7,7 +7,7 @@ import Distribution from '$components/round-generator/steps/3-Distribution/Distr
 import { roundData } from './RoundData';
 import { get, type Writable } from 'svelte/store';
 import { daoGeneratorData } from '../../../stores/generator/DaoDataStore';
-import type { FinancialDaoGeneratorData } from '$lib/types/generator/dao-generator-data.interface';
+import type { FinancialDaoGeneratorData } from '$lib/types/dao-generator/dao-generator-data.interface';
 
 // When a launch round event occurs, we should check whether the generated round comes from the dao generator or the dao admin
 // If it comes from the dao generator, the dao is not yet created, so we just save the roundData into the generator store.

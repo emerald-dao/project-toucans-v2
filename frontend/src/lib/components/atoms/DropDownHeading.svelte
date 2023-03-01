@@ -1,7 +1,7 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from "$lib/types/dao-project.interface";
+	import type { CommunityDao, FinancialDao } from "$lib/types/dao-project/dao-project.interface";
 	import { getContext } from "svelte";
 
   export let value: number;

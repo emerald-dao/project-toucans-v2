@@ -1,11 +1,11 @@
-import type { Currencies } from './currencies.enum';
+import type { ECurrencies } from '../../common/enums';
 
 export interface RoundData {
 	startDate: string;
 	endDate: string;
 	fundingGoal: number | undefined;
 	projectId: string | undefined;
-	currency: Currencies;
+	currency: ECurrencies;
 	infiniteDuration: boolean;
 	infiniteFundingGoal: boolean;
 	distributionList: [string, number][];

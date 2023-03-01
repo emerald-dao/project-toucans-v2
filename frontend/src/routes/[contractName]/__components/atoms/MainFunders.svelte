@@ -1,7 +1,7 @@
 <script type="ts">
-	import type { Action } from '$lib/types/actions/actions.type';
+	import type { Action } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { Currencies } from '$lib/types/currencies.enum';
-	import type { FinancialDao } from '$lib/types/dao-project.interface';
+	import type { FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 
 	export let daoData: FinancialDao;

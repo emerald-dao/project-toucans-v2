@@ -1,6 +1,6 @@
 <script type="ts">
 	import { page } from '$app/stores';
-	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project.interface';
+	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';

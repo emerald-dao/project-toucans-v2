@@ -1,6 +1,6 @@
 <script type="ts">
-	import type { Distribution } from '$lib/types/distribution.interface';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
+	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import DistStagingElement from '../atoms/DistStagingElement.svelte';
 	import { getContext } from 'svelte';
 	import { fly } from 'svelte/transition';

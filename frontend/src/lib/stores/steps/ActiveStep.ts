@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import type { Subscriber, Unsubscriber } from 'svelte/store';
-import type { Step } from '$lib/types/generator/generator-step.interface';
+import type { Step } from '$lib/types/dao-generator/generator-step.interface';
 import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
 
 export function createActiveStep(steps: {

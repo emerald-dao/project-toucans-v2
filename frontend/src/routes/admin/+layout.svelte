@@ -2,7 +2,7 @@
 	import { Button, FlowConnect } from '@emerald-dao/component-library';
 	import { AdminNav } from './__components';
 	import { setContext } from 'svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
+	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
 	import { user } from '$stores/flow/FlowStore';
 	import { logIn, unauthenticate } from '$flow/actions';
