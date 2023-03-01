@@ -2,11 +2,11 @@
 	import Icon from '@iconify/svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { Currencies } from '$lib/types/currencies.enum';
-	import newRoundSuite from '$lib/validations/newRoundSuite';
+	import validationSuite from './validation';
 	import { InputWrapper, Button, Range } from '@emerald-dao/component-library';
-	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
-	import { roundData } from '$stores/rounds/RoundData';
-	import StepTitle from '../atoms/StepTitle.svelte';
+	import { newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
+	import { roundData } from '$components/round-generator/stores/RoundData';
+	import StepTitle from '../../atoms/StepTitle.svelte';
 
 	export let tokenSymbol: string;
 	export let projectId: string;
@@ -15,10 +15,10 @@
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = newRoundSuite($roundData, target.name);
+		res = validationSuite($roundData, target.name);		
 	};
 
-	let res = newRoundSuite.get();
+	let res = validationSuite.get();
 </script>
 
 <div class="main-wrapper" in:fade={{ duration: 300}}>
@@ -57,6 +57,7 @@
 					name="infinite-goal"
 					id="infinite-goal"
 					bind:checked={$roundData.infiniteFundingGoal}
+					on:change={handleChange}
 				/>
 				<span class="slider" />
 				Infinite

@@ -116,7 +116,7 @@
 		<label for="logo">Logo *</label>
 		<DropZone
 			name="logo"
-			accept={['image/png']}
+			accept={['image/png', 'image/jpeg', 'image/jpg']}
 			maxAmountOfFiles={1}
 			bind:bindValue={$daoGeneratorData.daoDetails.logo}
 		/>

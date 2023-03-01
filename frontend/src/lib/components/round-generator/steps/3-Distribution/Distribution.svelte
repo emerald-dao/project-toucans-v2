@@ -1,13 +1,13 @@
 <script type="ts">
 	import { fade } from 'svelte/transition';
-	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
-	import { roundData } from '$stores/rounds/RoundData';
+	import { newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
+	import { roundData } from '$components/round-generator/stores/RoundData';
 	import Icon from '@iconify/svelte';
 	import { Button, InputWrapper, Range } from '@emerald-dao/component-library';
-	import roundDistributionSuite from '$lib/validations/roundDistributionSuite';
+	import validationSuite from './validation';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import type { SvelteComponent } from 'svelte';
-	import StepTitle from '../atoms/StepTitle.svelte';
+	import StepTitle from '../../atoms/StepTitle.svelte';
 
 	let distributionData: [string, number] = ['', 0];
 
@@ -18,16 +18,18 @@
 
 	const handleChange = (input: Event) => {
 		if (input.type === 'change') {
-			res = roundDistributionSuite(distributionData, 'percentage');
+			res = validationSuite(distributionData, 'percentage');
 		} else {
 			const target = input.target as HTMLInputElement;
-			res = roundDistributionSuite(distributionData, target.name);
+			res = validationSuite(distributionData, target.name);
 		}
 	};
 
+	let res = validationSuite.get();
+
 	const handleSubmit = () => {
-		roundDistributionSuite.reset();
-		res = roundDistributionSuite.get();
+		validationSuite.reset();
+		res = validationSuite.get();
 
 		chart.updateChartData(distributionData[0], distributionData[1]);
 
@@ -39,8 +41,6 @@
 		$roundData.distributionList.splice(i, 1);
 		$roundData.distributionList = $roundData.distributionList;
 	};
-
-	let res = roundDistributionSuite.get();
 
 	const onDistributionListChange = (newList: [string, number][]) => {
 		let distributedPercentage = 0;
@@ -78,6 +78,7 @@
 						<input
 							type="text"
 							id="address"
+							maxlength="18"
 							bind:value={distributionData[0]}
 							on:input={handleChange}
 						/>
@@ -120,7 +121,6 @@
 		<Button
 			size="large"
 			on:click={newRoundActiveStep.increment}
-			state={res.isValid() ? 'active' : 'disabled'}
 		>
 			Launch round
 		</Button>

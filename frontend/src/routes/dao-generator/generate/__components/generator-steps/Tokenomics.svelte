@@ -78,52 +78,6 @@
 		autocomplete="off"
 		in:fly={{ y: 30, duration: 400 }}
 	>
-	
-		<!-- <InputWrapper
-			name="targetAmount"
-			label="Target amount"
-			errors={res.getErrors('targetAmount')}
-			isValid={res.isValid('targetAmount')}
-			tooltip="Lorem ipsum helper text"
-		>
-			<input
-				name="targetAmount"
-				type="text"
-				min="1"
-				placeholder="e.g. 1000000"
-				bind:value={$daoData.tokenomics.targetAmount}
-				on:input={handleChange}
-			/>
-		</InputWrapper>
-
-		<div class="range-wrapper">
-			<div class="row-2">
-				<label for="reserveRate">Reserve rate </label>
-				<TooltipIcon tooltip="Lorem ipsum helper text" width={0.75} />
-			</div>
-			<Range
-				bind:value={$daoData.tokenomics.initialRound.reserveRate}
-				suffix="%"
-				id="reserveRate"
-			/>
-		</div>
-
-		<InputWrapper
-			name="issuanceRate"
-			label="Issuance rate"
-			errors={res.getErrors('issuanceRate')}
-			isValid={res.isValid('issuanceRate')}
-			tooltip="Lorem ipsum helper text"
-		>
-			<input
-				name="issuanceRate"
-				type="text"
-				min="0"
-				placeholder={`e.g. 1 ${$daoData.daoDetails.tokenName} - 1 ${$daoData.tokenomics.initialRound.currency}`}
-				bind:value={$daoData.tokenomics.initialRound.issuanceRate}
-				on:input={handleChange}
-			/>
-		</InputWrapper> -->
 		<InputWrapper
 			name="supply"
 			label="Total supply"
@@ -139,22 +93,6 @@
 				on:input={handleChange}
 			/>
 		</InputWrapper>
-
-		<!-- <div class="column-1 align-start">
-			<label for="mint-tokens" class="switch">
-				<input
-					type="checkbox"
-					name="mint-tokens"
-					id="mint-tokens"
-					placeholder="e.g. 1000000"
-					bind:checked={$daoData.tokenomics.mintTokens}
-				/>
-				<span class="slider" />
-				<span class="label">Mint tokens</span>
-				<TooltipIcon tooltip="Lorem ipsum helper text" width={0.75} />
-			</label>
-		</div> -->
-
 		<StepButtons active={res.isValidByGroup($daoGeneratorData.tokenomics.tokenType)} />
 	</form>
 {/if}

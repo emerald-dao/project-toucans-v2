@@ -21,7 +21,6 @@ export const emptyDaoGeneratorData = {
 		tokenType: TokenTypes.FINANCIAL,
 		paymentCurrency: Currencies.FLOW,
 		totalSupply: undefined,
-		targetAmount: undefined,
 		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: [],
@@ -32,7 +31,8 @@ export const emptyDaoGeneratorData = {
 			startDate: '',
 			endDate: '',
 			infiniteDuration: false,
-			infiniteFundingGoal: false
+			infiniteFundingGoal: false,
+			fundingGoal: undefined
 		}
 	}
 };

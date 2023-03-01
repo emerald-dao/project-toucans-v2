@@ -2,13 +2,13 @@
 	import { fly, fade } from 'svelte/transition';
 	import { Currencies } from '$lib/types/currencies.enum';
 	import { onMount } from 'svelte';
-	import newRoundSuite from '$lib/validations/newRoundSuite';
-	import { InputWrapper, Button, Range } from '@emerald-dao/component-library';
-	import { newRoundActiveStep } from '$stores/rounds/RoundSteps';
-	import { roundData } from '$stores/rounds/RoundData';
+	import validationSuite from './validation';
+	import { InputWrapper, Button } from '@emerald-dao/component-library';
+	import { newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
+	import { roundData } from '$components/round-generator/stores/RoundData';
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
-	import StepTitle from '../atoms/StepTitle.svelte';
+	import StepTitle from '../../atoms/StepTitle.svelte';
 
 	export let tokenSymbol: string;
 	export let projectId: string | undefined;
@@ -37,8 +37,10 @@
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = newRoundSuite($roundData, target.name);
+		res = validationSuite($roundData, target.name);
 	};
+
+	let res = validationSuite.get();
 
 	onMount(() => {
 		startDateInput.min = nowString;
@@ -46,8 +48,6 @@
 
 	let startDateInput: HTMLInputElement;
 	let endDateInput: HTMLInputElement;
-
-	let res = newRoundSuite.get();
 
 	$: if (endDateInput) {
 		endDateInput.min = $roundData.startDate;
@@ -70,6 +70,7 @@
 				name="infinite-duration"
 				id="infinite-duration"
 				bind:checked={$roundData.infiniteDuration}
+				on:change={handleChange}
 			/>
 			<span class="slider" />
 			Infinite

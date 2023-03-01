@@ -1,12 +1,12 @@
 import { createActiveStep } from '$stores/steps/ActiveStep';
 import { createSteps } from '$stores/steps/Steps';
 import { newRoundExecution } from '$flow/actions';
-import GeneralInfo from '$components/round-generator/steps/GeneralInfo.svelte';
-import Duration from '$components/round-generator/steps/Duration.svelte';
-import Distribution from '$components/round-generator/steps/Distribution.svelte';
+import GeneralInfo from '$components/round-generator/steps/2-Generalnfo/GeneralInfo.svelte';
+import Duration from '$components/round-generator/steps/1-Duration/Duration.svelte';
+import Distribution from '$components/round-generator/steps/3-Distribution/Distribution.svelte';
 import { roundData } from './RoundData';
 import { get, type Writable } from 'svelte/store';
-import { daoGeneratorData } from '../generator/DaoDataStore';
+import { daoGeneratorData } from '../../../stores/generator/DaoDataStore';
 import type { FinancialDaoGeneratorData } from '$lib/types/generator/dao-generator-data.interface';
 
 // When a launch round event occurs, we should check whether the generated round comes from the dao generator or the dao admin

@@ -1,8 +1,8 @@
 <script type="ts">
-	import { roundData } from '$stores/rounds/RoundData';
+	import { roundData } from '$components/round-generator/stores/RoundData';
 	import type { FinancialDao } from '$lib/types/dao-project.interface';
 	import type { FinancialDaoGeneratorData } from '$lib/types/generator/dao-generator-data.interface';
-	import { newRoundActiveStep, newRoundSteps } from "$stores/rounds/RoundSteps";
+	import { newRoundActiveStep, newRoundSteps } from "$components/round-generator/stores/RoundSteps";
 	import { Button, getModal, Modal } from "@emerald-dao/component-library";
 	import Icon from "@iconify/svelte";
   import { Currencies } from '$lib/types/currencies.enum';
@@ -23,8 +23,10 @@
   const projectId = "project_id" in daoData ? daoData.project_id : undefined;
   const editDelay = "editDelay" in daoData ? daoData.editDelay : '0.0'; // TODO: check the correct way to get the editDelay
 
-  // We reset all stores so we have a clean instance of all the data
-  roundData.set({
+  // If we are creating a funding round for an existing DAO, we clean our store to receive a clean instance,
+  // otherwise we keep the data we have in the store
+  if ("project_id" in daoData) {
+    roundData.set({
       infiniteDuration: false,
       infiniteFundingGoal: false,
       startDate: '',
@@ -35,8 +37,9 @@
       distributionList: [],
       issuanceRate: undefined,
       reserveRate: undefined
-  });
-  newRoundActiveStep.reset
+    });
+    newRoundActiveStep.reset
+  }
 
   // When the last step is completed, we close the modal
   $: if ($newRoundSteps[$newRoundSteps.length - 1].state === 'success') {

@@ -24,6 +24,9 @@
 	};
 
 	let logoElement: HTMLImageElement;
+
+	console.log($daoGeneratorData);
+	
 </script>
 
 <div class="column-6" in:fly="{{ y: 30, duration: 400 }}">
@@ -53,7 +56,7 @@
 	</RecapCard>
 	<RecapCard title="Tokenomics" onEdit={() => generatorActiveStep.goToStep(2)}>
 		{#if $daoGeneratorData.tokenomics.tokenType === TokenTypes.FINANCIAL}
-			<RecapElement title="Target amount" data={$daoGeneratorData.tokenomics.targetAmount} />
+			<RecapElement title="Target amount" data={$daoGeneratorData.tokenomics.initialRound.fundingGoal} />
 			<RecapElement
 				title="Issuance rate"
 				data={`${$daoGeneratorData.tokenomics.initialRound.issuanceRate} ${$daoGeneratorData.daoDetails.tokenName} = 1 ${$daoGeneratorData.tokenomics.initialRound.token}`}
