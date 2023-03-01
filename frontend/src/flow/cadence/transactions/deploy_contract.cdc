@@ -33,10 +33,19 @@ transaction(
       deployer.link<&FUSD.Vault{FungibleToken.Balance}>(/public/fusdBalance, target: /storage/fusdVault)
     }
 
+    // Blank empty for now
     let extra: {String: String} = {}
+
+    // Configure payouts
     let payoutsArray: [Toucans.Payout] = []
     for payoutAddr in payouts.keys {
       payoutsArray.append(Toucans.Payout(address: payoutAddr, percent: payouts[payoutAddr]!))
+    }
+
+    // Make sure the initial signers includes the deployer
+    var initialSigners: [Address] = signers
+    if initialSigners.contains(deployer.address) {
+      initialSigners.append(deployer.address)
     }
 
     deployer.contracts.add(
@@ -49,7 +58,7 @@ transaction(
       _timeframe: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
       _payouts: payoutsArray,
       _editDelay: editDelay,
-      _signers: signers,
+      _signers: initialSigners,
       _threshold: threshold,
       _minting: minting,
       _extra: extra

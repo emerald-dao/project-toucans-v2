@@ -1,4 +1,4 @@
-import ExampleFinancial from "../ExampleToken.cdc"
+import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
 
@@ -33,8 +33,8 @@ pub struct Info {
     self.editDelay = info.editDelay
     self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()
-    self.totalSupply = ExampleFinancial.totalSupply
-    self.balances = ExampleFinancial.getBalances()
+    self.totalSupply = ExampleToken.totalSupply
+    self.balances = ExampleToken.getBalances()
     self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
 

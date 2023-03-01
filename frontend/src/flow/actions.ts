@@ -5,15 +5,21 @@ import { browser } from '$app/environment';
 import { addresses, user } from '$stores/flow/FlowStore';
 import { executeTransaction, formatFix, replaceWithProperValues } from './utils';
 
+// Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
-import proposePaymentTokenWithdrawTx from './cadence/transactions/propose_payment_token_withdraw.cdc?raw';
-import proposeFUSDWithdrawTx from './cadence/transactions/propose_fusd_withdraw.cdc?raw';
-import proposeFlowTokenWithdrawTx from './cadence/transactions/propose_flow_token_withdraw.cdc?raw';
+
+// Treasury Actions
+import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
+import proposeFUSDWithdrawTx from './cadence/transactions/treasury-actions/propose_fusd_withdraw.cdc?raw';
+import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_flow_token_withdraw.cdc?raw';
+
+// Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
+
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
 import { roundData } from '$stores/rounds/RoundData';
@@ -82,7 +88,7 @@ const deployContract = async (data) => {
 			arg({ domain: "storage", identifier: "flowTokenVault" }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg('0', t.UInt64),
-			arg(false, t.Bool)
+			arg(data.tokenomics.mintTokens, t.Bool)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

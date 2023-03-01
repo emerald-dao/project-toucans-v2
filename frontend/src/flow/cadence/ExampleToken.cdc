@@ -96,7 +96,7 @@ pub contract ExampleToken: FungibleToken {
                         storagePath: ExampleToken.VaultStoragePath,
                         receiverPath: ExampleToken.ReceiverPublicPath,
                         metadataPath: ExampleToken.VaultPublicPath,
-                        providerPath: /private/ExampleFinancialVault,
+                        providerPath: /private/ExampleTokenVault,
                         receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
                         metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
                         providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
@@ -153,10 +153,10 @@ pub contract ExampleToken: FungibleToken {
       self.balances = {}
 
       // Paths
-      self.VaultStoragePath = /storage/ExampleFinancialVault
-      self.ReceiverPublicPath = /public/ExampleFinancialReceiver
-      self.VaultPublicPath = /public/ExampleFinancialMetadata
-      self.MinterStoragePath = /storage/ExampleFinancialMinter
+      self.VaultStoragePath = /storage/ExampleTokenVault
+      self.ReceiverPublicPath = /public/ExampleTokenReceiver
+      self.VaultPublicPath = /public/ExampleTokenMetadata
+      self.MinterStoragePath = /storage/ExampleTokenMinter
  
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)
@@ -179,7 +179,7 @@ pub contract ExampleToken: FungibleToken {
 
       let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
       toucansProjectCollection.createProject(
-        projectTokenInfo: Toucans.TokenInfo("ExampleFinancial", self.account.address, self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
+        projectTokenInfo: Toucans.TokenInfo("ExampleToken", self.account.address, self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 
         minter: <- create Minter(), 
         fundingTarget: _fundingTarget, 
