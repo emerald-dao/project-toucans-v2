@@ -16,22 +16,26 @@ export function createActiveStep(steps: {
 		const action = get(steps)[activeStepNumber].action;
 		const numberOfSteps = get(steps).length;
 
-		if (numberOfSteps > activeStepNumber) {
+		if (numberOfSteps - 1 >= activeStepNumber) {
 			if (action != null) {
 				steps.changeStepState(activeStepNumber, 'loading');
 				try {
 					await action();
 					steps.changeStepState(activeStepNumber, 'success');
-					steps.changeStepState(activeStepNumber + 1, 'active');
-					update((n) => n + 1);
+					if (numberOfSteps - 1 !== activeStepNumber) {
+						steps.changeStepState(activeStepNumber + 1, 'active');
+						update((n) => n + 1);
+					}
 				} catch (e) {
 					console.error('Error has occured: ' + e);
 					steps.changeStepState(activeStepNumber, 'error');
 				}
 			} else {
 				steps.changeStepState(activeStepNumber, 'success');
-				steps.changeStepState(activeStepNumber + 1, 'active');
-				update((n) => n + 1);
+				if (numberOfSteps - 1 !== activeStepNumber) {
+					steps.changeStepState(activeStepNumber + 1, 'active');
+					update((n) => n + 1);
+				}
 			}
 		}
 	}
@@ -47,9 +51,9 @@ export function createActiveStep(steps: {
 	}
 
 	function goToStep(i: number) {
-		const activeStepNumber = get(activeStep);
-
-		steps.changeStepState(activeStepNumber, 'inactive');
+		for (let j = i + 1; j < get(steps).length; j++) {
+			steps.changeStepState(j, 'inactive');
+		}
 		steps.changeStepState(i, 'active');
 		set(i);
 	}

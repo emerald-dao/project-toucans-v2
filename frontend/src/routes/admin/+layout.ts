@@ -46,8 +46,6 @@ export const load: LayoutLoad = async () => {
 			})
 		);
 
-		console.log(projectsInfo);
-
 		return {
 			projects: projectsInfo
 		};

@@ -3,7 +3,8 @@
 	import { generatorActiveStep } from '$stores/generator/GeneratorSteps';
 
 	export let title: string;
-	export let stepNumber: number;
+	export let onEdit: (() => void) | undefined = undefined;
+	export let onClean: (() => void) | undefined = undefined;
 </script>
 
 <div class="card">
@@ -11,8 +12,17 @@
 	<div class="column-3 align-start">
 		<slot />
 	</div>
-	<div class="edit-wrapper header-link" on:click={() => generatorActiveStep.goToStep(stepNumber)} on:keydown>
-		<Icon icon="tabler:edit"/>
+	<div class="edit-wrapper">
+		{#if onEdit !== undefined}
+			<div class="header-link" on:click={() => onEdit()} on:keydown>
+				<Icon icon="tabler:edit"/>
+			</div>
+		{/if}
+		{#if onClean !== undefined}
+			<div class="header-link" on:click={() => onClean()} on:keydown>
+				<Icon icon="tabler:trash"/>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -33,7 +43,9 @@
 			position: absolute;
 			top: 25px;
 			right: 25px;
-			cursor: pointer;
+			display: flex;
+			flex-direction: row;
+			gap: var(--space-2);
 		}
 	}
 </style>

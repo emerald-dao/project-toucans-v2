@@ -1,5 +1,5 @@
 import type { TokenTypes } from '$lib/types/token-types.enum';
-import type { Currencies, Currency } from '$lib/types/currencies.enum';
+import type { RoundData } from '../new-round.interface';
 
 export interface DaoGeneratorData {
 	daoDetails: {
@@ -22,21 +22,10 @@ export interface DaoGeneratorData {
 export interface FinancialDaoGeneratorData extends DaoGeneratorData {
 	tokenomics: {
 		tokenType: TokenTypes.FINANCIAL;
-		paymentCurrency: Currency,
 		totalSupply: number | undefined;
 		editDelay: string | undefined;
-		targetAmount: number | undefined;
 		mintTokens: boolean;
-		walletAddresses: string[] | [];
-		initialRound: {
-			currency: Currencies;
-			issuanceRate: number | undefined;
-			reserveRate: number | undefined;
-			startDate: string,
-			endDate: string,
-			infiniteDuration: boolean,
-			infiniteFundingGoal: boolean
-		};
+		initialRound: RoundData;
 	};
 }
 
