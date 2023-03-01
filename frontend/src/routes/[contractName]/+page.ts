@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
-import { getFinancialTokenBalance, getProjectInfo } from '$flow/actions';
+import { getTokenBalance, getProjectInfo } from '$flow/actions';
 import '$flow/config.js';
 import type { Action } from '$lib/types/actions/actions.type';
 import { get } from 'svelte/store';
@@ -28,7 +28,7 @@ export const load: PageLoad = async ({ params }) => {
 		info.project_id
 	);
 
-	const userBalance = await getFinancialTokenBalance(
+	const userBalance = await getTokenBalance(
 		info.contract_name,
 		info.contract_address,
 		get(user).addr

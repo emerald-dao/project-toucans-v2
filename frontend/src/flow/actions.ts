@@ -213,7 +213,7 @@ export const getProjectInfo = async (contractName: string, contractAddress: stri
 	}
 };
 
-export const getFinancialTokenBalance = async (contractName: string, contractAddress: string, user: string) => {
+export const getTokenBalance = async (contractName: string, contractAddress: string, user: string) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getTokenBalanceScript, contractName, contractAddress),
@@ -223,7 +223,7 @@ export const getFinancialTokenBalance = async (contractName: string, contractAdd
 		})
 		return response;
 	} catch (e) {
-		console.log('Error in getFinancialTokenBalance');
+		console.log('Error in getTokenBalance');
 		console.log(e);
 		return '0.0';
 	}
