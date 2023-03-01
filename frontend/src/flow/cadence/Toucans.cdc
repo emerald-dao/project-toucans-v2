@@ -177,7 +177,7 @@ pub contract Toucans {
     pub let minting: Bool
 
     // Setters
-    pub fun proposeAction(action: {ToucansMultiSign.Action}): UInt64
+    pub fun proposeAction(action: {ToucansMultiSign.Action})
     // If the action is ready to execute, then allow anyone to do it.
     pub fun executeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
@@ -226,13 +226,12 @@ pub contract Toucans {
     //                                  |___/       
 
 
-    pub fun proposeAction(action: {ToucansMultiSign.Action}): UInt64 {
+    pub fun proposeAction(action: {ToucansMultiSign.Action}) {
       // Keep this restriction to prevent bad actions displaying
       pre {
         "0x".concat(action.getType().identifier.slice(from: 2, upTo: 18)) == Toucans.account.address.toString(): "Must be a type allowed by Toucans."
       }
-      let newActionId = self.multiSignManager.createMultiSign(action: action)
-      return newActionId
+      self.multiSignManager.createMultiSign(action: action)
     }
 
     pub fun executeAction(actionUUID: UInt64) {

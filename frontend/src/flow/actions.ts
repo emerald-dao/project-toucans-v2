@@ -86,7 +86,7 @@ const deployContract = async (data) => {
 			arg({ domain: "public", identifier: paymentCurrencyInfo.publicPath }, t.Path),
 			arg({ domain: "storage", identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
-			arg('0', t.UInt64),
+			arg('1', t.UInt64),
 			arg(data.tokenomics.mintTokens, t.Bool)
 		],
 		proposer: fcl.authz,

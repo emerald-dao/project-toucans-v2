@@ -25,12 +25,6 @@ transaction(projectOwner: Address, projectId: UInt64, recipientAddr: Address, am
   execute {
     // Propose the new action
     let action = ToucansTreasuryActions.WithdrawToken(_recipientVault: self.RecipientVault, _amount: amount)
-    let newActionId = self.Project.proposeAction(action: action)
-
-    // Execute if we can (threshold is 0)
-    let manager = self.Project.borrowManagerPublic()
-    if manager.readyToExecute(actionUUID: newActionId) {
-      self.Project.executeAction(actionUUID: newActionId)
-    }
+    self.Project.proposeAction(action: action)
   }
 }
