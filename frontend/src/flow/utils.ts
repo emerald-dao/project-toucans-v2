@@ -66,6 +66,7 @@ export const executeTransaction = async (
 		});
 	} catch (e) {
 		transactionStore.resetTransaction();
+		console.log(e);
 		throw e;
 	}
 };

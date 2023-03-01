@@ -25,7 +25,6 @@ export const load: PageLoad = async ({ params }) => {
 		info.contract_name,
 		info.contract_address,
 		info.owner,
-		info.type,
 		info.project_id
 	);
 

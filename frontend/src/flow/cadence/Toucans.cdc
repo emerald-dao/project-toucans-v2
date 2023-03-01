@@ -722,8 +722,8 @@ pub contract Toucans {
   }
 
   init() {
-    self.CollectionStoragePath = /storage/ToucansCollection001
-    self.CollectionPublicPath = /public/ToucansCollection001
+    self.CollectionStoragePath = /storage/ToucansCollection002
+    self.CollectionPublicPath = /public/ToucansCollection002
   }
 
 }

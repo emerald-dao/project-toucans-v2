@@ -23,6 +23,7 @@ import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
 import { roundData } from '$stores/rounds/RoundData';
+import { currencies } from '$stores/flow/TokenStore';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -61,6 +62,8 @@ const deployContract = async (data) => {
 		.replace('INSERT SYMBOL', data.daoDetails.tokenName)
 		.replace('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.contractName;
+	const paymentCurrency = data.tokenomics.paymentCurrency;
+	const paymentCurrencyInfo = currencies[paymentCurrency];
 
 	contractCode = contractCode.replace(
 		'// INSERT MINTING HERE',
@@ -81,11 +84,11 @@ const deployContract = async (data) => {
 			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
 			arg(formatFix(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String),
-			arg("FlowToken", t.String),
+			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses.FlowToken, t.Address),
-			arg({ domain: "public", identifier: "flowTokenReceiver" }, t.Path),
-			arg({ domain: "public", identifier: "flowTokenBalance" }, t.Path),
-			arg({ domain: "storage", identifier: "flowTokenVault" }, t.Path),
+			arg({ domain: "public", identifier: paymentCurrencyInfo.receiverPath }, t.Path),
+			arg({ domain: "public", identifier: paymentCurrencyInfo.publicPath }, t.Path),
+			arg({ domain: "storage", identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg('0', t.UInt64),
 			arg(data.tokenomics.mintTokens, t.Bool)
@@ -193,6 +196,7 @@ export const proposeWithdrawExecution = (projectOwner: string, projectId: string
 // export const fundProjectExecution = () => executeTransaction(fundProject);
 
 export const getProjectInfo = async (contractName: string, contractAddress: string, owner: string, projectId: string) => {
+	console.log(projectId)
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
