@@ -45,7 +45,9 @@
 				"testnet": "0x631e88ae7f1d7c20"
 			}
 		},
-		"Toucans": "./src/flow/cadence/Toucans.cdc"
+		"Toucans": "./src/flow/cadence/Toucans.cdc",
+		"ToucansMultiSign": "./src/flow/cadence/ToucansMultiSign.cdc",
+		"ToucansTreasuryActions": "./src/flow/cadence/ToucansTreasuryActions.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -58,8 +60,7 @@
 			"key": "fc49a771829ff480841164af13b18a68cd697b6e79c80af7f8470a9e651dfac5"
 		},
 		"testnet-account": {
-			"address": "3ae53cb6e3f42a79",
-			"key": "12332967fd2bd75234ae9037dd4694c1f00baad63a10c35172bf65fbb8ad1111"
+			"fromFile": "testnet-account.private.json"
 		}
 	},
 	"deployments": {
@@ -70,11 +71,17 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
-				"Toucans"
+				"ToucansMultiSign",
+				"Toucans",
+				"ToucansTreasuryActions"
 			]
 		},
 		"testnet": {
-			"testnet-account": ["Toucans"]
+			"testnet-account": [
+				"ToucansMultiSign",
+				"Toucans",
+				"ToucansTreasuryActions"
+			]
 		}
 	}
 }

@@ -5,24 +5,25 @@ import { browser } from '$app/environment';
 import { addresses, user } from '$stores/flow/FlowStore';
 import { executeTransaction, formatFix, replaceWithProperValues } from './utils';
 
-import rawFinancialTokenCode from './cadence/ExampleFinancial.cdc?raw';
-import rawCommunityTokenCode from './cadence/ExampleCommunity.cdc?raw';
-import deployFinancialTokenTx from './cadence/transactions/financial/deploy_contract.cdc?raw';
-import deployCommunityTokenTx from './cadence/transactions/community/deploy_contract.cdc?raw';
-import fundProjectTx from './cadence/transactions/financial/fund_project.cdc?raw';
-import newRoundTx from './cadence/transactions/financial/new_round.cdc?raw';
-import transferTokensTx from './cadence/transactions/community/transfer_tokens.cdc?raw';
-import getFinancialProjectScript from './cadence/scripts/financial/get_project.cdc?raw';
-import getCommunityProjectScript from './cadence/scripts/community/get_project.cdc?raw';
-import getFinancialTokenBalanceScript from './cadence/scripts/financial/get_token_balance.cdc?raw';
+// Transactions
+import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
+import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
+import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
+import newRoundTx from './cadence/transactions/new_round.cdc?raw';
+
+// Treasury Actions
+import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
+import proposeFUSDWithdrawTx from './cadence/transactions/treasury-actions/propose_fusd_withdraw.cdc?raw';
+import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_flow_token_withdraw.cdc?raw';
+
+// Scripts
+import getProjectScript from './cadence/scripts/get_project.cdc?raw';
+import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
+
 import { get } from 'svelte/store';
 import { fundData } from '$stores/fund/FundDataStore';
+import { currencies } from '$stores/flow/TokenStore';
 import { roundData } from '$components/round-generator/stores/RoundData';
-
-const rawTokenCodes = {
-	Financial: rawFinancialTokenCode,
-	Community: rawCommunityTokenCode
-};
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -55,43 +56,26 @@ export const dummyTransactionExecution = () => executeTransaction(dummyTransacti
 
 const deployContract = async (data) => {
 	console.log(data);
-	const rawContractCode = rawTokenCodes[data.tokenomics.tokenType];
-	let contractCode = rawContractCode
+	let contractCode = rawExampleTokenCode
 		.replace('INSERT NAME', data.daoDetails.name)
 		.replace('INSERT DESCRIPTION', data.daoDetails.description)
 		.replace('INSERT SYMBOL', data.daoDetails.tokenName)
 		.replace('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.contractName;
+	const paymentCurrency = data.tokenomics.paymentCurrency;
+	const paymentCurrencyInfo = currencies[paymentCurrency];
 
-	if (data.tokenomics.tokenType == 'Financial') {
-		contractCode = contractCode.replace(
-			'// INSERT MINTING HERE',
-			data.tokenomics.mintTokens
-				? `pub fun mintTokens(amount: UFix64): @Vault {
-			pre {
-			  amount > 0.0: "Amount minted must be greater than zero"
-			}
-			ExampleFinancial.totalSupply = ExampleFinancial.totalSupply + amount
-			emit TokensMinted(amount: amount)
-			return <- create Vault(balance: amount)
-		}`
-				: ''
-		);
-		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString(
-			'hex'
-		);
-		return deployFinancialContract(hexCode, contractName, data);
-	} else if (data.tokenomics.tokenType == 'Community') {
-		const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString(
-			'hex'
-		);
-		return deployCommunityContract(hexCode, contractName, data);
-	}
-};
-
-const deployFinancialContract = async (hexCode, contractName, data) => {
+	contractCode = contractCode.replace(
+		'// INSERT MINTING HERE',
+		data.tokenomics.mintTokens
+			? `self.account.save(<- create Minter(), to: self.MinterStoragePath)`
+			: ''
+	);
+	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString(
+		'hex'
+	);
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(deployFinancialTokenTx),
+		cadence: replaceWithProperValues(deployExampleTokenTx),
 		args: (arg, t) => [
 			arg(contractName, t.String),
 			arg(formatFix(data.tokenomics.targetAmount), t.UFix64),
@@ -100,11 +84,14 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 			arg([], t.Dictionary({ key: t.Address, value: t.UFix64 })),
 			arg(formatFix(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String),
-			arg('FlowToken', t.String),
+			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses.FlowToken, t.Address),
-			arg({ domain: 'public', identifier: 'flowTokenReceiver' }, t.Path),
-			arg({ domain: 'public', identifier: 'flowTokenBalance' }, t.Path),
-			arg({ domain: 'storage', identifier: 'flowTokenVault' }, t.Path)
+			arg({ domain: "public", identifier: paymentCurrencyInfo.receiverPath }, t.Path),
+			arg({ domain: "public", identifier: paymentCurrencyInfo.publicPath }, t.Path),
+			arg({ domain: "storage", identifier: paymentCurrencyInfo.storagePath }, t.Path),
+			arg([], t.Array(t.Address)),
+			arg('0', t.UInt64),
+			arg(data.tokenomics.mintTokens, t.Bool)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -113,23 +100,7 @@ const deployFinancialContract = async (hexCode, contractName, data) => {
 	});
 };
 
-const deployCommunityContract = async (hexCode, contractName, data) => {
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(deployCommunityTokenTx),
-		args: (arg, t) => [
-			arg(contractName, t.String),
-			arg(formatFix(data.tokenomics.totalSupply), t.UFix64),
-			arg(hexCode, t.String)
-		],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const deployContractExecution = (data, action) =>
-	executeTransaction(() => deployContract(data), action);
+export const deployContractExecution = (data, action) => executeTransaction(() => deployContract(data), action);
 
 const fundProject = async () => {
 	const contractName = get(fundData).contractName;
@@ -188,6 +159,26 @@ const newRound = async () => {
 
 export const newRoundExecution = () => executeTransaction(newRound);
 
+// TODO: IMPLEMENT FOR FLOW TOKEN AND FUSD
+const proposeWithdraw = async (projectOwner: string, projectId: string, recipient: string, amount: string) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(proposePaymentTokenWithdrawTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.UInt64),
+			arg(recipient, t.Address),
+			arg(amount, t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const proposeWithdrawExecution = (projectOwner: string, projectId: string, recipient: string, amount: string) =>
+	executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
+
 // const tranferTokens = async () => {
 // 	const amount = "10.0";
 // 	const recipient = "0x179b6b1cb6755e31"
@@ -208,19 +199,12 @@ export const newRoundExecution = () => executeTransaction(newRound);
 
 // export const fundProjectExecution = () => executeTransaction(fundProject);
 
-export const getProjectInfo = async (contractName, contractAddress, owner, type, projectId) => {
-	const scriptCode = type === 'Financial' ? getFinancialProjectScript : getCommunityProjectScript;
-
-	let args;
-	if (type === 'Financial') {
-		args = (arg, t) => [arg(owner, t.Address), arg(projectId, t.UInt64)];
-	} else if (type === 'Community') {
-		args = (arg, t) => [arg(owner, t.Address)];
-	}
+export const getProjectInfo = async (contractName: string, contractAddress: string, owner: string, projectId: string) => {
+	console.log(projectId)
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(scriptCode, contractName, contractAddress),
-			args
+			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.UInt64)]
 		});
 		return response;
 	} catch (e) {
@@ -229,19 +213,17 @@ export const getProjectInfo = async (contractName, contractAddress, owner, type,
 	}
 };
 
-export const getFinancialTokenBalance = async (contractName, contractAddress, user) => {
+export const getTokenBalance = async (contractName: string, contractAddress: string, user: string) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(
-				getFinancialTokenBalanceScript,
-				contractName,
-				contractAddress
-			),
-			args: (arg, t) => [arg(user, t.Address)]
-		});
+			cadence: replaceWithProperValues(getTokenBalanceScript, contractName, contractAddress),
+			args: (arg, t) => [
+				arg(user, t.Address)
+			]
+		})
 		return response;
 	} catch (e) {
-		console.log('Error in getFinancialTokenBalance');
+		console.log('Error in getTokenBalance');
 		console.log(e);
 		return '0.0';
 	}

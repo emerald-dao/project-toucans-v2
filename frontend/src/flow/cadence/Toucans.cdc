@@ -1,4 +1,5 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
+import ToucansMultiSign from "./ToucansMultiSign.cdc"
 
 pub contract Toucans {
 
@@ -65,7 +66,8 @@ pub contract Toucans {
     tokenType: Type,
     by: Address, 
     currentCycle: UInt64?,
-    amounts: {Address: UFix64}
+    to: Address,
+    amount: UFix64
   )
 
   pub event Donate(
@@ -172,8 +174,12 @@ pub contract Toucans {
     pub let paymentTokenInfo: TokenInfo
     pub var totalFunding: UFix64
     pub let editDelay: UFix64
+    pub let minting: Bool
 
     // Setters
+    pub fun proposeAction(action: {ToucansMultiSign.Action}): UInt64
+    // If the action is ready to execute, then allow anyone to do it.
+    pub fun executeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
@@ -188,6 +194,7 @@ pub contract Toucans {
     pub fun getExtra(): {String: AnyStruct}
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
+    pub fun borrowManagerPublic(): &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic}
   }
 
   pub resource Project: ProjectPublic {
@@ -198,13 +205,49 @@ pub contract Toucans {
     pub var totalFunding: UFix64
     // You cannot edit or start a new cycle within this time frame
     pub let editDelay: UFix64
+    pub let minting: Bool
 
     access(self) var fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
+    access(self) let multiSignManager: @ToucansMultiSign.Manager
     access(self) let overflow: @FungibleToken.Vault
     access(self) let minter: @{Minter}
     access(self) let funders: {Address: UFix64}
     access(self) var extra: {String: AnyStruct}
+
+
+    //  __  __       _ _   _    _____ _             
+    // |  \/  |     | | | (_)  / ____(_)            
+    // | \  / |_   _| | |_ _  | (___  _  __ _ _ __  
+    // | |\/| | | | | | __| |  \___ \| |/ _` | '_ \ 
+    // | |  | | |_| | | |_| |  ____) | | (_| | | | |
+    // |_|  |_|\__,_|_|\__|_| |_____/|_|\__, |_| |_|
+    //                                   __/ |      
+    //                                  |___/       
+
+
+    pub fun proposeAction(action: {ToucansMultiSign.Action}): UInt64 {
+      // Keep this restriction to prevent bad actions displaying
+      pre {
+        "0x".concat(action.getType().identifier.slice(from: 2, upTo: 18)) == Toucans.account.address.toString(): "Must be a type allowed by Toucans."
+      }
+      let newActionId = self.multiSignManager.createMultiSign(action: action)
+      return newActionId
+    }
+
+    pub fun executeAction(actionUUID: UInt64) {
+      let selfRef: &Project = &self as &Project
+      self.multiSignManager.executeAction(actionUUID: actionUUID, {"treasury": selfRef})
+    }
+
+
+    //   ______               _           _          
+    //  |  ____|             | |         (_)         
+    //  | |__ _   _ _ __   __| |_ __ __ _ _ ___  ___ 
+    //  |  __| | | | '_ \ / _` | '__/ _` | / __|/ _ \
+    //  | |  | |_| | | | | (_| | | | (_| | \__ \  __/
+    //  |_|   \__,_|_| |_|\__,_|_|  \__,_|_|___/\___|
+                                                         
 
     // NOTES:
     // If fundingTarget is nil, that means this is an on-going funding round,
@@ -252,7 +295,7 @@ pub contract Toucans {
 
     // Allows you to edit a cycle that has not happened yet
     pub fun editUpcomingCycle(cycleNum: UInt64, details: FundingCycleDetails) {
-      let fundingCycle: &FundingCycle = self.getFundingCycleRef(cycleNum: cycleNum)
+      let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleNum: cycleNum)
       // This ensures the cycle is in the future
       assert(
         getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeframe.startTime,
@@ -278,7 +321,7 @@ pub contract Toucans {
       pre {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
       }
-      let fundingCycleRef: &FundingCycle = self.getCurrentFundingCycleRef() ?? panic("There is no active cycle.")
+      let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
       let paymentTokensSent: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
 
@@ -328,7 +371,16 @@ pub contract Toucans {
       )
     }
 
-    // Helper Functions
+
+    //   _    _      _                 
+    //  | |  | |    | |                
+    //  | |__| | ___| |_ __   ___ _ __ 
+    //  |  __  |/ _ \ | '_ \ / _ \ '__|
+    //  | |  | |  __/ | |_) |  __/ |   
+    //  |_|  |_|\___|_| .__/ \___|_|   
+    //                | |              
+    //                |_|              
+
 
     access(self) fun depositToTreasury(vault: @FungibleToken.Vault) {
       if let existingVault = &self.treasury[vault.getType()] as &FungibleToken.Vault? {
@@ -343,6 +395,22 @@ pub contract Toucans {
         vault.getType() == self.paymentTokenInfo.tokenType: "Not payment token type."
       }
       self.overflow.deposit(from: <- vault)
+    }
+
+    access(account) fun borrowManager(): &ToucansMultiSign.Manager {
+      return &self.multiSignManager as &ToucansMultiSign.Manager
+    }
+
+    access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
+      emit Withdraw(
+        projectId: self.projectId, 
+        tokenType: self.projectTokenInfo.tokenType,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleNum(),
+        amount: amount,
+        by: vault.owner!.address
+      )
+      vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
     }
 
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address) {
@@ -362,23 +430,51 @@ pub contract Toucans {
       }
     }
 
+
+    //   __  __ _       _   _             
+    //  |  \/  (_)     | | (_)            
+    //  | \  / |_ _ __ | |_ _ _ __   __ _ 
+    //  | |\/| | | '_ \| __| | '_ \ / _` |
+    //  | |  | | | | | | |_| | | | | (_| |
+    //  |_|  |_|_|_| |_|\__|_|_| |_|\__, |
+    //                               __/ |
+    //                              |___/ 
+
+
+    pub fun distribute(recipient: Address, amount: UFix64) {
+      pre {
+        self.minting: "Minting is off. You cannot do this."
+      }
+
+      let recipientVault = getAccount(recipient).getCapability(self.projectTokenInfo.publicPath)
+                      .borrow<&{FungibleToken.Receiver}>() ?? panic("The recipient does not have a Vault set up.")
+      let tokens <- self.minter.mint(amount: amount)
+      recipientVault.deposit(from: <- tokens)
+
+      emit Distribute(
+        projectId: self.projectId, 
+        tokenType: self.projectTokenInfo.tokenType,
+        by: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleNum(),
+        to: recipient,
+        amount: amount
+      )
+    }
+
+
+    //    ____                  __ _               
+    //   / __ \                / _| |              
+    //  | |  | |_   _____ _ __| |_| | _____      __
+    //  | |  | \ \ / / _ \ '__|  _| |/ _ \ \ /\ / /
+    //  | |__| |\ V /  __/ |  | | | | (_) \ V  V / 
+    //   \____/  \_/ \___|_|  |_| |_|\___/ \_/\_/  
+                                                                        
+
     pub fun convertOverflow(amount: UFix64) {
-      let cycle = self.getCurrentFundingCycleRef() ?? panic("There must be an active funding cycle in order to do this.")
+      let cycle = self.borrowCurrentFundingCycleRef() ?? panic("There must be an active funding cycle in order to do this.")
       let overflow <- self.treasury[self.paymentTokenInfo.tokenType]?.withdraw!(amount: amount)
       cycle.handlePaymentReceipt(projectTokensPurchased: 0.0, paymentTokensSent: overflow.balance, causer: self.owner!.address)
       self.depositToTreasury(vault: <- overflow)
-    }
-
-    pub fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
-      emit Withdraw(
-        projectId: self.projectId, 
-        tokenType: self.projectTokenInfo.tokenType,
-        projectOwner: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
-        amount: amount,
-        by: vault.owner!.address
-      )
-      vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
     }
 
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver}) {
@@ -396,8 +492,15 @@ pub contract Toucans {
       self.depositToTreasury(vault: <- tokenVault)
     }
 
-    // Getters
 
+    //    _____      _   _                
+    //   / ____|    | | | |               
+    //  | |  __  ___| |_| |_ ___ _ __ ___ 
+    //  | | |_ |/ _ \ __| __/ _ \ '__/ __|
+    //  | |__| |  __/ |_| ||  __/ |  \__ \
+    //   \_____|\___|\__|\__\___|_|  |___/
+                                   
+                                   
     pub fun getVaultTypesInTreasury(): [Type] {
       return self.treasury.keys
     }
@@ -440,19 +543,8 @@ pub contract Toucans {
       return self.getCurrentFundingCycle()?.details?.issuanceRate
     }
 
-    access(self) fun getCurrentFundingCycleRef(): &FundingCycle? {
-      if let currentCycle: FundingCycle = self.getCurrentFundingCycle() {
-        return self.getFundingCycleRef(cycleNum: currentCycle.details.cycleNum)
-      }
-      return nil
-    }
-
     pub fun getFundingCycle(cycleNum: UInt64): FundingCycle {
       return self.fundingCycles[cycleNum]
-    }
-
-    access(self) fun getFundingCycleRef(cycleNum: UInt64): &FundingCycle {
-      return &self.fundingCycles[cycleNum] as &FundingCycle
     }
 
     pub fun getFundingCycles(): [FundingCycle] {
@@ -471,12 +563,39 @@ pub contract Toucans {
       return self.overflow.balance
     }
 
+
+    //   ____                               
+    //  |  _ \                              
+    //  | |_) | ___  _ __ _ __ _____      __
+    //  |  _ < / _ \| '__| '__/ _ \ \ /\ / /
+    //  | |_) | (_) | |  | | | (_) \ V  V / 
+    //  |____/ \___/|_|  |_|  \___/ \_/\_/  
+                                                                
+
+    access(self) fun borrowFundingCycleRef(cycleNum: UInt64): &FundingCycle {
+      return &self.fundingCycles[cycleNum] as &FundingCycle
+    }
+
+    access(self) fun borrowCurrentFundingCycleRef(): &FundingCycle? {
+      if let currentCycle: FundingCycle = self.getCurrentFundingCycle() {
+        return self.borrowFundingCycleRef(cycleNum: currentCycle.details.cycleNum)
+      }
+      return nil
+    }
+
+    pub fun borrowManagerPublic(): &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic} {
+      return &self.multiSignManager as &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic}
+    }
+
     init(
       projectTokenInfo: TokenInfo,
       paymentTokenInfo: TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
-      firstCycleDetails: FundingCycleDetails
+      firstCycleDetails: FundingCycleDetails,
+      signers: [Address],
+      threshold: UInt64,
+      minting: Bool
     ) {
       self.projectId = self.uuid
       self.fundingCycles = [FundingCycle(details: firstCycleDetails)]
@@ -487,6 +606,7 @@ pub contract Toucans {
       self.editDelay = editDelay
       self.projectTokenInfo = projectTokenInfo
       self.paymentTokenInfo = paymentTokenInfo
+      self.minting = minting
 
       let testMint: @FungibleToken.Vault <- self.minter.mint(amount: 0.0)
       assert(testMint.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
@@ -494,12 +614,14 @@ pub contract Toucans {
       let emptyPaymentVault <- paymentContract.createEmptyVault()
       self.treasury <- {projectTokenInfo.tokenType: <- testMint, emptyPaymentVault.getType(): <- emptyPaymentVault}
       self.overflow <- paymentContract.createEmptyVault()
+      self.multiSignManager <- ToucansMultiSign.createMultiSigManager(signers: signers, threshold: threshold)
     }
 
     destroy() {
       destroy self.treasury
       destroy self.minter
       destroy self.overflow
+      destroy self.multiSignManager
     }
   }
 
@@ -521,6 +643,9 @@ pub contract Toucans {
       timeframe: CycleTimeFrame, 
       payouts: [Payout], 
       editDelay: UFix64,
+      signers: [Address],
+      threshold: UInt64,
+      minting: Bool,
       extra: {String: String}
     ) {
       pre {
@@ -537,7 +662,7 @@ pub contract Toucans {
         extra
       )
 
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, firstCycleDetails: firstCycleDetails)
+      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, firstCycleDetails: firstCycleDetails, signers: signers, threshold: threshold, minting: minting)
       let projectId: UInt64 = project.uuid
       self.projects[projectId] <-! project
 
@@ -597,8 +722,8 @@ pub contract Toucans {
   }
 
   init() {
-    self.CollectionStoragePath = /storage/ToucansCollection001
-    self.CollectionPublicPath = /public/ToucansCollection001
+    self.CollectionStoragePath = /storage/ToucansCollection002
+    self.CollectionPublicPath = /public/ToucansCollection002
   }
 
 }

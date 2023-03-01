@@ -3,10 +3,11 @@ import type { FundingCycleAction } from './funding-cycle-action.interface';
 import type { WithdrawAction } from './withdraw-action';
 import type { DonateAction } from './donate-action';
 import type { ProjectCreatedAction } from './project-created-action';
+import type { DistributeAction } from './distribute-action';
 
-export type Action = PurchaseAction | FundingCycleAction | WithdrawAction | DonateAction | ProjectCreatedAction;
+export type Action = DistributeAction | PurchaseAction | FundingCycleAction | WithdrawAction | DonateAction | ProjectCreatedAction;
 
-export type ActionType = 'Purchase' | 'Withdraw' | 'NewFundingCycle' | 'Donate' | 'ProjectCreated';
+export type ActionType = 'Distribute' | 'Purchase' | 'Withdraw' | 'NewFundingCycle' | 'Donate' | 'ProjectCreated';
 
 export interface BaseAction {
 	by: string;
