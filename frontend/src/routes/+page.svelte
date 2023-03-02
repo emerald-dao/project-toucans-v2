@@ -1,8 +1,8 @@
 <script type="ts">
-	import CreateYourToken from './__components/sections/CreateYourToken.svelte';
-	import Hero from './__components/sections/Hero.svelte';
-	import ToucansFeatures from './__components/sections/ToucansFeatures.svelte';
-	import LeadingProjects from './__components/sections/LeadingProjects.svelte';
+	import CreateYourToken from './_components/sections/CreateYourToken.svelte';
+	import Hero from './_components/sections/Hero.svelte';
+	import ToucansFeatures from './_components/sections/ToucansFeatures.svelte';
+	import LeadingProjects from './_components/sections/LeadingProjects.svelte';
 	import { StatsSection, PoweredByECDAO } from '@emerald-dao/component-library';
 </script>
 

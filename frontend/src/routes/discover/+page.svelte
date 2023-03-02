@@ -1,5 +1,5 @@
 <script>
-	import ProjectCard from '$components/cards/ProjectCard.svelte';
+	import ProjectCard from '$components/atoms/cards/ProjectCard.svelte';
 </script>
 
 <section class="container-small">

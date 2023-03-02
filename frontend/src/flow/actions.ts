@@ -21,9 +21,9 @@ import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 
 import { get } from 'svelte/store';
-import { fundData } from '$stores/fund/FundDataStore';
+import { fundingData } from '$lib/features/funding/stores/FundingData';
 import { currencies } from '$stores/flow/TokenStore';
-import { roundData } from '$components/round-generator/stores/RoundData';
+import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -102,11 +102,11 @@ export const deployContractExecution = (data, actionAfterSucceed) =>
 	executeTransaction(() => deployContract(data), actionAfterSucceed);
 
 const fundProject = async () => {
-	const contractName = get(fundData).contractName;
-	const projectOwner = get(fundData).daoAddress;
-	const projectId = get(fundData).projectId;
-	const amount = get(fundData).amount;
-	const message = get(fundData).specialMessage;
+	const contractName = get(fundingData).contractName;
+	const projectOwner = get(fundingData).daoAddress;
+	const projectId = get(fundingData).projectId;
+	const amount = get(fundingData).amount;
+	const message = get(fundingData).specialMessage;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
 		args: (arg, t) => [
@@ -125,7 +125,7 @@ const fundProject = async () => {
 export const fundProjectExecution = () => executeTransaction(fundProject);
 
 const newRound = async () => {
-	const newRoundData = get(roundData);
+	const newRoundData = get(roundGeneratorData);
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	const startTime = formatFix(Math.floor(new Date(newRoundData.startDate).getTime() / 1000));

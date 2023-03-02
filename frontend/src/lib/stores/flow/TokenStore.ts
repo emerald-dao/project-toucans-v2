@@ -1,7 +1,7 @@
-import type { ECurrencies, ICurrency } from '$lib/types/common/enums';
+import type { TokenInfo } from '$lib/types/dao-project/dao-project.interface';
 import { addresses } from './FlowStore';
 
-export const currencies: { [key: string]: ICurrency } = {
+export const currencies: { [key: string]: TokenInfo } = {
 	FLOW: {
 		contractName: 'FlowToken',
 		contractAddress: addresses.FlowToken,

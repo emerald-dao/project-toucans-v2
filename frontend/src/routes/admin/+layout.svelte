@@ -1,14 +1,14 @@
 <script type="ts">
 	import { Button, FlowConnect } from '@emerald-dao/component-library';
-	import { AdminNav } from './__components';
+	import { AdminNav } from './_components';
 	import { setContext } from 'svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
 	import { user } from '$stores/flow/FlowStore';
 	import { logIn, unauthenticate } from '$flow/actions';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	interface Data {
-		projects: (FinancialDao | CommunityDao)[]
+		projects: DAOProject[];
 	}
 
 	export let data: Data;
@@ -17,7 +17,7 @@
 
 	setContext<{
 		activeDao: Writable<number>;
-		userDaos: (FinancialDao | CommunityDao)[];
+		userDaos: DAOProject[];
 	}>('admin-data', {
 		userDaos: data.projects,
 		activeDao
@@ -29,7 +29,7 @@
 		{#if !$user.addr}
 			<div class="card-primary column-7 align-center">
 				<span>Connect your Flow wallet to access the admin dashboard</span>
-				<FlowConnect {logIn} {unauthenticate} {user}/>
+				<FlowConnect {logIn} {unauthenticate} {user} />
 			</div>
 		{:else if data.projects.length < 1}
 			<div class="card-primary column-7 align-center">
@@ -43,7 +43,6 @@
 	</div>
 </section>
 
-				
 <style type="scss">
 	section {
 		.container {
@@ -68,6 +67,5 @@
 				}
 			}
 		}
-
 	}
 </style>

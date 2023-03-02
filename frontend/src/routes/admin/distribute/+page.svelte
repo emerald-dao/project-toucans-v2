@@ -1,16 +1,16 @@
 <script type="ts">
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import type { Writable } from 'svelte/store';
-	import DistributionStaging from './__components/sections/DistributionStaging.svelte';
-	import DistributionForms from './__components/sections/DistributionForms.svelte';
+	import DistributionStaging from './_components/sections/DistributionStaging.svelte';
+	import DistributionForms from './_components/sections/DistributionForms.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: FinancialDao[] | CommunityDao[];
+		userDaos: DAOProject[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
@@ -47,7 +47,7 @@
 		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
 	</div>
 	<div class="dist-wrapper sub-wrapper card">
-		<DistributionStaging bind:distStaging tokenName={activeDaoData.token_symbol}/>
+		<DistributionStaging bind:distStaging tokenName={activeDaoData.token_symbol} />
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
 				<Button width="full-width" on:click={distributeTokens}>Distribute</Button>

@@ -1,17 +1,14 @@
 <script type="ts">
-	import CommunityProject from './__components/sections/CommunityProject.svelte';
-	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project/dao-project.interface';
-	import { ProjectSidebarSection } from './__components';
-	import FinancialProject from './__components/sections/FinancialProject.svelte';
-	import SeeMoreSidebar from './__components/atoms/SeeMoreSidebar.svelte';
+	import { ProjectSidebarSection } from './_components';
+	import FinancialProject from './_components/sections/FinancialProject.svelte';
+	import SeeMoreSidebar from './_components/atoms/SeeMoreSidebar.svelte';
 	import Icon from '@iconify/svelte';
 	import { setContext } from 'svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
-	export let data: CommunityDao | FinancialDao;
+	export let data: DAOProject;
 
-	setContext('daoData', 
-		data
-	);
+	setContext('daoData', data);
 
 	let seeMore = false;
 </script>
@@ -22,11 +19,7 @@
 			<ProjectSidebarSection daoData={data} />
 		</div>
 		<div class="secondary-wrapper">
-			{#if data.type === DaoType.Community}
-				<CommunityProject daoData={data} />
-			{:else if data.type === DaoType.Financial}
-				<FinancialProject daoData={data} />
-			{/if}
+			<FinancialProject daoData={data} />
 		</div>
 	</div>
 	<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>

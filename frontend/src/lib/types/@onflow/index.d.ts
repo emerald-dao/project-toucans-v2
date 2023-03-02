@@ -51,11 +51,23 @@ declare module '@onflow/fcl' {
 	/** https://developers.flow.com/tools/fcl-js/reference/api#transactionstatusobject */
 	type TransactionStatusObject = {
 		blockId: string;
-		events: unknown[];
+		events: EventObject[];
 		status: TrnsactionStatus;
 		statusString: '' | 'UNKNOWN' | 'PENDING' | 'FINALIZED' | 'EXECUTED' | 'SEALED' | 'EXPIRED';
 		errorMessage: string;
 		statusCode: string;
+	};
+
+	/** https://developers.flow.com/tools/fcl-js/reference/api#event-object */
+	type EventObject = {
+		blockId: string;
+		blockHeight: number;
+		blockTimestamp: string;
+		type: string;
+		transactionId: string;
+		transactionIndex: number;
+		eventIndex: number;
+		data: unknown;
 	};
 
 	type TrnsactionStatus = -1 | 0 | 1 | 2 | 3 | 4 | 5;

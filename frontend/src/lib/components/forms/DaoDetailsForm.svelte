@@ -1,7 +1,7 @@
 <script type="ts">
 	import { InputWrapper, DropZone } from '@emerald-dao/component-library';
-	import { daoGeneratorData } from '$stores/generator/DaoDataStore';
-	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
+	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
+	import { daoGeneratorSteps, generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
 	import { page } from '$app/stores';
 
@@ -50,7 +50,7 @@
 </script>
 
 <form
-	id={$generatorSteps[$generatorActiveStep].slug}
+	id={$daoGeneratorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
 	autocomplete="off"
 >

@@ -1,9 +1,12 @@
 <script>
 	import Icon from '@iconify/svelte';
 	import { Button } from '@emerald-dao/component-library';
-	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
-	import { GeneratorNav } from './__components';
+	import {
+		daoGeneratorSteps,
+		generatorActiveStep
+	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { Container, Section } from '@mateoroldos/svelte.bones';
+	import GeneratorNav from '$lib/features/dao-generator/components/navigation/GeneratorNav.svelte';
 </script>
 
 <Section paddingTop="none">

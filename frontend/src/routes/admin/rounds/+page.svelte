@@ -1,27 +1,26 @@
 <script type="ts">
-	import { newRoundSteps, newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
-	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
-	import { Button } from '@emerald-dao/component-library';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';
-	import { Modal, getModal } from '@emerald-dao/component-library';
 	import type { Writable } from 'svelte/store';
-	import RoundGeneratorModal from '$components/round-generator/RoundGeneratorModal.svelte';
+	import RoundGeneratorModal from '$lib/features/round-generator/components/RoundGeneratorModal.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: FinancialDao[] | CommunityDao[];
+		userDaos: DAOProject[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore] as FinancialDao;
+	$: activeDaoData = adminData.userDaos[$activeDaoStore];
+	$: activeDaoFundingRounds = activeDaoData.events?.filter(
+		(event) => event.type === 'NewFundingCycle'
+	);
 </script>
 
 <div class="card column-space-between">
 	<div class="rounds-wrapper">
-		{#if !activeDaoData.fundingCycles}
+		{#if !activeDaoFundingRounds}
 			<span>This project has no funding rounds yet</span>
 		{:else}
 			{#each activeDaoData.fundingCycles as round, i}
