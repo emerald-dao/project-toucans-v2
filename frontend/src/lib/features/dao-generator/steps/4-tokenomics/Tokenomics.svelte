@@ -1,46 +1,47 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-
 	import { StepButtons } from '../../components';
+	import { InputWrapper } from '@emerald-dao/component-library';
+	import validationSuite from './validation';
 
-	// const handleChange = (input: Event) => {
-	// 	const target = input.target as HTMLInputElement;
+	const handleChange = (input: Event) => {
+		const target = input.target as HTMLInputElement;
 
-	// 	if (target?.name) {
-	// 		res = tokenomicsSuite($daoGeneratorData.tokenomics, target.name);
-	// 	}
-	// };
+		if (target?.name) {
+			res = validationSuite($daoGeneratorData.tokenomics, target.name);
+		}
+	};
 
-	// let res = tokenomicsSuite.get();
-
-	let editMode = false;
+	let res = validationSuite.get();
 </script>
 
-<div class="column-4" in:fly={{ y: 30, duration: 400 }}>
-	<div in:fly|local={{ y: 40, duration: 400 }} class="column align-center">
-		<p>EDIT THIS COMPONENT</p>
-		<p>You can create it now or create it afterwards in the admin dashboard.</p>
-	</div>
-	<StepButtons />
-</div>
-
-<style type="scss">
-	form {
-		display: flex;
-		flex-direction: column;
-
-		.range-wrapper {
-			margin-bottom: var(--space-7);
-		}
-	}
-
-	p {
-		text-align: center;
-		margin-bottom: var(--space-2);
-
-		&:last-of-type {
-			margin-bottom: var(--space-4);
-		}
-	}
-</style>
+<form in:fly={{ y: 30, duration: 400 }}>
+	<InputWrapper
+		name="editDelay"
+		label="Edit delay"
+		errors={res.getErrors('editDelay')}
+		isValid={res.isValid('editDelay')}
+		required={true}
+	>
+		<input
+			name="editDelay"
+			type="number"
+			min="0"
+			bind:value={$daoGeneratorData.tokenomics.editDelay}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+	<label for="mint-tokens" class="switch">
+		<input
+			type="checkbox"
+			name="mint-tokens"
+			id="mint-tokens"
+			bind:checked={$daoGeneratorData.tokenomics.mintTokens}
+			on:change={handleChange}
+		/>
+		<span class="slider" />
+		Mint tokens
+	</label>
+	<StepButtons active={res.isValid()} />
+</form>

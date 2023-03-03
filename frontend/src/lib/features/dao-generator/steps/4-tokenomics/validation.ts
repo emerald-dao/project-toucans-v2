@@ -1,24 +1,15 @@
 import { create, enforce, test, only } from 'vest';
 
-const tokenomicsSuite = create((data = {}, currentField) => {
+const validationSuite = create((data = {}, currentField) => {
 	only(currentField);
-	only.group(data.tokenType);
 
-	test('targetAmount', 'Target amount is needed', () => {
-		enforce(data.targetAmount).isNotEmpty();
+	test('editDelay', 'Edit delay is needed', () => {
+		enforce(data.editDelay).isNotEmpty();
 	});
 
-	test('targetAmount', 'Target amount must be greater than 0', () => {
-		enforce(data.targetAmount).greaterThan(0);
-	});
-
-	test('issuanceRate', 'Issuance rate is needed', () => {
-		enforce(data.initialRound.issuanceRate).isNotEmpty();
-	});
-
-	test('issuanceRate', 'Issuance rate must be greater than 0', () => {
-		enforce(data.initialRound.issuanceRate).greaterThan(0);
+	test('editDelay', 'Edit delay should be greater than 0', () => {
+		enforce(data.editDelay).greaterThan(0);
 	});
 });
 
-export default tokenomicsSuite;
+export default validationSuite;
