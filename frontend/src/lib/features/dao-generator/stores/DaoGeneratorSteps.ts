@@ -1,15 +1,29 @@
 import { createActiveStep } from '$stores/custom/steps/ActiveStep';
 import { createSteps } from '$stores/custom/steps/Steps';
-import Tokenomics from '../components/steps/2-tokenomics/Tokenomics.svelte';
-import ReviewAndDeploy from '../components/steps/3-review-and-deploy/ReviewAndDeploy.svelte';
-import DaoDetails from '../components/steps/1-general-data/GeneralData.svelte';
 import { deployDao } from '../functions/deployDao';
+import { GeneralData, Description, Socials, Tokenomics, ReviewAndDeploy } from '../steps';
 
 export const daoGeneratorSteps = createSteps([
 	{
-		name: 'DAO Details',
-		slug: 'daoDetailes',
-		component: DaoDetails,
+		name: 'General Data',
+		slug: 'generalData',
+		component: GeneralData,
+		action: null,
+		form: true,
+		state: 'active'
+	},
+	{
+		name: 'Description',
+		slug: 'description',
+		component: Description,
+		action: null,
+		form: true,
+		state: 'active'
+	},
+	{
+		name: 'Socials',
+		slug: 'socials',
+		component: Socials,
 		action: null,
 		form: true,
 		state: 'active'

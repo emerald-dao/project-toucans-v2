@@ -60,7 +60,8 @@
 			"key": "fc49a771829ff480841164af13b18a68cd697b6e79c80af7f8470a9e651dfac5"
 		},
 		"testnet-account": {
-			"fromFile": "testnet-account.private.json"
+			"address": "f8d6e0586b0a20c7",
+			"key": "fc49a771829ff480841164af13b18a68cd697b6e79c80af7f8470a9e651dfac5"
 		}
 	},
 	"deployments": {
@@ -77,11 +78,7 @@
 			]
 		},
 		"testnet": {
-			"testnet-account": [
-				"ToucansMultiSign",
-				"Toucans",
-				"ToucansTreasuryActions"
-			]
+			"testnet-account": ["ToucansMultiSign", "Toucans", "ToucansTreasuryActions"]
 		}
 	}
 }

@@ -1,11 +1,9 @@
 <script type="ts">
-	import RecapElement from '../../atoms/RecapElement.svelte';
-	import StepButtons from '../../atoms/StepButtons.svelte';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-	import RecapCard from '../../atoms/RecapCard.svelte';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
+	import { RecapCard, StepButtons, RecapElement } from '../../components';
 
 	onMount(() => {
 		if ($daoGeneratorData.daoDetails.logo) {

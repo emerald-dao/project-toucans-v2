@@ -1,7 +1,7 @@
 import type { LayoutLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
 import { getProjectInfo } from '$flow/actions';
-import '$flow/config.js';
+import '$flow/config.ts';
 import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';
 import type { FinancialDao, CommunityDao } from '$lib/types/dao-project/dao-project.interface';

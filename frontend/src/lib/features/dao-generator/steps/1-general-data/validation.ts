@@ -1,6 +1,6 @@
 import { create, enforce, test, skipWhen, only, include, optional } from 'vest';
 
-const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
+const validationSuite = create((data = {}, currentField, daoProjects) => {
 	only(currentField);
 	include('contractName').when(() => currentField === 'name');
 
@@ -14,7 +14,7 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 		enforce(data.name).longerThan(4);
 	});
 
-	skipWhen(daoDetailsSuite.get().hasErrors('name'), () => {
+	skipWhen(validationSuite.get().hasErrors('name'), () => {
 		test.memo(
 			'name',
 			'Name already taken',
@@ -25,7 +25,7 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 		);
 	});
 
-	skipWhen(daoDetailsSuite.get().hasErrors('name'), () => {
+	skipWhen(validationSuite.get().hasErrors('name'), () => {
 		test.memo(
 			'contractName',
 			'Contract name already taken',
@@ -44,7 +44,7 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 		enforce(data.tokenName).shorterThan(6);
 	});
 
-	skipWhen(daoDetailsSuite.get().hasErrors('tokenName'), () => {
+	skipWhen(validationSuite.get().hasErrors('tokenName'), () => {
 		test.memo(
 			'tokenName',
 			'Token name already taken',
@@ -53,46 +53,6 @@ const daoDetailsSuite = create((data = {}, currentField, daoProjects) => {
 			},
 			[data.tokenName]
 		);
-	});
-
-	test('description', 'Description is needed', () => {
-		enforce(data.description).isNotBlank();
-	});
-
-	test('description', 'Description should be longer than 20 chars', () => {
-		enforce(data.description).longerThan(20);
-	});
-
-	test('website', 'Must be a valid URL', () => {
-		if (data.website.length > 0) {
-			enforce(data.website).matches(
-				/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-			);
-		}
-	});
-
-	test('twitter', 'Must start with @', () => {
-		if (data.twitter.length > 0) {
-			enforce(data.twitter).matches(/^@/);
-		}
-	});
-
-	test('twitter', 'Must be longer than 3 chars', () => {
-		if (data.twitter.length > 0) {
-			enforce(data.twitter).longerThan(3);
-		}
-	});
-
-	test('discord', 'Must be a valid discord link', () => {
-		if (data.discord.length > 0 || data.discord == 'https://discord.gg/') {
-			enforce(data.discord).matches(/^https:\/\/(discord\.(gg|com)\/)/i);
-		}
-	});
-
-	test('discord', 'Must be longer than 22 chars', () => {
-		if (data.discord.length > 0 || data.discord == 'https://discord.gg/') {
-			enforce(data.discord).longerThan(22);
-		}
 	});
 });
 
@@ -132,4 +92,4 @@ interface DaoProject {
 	contract_name: string;
 }
 
-export default daoDetailsSuite;
+export default validationSuite;

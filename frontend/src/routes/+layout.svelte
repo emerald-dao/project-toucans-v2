@@ -1,12 +1,17 @@
 <script type="ts">
-	import { network } from '$flow/config.js';
+	import { network } from '$flow/config.ts';
 	import '../app.postcss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
 	import '@emerald-dao/design-system/build/variables-light.css';
 	import '@emerald-dao/design-system/build/variables.css';
 	import '@emerald-dao/component-library/styles/app.scss';
 	import { Header, Footer, TransactionModal } from '@emerald-dao/component-library';
-	import { navElements, emeraldTools, socialMedia, avatarDropdownNav } from '$lib/config/navigation';
+	import {
+		navElements,
+		emeraldTools,
+		socialMedia,
+		avatarDropdownNav
+	} from '$lib/config/navigation';
 	import { theme } from '$stores/ThemeStore';
 	import { logIn, unauthenticate } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';

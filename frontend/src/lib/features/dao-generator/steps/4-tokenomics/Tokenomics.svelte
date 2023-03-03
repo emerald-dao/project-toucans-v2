@@ -1,18 +1,18 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
-	import StepButtons from '../../atoms/StepButtons.svelte';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-	import tokenomicsSuite from '$lib/validations/tokenomicsSuite';
 
-	const handleChange = (input: Event) => {
-		const target = input.target as HTMLInputElement;
+	import { StepButtons } from '../../components';
 
-		if (target?.name) {
-			res = tokenomicsSuite($daoGeneratorData.tokenomics, target.name);
-		}
-	};
+	// const handleChange = (input: Event) => {
+	// 	const target = input.target as HTMLInputElement;
 
-	let res = tokenomicsSuite.get();
+	// 	if (target?.name) {
+	// 		res = tokenomicsSuite($daoGeneratorData.tokenomics, target.name);
+	// 	}
+	// };
+
+	// let res = tokenomicsSuite.get();
 
 	let editMode = false;
 </script>

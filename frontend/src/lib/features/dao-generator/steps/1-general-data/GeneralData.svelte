@@ -1,9 +1,15 @@
 <script type="ts">
 	import { InputWrapper, DropZone } from '@emerald-dao/component-library';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-	import { daoGeneratorSteps, generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
-	import daoDetailsSuite from '$lib/validations/daoDetailsSuite';
+	import {
+		daoGeneratorSteps,
+		generatorActiveStep
+	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { page } from '$app/stores';
+	import { fly } from 'svelte/transition';
+	import StepButtons from '../../components/atoms/StepButtons.svelte';
+	import validationSuite from './validation';
+	import type { SuiteRunResult } from 'vest';
 
 	export let validForm = false;
 
@@ -20,9 +26,9 @@
 			tokenNamePending = true;
 		}
 
-		res = daoDetailsSuite($daoGeneratorData.daoDetails, target.name, $page.data.data.body);
+		res = validationSuite($daoGeneratorData.daoDetails, target.name, $page.data.data.body);
 
-		res.done((result) => {
+		(res as SuiteRunResult).done((result) => {
 			res = result;
 			namePending = false;
 			contractNamePending = false;
@@ -39,20 +45,23 @@
 		'Checking if contract name already exists in Flow blockchain...'
 	];
 
-	let res = daoDetailsSuite.get();
+	let res = validationSuite.get();
 
 	$: $daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
 		.replace(/[^\w\s]|\s/gi, '')
 		.toLowerCase();
 
 	$: validForm =
-		res.isValid() && $daoGeneratorData.daoDetails.logo ? $daoGeneratorData.daoDetails.logo.length > 0 : false;
+		res.isValid() && $daoGeneratorData.daoDetails.logo
+			? $daoGeneratorData.daoDetails.logo.length > 0
+			: false;
 </script>
 
 <form
 	id={$daoGeneratorSteps[$generatorActiveStep].slug}
 	on:submit|preventDefault={generatorActiveStep.increment}
 	autocomplete="off"
+	in:fly={{ y: 30, duration: 400 }}
 >
 	<InputWrapper
 		name="name"
@@ -72,7 +81,6 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
-
 	<InputWrapper
 		name="contractName"
 		label="Contract name"
@@ -90,7 +98,6 @@
 			bind:value={$daoGeneratorData.daoDetails.contractName}
 		/>
 	</InputWrapper>
-
 	<InputWrapper
 		name="tokenName"
 		label="Token Name"
@@ -111,7 +118,6 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
-
 	<div class="drop-zone-wrapper">
 		<label for="logo">Logo *</label>
 		<DropZone
@@ -121,69 +127,7 @@
 			bind:bindValue={$daoGeneratorData.daoDetails.logo}
 		/>
 	</div>
-
-	<InputWrapper
-		name="description"
-		label="Description"
-		errors={res.getErrors('description')}
-		isValid={res.isValid('description')}
-		required={true}
-	>
-		<textarea
-			name="description"
-			placeholder="A DAO for the people"
-			bind:value={$daoGeneratorData.daoDetails.description}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-
-	<InputWrapper
-		name="website"
-		label="Website"
-		icon="tabler:world"
-		errors={res.getErrors('website')}
-		isValid={res.isValid('website') && $daoGeneratorData.daoDetails.website.length > 0}
-	>
-		<input
-			name="website"
-			type="text"
-			placeholder="alphadao.com"
-			bind:value={$daoGeneratorData.daoDetails.website}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-
-	<InputWrapper
-		name="twitter"
-		label="Twitter"
-		icon="tabler:brand-twitter"
-		errors={res.getErrors('twitter')}
-		isValid={res.isValid('twitter') && $daoGeneratorData.daoDetails.twitter.length > 0}
-	>
-		<input
-			name="twitter"
-			type="text"
-			placeholder="@emerald_dao"
-			bind:value={$daoGeneratorData.daoDetails.twitter}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-
-	<InputWrapper
-		name="discord"
-		label="Discord invite"
-		icon="tabler:brand-discord"
-		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord') && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
-	>
-		<input
-			name="discord"
-			type="text"
-			placeholder="https://discord.gg/emeraldcity"
-			bind:value={$daoGeneratorData.daoDetails.discord}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
+	<StepButtons active={validForm} />
 </form>
 
 <style type="scss">
@@ -193,10 +137,6 @@
 
 		.drop-zone-wrapper {
 			margin-bottom: var(--space-7);
-		}
-
-		textarea {
-			min-height: 15rem;
 		}
 
 		input:read-only {

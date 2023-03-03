@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabaseClient';
 import { getTokenBalance, getProjectInfo } from '$flow/actions';
-import '$flow/config.js';
+import '$flow/config.ts';
 import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 import { get } from 'svelte/store';
 import { user } from '$stores/flow/FlowStore';
