@@ -5,10 +5,10 @@
 	import { InputWrapper, Button } from '@emerald-dao/component-library';
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
-	import StepTitle from '../../atoms/StepTitle.svelte';
 	import { roundGeneratorData } from '$lib/features/round-generator/stores/RoundGeneratorData';
 	import { newRoundActiveStep } from '$lib/features/round-generator/stores/RoundGeneratorSteps';
 	import { ECurrencies } from '$lib/types/common/enums';
+	import StepTitle from '../../components/atoms/StepTitle.svelte';
 
 	export let tokenSymbol: string;
 	export let projectId: string | undefined;

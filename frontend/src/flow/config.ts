@@ -4,14 +4,17 @@ import { env } from '$env/dynamic/public';
 
 const resolver = async () => {
 	// const response = await fetch('/api/generate');
-	const nonce = '7f190deedcd3b0538b7cd0ebc1994ed40d9db16cc1a6fcc3e7a994240c14d86d'
+	const nonce = '7f190deedcd3b0538b7cd0ebc1994ed40d9db16cc1a6fcc3e7a994240c14d86d';
 	return {
-		appIdentifier: "Toucans",
+		appIdentifier: 'Toucans',
 		nonce
-	}
-}
+	};
+};
 
-export const network = env.PUBLIC_FLOW_NETWORK;
+export const network: 'mainnet' | 'tesntet' | 'emulator' = env.PUBLIC_FLOW_NETWORK as
+	| 'mainnet'
+	| 'tesntet'
+	| 'emulator';
 
 // EMULATOR
 // const accessNode = 'http://127.0.0.1:8888';
@@ -28,7 +31,7 @@ export const network = env.PUBLIC_FLOW_NETWORK;
 config()
 	.put('app.detail.title', dappInfo.title)
 	.put('app.detail.icon', dappInfo.icon)
-	.put("fcl.accountProof.resolver", resolver)
+	.put('fcl.accountProof.resolver', resolver)
 	.put('flow.network', network)
 	.put('accessNode.api', env.PUBLIC_FLOW_ACCESS_NODE)
-	.put('discovery.wallet', env.PUBLIC_FLOW_DISCOVERY)
+	.put('discovery.wallet', env.PUBLIC_FLOW_DISCOVERY);

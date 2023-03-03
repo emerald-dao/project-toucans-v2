@@ -1,7 +1,7 @@
 const fcl = require('@onflow/fcl');
 const express = require('express');
 const { supabase } = require('./supabaseClient');
-require('./flow/config.ts');
+require('./flow/config.js');
 
 const app = express();
 const port = process.env.PORT || 5000;

@@ -7,7 +7,7 @@
 	import validationSuite from './validation';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import type { SvelteComponent } from 'svelte';
-	import StepTitle from '../../atoms/StepTitle.svelte';
+	import StepTitle from '../../components/atoms/StepTitle.svelte';
 
 	let distributionData: [string, number] = ['', 0];
 
@@ -57,7 +57,7 @@
 	}
 </script>
 
-<div class="main-wrapper" in:fade={{ duration: 300}}>
+<div class="main-wrapper" in:fade={{ duration: 300 }}>
 	<div>
 		<StepTitle title="Round distribution" stepNumber={3}>
 			<p class="xsmall">
@@ -112,18 +112,13 @@
 				<div />
 			</div>
 		</div>
-		</div>
+	</div>
 	<div class="button-wrapper">
 		<a href="#" class="header-link row-2 align-center" on:click={newRoundActiveStep.decrement}>
 			<Icon icon="tabler:arrow-left" />
 			Back
 		</a>
-		<Button
-			size="large"
-			on:click={newRoundActiveStep.increment}
-		>
-			Launch round
-		</Button>
+		<Button size="large" on:click={newRoundActiveStep.increment}>Launch round</Button>
 	</div>
 </div>
 

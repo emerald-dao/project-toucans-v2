@@ -6,7 +6,8 @@
 	import { InputWrapper, Button, Range } from '@emerald-dao/component-library';
 	import { newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
 	import { roundData } from '$components/round-generator/stores/RoundData';
-	import StepTitle from '../../atoms/StepTitle.svelte';
+	import StepTitle from '../../components/atoms/StepTitle.svelte';
+	StepTitle;
 
 	export let tokenSymbol: string;
 	export let projectId: string;
@@ -15,15 +16,15 @@
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = validationSuite($roundData, target.name);		
+		res = validationSuite($roundData, target.name);
 	};
 
 	let res = validationSuite.get();
 </script>
 
-<div class="main-wrapper" in:fade={{ duration: 300}}>
+<div class="main-wrapper" in:fade={{ duration: 300 }}>
 	<form autocomplete="off">
-		<StepTitle title="Round conditions" stepNumber={2}/>
+		<StepTitle title="Round conditions" stepNumber={2} />
 		<div class="form-section-wrapper currency">
 			<label for="currencies">Currency</label>
 			<div class="radio-tabs" id="currencies">
@@ -81,7 +82,7 @@
 						/>
 					</InputWrapper>
 				</div>
-				{/if}
+			{/if}
 		</div>
 		<div class="form-section-wrapper">
 			<InputWrapper
@@ -103,7 +104,12 @@
 				<div class="row-2">
 					<label for="reserveRate">Reserve rate </label>
 				</div>
-				<Range bind:value={$roundData.reserveRate} suffix="%" id="reserveRate" --clr-surface-secondary="var(--clr-surface-primary)"/>
+				<Range
+					bind:value={$roundData.reserveRate}
+					suffix="%"
+					id="reserveRate"
+					--clr-surface-secondary="var(--clr-surface-primary)"
+				/>
 			</div>
 		</div>
 	</form>
@@ -170,7 +176,7 @@
 				.range-wrapper {
 					margin-bottom: var(--space-7);
 
-					label[for=reserveRate] {
+					label[for='reserveRate'] {
 						margin-bottom: var(--space-1);
 					}
 				}

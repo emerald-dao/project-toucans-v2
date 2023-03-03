@@ -1,6 +1,6 @@
 <script type="ts">
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { page } from '$app/stores';
-	import { DaoType, type CommunityDao, type FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
@@ -11,32 +11,32 @@
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: (FinancialDao | CommunityDao)[];
+		userDaos: DAOProject[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
-	const userDaosNames = adminData.userDaos.map((dao) => dao.name);
+	const userDaosNames = adminData.userDaos.map((dao) => dao.generalInfo.name);
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore];	
+	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 
 	const copyToClipboard = () => {
 		const app = new CopyToClipboard({
 			target: document.getElementById('clipboard') as Element,
-			props: { name: `https://${dappInfo.url}/${activeDaoData.contract_name}` },
+			props: { name: `https://${dappInfo.url}/${activeDaoData.generalInfo.contract_name}` }
 		});
 		app.$destroy();
-	}
+	};
 </script>
 
 <nav class="column-12 align-start">
 	<div class="column-4">
-		<img src={activeDaoData.logo} alt="DAO Logo" />
+		<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
 		<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}>
 			<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top">
 				<Label color="neutral" size="small">
 					<div class="row-6 header-link align-center">
 						<span class="row-1 align-center">
-							{activeDaoData.contract_name}
+							{activeDaoData.generalInfo.contract_name}
 						</span>
 						<Icon icon="tabler:copy" />
 					</div>
@@ -44,36 +44,39 @@
 			</div>
 			<div class="bottom-dropdown-wapper" slot="bottom">
 				<a class="header-link row-2 align-center" href="/dao-generator">
-					<Icon icon="tabler:square-rounded-plus" width="1.1rem"/>
+					<Icon icon="tabler:square-rounded-plus" width="1.1rem" />
 					Add new DAO
 				</a>
 			</div>
 		</DropDownHeading>
-		<Label color="tertiary" size="small">{activeDaoData.type} DAO</Label>
 	</div>
 	<div class="column-10 align-start">
 		<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 			<Icon icon="tabler:chart-infographic" />
 			Stats
 		</a>
-		{#if activeDaoData.type === DaoType.Financial}
-			<a href="/admin/rounds" class="sidebar-link" class:active={$page.url.pathname.includes('rounds')}>
-				<Icon icon="tabler:analyze" />
-				Rounds
-			</a>
-		{/if}
-		<!-- {#if activeDaoData.type === DaoType.Community} -->
-			<a href="/admin/distribute" class="sidebar-link distribute-display" class:active={$page.url.pathname.includes('distribute')}>
-				<Icon icon="tabler:arrows-maximize" />
-				Distribute
-			</a>
-		<!-- {/if} -->
+		<a
+			href="/admin/rounds"
+			class="sidebar-link"
+			class:active={$page.url.pathname.includes('rounds')}
+		>
+			<Icon icon="tabler:analyze" />
+			Rounds
+		</a>
+		<a
+			href="/admin/distribute"
+			class="sidebar-link distribute-display"
+			class:active={$page.url.pathname.includes('distribute')}
+		>
+			<Icon icon="tabler:arrows-maximize" />
+			Distribute
+		</a>
 		<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
 			<Icon icon="tabler:bolt" />
 			Edit Info
 		</a>
 	</div>
-	<div id="clipboard"/>
+	<div id="clipboard" />
 </nav>
 
 <style type="scss">
@@ -90,7 +93,7 @@
 			white-space: normal;
 			max-width: 220px;
 		}
-	
+
 		.distribute-display {
 			display: none;
 
