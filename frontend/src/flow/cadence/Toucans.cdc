@@ -137,6 +137,8 @@ pub contract Toucans {
       self.reserveRate = reserveRate
       self.timeframe = timeframe
       self.extra = extra
+
+      // 2.5% goes to EC Treasury
       self.payouts = payouts.concat([Payout(Toucans.account.address, 0.025)])
 
       var percentCount: UFix64 = 0.0
@@ -207,13 +209,14 @@ pub contract Toucans {
     pub let editDelay: UFix64
     pub let minting: Bool
 
-    access(self) var fundingCycles: [FundingCycle]
+    access(self) let fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let multiSignManager: @ToucansMultiSign.Manager
     access(self) let overflow: @FungibleToken.Vault
     access(self) let minter: @{Minter}
     access(self) let funders: {Address: UFix64}
     access(self) var extra: {String: AnyStruct}
+    access(self) var additions: @{String: AnyResource}
 
 
     //  __  __       _ _   _    _____ _             
@@ -602,6 +605,7 @@ pub contract Toucans {
       self.projectTokenInfo = projectTokenInfo
       self.paymentTokenInfo = paymentTokenInfo
       self.minting = minting
+      self.additions <- {}
 
       let testMint: @FungibleToken.Vault <- self.minter.mint(amount: 0.0)
       assert(testMint.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
@@ -617,6 +621,7 @@ pub contract Toucans {
       destroy self.minter
       destroy self.overflow
       destroy self.multiSignManager
+      destroy self.additions
     }
   }
 
