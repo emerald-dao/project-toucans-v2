@@ -188,11 +188,9 @@ pub contract ToucansMultiSign {
         // to the resource itself
         access(self) let actions: @{UInt64: MultiSignAction}
 
-        pub fun createMultiSign(action: {Action}): UInt64 {
+        pub fun createMultiSign(action: {Action}) {
             let newAction <- create MultiSignAction(_signers: self.signers.keys, _intent: action.intent, _action: action)
-            let newActionId = newAction.uuid
             self.actions[newAction.uuid] <-! newAction
-            return newActionId
         }
 
         // TIP: You can make the threshold 0 so it always executes.
@@ -218,25 +216,34 @@ pub contract ToucansMultiSign {
             let action <- self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
             action.action.execute(params)
             destroy action
+
+            self.assertValidTreasury()
         }
 
         // Note: In the future, these will probably be access(contract)
         // so they are multisign actions themselves? Idk
         pub fun addSigner(signer: Address) {
             self.signers.insert(key: signer, true)
+
+            self.assertValidTreasury()
         }
 
         pub fun removeSigner(signer: Address) {
             self.signers.remove(key: signer)
-            // Automatically reduce the threshold by 1 to prevent it from
-            // being higher than the number of signers
-            if self.threshold > 0 {
+
+            if Int(self.threshold) > self.signers.length {
+                // Automatically reduce the threshold by 1 to prevent it from
+                // being higher than the number of signers
                 self.threshold = self.threshold - 1
             }
+
+            self.assertValidTreasury()
         }
 
         pub fun updateThreshold(newThreshold: UInt64) {
             self.threshold = newThreshold
+
+            self.assertValidTreasury()
         }
 
         pub fun borrowAction(actionUUID: UInt64): &MultiSignAction {
@@ -259,6 +266,12 @@ pub contract ToucansMultiSign {
             return self.signers.keys
         }
 
+        access(self) fun assertValidTreasury() {
+            assert(self.threshold > 0, message: "Threshold must be greater than 0.")
+            assert(self.signers.length > 0, message: "Number of signers must be greater than 0.")
+            assert(self.signers.length >= Int(self.threshold), message: "Number of signers must be greater than or equal to the threshold.")
+        }
+
         init(_initialSigners: [Address], _initialThreshold: UInt64) {
             self.signers = {}
             self.actions <- {}
@@ -267,6 +280,8 @@ pub contract ToucansMultiSign {
             for signer in _initialSigners {
                 self.signers.insert(key: signer, true)
             }
+
+            self.assertValidTreasury()
         }
 
         destroy() {

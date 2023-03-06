@@ -5,10 +5,6 @@ import Toucans from "../Toucans.cdc"
 
 transaction(
   contractName: String,
-  fundingTarget: UFix64, 
-  initialFlowTokenIssuanceRate: UFix64,
-  reserveRate: UFix64,
-  payouts: {Address: UFix64},
   editDelay: UFix64,
   contractCode: String,
   // PAYMENT TOKEN INFO
@@ -34,13 +30,7 @@ transaction(
     }
 
     // Blank empty for now
-    let extra: {String: String} = {}
-
-    // Configure payouts
-    let payoutsArray: [Toucans.Payout] = []
-    for payoutAddr in payouts.keys {
-      payoutsArray.append(Toucans.Payout(address: payoutAddr, percent: payouts[payoutAddr]!))
-    }
+    let extra: {String: AnyStruct} = {}
 
     // Make sure the initial signers includes the deployer
     var initialSigners: [Address] = signers
@@ -52,11 +42,6 @@ transaction(
       name: contractName,
       code: contractCode.decodeHex(),
       _paymentTokenInfo: Toucans.TokenInfo(ptContractName, ptContractAddress, ptReceiverPath, ptPublicPath, ptStoragePath),
-      _fundingTarget: fundingTarget, 
-      _issuanceRate: initialFlowTokenIssuanceRate,
-      _reserveRate: reserveRate,
-      _timeframe: Toucans.CycleTimeFrame(startTime: getCurrentBlock().timestamp, getCurrentBlock().timestamp + 1000.0),
-      _payouts: payoutsArray,
       _editDelay: editDelay,
       _signers: initialSigners,
       _threshold: threshold,

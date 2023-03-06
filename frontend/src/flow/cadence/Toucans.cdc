@@ -127,7 +127,7 @@ pub contract Toucans {
     pub let payouts: [Payout]
     pub let extra: {String: AnyStruct}
 
-    init(cycleNum: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], _ extra: {String: String}) {
+    init(cycleNum: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], _ extra: {String: AnyStruct}) {
       pre {
         reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
@@ -137,6 +137,8 @@ pub contract Toucans {
       self.reserveRate = reserveRate
       self.timeframe = timeframe
       self.extra = extra
+
+      // 2.5% goes to EC Treasury
       self.payouts = payouts.concat([Payout(Toucans.account.address, 0.025)])
 
       var percentCount: UFix64 = 0.0
@@ -177,7 +179,7 @@ pub contract Toucans {
     pub let minting: Bool
 
     // Setters
-    pub fun proposeAction(action: {ToucansMultiSign.Action}): UInt64
+    pub fun proposeAction(action: {ToucansMultiSign.Action})
     // If the action is ready to execute, then allow anyone to do it.
     pub fun executeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
@@ -207,13 +209,14 @@ pub contract Toucans {
     pub let editDelay: UFix64
     pub let minting: Bool
 
-    access(self) var fundingCycles: [FundingCycle]
+    access(self) let fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let multiSignManager: @ToucansMultiSign.Manager
     access(self) let overflow: @FungibleToken.Vault
     access(self) let minter: @{Minter}
     access(self) let funders: {Address: UFix64}
     access(self) var extra: {String: AnyStruct}
+    access(self) var additions: @{String: AnyResource}
 
 
     //  __  __       _ _   _    _____ _             
@@ -226,13 +229,12 @@ pub contract Toucans {
     //                                  |___/       
 
 
-    pub fun proposeAction(action: {ToucansMultiSign.Action}): UInt64 {
+    pub fun proposeAction(action: {ToucansMultiSign.Action}) {
       // Keep this restriction to prevent bad actions displaying
       pre {
         "0x".concat(action.getType().identifier.slice(from: 2, upTo: 18)) == Toucans.account.address.toString(): "Must be a type allowed by Toucans."
       }
-      let newActionId = self.multiSignManager.createMultiSign(action: action)
-      return newActionId
+      self.multiSignManager.createMultiSign(action: action)
     }
 
     pub fun executeAction(actionUUID: UInt64) {
@@ -252,22 +254,11 @@ pub contract Toucans {
     // NOTES:
     // If fundingTarget is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], extra: {String: String}) {
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
       }
       let cycleNum: UInt64 = UInt64(self.fundingCycles.length)
-
-      // Make sure it doesn't conflict with a cycle before it
-      let previousCycle: FundingCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
-      assert(
-        timeframe.startTime > previousCycle.details.timeframe.startTime,
-        message: "The new cycle must have a start time greater than the one before it."
-      )
-      assert(
-        previousCycle.details.timeframe.endTime == nil || (timeframe.startTime >= previousCycle.details.timeframe.endTime!),
-        message: "If the previous cycle's end time is set, the new cycle must have a start time >= the previous rounds end time."
-      )
 
       let newFundingCycle: FundingCycle = FundingCycle(details: FundingCycleDetails(
         cycleNum: cycleNum,
@@ -278,6 +269,13 @@ pub contract Toucans {
         payouts: payouts,
         extra
       ))
+
+      if cycleNum > 0 {
+        // Make sure it doesn't conflict with a cycle before it
+        let previousCycle: FundingCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
+        Toucans.assertNonConflictingCycles(earlierCycle: previousCycle.details, laterCycle: newFundingCycle.details)
+      }
+      
       self.fundingCycles.append(newFundingCycle)
 
       emit NewFundingCycle(
@@ -592,21 +590,22 @@ pub contract Toucans {
       paymentTokenInfo: TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
-      firstCycleDetails: FundingCycleDetails,
       signers: [Address],
       threshold: UInt64,
-      minting: Bool
+      minting: Bool,
+      extra: {String: AnyStruct}
     ) {
       self.projectId = self.uuid
-      self.fundingCycles = [FundingCycle(details: firstCycleDetails)]
       self.totalFunding = 0.0
-      self.extra = {}
+      self.extra = extra
+      self.fundingCycles = []
       self.minter <- minter
       self.funders = {}
       self.editDelay = editDelay
       self.projectTokenInfo = projectTokenInfo
       self.paymentTokenInfo = paymentTokenInfo
       self.minting = minting
+      self.additions <- {}
 
       let testMint: @FungibleToken.Vault <- self.minter.mint(amount: 0.0)
       assert(testMint.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
@@ -622,6 +621,7 @@ pub contract Toucans {
       destroy self.minter
       destroy self.overflow
       destroy self.multiSignManager
+      destroy self.additions
     }
   }
 
@@ -637,32 +637,15 @@ pub contract Toucans {
       projectTokenInfo:TokenInfo, 
       paymentTokenInfo: TokenInfo,
       minter: @{Minter},
-      fundingTarget: UFix64?, 
-      issuanceRate: UFix64, 
-      reserveRate: UFix64, 
-      timeframe: CycleTimeFrame, 
-      payouts: [Payout], 
       editDelay: UFix64,
       signers: [Address],
       threshold: UInt64,
       minting: Bool,
-      extra: {String: String}
+      extra: {String: AnyStruct}
     ) {
-      pre {
-        getCurrentBlock().timestamp + editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
-      }
       let cycleNum: UInt64 = 0
-      let firstCycleDetails = FundingCycleDetails(
-        cycleNum: cycleNum,
-        fundingTarget: fundingTarget,
-        issuanceRate: issuanceRate,
-        reserveRate: reserveRate,
-        timeframe: timeframe,
-        payouts: payouts,
-        extra
-      )
 
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, firstCycleDetails: firstCycleDetails, signers: signers, threshold: threshold, minting: minting)
+      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, extra: extra)
       let projectId: UInt64 = project.uuid
       self.projects[projectId] <-! project
 
@@ -670,17 +653,6 @@ pub contract Toucans {
         projectId: projectId,
         tokenType: projectTokenInfo.tokenType,
         by: self.owner!.address
-      )
-      emit NewFundingCycle(
-        projectId: projectId, 
-        tokenType: projectTokenInfo.tokenType,
-        by: self.owner!.address, 
-        currentCycle: 0,
-        cycleNum: cycleNum,
-        fundingTarget: fundingTarget,
-        issuanceRate: issuanceRate,
-        reserveRate: reserveRate,
-        timeframe: timeframe
       )
     }
 
