@@ -7,7 +7,7 @@
 	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { fly } from 'svelte/transition';
 	import validationSuite from './validation';
-	import { StepButtons } from '../../components';
+	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;

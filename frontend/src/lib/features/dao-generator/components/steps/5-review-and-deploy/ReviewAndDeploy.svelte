@@ -21,8 +21,6 @@
 	};
 
 	let logoElement: HTMLImageElement;
-
-	console.log($daoGeneratorData);
 </script>
 
 <div class="column-6" in:fly={{ y: 30, duration: 400 }}>

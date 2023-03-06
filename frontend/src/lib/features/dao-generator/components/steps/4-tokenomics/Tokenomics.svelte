@@ -1,7 +1,7 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-	import { StepButtons } from '../../components';
+	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 
