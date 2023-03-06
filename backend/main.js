@@ -14,39 +14,40 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
 
 fcl.events(`${eventIdentifierPrefix}ProjectCreated`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'ProjectCreated');
+  const { tokenType, projectId, contractName, ...rest } = event;
+  appendAction(projectId, contractName, rest, 'ProjectCreated');
 });
 
 fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'NewFundingCycle');
+  const { tokenType, projectId, contractName, ...rest } = event;
+  appendAction(projectId, contractName, rest, 'NewFundingCycle');
 });
 
 fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Purchase');
+  const { tokenType, projectId, contractName, ...rest } = event;
+  appendAction(projectId, contractName, rest, 'Purchase');
 });
 
 fcl.events(`${eventIdentifierPrefix}Distribute`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Distribute');
+  const { tokenType, projectId, contractName, ...rest } = event;
+  appendAction(projectId, contractName, rest, 'Distribute');
 });
 
 fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Donate');
+  const { tokenType, projectId, contractName, ...rest } = event;
+  appendAction(projectId, contractName, rest, 'Donate');
 });
 
 fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Withdraw');
+  const { tokenType, projectId, contractName, ...rest } = event;
+  appendAction(projectId, contractName, rest, 'Withdraw');
 });
 
-async function appendAction(projectId, eventData, type) {
+async function appendAction(projectId, contractName, eventData, type) {
   console.log(type + ' Action: ', eventData);
   const result = await supabase.rpc('append_action', {
     _project_id: projectId,
+    _contract_name: contractName,
     _action: {
       ...eventData,
       type,
