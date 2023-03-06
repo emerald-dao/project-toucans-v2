@@ -1,18 +1,18 @@
 <script type="ts">
 	import { fade } from 'svelte/transition';
-	import { newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
-	import { roundData } from '$components/round-generator/stores/RoundData';
 	import Icon from '@iconify/svelte';
 	import { Button, InputWrapper, Range } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import type { SvelteComponent } from 'svelte';
-	import StepTitle from '../../components/atoms/StepTitle.svelte';
+	import StepTitle from '../../../components/atoms/StepTitle.svelte';
+	import { roundGeneratorData } from '../../../stores/RoundGeneratorData';
+	import { newRoundActiveStep } from '../../../stores/RoundGeneratorSteps';
 
 	let distributionData: [string, number] = ['', 0];
 
-	let distributionAddresses: string[] = $roundData.distributionList.map((x) => x[0]);
-	let distributionPercentages: number[] = $roundData.distributionList.map((x) => x[1]);
+	let distributionAddresses: string[] = $roundGeneratorData.distributionList.map((x) => x[0]);
+	let distributionPercentages: number[] = $roundGeneratorData.distributionList.map((x) => x[1]);
 
 	let chart: SvelteComponent;
 
@@ -33,13 +33,16 @@
 
 		chart.updateChartData(distributionData[0], distributionData[1]);
 
-		$roundData.distributionList = [...$roundData.distributionList, distributionData];
+		$roundGeneratorData.distributionList = [
+			...$roundGeneratorData.distributionList,
+			distributionData
+		];
 		distributionData = ['', 0];
 	};
 
 	const deleteFromDistributionList = (i: number) => {
-		$roundData.distributionList.splice(i, 1);
-		$roundData.distributionList = $roundData.distributionList;
+		$roundGeneratorData.distributionList.splice(i, 1);
+		$roundGeneratorData.distributionList = $roundGeneratorData.distributionList;
 	};
 
 	const onDistributionListChange = (newList: [string, number][]) => {
@@ -49,11 +52,11 @@
 			distributedPercentage = distributedPercentage + newList[index][1];
 		}
 
-		$roundData.distributionList[0][1] = 100 - distributedPercentage;
+		$roundGeneratorData.distributionList[0][1] = 100 - distributedPercentage;
 	};
 
 	$: {
-		onDistributionListChange($roundData.distributionList);
+		onDistributionListChange($roundGeneratorData.distributionList);
 	}
 </script>
 
@@ -87,7 +90,7 @@
 						<label for="distribution-percentage">Percentage to distribute</label>
 						<Range
 							bind:value={distributionData[1]}
-							max={$roundData.distributionList[0][1]}
+							max={$roundGeneratorData.distributionList[0][1]}
 							suffix="%"
 							id="distribution-percentage"
 							on:change={handleChange}

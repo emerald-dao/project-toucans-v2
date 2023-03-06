@@ -1,13 +1,12 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
 	import { fly, fade } from 'svelte/transition';
-	import { Currencies } from '$lib/types/currencies.enum';
 	import validationSuite from './validation';
 	import { InputWrapper, Button, Range } from '@emerald-dao/component-library';
-	import { newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
-	import { roundData } from '$components/round-generator/stores/RoundData';
-	import StepTitle from '../../components/atoms/StepTitle.svelte';
-	StepTitle;
+	import StepTitle from '../../../components/atoms/StepTitle.svelte';
+	import { ECurrencies } from '$lib/types/common/enums';
+	import { roundGeneratorData } from '../../../stores/RoundGeneratorData';
+	import { newRoundActiveStep } from '../../../stores/RoundGeneratorSteps';
 
 	export let tokenSymbol: string;
 	export let projectId: string;
@@ -16,7 +15,7 @@
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = validationSuite($roundData, target.name);
+		res = validationSuite($roundGeneratorData, target.name);
 	};
 
 	let res = validationSuite.get();
@@ -34,8 +33,8 @@
 						type="radio"
 						id="flow"
 						name="currency"
-						value={Currencies.FLOW}
-						bind:group={$roundData.currency}
+						value={ECurrencies.FLOW}
+						bind:group={$roundGeneratorData.currency}
 					/>
 				</label>
 				<label>
@@ -44,8 +43,8 @@
 						type="radio"
 						id="fusd"
 						name="currency"
-						value={Currencies.FUSD}
-						bind:group={$roundData.currency}
+						value={ECurrencies.FUSD}
+						bind:group={$roundGeneratorData.currency}
 					/>
 				</label>
 			</div>
@@ -57,28 +56,30 @@
 					type="checkbox"
 					name="infinite-goal"
 					id="infinite-goal"
-					bind:checked={$roundData.infiniteFundingGoal}
+					bind:checked={$roundGeneratorData.infiniteFundingGoal}
 					on:change={handleChange}
 				/>
 				<span class="slider" />
 				Infinite
 			</label>
-			{#if !$roundData.infiniteFundingGoal}
+			{#if !$roundGeneratorData.infiniteFundingGoal}
 				<div class="funding-goal-input-wrapper" transition:fly|local={{ y: 10, duration: 140 }}>
 					<InputWrapper
 						name="fundingGoal"
-						iconUrl={$roundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
+						iconUrl={$roundGeneratorData.currency === ECurrencies.FLOW
+							? '/flow-logo.png'
+							: '/fusd-logo.png'}
 						errors={res.getErrors('fundingGoal')}
 						isValid={res.isValid('fundingGoal')}
-						disabled={$roundData.infiniteFundingGoal}
+						disabled={$roundGeneratorData.infiniteFundingGoal}
 					>
 						<input
 							type="text"
 							name="fundingGoal"
 							placeholder="1000"
-							bind:value={$roundData.fundingGoal}
+							bind:value={$roundGeneratorData.fundingGoal}
 							on:input={handleChange}
-							disabled={$roundData.infiniteFundingGoal}
+							disabled={$roundGeneratorData.infiniteFundingGoal}
 						/>
 					</InputWrapper>
 				</div>
@@ -95,8 +96,8 @@
 					type="text"
 					name="issuanceRate"
 					min="0"
-					placeholder={`e.g. 1 ${tokenSymbol} - 1 ${$roundData.currency}`}
-					bind:value={$roundData.issuanceRate}
+					placeholder={`e.g. 1 ${tokenSymbol} - 1 ${$roundGeneratorData.currency}`}
+					bind:value={$roundGeneratorData.issuanceRate}
 					on:input={handleChange}
 				/>
 			</InputWrapper>
@@ -105,7 +106,7 @@
 					<label for="reserveRate">Reserve rate </label>
 				</div>
 				<Range
-					bind:value={$roundData.reserveRate}
+					bind:value={$roundGeneratorData.reserveRate}
 					suffix="%"
 					id="reserveRate"
 					--clr-surface-secondary="var(--clr-surface-primary)"

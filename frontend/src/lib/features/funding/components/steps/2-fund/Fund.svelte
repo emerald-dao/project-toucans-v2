@@ -3,36 +3,36 @@
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import { Button } from '@emerald-dao/component-library';
 	import { fundActiveStep } from '$lib/features/funding/stores/FundingSteps';
-	import { fundData } from '$lib/features/funding/stores/FundingData';
-	import fundingSuite from '$lib/validations/fundingSuite';
-	import { Currencies } from '$lib/types/currencies.enum';
+	import validationSuite from './validation';
 	import { fade } from 'svelte/transition';
+	import { ECurrencies } from '$lib/types/common/enums';
+	import { fundingData } from '$lib/features/funding/stores/FundingData';
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = fundingSuite($fundData, target.name);
+		res = validationSuite($fundingData, target.name);
 	};
 
-	let res = fundingSuite.get();
+	let res = validationSuite.get();
 </script>
 
 <div in:fade={{ duration: 200 }}>
 	<div class="column-6 align-start">
-		<h4 class="w-medium">Fund {$fundData.daoName}</h4>
+		<h4 class="w-medium">Fund {$fundingData.daoName}</h4>
 		<form id="fund-form" on:submit|preventDefault={fundActiveStep.increment} autocomplete="off">
 			<InputWrapper
 				name="amount"
-				iconUrl={$fundData.currency === Currencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
+				iconUrl={$fundingData.currency === ECurrencies.FLOW ? '/flow-logo.png' : '/fusd-logo.png'}
 				errors={res.getErrors('amount')}
 				isValid={res.isValid('amount')}
-				label={`Funding amount ($${$fundData.currency})`}
+				label={`Funding amount ($${$fundingData.currency})`}
 			>
 				<input
 					type="text"
 					name="amount"
 					placeholder="1000"
-					bind:value={$fundData.amount}
+					bind:value={$fundingData.amount}
 					on:input={handleChange}
 				/>
 			</InputWrapper>
@@ -45,20 +45,20 @@
 				<textarea
 					name="message"
 					placeholder="Write a special message"
-					bind:value={$fundData.specialMessage}
+					bind:value={$fundingData.specialMessage}
 					on:input={handleChange}
 				/>
 			</InputWrapper>
-			{#if $fundData.issuanceRate}
+			{#if $fundingData.issuanceRate}
 				<label for="receive">You will recieve</label>
 				<span class="xsmall"
-					>{`Issuance rate: $${$fundData.issuanceRate} ${$fundData.tokenName} = $1 ${$fundData.currency}`}</span
+					>{`Issuance rate: $${$fundingData.issuanceRate} ${$fundingData.tokenName} = $1 ${$fundingData.currency}`}</span
 				>
 				<input
 					name="receive"
 					type="text"
-					value="${($fundData.amount ? $fundData.amount : 0) *
-						$fundData.issuanceRate} {$fundData.tokenName}"
+					value="${($fundingData.amount ? $fundingData.amount : 0) *
+						$fundingData.issuanceRate} {$fundingData.tokenName}"
 					readonly
 					id="receive"
 				/>

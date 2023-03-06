@@ -8,7 +8,7 @@
 	import { roundGeneratorData } from '$lib/features/round-generator/stores/RoundGeneratorData';
 	import { newRoundActiveStep } from '$lib/features/round-generator/stores/RoundGeneratorSteps';
 	import { ECurrencies } from '$lib/types/common/enums';
-	import StepTitle from '../../components/atoms/StepTitle.svelte';
+	import StepTitle from '../../../components/atoms/StepTitle.svelte';
 
 	export let tokenSymbol: string;
 	export let projectId: string | undefined;
@@ -21,18 +21,20 @@
 	let nowString = now.toISOString().split('.')[0];
 	let oneMonthForwardString = new Date(now.getTime() + 2629743000).toISOString().split('.')[0];
 
-	roundGeneratorData.set({
-		startDate: nowString,
-		endDate: oneMonthForwardString,
-		fundingGoal: undefined,
-		currency: ECurrencies.FLOW,
-		infiniteFundingGoal: false,
-		infiniteDuration: false,
-		distributionList: [[$user.addr, 100]],
-		reserveRate: undefined,
-		issuanceRate: undefined,
-		projectId
-	});
+	if ($user.addr) {
+		roundGeneratorData.set({
+			startDate: nowString,
+			endDate: oneMonthForwardString,
+			fundingGoal: undefined,
+			currency: ECurrencies.FLOW,
+			infiniteFundingGoal: false,
+			infiniteDuration: false,
+			distributionList: [[$user.addr, 100]],
+			reserveRate: undefined,
+			issuanceRate: undefined,
+			projectId
+		});
+	}
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;

@@ -1,4 +1,5 @@
 import type { DaoEvent } from './dao-event/dao-event.type';
+import type { FundingCycle } from './funding-rounds/funding-cycle.interface';
 
 // A DAO Project is a combination of two data types: DAOBlockchainData and DaoDatabaseData.
 // DAOBlockchainData is the data that is stored on the blockchain.
@@ -8,21 +9,24 @@ export interface DAOProject {
 	generalInfo: DaoDatabaseData;
 	onChainData: DaoBlockchainData;
 	events?: DaoEvent[];
+	fundingCycles?: FundingCycle[];
+	mainFunders?: {
+		[address: string]: number;
+	};
 }
 
 export interface DaoDatabaseData {
-	contract_address: string | null;
+	contract_address: string;
 	contract_name: string;
-	created_at: string | null;
-	description: string | null;
+	created_at: string;
+	description: string;
 	discord: string | null;
-	logo: string | null;
-	name: string | null;
-	owner: string | null;
+	logo: string;
+	name: string;
+	owner: string;
 	project_id: number;
-	token_symbol: string | null;
+	token_symbol: string;
 	twitter: string | null;
-	type: string | null;
 	website: string | null;
 }
 

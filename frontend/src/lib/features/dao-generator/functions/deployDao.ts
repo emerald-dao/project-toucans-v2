@@ -7,7 +7,7 @@ import { env as PublicEnv } from '$env/dynamic/public';
 import { goto } from '$app/navigation';
 import { generatorActiveStep } from '../stores/DaoGeneratorSteps';
 import { emptyDaoGeneratorData } from '../stores/DaoGeneratorData';
-import type { TransactionStatusObject } from '@onflow/fcl';
+import type { CurrentUserObject, TransactionStatusObject } from '@onflow/fcl';
 import type { ProjectCreatedEvent } from '$lib/types/dao-project/dao-event/events/project-created.interface';
 import { postProject } from '$lib/features/dao-generator/functions/postDao';
 
@@ -35,11 +35,13 @@ export const deployDao = async () => {
 			console.log('CID', cid);
 		}
 
-		postProject(get(user), projectData, eventData.projectId, logoUrl).then(() => {
-			goto(`/${projectData.daoDetails.contractName}`);
-			generatorActiveStep.reset();
-			daoGeneratorData.set(emptyDaoGeneratorData);
-		});
+		postProject(get(user) as CurrentUserObject, projectData, eventData.projectId, logoUrl).then(
+			() => {
+				goto(`/${projectData.daoDetails.contractName}`);
+				generatorActiveStep.reset();
+				daoGeneratorData.set(emptyDaoGeneratorData);
+			}
+		);
 	};
 
 	deployContractExecution(projectData, actionAfterDeployment);

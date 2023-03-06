@@ -1,7 +1,13 @@
 import { createActiveStep } from '$stores/custom/steps/ActiveStep';
 import { createSteps } from '$stores/custom/steps/Steps';
 import { deployDao } from '../functions/deployDao';
-import { GeneralData, Description, Socials, Tokenomics, ReviewAndDeploy } from '../steps';
+import {
+	GeneralData,
+	Description,
+	Socials,
+	Tokenomics,
+	ReviewAndDeploy
+} from '../components/steps';
 
 export const daoGeneratorSteps = createSteps([
 	{

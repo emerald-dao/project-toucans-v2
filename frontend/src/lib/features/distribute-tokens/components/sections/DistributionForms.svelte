@@ -1,22 +1,19 @@
 <script type="ts">
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import Papa from 'papaparse';
 	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import { InputWrapper, Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
-	import distributionSuite from '$lib/validations/distributionSuite';
-	import type { Writable } from 'svelte/store';
+	import validationSuite from './validation';
+	import type { SuiteRunResult } from 'vest';
 
-	const adminData: {
-		activeDao: Writable<number>;
-		userDaos: FinancialDao[] | CommunityDao[];
-	} = getContext('admin-data');
+	export let formDist: Distribution;
+	export let csvDist: Distribution[];
+	export let addToStaging: (validForm: boolean) => void;
 
-	const activeDaoStore = adminData.activeDao;
-
-	$: activeDaoData = adminData.userDaos[$activeDaoStore];
+	const daoData: DAOProject = getContext('daoData');
 
 	let csvFile: File[] = [];
 
@@ -26,7 +23,7 @@
 				download: true,
 				header: true, // gives us an array of objects
 				dynamicTyping: true,
-				complete: ({ data }) => (csvDist = data)
+				complete: ({ data }) => (csvDist = data as Distribution[])
 			});
 		}
 	};
@@ -38,26 +35,23 @@
 	$: if (csvFile.length > 0) parseAndSaveCsv();
 	$: if (csvFile.length === 0) emptyCsv();
 
-	let res = distributionSuite.get();
+	let res = validationSuite.get();
 	let addressPending: boolean;
 	let addressPendingMessage = ['Checking if address exists in the blockchain'];
 
 	const handleChange = (input: Event) => {
-		res = distributionSuite(formDist, input.target.name);
+		const target = input.target as HTMLInputElement;
+		res = validationSuite(formDist, target.name);
 
-		if (input.target.name === 'address') {
+		if (target.name === 'address') {
 			addressPending = true;
 		}
 
-		res.done((result) => {
+		(res as SuiteRunResult).done((result) => {
 			res = result;
 			addressPending = false;
 		});
 	};
-
-	export let formDist: Distribution;
-	export let csvDist: Distribution[];
-	export let addToStaging: (validForm: boolean) => void;
 </script>
 
 <Tabs>
@@ -93,7 +87,7 @@
 			<InputWrapper
 				name="amount"
 				label="Amount"
-				iconText={`$${activeDaoData.token_symbol}`}
+				iconText={`$${daoData.generalInfo.token_symbol}`}
 				errors={res.getErrors('amount')}
 				isValid={res.isValid('amount')}
 			>

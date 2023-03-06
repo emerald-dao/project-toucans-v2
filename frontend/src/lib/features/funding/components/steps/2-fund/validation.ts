@@ -1,6 +1,6 @@
 import { create, enforce, test, only } from 'vest';
 
-const fundingSuite = create((data = {}, currentField) => {
+const validationSuite = create((data = {}, currentField) => {
 	only(currentField);
 
 	test('amount', 'Amount should be greater than 0', () => {
@@ -12,4 +12,4 @@ const fundingSuite = create((data = {}, currentField) => {
 	});
 });
 
-export default fundingSuite;
+export default validationSuite;

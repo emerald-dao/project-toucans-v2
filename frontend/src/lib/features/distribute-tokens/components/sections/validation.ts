@@ -1,13 +1,13 @@
 import { create, enforce, test, only, skipWhen } from 'vest';
 
-const distributionSuite = create((data = {}, currentField) => {
+const validationSuite = create((data = {}, currentField) => {
 	only(currentField);
 
 	test('address', 'Address should have 18 chars', () => {
 		enforce(data.account).lengthEquals(18);
 	});
 
-	skipWhen(distributionSuite.get().hasErrors('address'), () => {
+	skipWhen(validationSuite.get().hasErrors('address'), () => {
 		test.memo(
 			'address',
 			"Address doesn't exist",
@@ -35,4 +35,4 @@ const dummyCheckAddress = async (success: boolean) => {
 	});
 };
 
-export default distributionSuite;
+export default validationSuite;

@@ -4,10 +4,10 @@ import { getProjectInfo } from '$flow/actions';
 import '$flow/config.ts';
 import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';
-import type { FinancialDao, CommunityDao } from '$lib/types/dao-project/dao-project.interface';
-import type { TDaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
+import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 
-export let ssr = false;
+export const ssr = false;
 
 export const load: LayoutLoad = async () => {
 	const userObj = get(user);
@@ -22,24 +22,23 @@ export const load: LayoutLoad = async () => {
 		}
 
 		const projectsInfo = await Promise.all(
-			data.map(async (project: FinancialDao | CommunityDao) => {
+			data.map(async (project: DAOProject) => {
 				const { data: actionData } = await supabase
 					.from('events')
 					.select()
-					.eq('project_id', project.project_id);
-				const [eventsData] = actionData;
+					.eq('project_id', project.generalInfo.project_id);
+				const eventsData = actionData as DaoEvent[];
 
 				return {
 					...project,
 					...(await getProjectInfo(
-						project.contract_name,
-						project.contract_address,
-						project.owner,
-						project.project_id
+						project.generalInfo.contract_name,
+						project.generalInfo.contract_address,
+						project.generalInfo.owner,
+						project.generalInfo.project_id.toString()
 					)),
-					actions: eventsData?.actions.reverse() || [],
-					purchaseHistory:
-						eventsData?.actions.filter((action: TDaoEvent) => action.type === 'Purchase') || []
+					actions: eventsData?.reverse() || [],
+					purchaseHistory: eventsData?.filter((event: DaoEvent) => event.type === 'Purchase') || []
 				};
 			})
 		);

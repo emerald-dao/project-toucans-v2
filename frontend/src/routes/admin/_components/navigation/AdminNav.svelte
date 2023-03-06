@@ -28,7 +28,7 @@
 	};
 </script>
 
-<nav class="column-12 align-start">
+<nav class="column-8 align-start">
 	<div class="column-4">
 		<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
 		<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}>
@@ -50,7 +50,7 @@
 			</div>
 		</DropDownHeading>
 	</div>
-	<div class="column-10 align-start">
+	<div class="column-8 align-start">
 		<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 			<Icon icon="tabler:chart-infographic" />
 			Stats
@@ -63,13 +63,17 @@
 			<Icon icon="tabler:analyze" />
 			Rounds
 		</a>
+		<a href="/admin/mint" class="sidebar-link" class:active={$page.url.pathname.includes('mint')}>
+			<Icon icon="tabler:coin" />
+			Mint
+		</a>
 		<a
-			href="/admin/distribute"
+			href="/admin/withdraw"
 			class="sidebar-link distribute-display"
-			class:active={$page.url.pathname.includes('distribute')}
+			class:active={$page.url.pathname.includes('withdraw')}
 		>
 			<Icon icon="tabler:arrows-maximize" />
-			Distribute
+			Withdraw
 		</a>
 		<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
 			<Icon icon="tabler:bolt" />
@@ -121,11 +125,15 @@
 		}
 
 		img {
-			max-width: 160px;
+			max-width: 120px;
 			aspect-ratio: 1 / 1;
 			object-fit: contain;
 			border: 1px solid var(--clr-border-primary);
 			border-radius: var(--radius-3);
+		}
+
+		.sidebar-link {
+			font-size: var(--font-size-4);
 		}
 	}
 </style>

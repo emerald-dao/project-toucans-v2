@@ -6,12 +6,19 @@
 	import { user } from '$stores/flow/FlowStore';
 	import { logIn, unauthenticate } from '$flow/actions';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { DummyDao, AnotherDummyDao } from '$lib/mocks/dummyDao';
 
 	interface Data {
 		projects: DAOProject[];
 	}
 
-	export let data: Data;
+	// Uncomment this line when connected again to blockchain and backend
+	// export let data: Data;
+
+	// Comment this line when connected again to blockchain and backend
+	let data: Data = {
+		projects: [DummyDao, AnotherDummyDao]
+	};
 
 	const activeDao = writable(0);
 
@@ -29,7 +36,7 @@
 		{#if !$user.addr}
 			<div class="card-primary column-7 align-center">
 				<span>Connect your Flow wallet to access the admin dashboard</span>
-				<FlowConnect {logIn} {unauthenticate} {user} />
+				<FlowConnect {logIn} {unauthenticate} {$user} />
 			</div>
 		{:else if data.projects.length < 1}
 			<div class="card-primary column-7 align-center">

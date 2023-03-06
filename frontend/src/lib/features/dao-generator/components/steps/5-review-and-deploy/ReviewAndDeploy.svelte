@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
-	import { RecapCard, StepButtons, RecapElement } from '../../components';
+	import { RecapCard, StepButtons, RecapElement } from '../../index';
 
 	onMount(() => {
 		if ($daoGeneratorData.daoDetails.logo) {

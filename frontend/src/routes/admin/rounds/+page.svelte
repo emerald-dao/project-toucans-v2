@@ -13,14 +13,11 @@
 	const activeDaoStore = adminData.activeDao;
 
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
-	$: activeDaoFundingRounds = activeDaoData.events?.filter(
-		(event) => event.type === 'NewFundingCycle'
-	);
 </script>
 
 <div class="card column-space-between">
 	<div class="rounds-wrapper">
-		{#if !activeDaoFundingRounds}
+		{#if !activeDaoData.fundingCycles}
 			<span>This project has no funding rounds yet</span>
 		{:else}
 			{#each activeDaoData.fundingCycles as round, i}

@@ -7,7 +7,7 @@
 	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { page } from '$app/stores';
 	import { fly } from 'svelte/transition';
-	import StepButtons from '../../components/atoms/StepButtons.svelte';
+	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 	import validationSuite from './validation';
 	import type { SuiteRunResult } from 'vest';
 
