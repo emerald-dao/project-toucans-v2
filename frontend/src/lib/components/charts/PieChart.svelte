@@ -45,7 +45,7 @@
 				label: title,
 				data: chartData,
 				cutout: '94%',
-				borderWidth: '1',
+				borderWidth: 1,
 				borderRadius: 7,
 				spacing: 10,
 				hoverOffset: 12,

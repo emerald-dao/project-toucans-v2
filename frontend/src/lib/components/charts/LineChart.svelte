@@ -46,7 +46,7 @@
 				borderWidth: 2,
 				borderDash: [],
 				borderDashOffset: 0.0,
-				borderJoinStyle: 'miter',
+				borderJoinStyle: 'miter' as 'miter' | 'bevel' | 'round',
 				pointStyle: 'circle',
 				pointBorderWidth: 2,
 				pointHoverRadius: 2,
