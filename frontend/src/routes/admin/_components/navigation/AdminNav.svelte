@@ -1,7 +1,7 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { page } from '$app/stores';
-	import { Label } from '@emerald-dao/component-library';
+	import { Currency, Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -28,7 +28,7 @@
 </script>
 
 <nav>
-	<div class="column-10">
+	<div class="column-12">
 		<div class="row-3 align-center">
 			<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
 			<DropDownHeading bind:activeDao={$activeDaoStore} userDaos={adminData.userDaos}>
@@ -51,7 +51,11 @@
 				</div>
 			</DropDownHeading>
 		</div>
-		<div class="column-6">
+		<div class="column-1">
+			<Currency amount={34321} currency="FLOW" color="heading" fontSize="1.4rem" />
+			<span class="xsmall">Treasury funds</span>
+		</div>
+		<div class="column-8">
 			<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 				<div class="sidebar-link-icon">
 					<Icon icon="tabler:chart-infographic" />
@@ -83,6 +87,26 @@
 					<Icon icon="tabler:arrows-maximize" />
 				</div>
 				Withdraw
+			</a>
+			<a
+				href="/admin/actions"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('actions')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:layout-list" />
+				</div>
+				Action queue
+			</a>
+			<a
+				href="/admin/multisig"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('multisig')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:signature" />
+				</div>
+				Multisig
 			</a>
 		</div>
 	</div>

@@ -65,6 +65,8 @@
 
 			.main-wrapper {
 				padding-block: var(--space-14);
+				display: flex;
+				flex-direction: column;
 			}
 
 			.card-primary {
