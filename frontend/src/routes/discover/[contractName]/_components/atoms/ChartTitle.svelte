@@ -24,6 +24,6 @@
 		}
 	}
 	span {
-		font-size: var(--font-size-4);
+		font-size: var(--font-size-2);
 	}
 </style>

@@ -8,13 +8,24 @@
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import PieChart from '$components/charts/PieChart.svelte';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let daoData: DAOProject;
 
 	console.log(daoData);
 
-	const mainHoldersAmountMock = Object.values(daoData.onChainData.balances); // [100, 100, 100];
-	const mainHoldersNamesMock = Object.keys(daoData.onChainData.balances); // ['mateo.find', 'jacob.find', 'dene.find'];
+	const mainHolders = Object.entries(daoData.onChainData.balances)
+		.sort((a, b) => Number(b[1]) - Number(a[1]))
+		.slice(0, 6);
+	const mainHoldersAccounts = mainHolders.map((holder) => holder[0]);
+	const mainHoldersAmounts = mainHolders.map((holder) => Number(holder[1]));
+
+	const mainFunders = Object.entries(daoData.onChainData.funders)
+		.sort((a, b) => Number(b[1]) - Number(a[1]))
+		.slice(0, 6);
+	const mainFundersAccounts = mainFunders.map((holder) => holder[0]);
+	const mainFundersAmounts = mainFunders.map((holder) => Number(holder[1]));
 
 	const currentFundingCycleData = daoData.onChainData.currentFundingCycle
 		? getFundingCycleData(daoData, Number(daoData.onChainData.currentFundingCycle))
@@ -25,10 +36,6 @@
 		data: number[];
 	} | null = null;
 
-	// if (daoData.purchaseHistory.length > 0) {
-	// 	fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory);
-	// }
-
 	const recentActivity = daoData.events
 		? daoData.events.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6)
 		: [];
@@ -37,53 +44,56 @@
 {#if daoData}
 	<div class="column-6">
 		<div class="boxes-wrapper">
-			<DataCard
-				title="Total Funding"
-				icon="tabler:pig-money"
-				data={Number(daoData.onChainData.totalFunding)}
-				isCurrency
-			/>
+			{#if $user.addr}
+				<DataCard
+					title="Your Balance"
+					data={daoData.userBalance}
+					isCurrency
+					currencyName={daoData.generalInfo.token_symbol}
+				/>
+			{/if}
 			<DataCard
 				title="Circulating Supply"
-				icon="tabler:coin"
 				data={Number(daoData.onChainData.totalSupply)}
 				isCurrency
 				currencyName={daoData.generalInfo.token_symbol}
 			/>
+			<DataCard title="Total Funding" data={Number(daoData.onChainData.totalFunding)} isCurrency />
 		</div>
 		{#if daoData.onChainData.fundingCycles.length > 0}
-			<FundingStats fundingCycleData={currentFundingCycleData} />
+			<FundingStats
+				fundingCycleData={currentFundingCycleData}
+				projectCurrency={daoData.generalInfo.token_symbol}
+			/>
 		{/if}
 		<div class="card">
 			<Tabs>
 				<TabList>
 					<Tab>Main holders</Tab>
-					{#if fundingPerMonth}
-						<Tab>Fundraising history</Tab>
-					{/if}
+					<Tab>Main funders</Tab>
 				</TabList>
 				<TabPanel>
 					<div class="panel-container">
-						<!-- <div class="chart-wrapper">
+						<div class="chart-wrapper">
 							<PieChart
 								title="Token distribution"
-								chartData={mainHoldersAmountMock}
-								labels={mainHoldersNamesMock}
-							/>
-						</div> -->
-					</div>
-				</TabPanel>
-				{#if fundingPerMonth}
-					<TabPanel>
-						<div class="chart-wrapper">
-							<LineChart
-								title="Fundrising history"
-								chartData={fundingPerMonth.data}
-								labels={fundingPerMonth.labels}
+								chartData={mainHoldersAmounts}
+								labels={mainHoldersAccounts}
 							/>
 						</div>
-					</TabPanel>
-				{/if}
+					</div>
+				</TabPanel>
+				<TabPanel>
+					<div class="panel-container">
+						<div class="chart-wrapper">
+							<PieChart
+								title="Token distribution"
+								chartData={mainFundersAmounts}
+								labels={mainFundersAccounts}
+							/>
+						</div>
+					</div>
+				</TabPanel>
 			</Tabs>
 		</div>
 		<div class="tabs-wrapper">

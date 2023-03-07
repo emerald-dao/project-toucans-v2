@@ -6,6 +6,9 @@
 	import ChartTitle from '../../../routes/discover/[contractName]/_components/atoms/ChartTitle.svelte';
 
 	export let fundingCycleData: FundingCycle | null;
+	export let title = 'Active Funding Round';
+	export let hasBorder = true;
+	export let projectCurrency: string;
 
 	let daysLeft: number;
 
@@ -15,9 +18,6 @@
 			new Date(Number(fundingCycleData.details.timeframe.endTime) * 1000)
 		);
 	}
-
-	export let title = 'Active Funding Round';
-	export let hasBorder = true;
 </script>
 
 {#if fundingCycleData}
@@ -36,20 +36,27 @@
 					{/if}
 				</span>
 			</div>
+			<ProgressBar
+				value={Number(fundingCycleData.paymentTokensSent)}
+				max={Number(fundingCycleData.details.fundingTarget)}
+				size="large"
+				showPercentage={true}
+				min={0}
+			/>
 			<div class="funding-stats-wrapper">
-				<div class="chart-data-card">
-					<p class="xsmall">Raised</p>
-					<Currency
-						amount={Number(fundingCycleData.paymentTokensSent)}
-						currency="FLOW"
-						fontSize="var(--font-size-2)"
-						color="heading"
-					/>
-				</div>
 				<div class="chart-data-card">
 					<p class="xsmall">Goal</p>
 					<Currency
 						amount={Number(fundingCycleData.details.fundingTarget)}
+						currency="FLOW"
+						fontSize="var(--font-size-1)"
+						color="heading"
+					/>
+				</div>
+				<div class="chart-data-card">
+					<p class="xsmall">Raised</p>
+					<Currency
+						amount={Number(fundingCycleData.paymentTokensSent)}
 						currency="FLOW"
 						fontSize="var(--font-size-1)"
 						color="heading"
@@ -67,18 +74,14 @@
 						<p class="xsmall">Issuance</p>
 						<TooltipIcon width={0.7} tooltip="description" />
 					</div>
-					<span class="small">
-						{Number(fundingCycleData.details.issuanceRate)}
-					</span>
+					<Currency
+						amount={Number(fundingCycleData.details.issuanceRate)}
+						currency={projectCurrency}
+						fontSize="var(--font-size-1)"
+						color="heading"
+					/>
 				</div>
 			</div>
-			<ProgressBar
-				value={Number(fundingCycleData.paymentTokensSent)}
-				max={Number(fundingCycleData.details.fundingTarget)}
-				size="large"
-				showPercentage={true}
-				min={0}
-			/>
 		</div>
 	</div>
 {/if}
@@ -90,7 +93,7 @@
 	.data-wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-3);
+		gap: var(--space-6);
 
 		.time-left {
 			color: var(--clr-tertiary-main);
@@ -110,11 +113,6 @@
 
 				span {
 					color: var(--clr-heading-main);
-				}
-
-				&:first-child,
-				&:nth-child(2) {
-					background-color: var(--clr-surface-secondary);
 				}
 
 				&:first-child {

@@ -11,9 +11,10 @@
 	export let hasBackground: boolean = false;
 	export let width: '100%' | 'fit-content' = '100%';
 	export let height: '100%' | 'fit-content' = 'fit-content';
-	export let paddingInline = 'var(--space-7)';
+	export let paddingInline = 'var(--space-5)';
 	export let paddingBlock = 'var(--space-5)';
 	export let color: 'heading' | 'text' | 'primary' | 'secondary' | 'tertiary' = 'heading';
+	export let fontSize = 'var(--font-size-2)';
 </script>
 
 <div
@@ -25,13 +26,13 @@
 		{#if icon}
 			<Icon {icon} />
 		{/if}
-		<span class="small">{title}</span>
+		<span class="xsmall">{title}</span>
 	</div>
 	{#if data !== null}
 		{#if isCurrency}
-			<Currency amount={data} currency={currencyName} color="heading" fontSize="var(--font-size-6)" />
+			<Currency amount={Number(data)} currency={currencyName} color="heading" {fontSize} />
 		{:else}
-			<span class={`h4 w-medium color-${color}`}>{data}</span>
+			<span class={`color-${color}`} style={`font-size: ${fontSize}`}>{data}</span>
 		{/if}
 	{/if}
 	<slot />

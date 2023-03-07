@@ -1,17 +1,17 @@
 export interface FundingCycle {
 	details: FundingCycleDetails;
-	projectTokensPurchased: number;
-	paymentTokensSent: number;
+	projectTokensPurchased: string;
+	paymentTokensSent: string;
 	funders: {
-		[address: string]: number;
+		[address: string]: string;
 	};
 }
 
 export interface FundingCycleDetails {
-	cycleNum: number;
-	fundingTarget?: number;
-	issuanceRate: number;
-	reserveRate: number;
+	cycleNum: string;
+	fundingTarget?: string;
+	issuanceRate: string;
+	reserveRate: string;
 	timeframe: {
 		startTime: Date;
 		endTime: Date;
@@ -22,5 +22,5 @@ export interface FundingCycleDetails {
 
 export interface Payout {
 	address: string;
-	percent: number;
+	percent: string;
 }

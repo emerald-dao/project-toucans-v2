@@ -32,7 +32,7 @@
 	<div class="column-4">
 		<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
 		<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}>
-			<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top">
+			<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>
 				<Label color="neutral" size="small">
 					<div class="row-6 header-link align-center">
 						<span class="row-1 align-center">
@@ -92,12 +92,6 @@
 			border-bottom: none;
 		}
 
-		h1 {
-			overflow-wrap: break-word;
-			white-space: normal;
-			max-width: 220px;
-		}
-
 		.distribute-display {
 			display: none;
 
@@ -127,7 +121,7 @@
 		img {
 			max-width: 120px;
 			aspect-ratio: 1 / 1;
-			object-fit: contain;
+			object-fit: cover;
 			border: 1px solid var(--clr-border-primary);
 			border-radius: var(--radius-3);
 		}
