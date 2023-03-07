@@ -6,19 +6,21 @@
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import RoundDetail from '$components/atoms/RoundDetail.svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
-	import type { FinancialDao } from '$lib/types/dao-project/dao-project.interface';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
 	import { getTotalFundingFromActions } from '$lib/utilities/getTotalFundingFromActions';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
-	export let daoData: FinancialDao;
+	export let daoData: DAOProject;
 
-	const mainHoldersAmountMock = Object.values(daoData.balances); // [100, 100, 100];
-	const mainHoldersNamesMock = Object.keys(daoData.balances); // ['mateo.find', 'jacob.find', 'dene.find'];
+	console.log(daoData);
 
-	const currentFundingCycleData = daoData.currentFundingCycle
-		? getFundingCycleData(daoData, Number(daoData.currentFundingCycle))
+	const mainHoldersAmountMock = Object.values(daoData.onChainData.balances); // [100, 100, 100];
+	const mainHoldersNamesMock = Object.keys(daoData.onChainData.balances); // ['mateo.find', 'jacob.find', 'dene.find'];
+
+	const currentFundingCycleData = daoData.onChainData.currentFundingCycle
+		? getFundingCycleData(daoData, Number(daoData.onChainData.currentFundingCycle))
 		: null;
 
 	let fundingPerMonth: {
@@ -26,11 +28,13 @@
 		data: number[];
 	} | null = null;
 
-	if (daoData.purchaseHistory.length > 0) {
-		fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory);
-	}
+	// if (daoData.purchaseHistory.length > 0) {
+	// 	fundingPerMonth = getMonthlyFundingFromRounds(daoData.purchaseHistory);
+	// }
 
-	const recentActivity = daoData.actions.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6);
+	const recentActivity = daoData.events
+		? daoData.events.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6)
+		: [];
 </script>
 
 {#if daoData}
@@ -39,18 +43,18 @@
 			<DataCard
 				title="Total Funding"
 				icon="tabler:pig-money"
-				data={Number(daoData.totalFunding)}
+				data={Number(daoData.onChainData.totalFunding)}
 				isCurrency
 			/>
 			<DataCard
 				title="Circulating Supply"
 				icon="tabler:coin"
-				data={Number(daoData.totalSupply)}
+				data={Number(daoData.onChainData.totalSupply)}
 				isCurrency
-				currencyName={daoData.token_symbol}
+				currencyName={daoData.generalInfo.token_symbol}
 			/>
 		</div>
-		{#if daoData.fundingCycles.length > 0}
+		{#if daoData.onChainData.fundingCycles.length > 0}
 			<FundingStats fundingCycleData={currentFundingCycleData} />
 		{/if}
 		<div class="card">
@@ -63,13 +67,13 @@
 				</TabList>
 				<TabPanel>
 					<div class="panel-container">
-						<div class="chart-wrapper">
+						<!-- <div class="chart-wrapper">
 							<PieChart
 								title="Token distribution"
 								chartData={mainHoldersAmountMock}
 								labels={mainHoldersNamesMock}
 							/>
-						</div>
+						</div> -->
 					</div>
 				</TabPanel>
 				{#if fundingPerMonth}
@@ -104,7 +108,7 @@
 				{/if}
 				<TabPanel>
 					<div class="rounds-wrapper">
-						{#each daoData.fundingCycles as round}
+						{#each daoData.onChainData.fundingCycles as round}
 							<RoundDetail {round} i={0} />
 						{/each}
 					</div>

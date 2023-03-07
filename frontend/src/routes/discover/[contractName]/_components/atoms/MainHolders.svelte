@@ -1,12 +1,12 @@
 <script type="ts">
-	import type { CommunityDao } from '$lib/types/dao-project/dao-project.interface';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 
-	export let daoData: CommunityDao;
+	export let daoData: DAOProject;
 </script>
 
 <div class="column-2 align-start">
-	{#each Object.entries(daoData.balances) as balance}
+	{#each Object.entries(daoData.onChainData.balances) as balance}
 		<div class="activity-wrapper">
 			<div class="row-3 align-center">
 				<img src="/avatar-header.png" alt="avatar logo" />
@@ -14,7 +14,7 @@
 			</div>
 			<Currency
 				amount={Number(balance[1])}
-				currency={daoData.token_symbol}
+				currency={daoData.generalInfo.token_symbol}
 				color="heading"
 				fontSize="0.85rem"
 			/>

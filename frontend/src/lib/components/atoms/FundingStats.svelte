@@ -3,7 +3,7 @@
 	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import ChartTitle from '../../../routes/[contractName]/_components/atoms/ChartTitle.svelte';
+	import ChartTitle from '../../../routes/discover/[contractName]/_components/atoms/ChartTitle.svelte';
 
 	export let fundingCycleData: FundingCycle | null;
 

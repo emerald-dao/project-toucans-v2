@@ -10,7 +10,7 @@
 	export let daoData: DAOProject;
 
 	const initFunding = () => {
-		if (daoData.fundingCycles != undefined && $user) {
+		if (daoData.onChainData.fundingCycles != undefined && $user) {
 			fundActiveStep.reset();
 
 			getModal().open();
@@ -23,11 +23,11 @@
 			$fundingData.currency = ECurrencies.FLOW;
 			$fundingData.issuanceRate = Math.trunc(
 				Number(
-					daoData.fundingCycles[Number(daoData.fundingCycles[daoData.fundingCycles.length - 1])]
-						.details.issuanceRate
+					daoData.onChainData.fundingCycles[
+						Number(daoData.onChainData.fundingCycles[daoData.onChainData.fundingCycles.length - 1])
+					].details.issuanceRate
 				)
 			);
-			// $fundingData.issuanceRate = daoData.issuanceRate;
 		}
 	};
 </script>
@@ -78,10 +78,12 @@
 			<p class="small">{daoData.generalInfo.description}</p>
 		</div>
 
-		<Button size="large" width="full-width" on:click={initFunding}
-			><Icon icon="tabler:cash-banknote" />
-			Fund
-		</Button>
+		{#if !daoData.onChainData.fundingCycles}
+			<Button size="large" width="full-width" on:click={initFunding}>
+				<Icon icon="tabler:cash-banknote" />
+				Fund
+			</Button>
+		{/if}
 	</div>
 </div>
 <Modal>

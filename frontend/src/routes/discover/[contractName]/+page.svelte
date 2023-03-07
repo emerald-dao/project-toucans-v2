@@ -1,7 +1,5 @@
 <script type="ts">
-	import { ProjectSidebarSection } from './_components';
-	import FinancialProject from './_components/sections/FinancialProject.svelte';
-	import SeeMoreSidebar from './_components/atoms/SeeMoreSidebar.svelte';
+	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
 	import Icon from '@iconify/svelte';
 	import { setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
@@ -16,10 +14,10 @@
 <section class="container">
 	<div class="main-wrapper">
 		<div class="project-sidebar-wrapper">
-			<ProjectSidebarSection daoData={data} />
+			<DiscoverProjectSidebar daoData={data} />
 		</div>
 		<div class="secondary-wrapper">
-			<FinancialProject daoData={data} />
+			<DiscoverProjectMain daoData={data} />
 		</div>
 	</div>
 	<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
