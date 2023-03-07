@@ -78,7 +78,7 @@
 			<p class="small">{daoData.generalInfo.description}</p>
 		</div>
 
-		{#if !daoData.onChainData.fundingCycles}
+		{#if daoData.onChainData.currentFundingCycle}
 			<Button size="large" width="full-width" on:click={initFunding}>
 				<Icon icon="tabler:cash-banknote" />
 				Fund
@@ -115,7 +115,7 @@
 			.dao-logo {
 				width: 130px;
 				aspect-ratio: 1 / 1;
-				object-fit: contain;
+				object-fit: cover;
 				border-radius: var(--radius-2);
 				border: 1px var(--clr-border-primary) solid;
 			}

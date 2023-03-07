@@ -1,5 +1,4 @@
 <script type="ts">
-	import PieChart from '$components/charts/PieChart.svelte';
 	import DataCard from '$components/atoms/cards/DataCard.svelte';
 	import MainFunders from '../atoms/MainFunders.svelte';
 	import RecentActivity from '../atoms/RecentActivity.svelte';
@@ -8,8 +7,6 @@
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import LineChart from '$components/charts/LineChart.svelte';
-	import { getMonthlyFundingFromRounds } from '$lib/utilities/getMonthlyFundings';
-	import { getTotalFundingFromActions } from '$lib/utilities/getTotalFundingFromActions';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	export let daoData: DAOProject;

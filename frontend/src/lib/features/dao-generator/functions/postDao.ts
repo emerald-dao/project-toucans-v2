@@ -5,14 +5,14 @@ export const postProject = async (
 	user: CurrentUserObject,
 	data: DaoGeneratorData,
 	projectId: string,
-	logoUrl?: string
+	logoUrl: string
 ) => {
 	const res = await fetch('/api/add', {
 		method: 'POST',
 		body: JSON.stringify({
 			user,
 			...data,
-			logoUrl,
+			logo: logoUrl,
 			projectId
 		}),
 		headers: {

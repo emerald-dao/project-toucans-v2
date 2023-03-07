@@ -26,22 +26,23 @@ export const deployDao = async () => {
 
 		console.log('ProjectCreatedEvent', projectCreatedEvent);
 
-		let logoUrl: string | undefined = undefined;
-		let cid: string;
-
-		if (projectData.daoDetails.logo) {
-			cid = await client.storeBlob(projectData.daoDetails.logo[0]);
-			logoUrl = `https://nftstorage.link/ipfs/${cid}`;
-			console.log('CID', cid);
-		}
-
-		postProject(get(user) as CurrentUserObject, projectData, eventData.projectId, logoUrl).then(
-			() => {
-				goto(`/discover/${projectData.daoDetails.contractName}`);
-				generatorActiveStep.reset();
-				daoGeneratorData.set(emptyDaoGeneratorData);
+		const uploadLogoToIPFS = async () => {
+			if (projectData.daoDetails.logo) {
+				const cid = await client.storeBlob(projectData.daoDetails.logo[0]);
+				console.log('CID', cid);
+				return `https://nftstorage.link/ipfs/${cid}`;
+			} else {
+				return '';
 			}
-		);
+		};
+
+		const logo = await uploadLogoToIPFS();
+
+		postProject(get(user) as CurrentUserObject, projectData, eventData.projectId, logo).then(() => {
+			goto(`/discover/${projectData.daoDetails.contractName}`);
+			generatorActiveStep.reset();
+			daoGeneratorData.set(emptyDaoGeneratorData);
+		});
 	};
 
 	deployContractExecution(projectData, actionAfterDeployment);
