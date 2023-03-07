@@ -37,7 +37,7 @@ export const deployDao = async () => {
 
 		postProject(get(user) as CurrentUserObject, projectData, eventData.projectId, logoUrl).then(
 			() => {
-				goto(`/${projectData.daoDetails.contractName}`);
+				goto(`/discover/${projectData.daoDetails.contractName}`);
 				generatorActiveStep.reset();
 				daoGeneratorData.set(emptyDaoGeneratorData);
 			}
