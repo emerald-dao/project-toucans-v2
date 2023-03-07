@@ -6,7 +6,8 @@ import {
 	Description,
 	Socials,
 	Tokenomics,
-	ReviewAndDeploy
+	ReviewAndDeploy,
+	Multisig
 } from '../components/steps';
 
 export const daoGeneratorSteps = createSteps([
@@ -38,6 +39,14 @@ export const daoGeneratorSteps = createSteps([
 		name: 'Tokenomics',
 		slug: 'tokenomics',
 		component: Tokenomics,
+		action: null,
+		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'Multisig',
+		slug: 'multisig',
+		component: Multisig,
 		action: null,
 		form: true,
 		state: 'inactive'

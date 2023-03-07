@@ -5,7 +5,7 @@
 
 <nav>
 	<div class="row">
-		<ProgressSteps steps={$daoGeneratorSteps} gap={8} />
+		<ProgressSteps steps={$daoGeneratorSteps} gap={5} fontSize="small" />
 	</div>
 </nav>
 

@@ -19,6 +19,10 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: []
+	},
+	multisig: {
+		addresses: [],
+		threshold: 0
 	}
 };
 

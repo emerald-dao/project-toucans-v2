@@ -18,4 +18,8 @@ export interface DaoGeneratorData {
 		mintTokens: boolean;
 		walletAddresses: string[];
 	};
+	multisig: {
+		addresses: string[];
+		threshold: number;
+	};
 }
