@@ -17,10 +17,10 @@
 
 <div class="card column-space-between">
 	<div class="rounds-wrapper">
-		{#if !activeDaoData.fundingCycles}
+		{#if !activeDaoData.onChainData.fundingCycles}
 			<span>This project has no funding rounds yet</span>
 		{:else}
-			{#each activeDaoData.fundingCycles as round, i}
+			{#each activeDaoData.onChainData.fundingCycles as round, i}
 				<RoundDetail {round} {i} />
 			{/each}
 		{/if}

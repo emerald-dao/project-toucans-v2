@@ -12,13 +12,7 @@
 		projects: DAOProject[];
 	}
 
-	// Uncomment this line when connected again to blockchain and backend
-	// export let data: Data;
-
-	// Comment this line when connected again to blockchain and backend
-	let data: Data = {
-		projects: [DummyDao, AnotherDummyDao]
-	};
+	export let data: Data;
 
 	const activeDao = writable(0);
 

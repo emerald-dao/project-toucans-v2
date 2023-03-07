@@ -46,13 +46,13 @@ fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
 async function appendAction(projectId, contractName, eventData, type) {
   console.log(type + ' Action: ', eventData);
   const result = await supabase.rpc('append_action', {
-    _project_id: projectId,
     _contract_name: contractName,
     _action: {
       ...eventData,
       type,
       timestamp: Date.now() / 1000, // seconds
     },
+    _project_id: projectId,
   });
   if (result.error) {
     console.log('Result Error:', result);
