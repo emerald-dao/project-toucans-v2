@@ -23,7 +23,7 @@
 		</div>
 	{/if}
 	{#if typeof data != 'boolean'}
-		<span>{data}</span>
+		<span class="small">{data}</span>
 	{/if}
 </div>
 

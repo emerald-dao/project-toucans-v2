@@ -24,7 +24,7 @@
 </script>
 
 <div class="column-6" in:fly={{ y: 30, duration: 400 }}>
-	<RecapCard title="DAO Details" onEdit={() => generatorActiveStep.goToStep(0)}>
+	<RecapCard title="Overview" onEdit={() => generatorActiveStep.goToStep(0)}>
 		<div class="row-5">
 			{#if $daoGeneratorData.daoDetails.logo}
 				<img bind:this={logoElement} class="logo" alt="Dao logo" />
@@ -44,11 +44,8 @@
 		{#if $daoGeneratorData.daoDetails.discord && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
 			<RecapElement title="Discord" data={$daoGeneratorData.daoDetails.discord} />
 		{/if}
-	</RecapCard>
-	<RecapCard title="Tokenomics" onEdit={() => generatorActiveStep.goToStep(2)}>
-		<div class="row-6">
-			<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
-		</div>
+		<RecapElement title="Edit delay" data={$daoGeneratorData.tokenomics.editDelay} />
+		<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
 	</RecapCard>
 </div>
 <StepButtons />

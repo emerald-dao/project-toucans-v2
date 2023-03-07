@@ -125,12 +125,4 @@
 			}
 		}
 	}
-
-	.chart-wrapper {
-		margin-top: var(--space-7);
-
-		@include mq(small) {
-			width: auto;
-		}
-	}
 </style>
