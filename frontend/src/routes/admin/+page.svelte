@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -21,7 +22,7 @@
 	// 		: null;
 </script>
 
-<div class="main-wrapper">
+<div class="main-wrapper" in:fly={{ x: 10, duration: 400 }}>
 	<DataCard
 		title="Token"
 		data={`$${activeDaoData.generalInfo.token_symbol}`}

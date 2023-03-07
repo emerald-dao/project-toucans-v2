@@ -26,7 +26,7 @@
 </script>
 
 <section>
-	<div class="container">
+	<div class="container-large">
 		{#if !$user.addr}
 			<div class="card-primary column-7 align-center">
 				<span>Connect your Flow wallet to access the admin dashboard</span>
@@ -39,23 +39,32 @@
 			</div>
 		{:else}
 			<AdminNav />
-			<slot />
+			<div class="main-wrapper">
+				<slot />
+			</div>
 		{/if}
 	</div>
 </section>
 
 <style type="scss">
 	section {
-		.container {
+		padding: 0;
+		display: flex;
+		flex: 1;
+
+		.container-large {
 			display: flex;
 			flex-direction: column;
 			gap: var(--space-8);
-			min-height: 70vh;
 
 			@include mq(medium) {
 				display: grid;
-				grid-template-columns: 220px auto;
+				grid-template-columns: 280px auto;
 				gap: var(--space-16);
+			}
+
+			.main-wrapper {
+				padding-block: var(--space-14);
 			}
 
 			.card-primary {

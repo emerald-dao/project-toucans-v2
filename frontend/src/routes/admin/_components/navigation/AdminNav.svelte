@@ -28,68 +28,84 @@
 	};
 </script>
 
-<nav class="column-8 align-start">
-	<div class="column-4">
-		<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
-		<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}>
-			<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>
-				<Label color="neutral" size="small">
-					<div class="row-6 header-link align-center">
-						<span class="row-1 align-center">
-							{activeDaoData.generalInfo.contract_name}
-						</span>
-						<Icon icon="tabler:copy" />
-					</div>
-				</Label>
-			</div>
-			<div class="bottom-dropdown-wapper" slot="bottom">
-				<a class="header-link row-2 align-center" href="/dao-generator">
-					<Icon icon="tabler:square-rounded-plus" width="1.1rem" />
-					Add new DAO
-				</a>
-			</div>
-		</DropDownHeading>
+<nav>
+	<div class="column-10">
+		<div class="row-3 align-center">
+			<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
+			<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}>
+				<div id="clipboard" />
+				<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>
+					<Label color="neutral" size="small">
+						<div class="row-6 header-link align-center">
+							<span class="row-1 align-center">
+								{activeDaoData.generalInfo.contract_name}
+							</span>
+							<Icon icon="tabler:copy" />
+						</div>
+					</Label>
+				</div>
+				<div class="bottom-dropdown-wapper" slot="bottom">
+					<a class="header-link row-2 align-center" href="/dao-generator">
+						<Icon icon="tabler:square-rounded-plus" width="1.1rem" />
+						Add new DAO
+					</a>
+				</div>
+			</DropDownHeading>
+		</div>
+		<div class="column-6">
+			<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:chart-infographic" />
+				</div>
+				Stats
+			</a>
+			<a
+				href="/admin/rounds"
+				class="sidebar-link"
+				class:active={$page.url.pathname.includes('rounds')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:analyze" />
+				</div>
+				Rounds
+			</a>
+			<a href="/admin/mint" class="sidebar-link" class:active={$page.url.pathname.includes('mint')}>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:coin" />
+				</div>
+				Mint
+			</a>
+			<a
+				href="/admin/withdraw"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('withdraw')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:arrows-maximize" />
+				</div>
+				Withdraw
+			</a>
+		</div>
 	</div>
-	<div class="column-8 align-start">
-		<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
-			<Icon icon="tabler:chart-infographic" />
-			Stats
-		</a>
-		<a
-			href="/admin/rounds"
-			class="sidebar-link"
-			class:active={$page.url.pathname.includes('rounds')}
-		>
-			<Icon icon="tabler:analyze" />
-			Rounds
-		</a>
-		<a href="/admin/mint" class="sidebar-link" class:active={$page.url.pathname.includes('mint')}>
-			<Icon icon="tabler:coin" />
-			Mint
-		</a>
-		<a
-			href="/admin/withdraw"
-			class="sidebar-link distribute-display"
-			class:active={$page.url.pathname.includes('withdraw')}
-		>
-			<Icon icon="tabler:arrows-maximize" />
-			Withdraw
-		</a>
-		<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
-			<Icon icon="tabler:bolt" />
-			Edit Info
-		</a>
-	</div>
-	<div id="clipboard" />
+	<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
+		<div class="sidebar-link-icon">
+			<Icon icon="tabler:edit" />
+		</div>
+		Edit Info
+	</a>
 </nav>
 
 <style type="scss">
 	nav {
-		padding-bottom: var(--space-5);
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 		border-bottom: 1px solid var(--clr-neutral-400);
+		padding-block: var(--space-10);
 
 		@include mq('medium') {
 			border-bottom: none;
+			border-right: 0.5px var(--clr-border-primary) solid;
 		}
 
 		.distribute-display {
@@ -98,11 +114,6 @@
 			@include mq('medium') {
 				display: block;
 			}
-		}
-
-		.contract-name {
-			font-size: var(--font-size-0);
-			color: var(--clr-text-off);
 		}
 
 		.top-dropdown-wapper {
@@ -119,15 +130,26 @@
 		}
 
 		img {
-			max-width: 120px;
+			max-width: 50px;
 			aspect-ratio: 1 / 1;
 			object-fit: cover;
 			border: 1px solid var(--clr-border-primary);
-			border-radius: var(--radius-3);
+			border-radius: var(--radius-1);
 		}
 
 		.sidebar-link {
-			font-size: var(--font-size-4);
+			font-size: var(--font-size-3);
+			display: flex;
+
+			.sidebar-link-icon {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			&.active > .sidebar-link-icon {
+				color: var(--clr-tertiary-main);
+			}
 		}
 	}
 </style>

@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import type { Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
@@ -14,4 +15,6 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
-<DistributeTokens daoData={activeDaoData} distributionType="withdraw" />
+<div in:fly={{ x: 10, duration: 400 }}>
+	<DistributeTokens daoData={activeDaoData} distributionType="withdraw" />
+</div>

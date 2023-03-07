@@ -46,3 +46,10 @@
 {#if $page.url.pathname === '/' || $page.url.pathname === '/discover'}
 	<Footer {navElements} {emeraldTools} socials={socialMedia} />
 {/if}
+
+<style>
+	main {
+		display: flex;
+		flex-direction: column;
+	}
+</style>

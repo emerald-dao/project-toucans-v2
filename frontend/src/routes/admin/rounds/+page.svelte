@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';
@@ -15,7 +16,7 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
-<div class="card column-space-between">
+<div class="card column-space-between" in:fly={{ x: 10, duration: 400 }}>
 	<div class="rounds-wrapper">
 		{#if !activeDaoData.onChainData.fundingCycles}
 			<span>This project has no funding rounds yet</span>

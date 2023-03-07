@@ -32,8 +32,13 @@
 
 <svelte:window on:click={handleWindowClick} />
 <div class="main-wrapper">
-	<div class="heading-wrapper row-2 align-center" bind:this={headingWrapper} on:click={handleClick}>
-		<h1 class="h4">
+	<div
+		class="heading-wrapper row-2 align-center"
+		bind:this={headingWrapper}
+		on:click={handleClick}
+		on:keydown
+	>
+		<h1>
 			{headings[value]}
 		</h1>
 		<div class="icon-wrapper" class:selected={displayDropDown}>
@@ -72,7 +77,7 @@
 			cursor: pointer;
 
 			h1 {
-				font-weight: var(--font-weight-regular);
+				font-size: var(--font-size-4);
 			}
 
 			.icon-wrapper {

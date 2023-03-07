@@ -35,7 +35,7 @@
 	$: walletValid = index > 0 ? res.isValid(`multisig-wallet-${index}`) : true;
 </script>
 
-<div class="main-wrapper row-3 align-center" transition:fly|local={{ y: 10, duration: 400 }}>
+<div class="main-wrapper row-3 align-center" in:fly|local={{ y: 10, duration: 400 }}>
 	<div class="secondary-wrapper">
 		<InputWrapper
 			name={`multisig-wallet-${index}`}
