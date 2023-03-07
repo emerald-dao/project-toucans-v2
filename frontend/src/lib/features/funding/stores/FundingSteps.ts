@@ -1,9 +1,9 @@
 import { createActiveStep } from '$stores/custom/steps/ActiveStep';
 import { createSteps } from '$stores/custom/steps/Steps';
 import { fundProjectExecution } from '$flow/actions';
-import Disclaimer from '../../features/funding/funding-steps/Disclaimer.svelte';
-import Fund from '../../features/funding/funding-steps/Fund.svelte';
-import Thanks from '../../features/funding/funding-steps/Thanks.svelte';
+import Disclaimer from '../components/steps/1-disclaimer/Disclaimer.svelte';
+import Fund from '../components/steps/2-fund/Fund.svelte';
+import Thanks from '../components/steps/3-thanks/Thanks.svelte';
 
 export const fundingSteps = createSteps([
 	{

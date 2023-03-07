@@ -9,10 +9,7 @@ export interface DAOProject {
 	generalInfo: DaoDatabaseData;
 	onChainData: DaoBlockchainData;
 	events?: DaoEvent[];
-	fundingCycles?: FundingCycle[];
-	mainFunders?: {
-		[address: string]: number;
-	};
+	userBalance?: number;
 }
 
 export interface DaoDatabaseData {
@@ -32,10 +29,26 @@ export interface DaoDatabaseData {
 
 export interface DaoBlockchainData {
 	projectId: string;
-	projectTokenInfo: TokenInfo;
-	paymentTokenInfo: TokenInfo;
+	tokenType: TokenInfo;
+	currentFundingCycle: string;
 	totalFunding: string;
 	editDelay: string;
+	extra: {
+		[key: string]: string;
+	};
+	fundingCycles: FundingCycle[];
+	totalSupply: string;
+	balances: {
+		[address: string]: string;
+	};
+	funders: {
+		[address: string]: string;
+	};
+	overflowBalance: string;
+	signers: string[];
+	actions: {
+		[address: string]: string;
+	};
 	minting: boolean;
 }
 

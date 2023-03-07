@@ -24,6 +24,7 @@ import { get } from 'svelte/store';
 import { fundingData } from '$lib/features/funding/stores/FundingData';
 import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
+import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -201,12 +202,12 @@ export const proposeWithdrawExecution = (
 
 // export const fundProjectExecution = () => executeTransaction(fundProject);
 
-export const getProjectInfo = async (
+export const getProjectInfo: (
 	contractName: string,
 	contractAddress: string,
 	owner: string,
 	projectId: string
-) => {
+) => Promise<DaoBlockchainData> = async (contractName, contractAddress, owner, projectId) => {
 	console.log(projectId);
 	try {
 		const response = await fcl.query({

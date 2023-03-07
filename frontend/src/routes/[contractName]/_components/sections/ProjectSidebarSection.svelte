@@ -1,33 +1,33 @@
 <script type="ts">
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { user } from '$stores/flow/FlowStore';
 	import { Button, Label, Modal, getModal } from '@emerald-dao/component-library';
-	import { fundSteps, fundActiveStep } from '$lib/features/funding/stores/FundingSteps';
-	import { fundData } from '$lib/features/funding/stores/FundingData';
 	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
-	import { DaoType } from '$lib/types/dao-project/dao-project.interface';
-	import { Currencies } from '$lib/types/currencies.enum';
+	import { ECurrencies } from '$lib/types/common/enums';
+	import { fundingData } from '$lib/features/funding/stores/FundingData';
+	import { fundActiveStep, fundingSteps } from '$lib/features/funding/stores/FundingSteps';
 
-	export let daoData: FinancialDao | CommunityDao;
+	export let daoData: DAOProject;
 
 	const initFunding = () => {
-		if (daoData.type === DaoType.Financial && $user) {
+		if (daoData.fundingCycles != undefined && $user) {
 			fundActiveStep.reset();
 
 			getModal().open();
 
-			const dao = daoData as FinancialDao;
-
-			$fundData.daoName = dao.name;
-			$fundData.daoAddress = dao.owner;
-			$fundData.funderAddress = $user.addr;
-			$fundData.contractName = dao.contract_name;
-			$fundData.projectId = dao.projectId;
-			$fundData.currency = Currencies.FLOW;
-			$fundData.issuanceRate = Math.trunc(
-				Number(dao.fundingCycles[Number(dao.currentFundingCycle)].details.issuanceRate)
+			$fundingData.daoName = daoData.generalInfo.name;
+			$fundingData.daoAddress = daoData.generalInfo.owner;
+			$fundingData.funderAddress = $user.addr;
+			$fundingData.contractName = daoData.generalInfo.contract_name;
+			$fundingData.projectId = daoData.generalInfo.project_id;
+			$fundingData.currency = ECurrencies.FLOW;
+			$fundingData.issuanceRate = Math.trunc(
+				Number(
+					daoData.fundingCycles[Number(daoData.fundingCycles[daoData.fundingCycles.length - 1])]
+						.details.issuanceRate
+				)
 			);
-			// $fundData.issuanceRate = daoData.issuanceRate;
+			// $fundingData.issuanceRate = daoData.issuanceRate;
 		}
 	};
 </script>
@@ -36,15 +36,15 @@
 	<img src="/toucans-illustration.png" alt="Background illustration" class="banner-image" />
 	<div class="content-wrapper column-14">
 		<div class="column-4">
-			<img src={daoData.logo} alt="DAO Logo" class="dao-logo" />
-			<h1 class="h3 w-medium">{daoData.name}</h1>
-			{#if daoData.twitter || daoData.discord || daoData.website}
+			<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
+			<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
+			{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
 				<div class="row-3 align-end">
-					<Label size="small" color="tertiary">{`$${daoData.token_symbol}`}</Label>
+					<Label size="small" color="tertiary">{`$${daoData.generalInfo.token_symbol}`}</Label>
 					<div class="row-2 align-end">
-						{#if daoData.twitter}
+						{#if daoData.generalInfo.twitter}
 							<a
-								href={`https://twitter.com/${daoData.twitter}`}
+								href={`https://twitter.com/${daoData.generalInfo.twitter}`}
 								rel="noreferrer"
 								class="header-link"
 								target="_blank"
@@ -52,32 +52,41 @@
 								<Icon icon="tabler:brand-twitter" width="18" />
 							</a>
 						{/if}
-						{#if daoData.discord && daoData.discord != 'https://discord.gg/'}
-							<a href={daoData.discord} rel="noreferrer" class="header-link" target="_blank">
+						{#if daoData.generalInfo.discord && daoData.generalInfo.discord != 'https://discord.gg/'}
+							<a
+								href={daoData.generalInfo.discord}
+								rel="noreferrer"
+								class="header-link"
+								target="_blank"
+							>
 								<Icon icon="tabler:brand-discord" width="18" />
 							</a>
 						{/if}
-						{#if daoData.website}
-							<a href={daoData.website} rel="noreferrer" class="header-link" target="_blank">
+						{#if daoData.generalInfo.website}
+							<a
+								href={daoData.generalInfo.website}
+								rel="noreferrer"
+								class="header-link"
+								target="_blank"
+							>
 								<Icon icon="tabler:world" width="18" />
 							</a>
 						{/if}
 					</div>
 				</div>
 			{/if}
-			<p class="small">{daoData.description}</p>
+			<p class="small">{daoData.generalInfo.description}</p>
 		</div>
-		{#if daoData.type === DaoType.Financial}
-			<Button size="large" width="full-width" on:click={initFunding}
-				><Icon icon="tabler:cash-banknote" />
-				Fund
-			</Button>
-		{/if}
+
+		<Button size="large" width="full-width" on:click={initFunding}
+			><Icon icon="tabler:cash-banknote" />
+			Fund
+		</Button>
 	</div>
 </div>
 <Modal>
 	<div class="modal-content">
-		<svelte:component this={$fundSteps[$fundActiveStep].component} />
+		<svelte:component this={$fundingSteps[$fundActiveStep].component} />
 	</div>
 </Modal>
 
