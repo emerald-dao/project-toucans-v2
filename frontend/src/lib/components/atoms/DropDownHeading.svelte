@@ -1,12 +1,10 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
-	export let value: number;
-	export let name: string;
-	export let headings: string[];
+	export let activeDao: number;
+	export let userDaos: DAOProject[];
 
 	let dropDown: HTMLDivElement;
 	let headingWrapper: HTMLDivElement;
@@ -27,7 +25,7 @@
 		}
 	};
 
-	$: value && (displayDropDown = false);
+	$: activeDao && (displayDropDown = false);
 </script>
 
 <svelte:window on:click={handleWindowClick} />
@@ -39,7 +37,7 @@
 		on:keydown
 	>
 		<h1>
-			{headings[value]}
+			{userDaos[activeDao].generalInfo.name}
 		</h1>
 		<div class="icon-wrapper" class:selected={displayDropDown}>
 			<Icon icon="tabler:chevron-down" width="1.2rem" />
@@ -48,17 +46,18 @@
 	{#if displayDropDown}
 		<div class="drop-down" bind:this={dropDown} transition:fly|local={{ y: 15, duration: 400 }}>
 			<slot name="top" />
-			{#if headings.length > 1}
+			{#if userDaos.length > 1}
 				<ul>
-					{#each headings as heading, index}
+					{#each userDaos as dao, index}
 						<li>
+							<img src={dao.generalInfo.logo} alt="dao logo" />
 							<a
 								class="header-link"
-								class:selected={index === value}
+								class:selected={index === activeDao}
 								href=""
-								on:click={() => (value = index)}
+								on:click={() => (activeDao = index)}
 							>
-								{heading}
+								{dao.generalInfo.name}
 							</a>
 						</li>
 					{/each}
@@ -109,7 +108,18 @@
 				margin: 0;
 
 				li {
-					padding: var(--space-2) var(--space-3);
+					padding: var(--space-2) 0;
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					gap: var(--space-2);
+
+					img {
+						width: 1.2rem;
+						height: 1.2rem;
+						border-radius: 4px;
+						object-fit: cover;
+					}
 
 					.selected {
 						color: var(--clr-heading-main);

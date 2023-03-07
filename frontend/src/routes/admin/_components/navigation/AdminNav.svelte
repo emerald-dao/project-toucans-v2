@@ -15,7 +15,6 @@
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
-	const userDaosNames = adminData.userDaos.map((dao) => dao.generalInfo.name);
 
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 
@@ -32,7 +31,7 @@
 	<div class="column-10">
 		<div class="row-3 align-center">
 			<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
-			<DropDownHeading name="dao-headings" bind:value={$activeDaoStore} headings={userDaosNames}>
+			<DropDownHeading bind:activeDao={$activeDaoStore} userDaos={adminData.userDaos}>
 				<div id="clipboard" />
 				<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>
 					<Label color="neutral" size="small">
