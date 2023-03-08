@@ -64,7 +64,7 @@
 				class:active={$page.url.pathname.includes('rounds')}
 			>
 				<div class="sidebar-link-icon">
-					<Icon icon="tabler:analyze" />
+					<Icon icon="tabler:pig-money" />
 				</div>
 				Rounds
 			</a>
@@ -80,7 +80,7 @@
 				class:active={$page.url.pathname.includes('withdraw')}
 			>
 				<div class="sidebar-link-icon">
-					<Icon icon="tabler:arrows-maximize" />
+					<Icon icon="tabler:outbound" />
 				</div>
 				Withdraw
 			</a>
@@ -92,7 +92,7 @@
 				<div class="sidebar-link-icon">
 					<Icon icon="tabler:layout-list" />
 				</div>
-				Action queue
+				Actions queue
 			</a>
 			<a
 				href="/admin/multisig"
