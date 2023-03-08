@@ -23,10 +23,10 @@ pub contract ToucansMultiSign {
     //
     pub resource MultiSignAction {
 
-        pub var totalVerified: UInt64
         pub let intent: String
         access(contract) let action: {Action}
-        access(self) var accountsVerified: {Address: Bool}
+        access(self) let signers: [Address]
+        access(self) let votes: {Address: Bool}
 
         // ZayVerifierv2 - verifySignature
         //
@@ -44,13 +44,7 @@ pub contract ToucansMultiSign {
         //
         // Returns:
         // Whether or not this signature is valid
-        pub fun verifySignature(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64): Bool {
-            pre {
-                self.accountsVerified[acctAddress] != nil:
-                    "This address is not allowed to sign for this."
-                !self.accountsVerified[acctAddress]!:
-                    "This address has already signed."
-            }
+        access(self) fun verifySignature(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64): Bool {
             let keyList = Crypto.KeyList()
             let account = getAccount(acctAddress)
 
@@ -143,12 +137,28 @@ pub contract ToucansMultiSign {
                 signatureSet: signatureSet,
                 signedData: message.decodeHex()
             )
-            if (signatureValid) {
-                self.accountsVerified[acctAddress] = true
-                self.totalVerified = self.totalVerified + 1
-                return true
-            } else {
-                return false
+            return signatureValid
+        }
+
+        pub fun decline(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+            pre {
+                self.signers.contains(acctAddress): "This person cannot vote."
+                self.votes[acctAddress] == nil: "This person has already voted."
+            }
+            let sign = self.verifySignature(acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+            if sign {
+                self.votes[acctAddress] = false
+            }
+        }
+
+        pub fun accept(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+             pre {
+                self.signers.contains(acctAddress): "This person cannot vote."
+                self.votes[acctAddress] == nil: "This person has already voted."
+            }
+            let sign = self.verifySignature(acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+            if sign {
+                self.votes[acctAddress] = true
             }
         }
 
@@ -156,32 +166,52 @@ pub contract ToucansMultiSign {
             return self.action
         }
 
-        pub fun getAccountsVerified(): [Address] {
-            return self.accountsVerified.keys
+        pub fun getSigners(): [Address] {
+            return self.signers
+        }
+
+        pub fun getVotes(): {Address: Bool} {
+            return self.votes
+        }
+
+        pub fun getAccepted(): UInt64 {
+            var count: UInt64 = 0
+            for voter in self.votes.keys {
+                if self.votes[voter]! {
+                    count = count + 1
+                }
+            }
+            return count
+        }
+
+        pub fun getDeclined(): UInt64 {
+            var count: UInt64 = 0
+            for voter in self.votes.keys {
+                if !self.votes[voter]! {
+                    count = count + 1
+                }
+            }
+            return count
         }
 
         init(_signers: [Address], _intent: String, _action: {Action}) {
-            self.totalVerified = 0
-            self.accountsVerified = {}
+            self.signers = _signers
+            self.votes = {}
             self.intent = _intent
             self.action = _action
-            
-            for signer in _signers {
-                self.accountsVerified[signer] = false
-            }
         }
     }
 
     pub resource interface ManagerPublic {
         pub fun borrowAction(actionUUID: UInt64): &MultiSignAction
-        pub fun readyToExecute(actionUUID: UInt64): Bool
+        pub fun readyToFinalize(actionUUID: UInt64): Bool
         pub fun getIDs(): [UInt64]
         pub fun getIntents(): {UInt64: String}
         pub fun getSigners(): [Address]
     }
     
     pub resource Manager: ManagerPublic {
-        access(account) let signers: {Address: Bool}
+        access(self) let signers: {Address: Bool}
         pub var threshold: UInt64
 
         // Maps the `uuid` of the MultiSignAction
@@ -193,42 +223,43 @@ pub contract ToucansMultiSign {
             self.actions[newAction.uuid] <-! newAction
         }
 
-        // TIP: You can make the threshold 0 so it always executes.
-        // This is useful if a Project Owner does not want to
-        // have multisign capabilities and run two separate transactions
-        // to propose and sign. They can simply propose and execute in the
-        // same transaction if threshold is 0.
-        pub fun readyToExecute(actionUUID: UInt64): Bool {
+        pub fun readyToFinalize(actionUUID: UInt64): Bool {
             let actionRef: &MultiSignAction = (&self.actions[actionUUID] as &MultiSignAction?)!
-            return actionRef.totalVerified >= self.threshold
+            let accepted: Bool = actionRef.getAccepted() >= self.threshold
+            let declined: Bool = actionRef.getDeclined() > UInt64(actionRef.getSigners().length) - self.threshold
+
+            return accepted || declined
         }
 
         // We do not make this public because if anyone else wants to use
         // this contract, they may want specific access control over who can
         // actually execute an action, and/or implement requirements
         // (like the treasury must have >= 10 $FLOW before an action can be executed)
-        pub fun executeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
+        pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
             pre {
-                self.readyToExecute(actionUUID: actionUUID):
-                    "This action has not received a signature from every signer yet."
+                self.readyToFinalize(actionUUID: actionUUID):
+                    "This action has not received enough signatures to be accepted or declined yet."
             }
-            
             let action <- self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
-            action.action.execute(params)
+
+            // If it's accepted
+            if action.getAccepted() >= self.threshold {
+                action.action.execute(params)
+            }
+            // Will destroy if it's accepted or denied
             destroy action
 
             self.assertValidTreasury()
         }
 
-        // Note: In the future, these will probably be access(contract)
-        // so they are multisign actions themselves? Idk
-        pub fun addSigner(signer: Address) {
+        // These will be multisign actions themselves
+        access(account) fun addSigner(signer: Address) {
             self.signers.insert(key: signer, true)
 
             self.assertValidTreasury()
         }
 
-        pub fun removeSigner(signer: Address) {
+        access(account) fun removeSigner(signer: Address) {
             self.signers.remove(key: signer)
 
             if Int(self.threshold) > self.signers.length {
@@ -240,7 +271,7 @@ pub contract ToucansMultiSign {
             self.assertValidTreasury()
         }
 
-        pub fun updateThreshold(newThreshold: UInt64) {
+        access(account) fun updateThreshold(newThreshold: UInt64) {
             self.threshold = newThreshold
 
             self.assertValidTreasury()

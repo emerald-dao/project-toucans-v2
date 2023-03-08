@@ -2,7 +2,7 @@ import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
 
-pub fun main(projectOwner: Address, projectId: UInt64): Info {
+pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
                 .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                 ?? panic("User does not have a Toucans Collection")
@@ -11,7 +11,7 @@ pub fun main(projectOwner: Address, projectId: UInt64): Info {
 }
 
 pub struct Info {
-  pub let projectId: UInt64
+  pub let projectId: String
   pub let tokenType: Type
   pub let currentFundingCycle: UInt64?
   pub let totalFunding: UFix64

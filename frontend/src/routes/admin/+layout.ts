@@ -32,10 +32,9 @@ export const load: LayoutLoad = async () => {
 				return {
 					generalInfo: project,
 					onChainData: await getProjectInfo(
-						project.contract_name,
 						project.contract_address,
 						project.owner,
-						project.project_id.toString()
+						project.project_id
 					),
 					events: eventsData?.reverse() || []
 				};

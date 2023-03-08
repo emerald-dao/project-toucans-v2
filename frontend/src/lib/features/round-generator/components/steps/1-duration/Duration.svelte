@@ -9,16 +9,16 @@
 	import { newRoundActiveStep } from '$lib/features/round-generator/stores/RoundGeneratorSteps';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import StepTitle from '../../../components/atoms/StepTitle.svelte';
+	import { toISOStringWithTimezone } from '$lib/utilities/formatDate';
 
 	export let tokenSymbol: string;
 	export let projectId: string | undefined;
 	export let editDelay: string;
 
-	// TODO: Consider edit delay with start time
-
 	// initial time is 5 minutes from now, plus edit delay (which is in seconds)
 	let now = new Date(new Date().getTime() + 5 * 60000 + Number(editDelay));
-	let nowString = now.toISOString().split('.')[0];
+	let localeISO = toISOStringWithTimezone(now);
+	let nowString = localeISO.split('.')[0];
 	let oneMonthForwardString = new Date(now.getTime() + 2629743000).toISOString().split('.')[0];
 
 	if ($user.addr) {

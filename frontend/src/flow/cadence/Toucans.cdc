@@ -34,16 +34,13 @@ pub contract Toucans {
   }
 
   pub event ProjectCreated(
-    projectId: UInt64,
-    contractName: String,
+    projectId: String,
     tokenType: Type,
     by: Address
   )
 
   pub event NewFundingCycle(
-    projectId: UInt64,
-    contractName: String, 
-    tokenType: Type,
+    projectId: String,
     by: Address, 
     currentCycle: UInt64?,
     cycleNum: UInt64,
@@ -54,9 +51,7 @@ pub contract Toucans {
   )
 
   pub event Purchase(
-    projectId: UInt64,
-    contractName: String, 
-    tokenType: Type,
+    projectId: String,
     projectOwner: Address, 
     currentCycle: UInt64,
     amount: UFix64,
@@ -65,9 +60,7 @@ pub contract Toucans {
   )
 
   pub event Distribute(
-    projectId: UInt64,
-    contractName: String, 
-    tokenType: Type,
+    projectId: String,
     by: Address, 
     currentCycle: UInt64?,
     to: Address,
@@ -75,9 +68,7 @@ pub contract Toucans {
   )
 
   pub event Donate(
-    projectId: UInt64,
-    contractName: String, 
-    tokenType: Type,
+    projectId: String,
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
@@ -86,9 +77,7 @@ pub contract Toucans {
   )
 
   pub event Withdraw(
-    projectId: UInt64,
-    contractName: String, 
-    tokenType: Type,
+    projectId: String,
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
@@ -177,7 +166,7 @@ pub contract Toucans {
   }
 
   pub resource interface ProjectPublic {
-    pub let projectId: UInt64
+    pub let projectId: String
     pub let projectTokenInfo: TokenInfo
     pub let paymentTokenInfo: TokenInfo
     pub var totalFunding: UFix64
@@ -187,7 +176,7 @@ pub contract Toucans {
     // Setters
     pub fun proposeAction(action: {ToucansMultiSign.Action})
     // If the action is ready to execute, then allow anyone to do it.
-    pub fun executeAction(actionUUID: UInt64)
+    pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
@@ -206,7 +195,7 @@ pub contract Toucans {
   }
 
   pub resource Project: ProjectPublic {
-    pub let projectId: UInt64
+    pub let projectId: String
     pub let projectTokenInfo: TokenInfo
     pub let paymentTokenInfo: TokenInfo
     // Of payment tokens
@@ -243,9 +232,9 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun executeAction(actionUUID: UInt64) {
+    pub fun finalizeAction(actionUUID: UInt64) {
       let selfRef: &Project = &self as &Project
-      self.multiSignManager.executeAction(actionUUID: actionUUID, {"treasury": selfRef})
+      self.multiSignManager.finalizeAction(actionUUID: actionUUID, {"treasury": selfRef})
     }
 
 
@@ -286,8 +275,6 @@ pub contract Toucans {
 
       emit NewFundingCycle(
         projectId: self.projectId,
-        contractName: self.projectTokenInfo.contractName, 
-        tokenType: self.projectTokenInfo.tokenType,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         cycleNum: cycleNum,
@@ -367,8 +354,6 @@ pub contract Toucans {
       self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
       emit Purchase(
         projectId: self.projectId,
-        contractName: self.projectTokenInfo.contractName, 
-        tokenType: self.projectTokenInfo.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum()!,
         amount: paymentTokensSent,
@@ -410,8 +395,6 @@ pub contract Toucans {
     access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
       emit Withdraw(
         projectId: self.projectId,
-        contractName: self.projectTokenInfo.contractName, 
-        tokenType: self.projectTokenInfo.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: amount,
@@ -423,8 +406,6 @@ pub contract Toucans {
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address) {
       emit Donate(
         projectId: self.projectId,
-        contractName: self.projectTokenInfo.contractName, 
-        tokenType: self.projectTokenInfo.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: vault.balance,
@@ -461,8 +442,6 @@ pub contract Toucans {
 
       emit Distribute(
         projectId: self.projectId,
-        contractName: self.projectTokenInfo.contractName, 
-        tokenType: self.projectTokenInfo.tokenType,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         to: recipient,
@@ -606,7 +585,7 @@ pub contract Toucans {
       minting: Bool,
       extra: {String: AnyStruct}
     ) {
-      self.projectId = self.uuid
+      self.projectId = projectTokenInfo.contractName
       self.totalFunding = 0.0
       self.extra = extra
       self.fundingCycles = []
@@ -637,12 +616,12 @@ pub contract Toucans {
   }
 
   pub resource interface CollectionPublic {
-    pub fun getProjectIds(): [UInt64]
-    pub fun borrowProjectPublic(projectId: UInt64): &Project{ProjectPublic}?
+    pub fun getProjectIds(): [String]
+    pub fun borrowProjectPublic(projectId: String): &Project{ProjectPublic}?
   }
 
   pub resource Collection: CollectionPublic {
-    pub let projects: @{UInt64: Project}
+    pub let projects: @{String: Project}
 
     pub fun createProject(
       projectTokenInfo:TokenInfo, 
@@ -657,26 +636,25 @@ pub contract Toucans {
       let cycleNum: UInt64 = 0
 
       let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, extra: extra)
-      let projectId: UInt64 = project.uuid
+      let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
 
       emit ProjectCreated(
         projectId: projectId,
-        contractName: projectTokenInfo.contractName,
         tokenType: projectTokenInfo.tokenType,
         by: self.owner!.address
       )
     }
 
-    pub fun borrowProject(projectId: UInt64): &Project? {
+    pub fun borrowProject(projectId: String): &Project? {
       return &self.projects[projectId] as &Project?
     }
 
-    pub fun getProjectIds(): [UInt64] {
+    pub fun getProjectIds(): [String] {
       return self.projects.keys
     }
 
-    pub fun borrowProjectPublic(projectId: UInt64): &Project{ProjectPublic}? {
+    pub fun borrowProjectPublic(projectId: String): &Project{ProjectPublic}? {
       return &self.projects[projectId] as &Project{ProjectPublic}?
     }
 
@@ -706,8 +684,8 @@ pub contract Toucans {
   }
 
   init() {
-    self.CollectionStoragePath = /storage/ToucansCollection002
-    self.CollectionPublicPath = /public/ToucansCollection002
+    self.CollectionStoragePath = /storage/ToucansCollection003
+    self.CollectionPublicPath = /public/ToucansCollection003
   }
 
 }

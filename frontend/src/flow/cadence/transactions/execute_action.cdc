@@ -1,6 +1,6 @@
 import Toucans from "../Toucans.cdc"
 
-transaction(projectOwner: Address, projectId: UInt64, actionUUID: UInt64) {
+transaction(projectOwner: Address, projectId: String, actionUUID: UInt64) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   

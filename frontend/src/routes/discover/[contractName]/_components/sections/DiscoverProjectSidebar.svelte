@@ -8,6 +8,7 @@
 	import { fundActiveStep, fundingSteps } from '$lib/features/funding/stores/FundingSteps';
 
 	export let daoData: DAOProject;
+	console.log(daoData);
 
 	const initFunding = () => {
 		if (daoData.onChainData.fundingCycles != undefined && $user) {
