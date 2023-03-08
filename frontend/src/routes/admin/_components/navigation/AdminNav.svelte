@@ -92,7 +92,7 @@
 				<div class="sidebar-link-icon">
 					<Icon icon="tabler:layout-list" />
 				</div>
-				Actions queue
+				Actions Queue
 			</a>
 			<a
 				href="/admin/multisig"

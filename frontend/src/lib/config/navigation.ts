@@ -55,6 +55,12 @@ export const avatarDropdownNav = [
 		icon: 'tabler:home'
 	},
 	{
+		name: 'Signatures queue',
+		url: '/signatures-queue',
+		prefetch: true,
+		icon: 'tabler:pencil-plus'
+	},
+	{
 		name: 'Create new DAO',
 		url: '/dao-generator',
 		prefetch: true,

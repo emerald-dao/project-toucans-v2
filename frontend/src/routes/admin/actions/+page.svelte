@@ -17,12 +17,16 @@
 	console.log(adminData.userDaos[$activeDaoStore]);
 </script>
 
-<div in:fly={{ x: 10, duration: 400 }}>
-	<h5>Actions Queue</h5>
-	<p class="small">Actions waiting for signatures</p>
-	<ActionElement actionType="Withdraw" actionId="0x3213" signed={true} />
-	<ActionElement actionType="NewFundingCycle" actionId="0x3213" signed={false} />
-	<ActionElement actionType="RemoveSigner" actionId="0x3213" signed={true} />
+<div in:fly={{ x: 10, duration: 400 }} class="column-4">
+	<div>
+		<h5>Actions Queue</h5>
+		<p class="small">Actions waiting for signatures</p>
+	</div>
+	<div>
+		<ActionElement actionType="Withdraw" actionId="0x3213" signed={true} />
+		<ActionElement actionType="NewFundingCycle" actionId="0x3213" signed={false} />
+		<ActionElement actionType="RemoveSigner" actionId="0x3213" signed={true} />
+	</div>
 </div>
 
 <style lang="scss">
