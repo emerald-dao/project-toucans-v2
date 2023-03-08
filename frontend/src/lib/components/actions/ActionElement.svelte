@@ -56,10 +56,7 @@
 	<div class="row-4">
 		<div class="threshold-wrapper">
 			<span class="xsmall">Signatures</span>
-			<div class="row align-baseline">
-				<span>1</span>
-				<span class="threshold">/4</span>
-			</div>
+			<span class="threshold"><strong>1</strong>/4</span>
 		</div>
 		{#if !signed}
 			<div class="row-2">
@@ -67,7 +64,7 @@
 					<Icon icon="tabler:pencil-plus" />
 				</div>
 				<div class="action-wrapper trash">
-					<Icon icon="tabler:trash" />
+					<Icon icon="tabler:x" />
 				</div>
 			</div>
 		{:else}
@@ -156,7 +153,7 @@
 			border-radius: var(--radius-8);
 
 			.threshold {
-				font-size: 0.6rem;
+				font-size: var(--font-size-0);
 				color: var(--clr-font-text);
 			}
 		}
