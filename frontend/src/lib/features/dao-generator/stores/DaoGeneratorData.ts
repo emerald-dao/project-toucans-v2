@@ -22,7 +22,7 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 	},
 	multisig: {
 		addresses: [],
-		threshold: 0
+		threshold: 1
 	}
 };
 

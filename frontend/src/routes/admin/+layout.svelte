@@ -7,6 +7,7 @@
 	import { logIn, unauthenticate } from '$flow/actions';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { DummyDao, AnotherDummyDao } from '$lib/mocks/dummyDao';
+	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 
 	interface Data {
 		projects: DAOProject[];
@@ -25,33 +26,29 @@
 	});
 </script>
 
-<section>
-	{#if !$user.addr}
-		<div class="card-primary column-7 align-center">
-			<span>Connect your Flow wallet to access the admin dashboard</span>
-			<FlowConnect {logIn} {unauthenticate} {$user} />
-		</div>
-	{:else if data.projects.length < 1}
-		<div class="card-primary column-7 align-center">
-			<span>You don't have any DAO yet</span>
-			<Button size="large" href="/dao-generator/generate">Create DAO</Button>
-		</div>
-	{:else}
+{#if !$user.addr}
+	<ConnectPage />
+{:else if data.projects.length < 1}
+	<div class="card-primary column-7 align-center">
+		<span>You don't have any DAO yet</span>
+		<Button size="large" href="/dao-generator/generate">Create DAO</Button>
+	</div>
+{:else}
+	<section>
 		<div class="container-large">
 			<AdminNav />
 			<div class="main-wrapper">
 				<slot />
 			</div>
 		</div>
-	{/if}
-</section>
+	</section>
+{/if}
 
 <style type="scss">
 	section {
 		padding: 0;
 		display: flex;
 		flex: 1;
-		align-items: center;
 		justify-content: center;
 
 		.container-large {

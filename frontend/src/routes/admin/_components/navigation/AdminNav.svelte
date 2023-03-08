@@ -28,7 +28,7 @@
 </script>
 
 <nav>
-	<div class="column-12">
+	<div class="column-10">
 		<div class="row-3 align-center">
 			<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
 			<DropDownHeading bind:activeDao={$activeDaoStore} userDaos={adminData.userDaos}>
@@ -37,7 +37,7 @@
 					<Label color="neutral" size="small">
 						<div class="row-6 header-link align-center">
 							<span class="row-1 align-center">
-								{activeDaoData.generalInfo.contract_name}
+								{activeDaoData.generalInfo.project_id}
 							</span>
 							<Icon icon="tabler:copy" />
 						</div>
@@ -50,10 +50,6 @@
 					</a>
 				</div>
 			</DropDownHeading>
-		</div>
-		<div class="column-1 card-1">
-			<Currency amount={34321} currency="FLOW" color="heading" fontSize="1.4rem" />
-			<span class="xsmall">Treasury funds</span>
 		</div>
 		<div class="column-8">
 			<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
@@ -110,12 +106,25 @@
 			</a>
 		</div>
 	</div>
-	<a href="/admin/info" class="sidebar-link" class:active={$page.url.pathname.includes('info')}>
-		<div class="sidebar-link-icon">
-			<Icon icon="tabler:edit" />
+	<div class="column-6">
+		<div class="treasury-wallet-card">
+			<div class="icon-wrapper">
+				<Icon icon="tabler:wallet" />
+			</div>
+			<Currency amount={34321} currency="FLOW" color="heading" fontSize="1.1rem" />
+			<span class="xsmall row-1 align-center"> Treasury funds </span>
 		</div>
-		Edit Info
-	</a>
+		<a
+			href="/admin/info"
+			class="sidebar-link small"
+			class:active={$page.url.pathname.includes('info')}
+		>
+			<div class="sidebar-link-icon ">
+				<Icon icon="tabler:edit" />
+			</div>
+			Edit Info
+		</a>
+	</div>
 </nav>
 
 <style type="scss">
@@ -136,6 +145,28 @@
 
 			@include mq('medium') {
 				display: block;
+			}
+		}
+
+		.treasury-wallet-card {
+			width: fit-content;
+			padding: var(--space-4) var(--space-6);
+			border-radius: var(--radius-1);
+			background-color: var(--clr-background-secondary);
+			position: relative;
+
+			.icon-wrapper {
+				position: absolute;
+				left: -0.6em;
+				top: -0.6em;
+				border-radius: 50%;
+				width: 2em;
+				aspect-ratio: 1/1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: var(--clr-surface-primary);
+				border: 0.5px solid var(--clr-border-primary);
 			}
 		}
 
@@ -172,6 +203,10 @@
 
 			&.active > .sidebar-link-icon {
 				color: var(--clr-tertiary-main);
+			}
+
+			&.small {
+				font-size: var(--font-size-2);
 			}
 		}
 	}

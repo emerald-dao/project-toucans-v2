@@ -55,7 +55,7 @@
 		height: 120px;
 		aspect-ratio: 1 / 1;
 		border-radius: 0.3rem;
-		object-fit: contain;
+		object-fit: cover;
 		border: 1px var(--clr-border-primary) solid;
 	}
 </style>

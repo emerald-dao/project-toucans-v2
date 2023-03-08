@@ -1,11 +1,10 @@
 <script type="ts">
-	import SignatureElement from './_components/SignatureElement.svelte';
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import { Button } from '@emerald-dao/component-library';
-	import Icon from '@iconify/svelte';
+	import MultisigManager from '$lib/features/add-signature/MultisigManager.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -16,7 +15,16 @@
 
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 
-	console.log(adminData.userDaos[$activeDaoStore]);
+	let allWalletsValid: boolean = false;
+	let thresholdValid: boolean = false;
+
+	let addresses: string[] = [''];
+	let threshold: number;
+
+	onMount(() => {
+		addresses = activeDaoData.onChainData.signers;
+		threshold = Number(activeDaoData.onChainData.threshold);
+	});
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
@@ -24,17 +32,18 @@
 		<h5>Multisig</h5>
 		<p class="small">Manage the signers of your DAO.</p>
 	</div>
-	<div>
-		{#each activeDaoData.onChainData.signers as signer, i}
-			<SignatureElement address={signer} {i} />
-		{/each}
-	</div>
-	<div class="column align-end">
-		<Button>
-			<Icon icon="tabler:plus" />
-			Add Signer
-		</Button>
-	</div>
+	<MultisigManager bind:addresses bind:allWalletsValid bind:thresholdValid bind:threshold />
+
+	<Button
+		state={allWalletsValid &&
+		thresholdValid &&
+		Number(activeDaoData.onChainData.threshold) !== threshold &&
+		activeDaoData.onChainData.signers.length !== addresses.length
+			? 'active'
+			: 'disabled'}
+	>
+		Submit changes
+	</Button>
 </div>
 
 <style lang="scss">

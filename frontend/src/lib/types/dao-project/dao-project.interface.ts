@@ -14,14 +14,13 @@ export interface DAOProject {
 
 export interface DaoDatabaseData {
 	contract_address: string;
-	contract_name: string;
 	created_at: string;
 	description: string;
 	discord: string | null;
 	logo: string;
 	name: string;
 	owner: string;
-	project_id: number;
+	project_id: string;
 	token_symbol: string;
 	twitter: string | null;
 	website: string | null;
@@ -46,6 +45,7 @@ export interface DaoBlockchainData {
 	};
 	overflowBalance: string;
 	signers: string[];
+	threshold: string;
 	actions: {
 		[address: string]: string;
 	};

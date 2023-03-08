@@ -21,7 +21,7 @@ import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
-import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw'
+import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw';
 
 import { get } from 'svelte/store';
 import { fundingData } from '$lib/features/funding/stores/FundingData';
@@ -189,7 +189,7 @@ const signAction = async (actionMessage: string, actionUUID: number) => {
 	const intent = actionMessage;
 	const latestBlock = await fcl.block(true);
 	const intentHex = Buffer.from(`${intent}`).toString('hex');
-	const MSG = `${actionUUID}${intentHex}${latestBlock.id}`
+	const MSG = `${actionUUID}${intentHex}${latestBlock.id}`;
 	const sig = await fcl.currentUser().signUserMessage(MSG);
 	const keyIds = sig.map((s) => {
 		return s.keyId;
@@ -198,7 +198,7 @@ const signAction = async (actionMessage: string, actionUUID: number) => {
 		return s.signature.signature;
 	});
 
-	return { keyIds, signatures, MSG, signatureBlock: latestBlock }
+	return { keyIds, signatures, MSG, signatureBlock: latestBlock };
 };
 
 const acceptAction = async (
@@ -304,11 +304,7 @@ export const getProjectInfo: (
 	}
 };
 
-export const getTokenBalance = async (
-	projectId: string,
-	contractAddress: string,
-	user: string
-) => {
+export const getTokenBalance = async (projectId: string, contractAddress: string, user: string) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
@@ -322,10 +318,7 @@ export const getTokenBalance = async (
 	}
 };
 
-export const getPendingActionInDAO = async (
-	owner: string,
-	projectId: string
-) => {
+export const getPendingActionInDAO = async (owner: string, projectId: string) => {
 	console.log(projectId);
 	try {
 		const response = await fcl.query({

@@ -68,7 +68,7 @@ const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<b
 
 const checkDaoContract = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
-		if (daoProjects.some((obj) => obj.contract_name.toUpperCase() === value.toUpperCase())) {
+		if (daoProjects.some((obj) => obj.project_id.toUpperCase() === value.toUpperCase())) {
 			reject();
 		} else {
 			resolve(true);
@@ -89,7 +89,7 @@ const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<
 interface DaoProject {
 	name: string;
 	token_symbol: string;
-	contract_name: string;
+	project_id: string;
 }
 
 export default validationSuite;
