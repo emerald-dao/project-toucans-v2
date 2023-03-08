@@ -41,7 +41,6 @@ pub contract Toucans {
 
   pub event NewFundingCycle(
     projectId: String,
-    tokenType: Type,
     by: Address, 
     currentCycle: UInt64?,
     cycleNum: UInt64,
@@ -53,7 +52,6 @@ pub contract Toucans {
 
   pub event Purchase(
     projectId: String,
-    tokenType: Type,
     projectOwner: Address, 
     currentCycle: UInt64,
     amount: UFix64,
@@ -63,7 +61,6 @@ pub contract Toucans {
 
   pub event Distribute(
     projectId: String,
-    tokenType: Type,
     by: Address, 
     currentCycle: UInt64?,
     to: Address,
@@ -72,7 +69,6 @@ pub contract Toucans {
 
   pub event Donate(
     projectId: String,
-    tokenType: Type,
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
@@ -82,7 +78,6 @@ pub contract Toucans {
 
   pub event Withdraw(
     projectId: String,
-    tokenType: Type,
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
@@ -280,7 +275,6 @@ pub contract Toucans {
 
       emit NewFundingCycle(
         projectId: self.projectId,
-        tokenType: self.projectTokenInfo.tokenType,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         cycleNum: cycleNum,
@@ -360,7 +354,6 @@ pub contract Toucans {
       self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
       emit Purchase(
         projectId: self.projectId,
-        tokenType: self.projectTokenInfo.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum()!,
         amount: paymentTokensSent,
@@ -402,7 +395,6 @@ pub contract Toucans {
     access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
       emit Withdraw(
         projectId: self.projectId,
-        tokenType: self.projectTokenInfo.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: amount,
@@ -414,7 +406,6 @@ pub contract Toucans {
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address) {
       emit Donate(
         projectId: self.projectId,
-        tokenType: self.projectTokenInfo.tokenType,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: vault.balance,
@@ -451,7 +442,6 @@ pub contract Toucans {
 
       emit Distribute(
         projectId: self.projectId,
-        tokenType: self.projectTokenInfo.tokenType,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         to: recipient,
@@ -694,8 +684,8 @@ pub contract Toucans {
   }
 
   init() {
-    self.CollectionStoragePath = /storage/ToucansCollection002
-    self.CollectionPublicPath = /public/ToucansCollection002
+    self.CollectionStoragePath = /storage/ToucansCollection003
+    self.CollectionPublicPath = /public/ToucansCollection003
   }
 
 }

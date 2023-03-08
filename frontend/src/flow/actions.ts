@@ -10,6 +10,8 @@ import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
+import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
+import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 
 // Treasury Actions
 import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
@@ -124,6 +126,7 @@ const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
+	console.log(new Date(newRoundData.startDate));
 	const startTime = formatFix(Math.floor(new Date(newRoundData.startDate).getTime() / 1000));
 	const endTime = newRoundData.infiniteDuration
 		? null
@@ -181,6 +184,88 @@ export const proposeWithdrawExecution = (
 	recipient: string,
 	amount: string
 ) => executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
+
+const signAction = async (actionMessage: string, actionUUID: number) => {
+	const intent = actionMessage;
+	const latestBlock = await fcl.block(true);
+	const intentHex = Buffer.from(`${intent}`).toString('hex');
+	const MSG = `${actionUUID}${intentHex}${latestBlock.id}`
+	const sig = await fcl.currentUser().signUserMessage(MSG);
+	const keyIds = sig.map((s) => {
+		return s.keyId;
+	});
+	const signatures = sig.map((s) => {
+		return s.signature.signature;
+	});
+
+	return { keyIds, signatures, MSG, signatureBlock: latestBlock }
+};
+
+const acceptAction = async (
+	projectOwner: string,
+	projectId: string,
+	actionMessage: string,
+	actionUUID: number
+) => {
+	const { keyIds, signatures, MSG, signatureBlock } = signAction(actionMessage, actionUUID);
+
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(acceptActionTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(actionUUID, t.UInt64),
+			arg(MSG, t.String),
+			arg(keyIds, t.Array(t.Int)),
+			arg(signatures, t.Array(t.String)),
+			arg(signatureBlock, t.UInt64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const acceptActionExecution = (
+	projectOwner: string,
+	projectId: string,
+	actionMessage: string,
+	actionUUID: number
+) => executeTransaction(() => acceptAction(projectOwner, projectId, actionMessage, actionUUID));
+
+const declineAction = async (
+	projectOwner: string,
+	projectId: string,
+	actionMessage: string,
+	actionUUID: number
+) => {
+	const { keyIds, signatures, MSG, signatureBlock } = signAction(actionMessage, actionUUID);
+
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(declineActionTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(actionUUID, t.UInt64),
+			arg(MSG, t.String),
+			arg(keyIds, t.Array(t.Int)),
+			arg(signatures, t.Array(t.String)),
+			arg(signatureBlock, t.UInt64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const declineActionExecution = (
+	projectOwner: string,
+	projectId: string,
+	actionMessage: string,
+	actionUUID: number
+) => executeTransaction(() => declineAction(projectOwner, projectId, actionMessage, actionUUID));
 
 // const tranferTokens = async () => {
 // 	const amount = "10.0";

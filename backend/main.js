@@ -15,32 +15,32 @@ const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)
 const actionIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.ToucansTreasuryActions.`;
 
 fcl.events(`${eventIdentifierPrefix}ProjectCreated`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
+  const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'ProjectCreated');
 });
 
 fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
+  const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'NewFundingCycle');
 });
 
 fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
+  const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'Purchase');
 });
 
 fcl.events(`${eventIdentifierPrefix}Distribute`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
+  const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'Distribute');
 });
 
 fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
+  const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'Donate');
 });
 
 fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
-  const { tokenType, projectId, ...rest } = event;
+  const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'Withdraw');
 });
 

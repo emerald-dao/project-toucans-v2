@@ -2,7 +2,13 @@
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import Icon from '@iconify/svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
-	import { Modal, getModal, ProgressBar, StatusCircle, Currency } from '@emerald-dao/component-library';
+	import {
+		Modal,
+		getModal,
+		ProgressBar,
+		StatusCircle,
+		Currency
+	} from '@emerald-dao/component-library';
 	import FundingStats from '$components/atoms/FundingStats.svelte';
 
 	export let round: FundingCycle;
@@ -15,7 +21,12 @@
 <div class="main-wrapper row-space-between align-center">
 	<div class="row-4 align-center">
 		<StatusCircle width="0.5rem" status={active ? 'active' : goalReached ? 'success' : 'alert'} />
-		<Currency fontSize="0.9rem" amount={Number(round.paymentTokensSent)} currency="FLOW" color="heading" />
+		<Currency
+			fontSize="0.9rem"
+			amount={Number(round.paymentTokensSent)}
+			currency="FLOW"
+			color="heading"
+		/>
 		<div class="progress-bar-wrapper">
 			<ProgressBar
 				value={Number(round.paymentTokensSent)}
@@ -25,14 +36,18 @@
 		</div>
 	</div>
 	<div class="row-5 align-center">
-		<span class="xsmall display-handling"
-			>{`${formatDate(new Date(Number(round.details.timeframe.startTime) * 1000))} to ${formatDate(
-				new Date(Number(round.details.timeframe.endTime) * 1000)
-			)}`}</span
-		>
+		<span class="xsmall display-handling">
+			{#if round.details.timeframe.endTime}
+				{`${formatDate(new Date(Number(round.details.timeframe.startTime) * 1000))} to ${formatDate(
+					new Date(Number(round.details.timeframe.endTime) * 1000)
+				)}`}
+			{:else}
+				{`${formatDate(new Date(Number(round.details.timeframe.startTime) * 1000))} to Infinity`}
+			{/if}
+		</span>
 		<div class="header-link" on:click={() => getModal(`funding-stats-${i}`).open()} on:keydown>
 			<Icon icon="tabler:eye" />
-		</div>	
+		</div>
 	</div>
 </div>
 <Modal background="var(--clr-background-secondary)" id={`funding-stats-${i}`}>
