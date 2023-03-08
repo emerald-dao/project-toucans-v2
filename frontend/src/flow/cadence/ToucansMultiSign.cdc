@@ -225,10 +225,10 @@ pub contract ToucansMultiSign {
 
         pub fun readyToFinalize(actionUUID: UInt64): Bool {
             let actionRef: &MultiSignAction = (&self.actions[actionUUID] as &MultiSignAction?)!
-            let accepted = actionRef.getAccepted() >= self.threshold
-            let denied = actionRef.getDeclined() > UInt64(actionRef.getSigners().length) - self.threshold
+            let accepted: Bool = actionRef.getAccepted() >= self.threshold
+            let declined: Bool = actionRef.getDeclined() > UInt64(actionRef.getSigners().length) - self.threshold
 
-            return accepted || denied
+            return accepted || declined
         }
 
         // We do not make this public because if anyone else wants to use
@@ -238,7 +238,7 @@ pub contract ToucansMultiSign {
         pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
             pre {
                 self.readyToFinalize(actionUUID: actionUUID):
-                    "This action has not received a signature from every signer yet."
+                    "This action has not received enough signatures to be accepted or declined yet."
             }
             let action <- self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
 
@@ -252,15 +252,14 @@ pub contract ToucansMultiSign {
             self.assertValidTreasury()
         }
 
-        // Note: In the future, these will probably be access(contract)
-        // so they are multisign actions themselves? Idk
-        pub fun addSigner(signer: Address) {
+        // These will be multisign actions themselves
+        access(account) fun addSigner(signer: Address) {
             self.signers.insert(key: signer, true)
 
             self.assertValidTreasury()
         }
 
-        pub fun removeSigner(signer: Address) {
+        access(account) fun removeSigner(signer: Address) {
             self.signers.remove(key: signer)
 
             if Int(self.threshold) > self.signers.length {
@@ -272,7 +271,7 @@ pub contract ToucansMultiSign {
             self.assertValidTreasury()
         }
 
-        pub fun updateThreshold(newThreshold: UInt64) {
+        access(account) fun updateThreshold(newThreshold: UInt64) {
             self.threshold = newThreshold
 
             self.assertValidTreasury()
