@@ -1,7 +1,7 @@
 import Toucans from "../Toucans.cdc"
 
 transaction(
-    projectId: UInt64,
+    projectId: String,
     fundingTarget: UFix64?, 
     issuanceRate: UFix64, 
     reserveRate: UFix64, 

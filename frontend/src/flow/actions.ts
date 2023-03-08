@@ -19,6 +19,7 @@ import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
+import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw'
 
 import { get } from 'svelte/store';
 import { fundingData } from '$lib/features/funding/stores/FundingData';
@@ -98,16 +99,15 @@ export const deployContractExecution = (data, actionAfterSucceed) =>
 	executeTransaction(() => deployContract(data), actionAfterSucceed);
 
 const fundProject = async () => {
-	const contractName = get(fundingData).contractName;
 	const projectOwner = get(fundingData).daoAddress;
 	const projectId = get(fundingData).projectId;
 	const amount = get(fundingData).amount;
 	const message = get(fundingData).specialMessage;
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(fundProjectTx, contractName, projectOwner),
+		cadence: replaceWithProperValues(fundProjectTx, projectId, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
-			arg(projectId, t.UInt64),
+			arg(projectId, t.String),
 			arg(formatFix(amount), t.UFix64),
 			arg(message, t.String)
 		],
@@ -135,7 +135,7 @@ const newRound = async () => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(newRoundTx),
 		args: (arg, t) => [
-			arg(newRoundData.projectId, t.UInt64),
+			arg(newRoundData.projectId, t.String),
 			arg(fundingGoal, t.Optional(t.UFix64)),
 			arg(formatFix(newRoundData.issuanceRate), t.UFix64),
 			arg(formatFix(newRoundData.reserveRate / 100.0), t.UFix64),
@@ -164,7 +164,7 @@ const proposeWithdraw = async (
 		cadence: replaceWithProperValues(proposePaymentTokenWithdrawTx),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
-			arg(projectId, t.UInt64),
+			arg(projectId, t.String),
 			arg(recipient, t.Address),
 			arg(amount, t.UFix64)
 		],
@@ -203,16 +203,14 @@ export const proposeWithdrawExecution = (
 // export const fundProjectExecution = () => executeTransaction(fundProject);
 
 export const getProjectInfo: (
-	contractName: string,
 	contractAddress: string,
 	owner: string,
 	projectId: string
-) => Promise<DaoBlockchainData> = async (contractName, contractAddress, owner, projectId) => {
-	console.log(projectId);
+) => Promise<DaoBlockchainData> = async (contractAddress, owner, projectId) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getProjectScript, contractName, contractAddress),
-			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.UInt64)]
+			cadence: replaceWithProperValues(getProjectScript, projectId, contractAddress),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
 		return response;
 	} catch (e) {
@@ -222,13 +220,13 @@ export const getProjectInfo: (
 };
 
 export const getTokenBalance = async (
-	contractName: string,
+	projectId: string,
 	contractAddress: string,
 	user: string
 ) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getTokenBalanceScript, contractName, contractAddress),
+			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
 			args: (arg, t) => [arg(user, t.Address)]
 		});
 		return response;
@@ -236,5 +234,22 @@ export const getTokenBalance = async (
 		console.log('Error in getTokenBalance');
 		console.log(e);
 		return '0.0';
+	}
+};
+
+export const getPendingActionInDAO = async (
+	owner: string,
+	projectId: string
+) => {
+	console.log(projectId);
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getPendingActionsInDAOScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getPendingActionInDAO');
+		console.log(e);
 	}
 };

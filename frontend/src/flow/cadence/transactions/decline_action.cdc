@@ -1,6 +1,6 @@
 import Toucans from "../Toucans.cdc"
 
-transaction(projectOwner: Address, projectId: UInt64, actionUUID: UInt64, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+transaction(projectOwner: Address, projectId: String, actionUUID: UInt64, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let SignerAddress: Address
@@ -15,6 +15,10 @@ transaction(projectOwner: Address, projectId: UInt64, actionUUID: UInt64, messag
   execute {
     let manager = self.Project.borrowManagerPublic()
     let action = manager.borrowAction(actionUUID: actionUUID)
-    action.verifySignature(acctAddress: self.SignerAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+    action.decline(acctAddress: self.SignerAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+
+    if manager.readyToFinalize(actionUUID: actionUUID) {
+        self.Project.finalizeAction(actionUUID: actionUUID)
+    }
   }
 }

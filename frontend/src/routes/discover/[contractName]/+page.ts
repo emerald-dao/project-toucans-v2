@@ -17,7 +17,7 @@ export const load: PageLoad = async ({ params }) => {
 	let userBalance = null;
 	if (userAddress != undefined) {
 		userBalance = await getTokenBalance(
-			generalInfo.contract_name,
+			generalInfo.project_id,
 			generalInfo.contract_address,
 			userAddress
 		);
@@ -26,12 +26,11 @@ export const load: PageLoad = async ({ params }) => {
 	return {
 		generalInfo,
 		onChainData: getProjectInfo(
-			generalInfo.contract_name,
 			generalInfo.contract_address,
 			generalInfo.owner,
 			generalInfo.project_id
 		),
-		events: events.actions ? events.actions.reverse() : [],
+		events: events && events.actions ? events.actions.reverse() : [],
 		userBalance
 	};
 };

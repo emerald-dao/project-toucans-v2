@@ -20,9 +20,9 @@ export async function POST({ request }: { request: RequestHandler }) {
 	const name = data.daoDetails.name;
 
 	const { error: ProjectError } = await supabase.from('projects').insert({
+		project_id: data.daoDetails.contractName,
 		name,
 		token_symbol: tokenName,
-		contract_name: data.daoDetails.contractName,
 		contract_address: data.user.addr,
 		description: data.daoDetails.description,
 		website: data.daoDetails.website,
@@ -30,8 +30,7 @@ export async function POST({ request }: { request: RequestHandler }) {
 		discord: data.daoDetails.discord,
 		logo: data.logo,
 		owner: data.user.addr,
-		type: data.tokenomics.tokenType,
-		project_id: data.projectId
+		type: data.tokenomics.tokenType
 	});
 	console.log('Error adding new project', ProjectError);
 
