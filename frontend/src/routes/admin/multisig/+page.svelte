@@ -20,9 +20,15 @@
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
-	{#each activeDaoData.onChainData.signers as signer, i}
-		<SignatureElement address={signer} {i} />
-	{/each}
+	<div>
+		<h5>Multisig</h5>
+		<p class="small">Manage the signers of your DAO.</p>
+	</div>
+	<div>
+		{#each activeDaoData.onChainData.signers as signer, i}
+			<SignatureElement address={signer} {i} />
+		{/each}
+	</div>
 	<div class="column align-end">
 		<Button>
 			<Icon icon="tabler:plus" />
@@ -36,6 +42,11 @@
 		display: flex;
 		flex-direction: column;
 		flex: 1;
-		justify-content: space-between;
+		gap: var(--space-10);
+
+		h5 {
+			margin-bottom: var(--space-2);
+			margin-top: 0;
+		}
 	}
 </style>

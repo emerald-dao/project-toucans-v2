@@ -26,24 +26,24 @@
 </script>
 
 <section>
-	<div class="container-large">
-		{#if !$user.addr}
-			<div class="card-primary column-7 align-center">
-				<span>Connect your Flow wallet to access the admin dashboard</span>
-				<FlowConnect {logIn} {unauthenticate} {$user} />
-			</div>
-		{:else if data.projects.length < 1}
-			<div class="card-primary column-7 align-center">
-				<span>You don't have any DAO yet</span>
-				<Button size="large" href="/dao-generator/generate">Create DAO</Button>
-			</div>
-		{:else}
+	{#if !$user.addr}
+		<div class="card-primary column-7 align-center">
+			<span>Connect your Flow wallet to access the admin dashboard</span>
+			<FlowConnect {logIn} {unauthenticate} {$user} />
+		</div>
+	{:else if data.projects.length < 1}
+		<div class="card-primary column-7 align-center">
+			<span>You don't have any DAO yet</span>
+			<Button size="large" href="/dao-generator/generate">Create DAO</Button>
+		</div>
+	{:else}
+		<div class="container-large">
 			<AdminNav />
 			<div class="main-wrapper">
 				<slot />
 			</div>
-		{/if}
-	</div>
+		</div>
+	{/if}
 </section>
 
 <style type="scss">
@@ -51,6 +51,8 @@
 		padding: 0;
 		display: flex;
 		flex: 1;
+		align-items: center;
+		justify-content: center;
 
 		.container-large {
 			display: flex;
@@ -68,15 +70,16 @@
 				display: flex;
 				flex-direction: column;
 			}
+		}
 
-			.card-primary {
-				padding: var(--space-12);
-				width: fit-content;
+		.card-primary {
+			padding: var(--space-12);
+			width: fit-content;
+			height: fit-content;
 
-				span {
-					text-align: center;
-					min-width: 18ch;
-				}
+			span {
+				text-align: center;
+				min-width: 18ch;
 			}
 		}
 	}

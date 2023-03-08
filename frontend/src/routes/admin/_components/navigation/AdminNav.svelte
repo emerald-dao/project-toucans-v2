@@ -51,7 +51,7 @@
 				</div>
 			</DropDownHeading>
 		</div>
-		<div class="column-1">
+		<div class="column-1 card-1">
 			<Currency amount={34321} currency="FLOW" color="heading" fontSize="1.4rem" />
 			<span class="xsmall">Treasury funds</span>
 		</div>

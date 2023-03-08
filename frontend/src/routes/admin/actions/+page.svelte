@@ -17,5 +17,13 @@
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }}>
-	<div>{activeDaoData.onChainData.signers}</div>
+	<h5>Action Queue</h5>
+	<p class="small">Actions waiting for signatures</p>
 </div>
+
+<style lang="scss">
+	h5 {
+		margin-bottom: var(--space-2);
+		margin-top: 0;
+	}
+</style>
