@@ -8,7 +8,7 @@
 
 	setContext('daoData', data);
 
-	let seeMore = false;
+	// let seeMore = false;
 </script>
 
 <section class="container">
@@ -20,14 +20,14 @@
 			<DiscoverProjectMain daoData={data} />
 		</div>
 	</div>
-	<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
+
+	<!-- <div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
 		<Icon icon="tabler:arrow-left" color="#ff66c4" width="19.5" />
 		<p class="xsmall w-medium">More</p>
-	</div>
-
-	{#if seeMore}
+	</div> -->
+	<!-- {#if seeMore}
 		<SeeMoreSidebar on:closeModal={() => (seeMore = !seeMore)} />
-	{/if}
+	{/if} -->
 </section>
 
 <style type="scss">

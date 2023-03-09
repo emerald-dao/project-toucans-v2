@@ -6,10 +6,10 @@
 	import RoundDetail from '$components/atoms/RoundDetail.svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
-	import LineChart from '$components/charts/LineChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import SignatureElement from '$lib/features/add-signature/components/atoms/signature-element/SignatureElement.svelte';
 
 	export let daoData: DAOProject;
 
@@ -74,24 +74,32 @@
 				</TabList>
 				<TabPanel>
 					<div class="panel-container">
-						<div class="chart-wrapper">
-							<PieChart
-								title="Token distribution"
-								chartData={mainHoldersAmounts}
-								labels={mainHoldersAccounts}
-							/>
-						</div>
+						{#if mainHoldersAmounts.length < 1}
+							<span><em>This token has no holders yet</em></span>
+						{:else}
+							<div class="chart-wrapper">
+								<PieChart
+									title="Token distribution"
+									chartData={mainHoldersAmounts}
+									labels={mainHoldersAccounts}
+								/>
+							</div>
+						{/if}
 					</div>
 				</TabPanel>
 				<TabPanel>
 					<div class="panel-container">
-						<div class="chart-wrapper">
-							<PieChart
-								title="Token distribution"
-								chartData={mainFundersAmounts}
-								labels={mainFundersAccounts}
-							/>
-						</div>
+						{#if mainFundersAmounts.length < 1}
+							<span><em>This token has no funders yet</em></span>
+						{:else}
+							<div class="chart-wrapper">
+								<PieChart
+									title="Token distribution"
+									chartData={mainFundersAmounts}
+									labels={mainFundersAccounts}
+								/>
+							</div>
+						{/if}
 					</div>
 				</TabPanel>
 			</Tabs>
@@ -100,26 +108,36 @@
 			<Tabs>
 				<TabList>
 					<Tab>Recent Activity</Tab>
+					<Tab>Signers</Tab>
 					{#if fundingPerMonth}
 						<Tab>Main Funders</Tab>
 					{/if}
-					<Tab>Rounds</Tab>
+					{#if daoData.onChainData.fundingCycles.length > 0}
+						<Tab>Rounds</Tab>
+					{/if}
 				</TabList>
 				<TabPanel>
-					<RecentActivity actions={recentActivity} />
+					<RecentActivity events={recentActivity} />
+				</TabPanel>
+				<TabPanel>
+					{#each daoData.onChainData.signers as signer, i}
+						<SignatureElement address={signer} {i} />
+					{/each}
 				</TabPanel>
 				{#if fundingPerMonth}
 					<TabPanel>
 						<MainFunders {daoData} />
 					</TabPanel>
 				{/if}
-				<TabPanel>
-					<div class="rounds-wrapper">
-						{#each daoData.onChainData.fundingCycles as round}
-							<RoundDetail {round} i={0} />
-						{/each}
-					</div>
-				</TabPanel>
+				{#if daoData.onChainData.fundingCycles.length > 0}
+					<TabPanel>
+						<div class="rounds-wrapper">
+							{#each daoData.onChainData.fundingCycles as round}
+								<RoundDetail {round} i={0} />
+							{/each}
+						</div>
+					</TabPanel>
+				{/if}
 			</Tabs>
 		</div>
 	</div>
@@ -139,6 +157,12 @@
 	.panel-container {
 		display: flex;
 		justify-content: center;
+		min-height: var(--space-20);
+		align-items: center;
+
+		em {
+			color: var(--clr-text-off);
+		}
 
 		.chart-wrapper {
 			margin-top: var(--space-6);
@@ -156,12 +180,6 @@
 	.rounds-wrapper {
 		display: flex;
 		flex-direction: column;
-
-		span {
-			margin: 0;
-			margin-top: var(--space-2);
-			font-size: var(--font-size-1);
-		}
 	}
 
 	.tabs-wrapper {

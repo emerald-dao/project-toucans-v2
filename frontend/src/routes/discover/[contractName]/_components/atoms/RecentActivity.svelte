@@ -1,17 +1,14 @@
 <script type="ts">
+	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import ActivityDetail from '$components/atoms/activity/ActivityDetail.svelte';
-	import type { Action } from '$lib/types/dao-project/dao-event/dao-event.type';
 
-	export let actions: Action[];
+	export let events: DaoEvent[];
 </script>
 
 <div class="column-2 align-start">
-	{#each actions as action, i}
+	{#each events as event, i}
 		<div class="activity-wrapper">
-			<ActivityDetail
-				{action}
-				{i}
-			/>
+			<ActivityDetail action={event} {i} />
 		</div>
 	{/each}
 </div>
@@ -23,6 +20,6 @@
 		justify-content: space-between;
 		width: 100%;
 		padding: var(--space-2);
-		border-bottom: 1px solid var(--clr-border-primary);
+		border-bottom: 1px solid var(--clr-neutral-badge);
 	}
 </style>

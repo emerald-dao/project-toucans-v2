@@ -9,7 +9,7 @@
 	export let address: string;
 	export let i: number;
 	export let editable = false;
-	export let walletValid;
+	export let walletValid = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -72,10 +72,9 @@
 			position: relative;
 
 			img {
-				width: 40px;
+				width: 34px;
 				aspect-ratio: 1 / 1;
 				object-fit: cover;
-				border: 1px solid var(--clr-border-primary);
 				border-radius: var(--radius-2);
 			}
 
