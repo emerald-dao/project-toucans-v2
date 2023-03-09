@@ -46,7 +46,7 @@
 				/>
 			</InputWrapper>
 		{:else}
-			<span class="small">{address}</span>
+			<span class="small address">{address}</span>
 		{/if}
 	</div>
 	{#if i === 0}
@@ -75,7 +75,7 @@
 				width: 34px;
 				aspect-ratio: 1 / 1;
 				object-fit: cover;
-				border-radius: var(--radius-2);
+				border-radius: 50%;
 			}
 
 			.number {
@@ -93,6 +93,10 @@
 				right: -4px;
 				bottom: -4px;
 			}
+		}
+
+		.address {
+			color: var(--clr-heading-main);
 		}
 
 		.trash-wrapper {

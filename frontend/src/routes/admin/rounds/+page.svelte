@@ -2,7 +2,7 @@
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
-	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';
+	import RoundDetail from '$components/atoms/roundDetail/RoundDetail.svelte';
 	import type { Writable } from 'svelte/store';
 	import RoundGeneratorModal from '$lib/features/round-generator/components/RoundGeneratorModal.svelte';
 
@@ -17,16 +17,13 @@
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
-	<div>
-		<h5>Multisig</h5>
-		<p class="small">Manage the signers of your DAO.</p>
-	</div>
+	<h5>Funding Rounds</h5>
 	<div class="rounds-wrapper">
 		{#if activeDaoData.onChainData.fundingCycles.length < 1}
 			<span><em>This project has no funding rounds yet</em></span>
 		{:else}
 			{#each activeDaoData.onChainData.fundingCycles as round, i}
-				<RoundDetail {round} {i} />
+				<RoundDetail {round} {i} projectToken={activeDaoData.generalInfo.token_symbol} />
 			{/each}
 		{/if}
 	</div>

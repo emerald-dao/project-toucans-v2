@@ -1,8 +1,10 @@
 export const formatDate = (date: Date) => {
-	const formattedDate = date.toLocaleString('en-GB', {
+	const formattedDate = date.toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
 		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
+		hour: 'numeric',
+		minute: 'numeric'
 	});
 
 	return formattedDate;
@@ -10,6 +12,7 @@ export const formatDate = (date: Date) => {
 
 export const daysOfDifference = (date1: Date, date2: Date) => {
 	const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
 	const utc1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
 	const utc2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
 
@@ -29,9 +32,7 @@ export const getMonthsBetweenDates = (startDate: Date, endDate: Date): string[] 
 };
 
 export const toISOStringWithTimezone = (date: Date) => {
-	const tzOffset = -date.getTimezoneOffset();
-	const diff = tzOffset >= 0 ? '+' : '-';
-	const pad = (n) => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+	const pad = (n: number) => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
 	return (
 		date.getFullYear() +
 		'-' +

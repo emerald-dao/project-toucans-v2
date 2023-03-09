@@ -1,4 +1,5 @@
 <script lang="ts">
+	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
 	import Icon from '@iconify/svelte';
 
@@ -35,9 +36,7 @@
 <div class="main-wrapper">
 	<div class="row-6 align-center">
 		<div class="row-2 align-center">
-			<div class="icon-wrapper">
-				<Icon icon={actionTypeToIcon[actionType]} width="0.9rem" />
-			</div>
+			<IconCircle icon={actionTypeToIcon[actionType]} />
 			<span class="action-name small">{actionTypeToText[actionType]}</span>
 		</div>
 		{#if daoId}
@@ -98,17 +97,6 @@
 				height: 1.3em;
 				border-radius: 50%;
 			}
-		}
-
-		.icon-wrapper {
-			background-color: var(--clr-tertiary-badge);
-			border-radius: 50%;
-			color: var(--clr-tertiary-main);
-			width: 1.7em;
-			height: 1.7em;
-			display: flex;
-			align-items: center;
-			justify-content: center;
 		}
 
 		.action-name {

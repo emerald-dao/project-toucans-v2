@@ -1,90 +1,96 @@
 <script type="ts">
-	import { daysOfDifference } from '$lib/utilities/formatDate';
+	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
 	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import ChartTitle from '../../../routes/discover/[contractName]/_components/atoms/ChartTitle.svelte';
+	import FundingNumbers from './roundDetail/atoms/FundingNumbers.svelte';
+	import GoalReached from './GoalReached.svelte';
 
-	export let fundingCycleData: FundingCycle | null;
+	export let round: FundingCycle;
 	export let title = 'Active Funding Round';
 	export let hasBorder = true;
-	export let projectCurrency: string;
+	export let projectToken: string;
 
-	let daysLeft: number;
+	const goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
+	const funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
 
-	if (fundingCycleData) {
-		daysLeft = daysOfDifference(
-			new Date(),
-			new Date(Number(fundingCycleData.details.timeframe.endTime) * 1000)
-		);
-	}
+	const goalReached = goal !== 'infinite' ? goal < funding : false;
+
+	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
+	const endDate = round.details.timeframe.endTime
+		? new Date(Number(round.details.timeframe.endTime) * 1000)
+		: null;
+
+	const active = endDate ? endDate >= new Date() : true;
 </script>
 
-{#if fundingCycleData}
-	<div class:card={hasBorder}>
-		<div class="data-wrapper">
-			<div class="row-space-between">
-				<ChartTitle {title} icon="tabler:activity-heartbeat" />
-				<span class="time-left xsmall">
-					<Icon icon="tabler:clock" />
-					{#if daysLeft < 0}
-						Finished {(-daysLeft).toLocaleString()} days ago
-					{:else if daysLeft === 0}
-						Finishes today
-					{:else}
-						{daysLeft.toLocaleString()} days left
-					{/if}
-				</span>
+<div class:card={hasBorder}>
+	<div class="data-wrapper">
+		<div class="row-space-between">
+			<div class="row-2 align-center">
+				<h4 class="title">{title}</h4>
+				{#if goalReached}
+					<GoalReached />
+				{/if}
 			</div>
+			<span class="time-left xsmall">
+				<Icon icon="tabler:clock" />
+				{#if active && endDate != null}
+					{`${daysOfDifference(startDate, endDate)}`}
+					days left
+				{:else if endDate === null}
+					{`Infinite duration`}
+				{:else}
+					Finished
+				{/if}
+			</span>
+		</div>
+		{#if goal !== 'infinite'}
 			<ProgressBar
-				value={Number(fundingCycleData.paymentTokensSent)}
-				max={Number(fundingCycleData.details.fundingTarget)}
+				value={Number(round.paymentTokensSent)}
+				max={Number(round.details.fundingTarget)}
 				size="large"
 				showPercentage={true}
 				min={0}
-			/>
-			<div class="funding-stats-wrapper">
-				<div class="chart-data-card">
-					<p class="xsmall">Goal</p>
-					<Currency
-						amount={Number(fundingCycleData.details.fundingTarget)}
-						currency="FLOW"
-						fontSize="var(--font-size-1)"
-						color="heading"
-					/>
+			>
+				<div slot="label">
+					<FundingNumbers {goal} {funding} fontSize="1.2rem" />
 				</div>
-				<div class="chart-data-card">
-					<p class="xsmall">Raised</p>
-					<Currency
-						amount={Number(fundingCycleData.paymentTokensSent)}
-						currency="FLOW"
-						fontSize="var(--font-size-1)"
-						color="heading"
-					/>
+			</ProgressBar>
+		{:else}
+			<FundingNumbers {goal} {funding} fontSize="1.2rem" />
+		{/if}
+		<div class="funding-stats-wrapper">
+			<div class="chart-data-card">
+				<p class="xsmall">Start Date</p>
+				<span class="xsmall">{formatDate(startDate)}</span>
+			</div>
+			<div class="chart-data-card">
+				<p class="xsmall">End Date</p>
+				<span class="xsmall">{endDate ? formatDate(endDate) : 'Infinite'}</span>
+			</div>
+			<div class="chart-data-card">
+				<div class="row-1">
+					<p class="xsmall">Reserve</p>
+					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
-				<div class="chart-data-card">
-					<div class="row-1">
-						<p class="xsmall">Reserve rate</p>
-						<TooltipIcon width={0.7} tooltip="description" />
-					</div>
-					<span class="small">{Number(fundingCycleData.details.reserveRate)}</span>
+				<span class="xsmall">{Number(round.details.reserveRate)}</span>
+			</div>
+			<div class="chart-data-card">
+				<div class="row-1">
+					<p class="xsmall">Issuance</p>
+					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
-				<div class="chart-data-card">
-					<div class="row-1">
-						<p class="xsmall">Issuance</p>
-						<TooltipIcon width={0.7} tooltip="description" />
-					</div>
-					<Currency
-						amount={Number(fundingCycleData.details.issuanceRate)}
-						currency={projectCurrency}
-						fontSize="var(--font-size-1)"
-						color="heading"
-					/>
-				</div>
+				<Currency
+					amount={Number(round.details.issuanceRate)}
+					currency={projectToken}
+					fontSize="var(--font-size-0)"
+					color="heading"
+				/>
 			</div>
 		</div>
 	</div>
-{/if}
+</div>
 
 <style type="scss">
 	.card {
@@ -95,8 +101,11 @@
 		flex-direction: column;
 		gap: var(--space-6);
 
+		.title {
+			font-size: var(--font-size-3);
+		}
+
 		.time-left {
-			color: var(--clr-tertiary-main);
 			display: flex;
 			align-items: center;
 			gap: var(--space-1);
@@ -104,11 +113,11 @@
 
 		.funding-stats-wrapper {
 			display: grid;
-			grid-template-columns: repeat(2, 4fr) repeat(2, 3fr);
+			grid-template-columns: 3fr 3fr 1fr 2fr;
 			gap: var(--space-1);
 
 			.chart-data-card {
-				padding: var(--space-3) var(--space-4);
+				padding: var(--space-3);
 				background-color: var(--clr-surface-primary);
 
 				span {

@@ -1,15 +1,16 @@
 <script type="ts">
 	import DataCard from '$components/atoms/cards/DataCard.svelte';
-	import MainFunders from '../atoms/MainFunders.svelte';
-	import RecentActivity from '../atoms/RecentActivity.svelte';
+	import MainFunders from '../../atoms/MainFunders.svelte';
+	import RecentActivity from '../../atoms/RecentActivity.svelte';
 	import { Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
-	import RoundDetail from '$components/atoms/RoundDetail.svelte';
+	import RoundDetail from '$components/atoms/roundDetail/RoundDetail.svelte';
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import PieChart from '$components/charts/PieChart.svelte';
-	import { user } from '$stores/flow/FlowStore';
+
 	import SignatureElement from '$lib/features/add-signature/components/atoms/signature-element/SignatureElement.svelte';
+	import TokenStats from './atoms/TokenStats.svelte';
 
 	export let daoData: DAOProject;
 
@@ -43,27 +44,11 @@
 
 {#if daoData}
 	<div class="column-6">
-		<div class="boxes-wrapper">
-			{#if $user.addr}
-				<DataCard
-					title="Your Balance"
-					data={daoData.userBalance}
-					isCurrency
-					currencyName={daoData.generalInfo.token_symbol}
-				/>
-			{/if}
-			<DataCard
-				title="Circulating Supply"
-				data={Number(daoData.onChainData.totalSupply)}
-				isCurrency
-				currencyName={daoData.generalInfo.token_symbol}
-			/>
-			<DataCard title="Total Funding" data={Number(daoData.onChainData.totalFunding)} isCurrency />
-		</div>
-		{#if daoData.onChainData.fundingCycles.length > 0}
+		<TokenStats {daoData} />
+		{#if currentFundingCycleData}
 			<FundingStats
-				fundingCycleData={currentFundingCycleData}
-				projectCurrency={daoData.generalInfo.token_symbol}
+				round={currentFundingCycleData}
+				projectToken={daoData.generalInfo.token_symbol}
 			/>
 		{/if}
 		<div class="card">
@@ -132,8 +117,8 @@
 				{#if daoData.onChainData.fundingCycles.length > 0}
 					<TabPanel>
 						<div class="rounds-wrapper">
-							{#each daoData.onChainData.fundingCycles as round}
-								<RoundDetail {round} i={0} />
+							{#each daoData.onChainData.fundingCycles as round, i}
+								<RoundDetail {round} {i} />
 							{/each}
 						</div>
 					</TabPanel>
@@ -144,16 +129,6 @@
 {/if}
 
 <style type="scss">
-	.boxes-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-5);
-
-		@include mq(small) {
-			flex-direction: row;
-		}
-	}
-
 	.panel-container {
 		display: flex;
 		justify-content: center;

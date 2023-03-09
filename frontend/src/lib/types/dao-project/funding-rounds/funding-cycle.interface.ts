@@ -13,8 +13,8 @@ export interface FundingCycleDetails {
 	issuanceRate: string;
 	reserveRate: string;
 	timeframe: {
-		startTime: Date;
-		endTime: Date;
+		startTime: string;
+		endTime: string | null;
 	};
 	payouts: Payout[];
 	extra: unknown;

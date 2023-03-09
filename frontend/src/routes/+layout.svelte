@@ -39,12 +39,20 @@
 	avatarDropDownNavigation={avatarDropdownNav}
 	{network}
 	transactionInProgress={$transactionStore.progress}
+	logoText="Toucans"
+	logoUrl="/ec-logo.png"
 />
 <main>
 	<slot />
 </main>
 {#if $page.url.pathname === '/' || $page.url.pathname === '/discover'}
-	<Footer {navElements} {emeraldTools} socials={socialMedia} />
+	<Footer
+		{navElements}
+		{emeraldTools}
+		socials={socialMedia}
+		logoText="Toucans"
+		logoUrl="/ec-logo.png"
+	/>
 {/if}
 
 <style>

@@ -20,7 +20,7 @@
 <div
 	class="card"
 	class:card-primary={hasBackground}
-	style={`width: ${width}; height: ${height}; padding: ${paddingBlock} ${paddingInline}`}
+	style={`width: ${width}; height: ${height}; padding: ${paddingBlock} ${paddingInline}; font-size: ${fontSize}`}
 >
 	<div class="row-2">
 		{#if icon}
@@ -43,7 +43,7 @@
 		padding: var(--space-2) var(--space-3);
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-1);
+		gap: 0.3em;
 
 		@include mq('small') {
 			padding: var(--space-5) var(--space-7);
