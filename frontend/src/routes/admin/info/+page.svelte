@@ -1,5 +1,5 @@
-<script type="ts">
-	import DaoDetailsForm from '$lib/components/forms/DaoDetailsForm.svelte';
+<script lang="ts">
+	import { fly } from 'svelte/transition';
 </script>
 
-<DaoDetailsForm />
+<div in:fly={{ x: 10, duration: 400 }}>todo</div>

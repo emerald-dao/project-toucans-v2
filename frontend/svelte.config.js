@@ -1,5 +1,9 @@
 import adapter from '@sveltejs/adapter-auto';
 import preprocess from 'svelte-preprocess';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const filePath = dirname(fileURLToPath(import.meta.url)).replaceAll('\\', '/');
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -9,7 +13,7 @@ const config = {
 		preprocess({
 			postcss: true,
 			scss: {
-				prependData: `@import './node_modules/@emerald-dao/component-library/styles/utils/mixins';`
+				prependData: `@import '${filePath}/node_modules/@emerald-dao/component-library/styles/utils/mixins';`
 			}
 		})
 	],

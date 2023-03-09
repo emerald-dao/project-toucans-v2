@@ -1,0 +1,81 @@
+<script type="ts">
+	import { InputWrapper } from '@emerald-dao/component-library';
+	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
+	import {
+		daoGeneratorSteps,
+		generatorActiveStep
+	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
+	import { fly } from 'svelte/transition';
+	import validationSuite from './validation';
+	import StepButtons from '../../../components/atoms/StepButtons.svelte';
+
+	const handleChange = (input: Event) => {
+		const target = input.target as HTMLInputElement;
+
+		res = validationSuite($daoGeneratorData.daoDetails, target.name);
+	};
+
+	let res = validationSuite.get();
+</script>
+
+<form
+	id={$daoGeneratorSteps[$generatorActiveStep].slug}
+	on:submit|preventDefault={generatorActiveStep.increment}
+	autocomplete="off"
+	in:fly={{ y: 30, duration: 400 }}
+>
+	<InputWrapper
+		name="website"
+		label="Website"
+		icon="tabler:world"
+		errors={res.getErrors('website')}
+		isValid={res.isValid('website') && $daoGeneratorData.daoDetails.website.length > 0}
+	>
+		<input
+			name="website"
+			type="text"
+			placeholder="alphadao.com"
+			bind:value={$daoGeneratorData.daoDetails.website}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+	<InputWrapper
+		name="twitter"
+		label="Twitter"
+		icon="tabler:brand-twitter"
+		errors={res.getErrors('twitter')}
+		isValid={res.isValid('twitter') && $daoGeneratorData.daoDetails.twitter.length > 0}
+	>
+		<input
+			name="twitter"
+			type="text"
+			placeholder="@emerald_dao"
+			bind:value={$daoGeneratorData.daoDetails.twitter}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+	<InputWrapper
+		name="discord"
+		label="Discord invite"
+		icon="tabler:brand-discord"
+		errors={res.getErrors('discord')}
+		isValid={res.isValid('discord') &&
+			$daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
+	>
+		<input
+			name="discord"
+			type="text"
+			placeholder="https://discord.gg/emeraldcity"
+			bind:value={$daoGeneratorData.daoDetails.discord}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+	<StepButtons />
+</form>
+
+<style type="scss">
+	form {
+		display: flex;
+		flex-direction: column;
+	}
+</style>

@@ -15,7 +15,6 @@ transaction(
   ptStoragePath: StoragePath,
   // DAO TREASURY
   signers: [Address],
-  threshold: UInt64,
   minting: Bool
 ) {
 
@@ -34,9 +33,11 @@ transaction(
 
     // Make sure the initial signers includes the deployer
     var initialSigners: [Address] = signers
-    if initialSigners.contains(deployer.address) {
+    if !initialSigners.contains(deployer.address) {
       initialSigners.append(deployer.address)
     }
+
+    let threshold = UInt64(initialSigners.length)
 
     deployer.contracts.add(
       name: contractName,

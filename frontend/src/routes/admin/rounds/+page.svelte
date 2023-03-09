@@ -1,31 +1,29 @@
 <script type="ts">
-	import { newRoundSteps, newRoundActiveStep } from '$components/round-generator/stores/RoundSteps';
-	import Icon from '@iconify/svelte';
-	import type { CommunityDao, FinancialDao } from '$lib/types/dao-project.interface';
-	import { Button } from '@emerald-dao/component-library';
+	import { fly } from 'svelte/transition';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
-	import RoundDetail from '$lib/components/atoms/RoundDetail.svelte';
-	import { Modal, getModal } from '@emerald-dao/component-library';
+	import RoundDetail from '$components/atoms/roundDetail/RoundDetail.svelte';
 	import type { Writable } from 'svelte/store';
-	import RoundGeneratorModal from '$components/round-generator/RoundGeneratorModal.svelte';
+	import RoundGeneratorModal from '$lib/features/round-generator/components/RoundGeneratorModal.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: FinancialDao[] | CommunityDao[];
+		userDaos: DAOProject[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore] as FinancialDao;
+	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
-<div class="card column-space-between">
+<div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
+	<h5>Funding Rounds</h5>
 	<div class="rounds-wrapper">
-		{#if !activeDaoData.fundingCycles}
-			<span>This project has no funding rounds yet</span>
+		{#if activeDaoData.onChainData.fundingCycles.length < 1}
+			<span><em>This project has no funding rounds yet</em></span>
 		{:else}
-			{#each activeDaoData.fundingCycles as round, i}
-				<RoundDetail {round} {i} />
+			{#each activeDaoData.onChainData.fundingCycles as round, i}
+				<RoundDetail {round} {i} projectToken={activeDaoData.generalInfo.token_symbol} />
 			{/each}
 		{/if}
 	</div>
@@ -35,26 +33,19 @@
 </div>
 
 <style type="scss">
-	.card {
-		padding: var(--space-12);
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: var(--space-10);
 
-		.rounds-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 1.2rem;
+		h5 {
+			margin-bottom: var(--space-2);
+			margin-top: 0;
 		}
-		.rounds-wrapper:not(:last-child) {
-			margin-bottom: 2rem;
-		}
 
-		.create-round-wrapper {
-			display: none;
-
-			@include mq('medium') {
-				display: flex;
-				justify-content: flex-end;
-				width: 100%;
-			}
+		em {
+			color: var(--clr-text-off);
 		}
 	}
 </style>

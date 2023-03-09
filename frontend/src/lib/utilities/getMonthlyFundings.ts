@@ -1,6 +1,6 @@
-import type { Action } from '$lib/types/actions/actions.type';
+import type { TDaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 
-export const getMonthlyFundingFromRounds = (actions: Action[]) => {
+export const getMonthlyFundingFromRounds = (actions: TDaoEvent[]) => {
 	if (actions) {
 		const timeOrderedActions = actions.sort((a, b) => a.timestamp - b.timestamp);
 

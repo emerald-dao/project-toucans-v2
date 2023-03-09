@@ -1,5 +1,5 @@
 <script type="ts">
-	import CreateProjectStepsCard from '$lib/components/cards/CreateProjectStepsCard.svelte';
+	import CreateProjectStepsCard from '$components/atoms/cards/CreateProjectStepsCard.svelte';
 	import { user } from '$stores/flow/FlowStore';
 </script>
 

@@ -7,7 +7,7 @@ import FungibleToken from "../../utility/FungibleToken.cdc"
 // Proposed ACTION: Withdraw `amount` `paymentTokenType` from the treasury
 // at `projectOwner` to `recipientAddr`
 
-transaction(projectOwner: Address, projectId: UInt64, recipientAddr: Address, amount: UFix64) {
+transaction(projectOwner: Address, projectId: String, recipientAddr: Address, amount: UFix64) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let RecipientVault: Capability<&{FungibleToken.Receiver}>

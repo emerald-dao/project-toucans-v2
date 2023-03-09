@@ -4,7 +4,7 @@ import Toucans from "../Toucans.cdc"
 import ExampleToken from "../ExampleToken.cdc"
 import MetadataViews from "../utility/MetadataViews.cdc"
 
-transaction(projectOwner: Address, projectId: UInt64, amount: UFix64, message: String) {
+transaction(projectOwner: Address, projectId: String, amount: UFix64, message: String) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let Payment: @FlowToken.Vault

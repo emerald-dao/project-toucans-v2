@@ -1,6 +1,6 @@
-import type { Action } from '$lib/types/actions/actions.type';
+import type { TDaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 
-export const getTotalFundingFromActions = (actions: Action[]) => {
+export const getTotalFundingFromActions = (actions: TDaoEvent[]) => {
 	const fundings = actions.reduce((acc, action) => {
 		if (action.type === 'Purchase') {
 			acc += Number(action.amount);

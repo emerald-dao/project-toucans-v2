@@ -8,7 +8,7 @@ import FlowToken from "../../utility/FlowToken.cdc"
 // Proposed ACTION: Withdraw `amount` `Flow Token` from the treasury
 // at `projectOwner` to `recipientAddr`
 
-transaction(projectOwner: Address, projectId: UInt64, recipientAddr: Address, amount: UFix64) {
+transaction(projectOwner: Address, projectId: String, recipientAddr: Address, amount: UFix64) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let RecipientVault: Capability<&{FungibleToken.Receiver}>

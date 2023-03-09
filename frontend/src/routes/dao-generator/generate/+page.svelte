@@ -1,6 +1,6 @@
 <!-- Page that dynamically renders each step of the DAO Generation process -->
 <script>
-	import { generatorSteps, generatorActiveStep } from '$stores/generator/GeneratorSteps';
+	import { daoGeneratorSteps, generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 </script>
 
-<svelte:component this={$generatorSteps[$generatorActiveStep].component} />
+<svelte:component this={$daoGeneratorSteps[$generatorActiveStep].component} />
