@@ -3,7 +3,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import ActionElement from '$components/actions/ActionElement.svelte';
+	import ActionElement from '$lib/features/action-queue/components/atoms/ActionElement.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;

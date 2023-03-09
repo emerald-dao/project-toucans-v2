@@ -16,10 +16,14 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
-<div class="card column-space-between" in:fly={{ x: 10, duration: 400 }}>
+<div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
+	<div>
+		<h5>Multisig</h5>
+		<p class="small">Manage the signers of your DAO.</p>
+	</div>
 	<div class="rounds-wrapper">
-		{#if !activeDaoData.onChainData.fundingCycles}
-			<span>This project has no funding rounds yet</span>
+		{#if activeDaoData.onChainData.fundingCycles.length < 1}
+			<span><em>This project has no funding rounds yet</em></span>
 		{:else}
 			{#each activeDaoData.onChainData.fundingCycles as round, i}
 				<RoundDetail {round} {i} />
@@ -32,26 +36,19 @@
 </div>
 
 <style type="scss">
-	.card {
-		padding: var(--space-12);
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: var(--space-10);
 
-		.rounds-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 1.2rem;
+		h5 {
+			margin-bottom: var(--space-2);
+			margin-top: 0;
 		}
-		.rounds-wrapper:not(:last-child) {
-			margin-bottom: 2rem;
-		}
 
-		.create-round-wrapper {
-			display: none;
-
-			@include mq('medium') {
-				display: flex;
-				justify-content: flex-end;
-				width: 100%;
-			}
+		em {
+			color: var(--clr-text-off);
 		}
 	}
 </style>

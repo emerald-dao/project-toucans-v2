@@ -1,6 +1,6 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
-	import ActionElement from '$components/actions/ActionElement.svelte';
+	import ActionElement from '$lib/features/action-queue/components/atoms/ActionElement.svelte';
 </script>
 
 <section in:fly={{ x: 10, duration: 400 }} class="container-small column-4">

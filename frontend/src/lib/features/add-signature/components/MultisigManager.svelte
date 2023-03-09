@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, InputWrapper } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import SignatureElement from './components/signature-element/SignatureElement.svelte';
+	import SignatureElement from './atoms/signature-element/SignatureElement.svelte';
 	import { validationSuite } from './validation';
 
 	export let addresses: string[];
