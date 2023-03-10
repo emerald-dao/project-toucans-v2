@@ -52,7 +52,7 @@
 		state={allWalletsValid &&
 		thresholdValid &&
 		Number(activeDaoData.onChainData.threshold) !== threshold &&
-		activeDaoData.onChainData.signers.length !== newAddresses.length
+		newAddresses.length > 0
 			? 'active'
 			: 'disabled'}
 		on:click={() =>
