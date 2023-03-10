@@ -24,6 +24,7 @@ import updateMultiSigTx from './cadence/transactions/treasury-actions/update_mul
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw';
+import getPendingActionsInManyScript from './cadence/scripts/get_pending_actions_in_many.cdc?raw';
 
 import { get } from 'svelte/store';
 import { fundingData } from '$lib/features/funding/stores/FundingData';
@@ -396,3 +397,21 @@ export const getPendingActionInDAO = async (owner: string, projectId: string) =>
 		console.log(e);
 	}
 };
+
+export const getPendingActionsInMany = async (userAddress: string, projectOwners: string[], projectIds: string[]) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getPendingActionsInManyScript),
+			args: (arg, t) => [
+				arg(userAddress, t.Address),
+				arg(projectOwners, t.Array(t.String)),
+				arg(projectIds, t.Array(t.String))
+			]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getPendingActions');
+		console.log(e);
+	}
+};
+
