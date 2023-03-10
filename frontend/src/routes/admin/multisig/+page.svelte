@@ -17,7 +17,7 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 
 	let allWalletsValid: boolean = false;
-	let thresholdValid: boolean = false;
+	let thresholdValid: boolean = true;
 
 	let addresses: string[] = [''];
 	let threshold: number;
@@ -34,7 +34,6 @@
 		<p class="small">Manage the signers of your DAO.</p>
 	</div>
 	<MultisigManager bind:addresses bind:allWalletsValid bind:thresholdValid bind:threshold />
-
 	<Button
 		state={allWalletsValid &&
 		thresholdValid &&

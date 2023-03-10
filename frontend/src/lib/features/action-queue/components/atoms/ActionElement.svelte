@@ -14,7 +14,7 @@
 	export let daoLogo: string | undefined =
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
 
-	const signed = Object.keys(action.votes).includes($user.addr);
+	const signed = Object.keys(action.votes).includes($user.addr as string);
 	const yesCount = Object.values(action.votes).filter((v) => v === true).length;
 
 	const actionTypeToIcon: {
@@ -54,10 +54,7 @@
 			<span class="xsmall action-id">Action ID</span>
 			<span class="xsmall">{action.id}</span>
 		</div>
-		<div>
-			<span class="xsmall action-id">Info</span>
-			<span class="xsmall">{action.intent}</span>
-		</div>
+		<span class="action-message xsmall">{action.intent}</span>
 	</div>
 	<div class="row-4">
 		<div class="threshold-wrapper">
@@ -93,6 +90,7 @@
 		justify-content: space-between;
 		padding-block: var(--space-4);
 		border-bottom: 1px solid var(--clr-neutral-badge);
+		gap: var(--space-4);
 
 		.dao-project {
 			display: flex;
@@ -115,6 +113,11 @@
 		}
 
 		.action-id {
+			color: var(--clr-text-off);
+		}
+
+		.action-message {
+			max-width: 50ch;
 			color: var(--clr-text-off);
 		}
 

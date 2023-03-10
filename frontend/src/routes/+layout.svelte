@@ -18,10 +18,14 @@
 	import { getFindProfile } from '$flow/utils';
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
+	import { invalidateAll } from '$app/navigation';
 
 	$: if ($user) {
 		console.log($user);
 	}
+
+	// If the connected address changes, invalidate all fetched data to get data for the new address
+	$: $user.addr && invalidateAll();
 </script>
 
 <TransactionModal

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, InputWrapper } from '@emerald-dao/component-library';
+	import { InputWrapper } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import SignatureElement from './atoms/signature-element/SignatureElement.svelte';
 	import { validationSuite } from './validation';
@@ -11,14 +11,20 @@
 
 	let walletsValidations: boolean[] = [true];
 
+	const existingAddresses = addresses.length;
+
 	const addMultisig = () => {
 		addresses = [...addresses, ''];
 		walletsValidations = [...walletsValidations, false];
 	};
 
 	const deleteMultisig = (i: number) => {
-		addresses = addresses.filter((_, index) => index !== i);
-		walletsValidations = walletsValidations.filter((_, index) => index !== i);
+		if (i > existingAddresses) {
+			addresses = addresses.filter((_, index) => index !== i);
+			walletsValidations = walletsValidations.filter((_, index) => index !== i);
+		} else {
+			alert('Submit action to delete this signer');
+		}
 	};
 
 	const handleChange = () => {
@@ -60,7 +66,7 @@
 				on:delete={() => deleteMultisig(i)}
 				bind:address={multisigAdress}
 				bind:walletValid={walletsValidations[i]}
-				editable
+				editable={i > existingAddresses}
 			/>
 		{/each}
 		<div class="add-wallet-wrapper">

@@ -1,13 +1,12 @@
 <script type="ts">
-	import { Button, FlowConnect } from '@emerald-dao/component-library';
+	import { Button } from '@emerald-dao/component-library';
 	import { AdminNav } from './_components';
 	import { setContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { user } from '$stores/flow/FlowStore';
-	import { logIn, unauthenticate } from '$flow/actions';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { DummyDao, AnotherDummyDao } from '$lib/mocks/dummyDao';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
+	import { invalidate } from '$app/navigation';
 
 	interface Data {
 		projects: DAOProject[];
@@ -29,10 +28,12 @@
 {#if !$user.addr}
 	<ConnectPage />
 {:else if data.projects.length < 1}
-	<div class="card-primary column-7 align-center">
-		<span>You don't have any DAO yet</span>
-		<Button size="large" href="/dao-generator/generate">Create DAO</Button>
-	</div>
+	<section class="centered">
+		<div class="card-primary column-7 align-center">
+			<span>You don't have any DAO yet</span>
+			<Button size="large" href="/dao-generator/generate">Create DAO</Button>
+		</div>
+	</section>
 {:else}
 	<section>
 		<div class="container-large">
@@ -50,6 +51,10 @@
 		display: flex;
 		flex: 1;
 		justify-content: center;
+
+		&.centered {
+			align-items: center;
+		}
 
 		.container-large {
 			display: flex;
