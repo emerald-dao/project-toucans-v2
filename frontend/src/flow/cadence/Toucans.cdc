@@ -190,7 +190,7 @@ pub contract Toucans {
     // Setters
     pub fun proposeAction(action: {ToucansMultiSign.Action})
     // If the action is ready to execute, then allow anyone to do it.
-    pub fun finalizeAction(actionUUID: UInt64)
+    pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct})
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
@@ -246,12 +246,13 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun finalizeAction(actionUUID: UInt64) {
+    pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
       post {
         self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
       }
       let selfRef: &Project = &self as &Project
-      self.multiSignManager.finalizeAction(actionUUID: actionUUID, {"treasury": selfRef})
+      params.insert(key: "treasury", selfRef)
+      self.multiSignManager.finalizeAction(actionUUID: actionUUID, params)
     }
 
 

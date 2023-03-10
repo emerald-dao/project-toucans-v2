@@ -12,6 +12,7 @@ import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
+import finalizeAddSignerActionTx from './cadence/transactions/finalize_add_signer_action.cdc?raw';
 
 // Treasury Actions
 import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
@@ -41,7 +42,15 @@ export const unauthenticate = () => fcl.unauthenticate();
 export const logIn = async () => await fcl.logIn();
 export const signUp = () => fcl.signUp();
 
-// ****** Transactions ****** //
+
+//   _______                             _   _                 
+//  |__   __|                           | | (_)                
+//     | |_ __ __ _ _ __  ___  __ _  ___| |_ _  ___  _ __  ___ 
+//     | | '__/ _` | '_ \/ __|/ _` |/ __| __| |/ _ \| '_ \/ __|
+//     | | | | (_| | | | \__ \ (_| | (__| |_| | (_) | | | \__ \
+//     |_|_|  \__,_|_| |_|___/\__,_|\___|\__|_|\___/|_| |_|___/                                             
+
+
 const dummyTransaction = async () => {
 	return await fcl.mutate({
 		cadence: `
@@ -299,25 +308,49 @@ export const declineActionExecution = (
 	actionUUID: string
 ) => executeTransaction(() => declineAction(projectOwner, projectId, actionMessage, actionUUID));
 
-// const tranferTokens = async () => {
-// 	const amount = "10.0";
-// 	const recipient = "0x179b6b1cb6755e31"
-// 	const contractAddress = "";
-// 	const contractName = "";
-// 	return await fcl.mutate({
-// 		cadence: replaceWithProperValues(transferTokensTx, contractName, projectOwner),
-// 		args: (arg, t) => [
-// 			arg(amount, t.UFix64),
-// 			arg(recipient, t.Address)
-// 		],
-// 		proposer: fcl.authz,
-// 		payer: fcl.authz,
-// 		authorizations: [fcl.authz],
-// 		limit: 9999
-// 	});
-// }
+const finalizeAddSigner = async (
+	projectOwner: string,
+	projectId: string,
+	actionMessage: string,
+	actionUUID: string
+) => {
+	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
 
-// export const fundProjectExecution = () => executeTransaction(fundProject);
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(declineActionTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(actionUUID, t.UInt64),
+			arg(MSG, t.String),
+			arg(keyIds, t.Array(t.Int)),
+			arg(signatures, t.Array(t.String)),
+			arg(signatureBlock, t.UInt64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const finalizeAddSignerExecution = (
+	projectOwner: string,
+	projectId: string,
+	actionMessage: string,
+	actionUUID: string
+) => executeTransaction(() => finalizeAddSigner(projectOwner, projectId, actionMessage, actionUUID));
+
+
+//    _____           _       _       
+//   / ____|         (_)     | |      
+//  | (___   ___ _ __ _ _ __ | |_ ___ 
+//   \___ \ / __| '__| | '_ \| __/ __|
+//   ____) | (__| |  | | |_) | |_\__ \
+//  |_____/ \___|_|  |_| .__/ \__|___/
+//                     | |            
+//                     |_|            
+
 
 export const getProjectInfo: (
 	contractAddress: string,

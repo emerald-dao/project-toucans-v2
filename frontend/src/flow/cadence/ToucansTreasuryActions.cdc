@@ -51,6 +51,15 @@ pub contract ToucansTreasuryActions {
       let manager = treasuryRef.borrowManager()
       manager.addSigner(signer: self.signer)
 
+      let uuid = params["uuid"]! as! UInt64
+      let intent = params["intent"]! as! String
+      let message = params["message"]! as! String
+      let keyIds = params["keyIds"]! as! [Int]
+      let signatures = params["signatures"]! as! [String]
+      let signatureBlock = params["signatureBlock"]! as! UInt64
+      let validSig = ToucansMultiSign.verifySignature(uuid: uuid, intent: intent, acctAddress: self.signer, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+      assert(validSig, message: "The signer that will be added must have signed the request to be added.")
+
       emit AddedSigner(projectId: treasuryRef.projectId, signer: self.signer)
     }
 
@@ -62,7 +71,9 @@ pub contract ToucansTreasuryActions {
   }
 
   // Remove a signer from the treasury
-  // NOTE: This will automatically reduce the threshold by 1 as well
+  // NOTE: If this reduces the # of signers to 
+  // below the threshold, this will automatically
+  // reduce the threshold to the # of signers
   pub struct RemoveSigner: ToucansMultiSign.Action {
     pub let signer: Address
     pub let intent: String

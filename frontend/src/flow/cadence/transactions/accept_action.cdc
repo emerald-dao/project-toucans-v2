@@ -1,6 +1,14 @@
 import Toucans from "../Toucans.cdc"
 
-transaction(projectOwner: Address, projectId: String, actionUUID: UInt64, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+transaction(
+  projectOwner: Address, 
+  projectId: String, 
+  actionUUID: UInt64, 
+  message: String, 
+  keyIds: [Int], 
+  signatures: [String], 
+  signatureBlock: UInt64
+) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let SignerAddress: Address
@@ -17,8 +25,9 @@ transaction(projectOwner: Address, projectId: String, actionUUID: UInt64, messag
     let action = manager.borrowAction(actionUUID: actionUUID)
     action.accept(acctAddress: self.SignerAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
 
-    if manager.readyToFinalize(actionUUID: actionUUID) {
-        self.Project.finalizeAction(actionUUID: actionUUID)
+    let cantExecuteAutomatically = ["AddSigner"]
+    if !cantExecuteAutomatically.contains(action.getAction().title) && manager.readyToFinalize(actionUUID: actionUUID) {
+        self.Project.finalizeAction(actionUUID: actionUUID, {})
     }
   }
 }

@@ -17,8 +17,9 @@ transaction(projectOwner: Address, projectId: String, actionUUID: UInt64, messag
     let action = manager.borrowAction(actionUUID: actionUUID)
     action.decline(acctAddress: self.SignerAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
 
-    if manager.readyToFinalize(actionUUID: actionUUID) {
-        self.Project.finalizeAction(actionUUID: actionUUID)
+    let cantExecuteAutomatically = ["AddSigner"]
+    if !cantExecuteAutomatically.contains(action.getAction().title) && manager.readyToFinalize(actionUUID: actionUUID) {
+        self.Project.finalizeAction(actionUUID: actionUUID, {})
     }
   }
 }
