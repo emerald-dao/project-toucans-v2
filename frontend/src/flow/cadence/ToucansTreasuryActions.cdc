@@ -12,6 +12,7 @@ pub contract ToucansTreasuryActions {
   // Transfers `amount` tokens from the treasury to `recipientVault`
   pub struct WithdrawToken: ToucansMultiSign.Action {
     pub let intent: String
+    pub let title: String
     access(self) let recipientVault: Capability<&{FungibleToken.Receiver}>
     pub let amount: UFix64
 
@@ -32,6 +33,7 @@ pub contract ToucansTreasuryActions {
                         .concat(_recipientVault.getType().identifier)
                         .concat(" tokens from the treasury to ")
                         .concat((_recipientVault.borrow()!.owner!.address as Address).toString())
+      self.title = "Withdraw"
       self.recipientVault = _recipientVault
       self.amount = _amount
     }
@@ -41,6 +43,7 @@ pub contract ToucansTreasuryActions {
   pub struct AddSigner: ToucansMultiSign.Action {
     pub let signer: Address
     pub let intent: String
+    pub let title: String
 
     pub fun execute(_ params: {String: AnyStruct}) {
       let treasuryRef: &Toucans.Project = params["treasury"]! as! &Toucans.Project
@@ -53,6 +56,7 @@ pub contract ToucansTreasuryActions {
 
     init(_signer: Address) {
       self.signer = _signer
+      self.title = "AddSigner"
       self.intent = "Add ".concat((_signer as Address).toString()).concat(" as a signer to the Treasury.")
     }
   }
@@ -62,6 +66,7 @@ pub contract ToucansTreasuryActions {
   pub struct RemoveSigner: ToucansMultiSign.Action {
     pub let signer: Address
     pub let intent: String
+    pub let title: String
 
     pub fun execute(_ params: {String: AnyStruct}) {
       let treasuryRef: &Toucans.Project = params["treasury"]! as! &Toucans.Project
@@ -74,6 +79,7 @@ pub contract ToucansTreasuryActions {
 
     init(_signer: Address) {
       self.signer = _signer
+      self.title = "RemoveSigner"
       self.intent = "Remove ".concat((_signer as Address).toString()).concat(" as a signer to the Treasury.")
     }
   }
@@ -82,6 +88,7 @@ pub contract ToucansTreasuryActions {
   pub struct UpdateThreshold: ToucansMultiSign.Action {
     pub let threshold: UInt64
     pub let intent: String
+    pub let title: String
 
     pub fun execute(_ params: {String: AnyStruct}) {
       let treasuryRef: &Toucans.Project = params["treasury"]! as! &Toucans.Project
@@ -95,12 +102,14 @@ pub contract ToucansTreasuryActions {
 
     init(_threshold: UInt64) {
       self.threshold = _threshold
+      self.title = "UpdateThreshold"
       self.intent = "Update the threshold of signers needed to execute an action in the Treasury to ".concat(_threshold.toString())
     }
   }
 
   pub struct Test: ToucansMultiSign.Action {
     pub let intent: String
+    pub let title: String
     access(self) let cap: Capability<&FungibleToken.Vault>
 
     pub fun execute(_ params: {String: AnyStruct}) {
@@ -113,6 +122,7 @@ pub contract ToucansTreasuryActions {
         _cap.check(): "check"
       }
       self.intent = "Testing"
+      self.title = "Test"
       self.cap = _cap
     }
   }

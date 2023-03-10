@@ -21,7 +21,7 @@
 	const copyToClipboard = () => {
 		const app = new CopyToClipboard({
 			target: document.getElementById('clipboard') as Element,
-			props: { name: `https://${dappInfo.url}/${activeDaoData.generalInfo.contract_name}` }
+			props: { name: `https://${dappInfo.url}/discover/${activeDaoData.generalInfo.project_id}` }
 		});
 		app.$destroy();
 	};
@@ -68,12 +68,18 @@
 				</div>
 				Rounds
 			</a>
-			<a href="/admin/mint" class="sidebar-link" class:active={$page.url.pathname.includes('mint')}>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:coin" />
-				</div>
-				Mint
-			</a>
+			{#if activeDaoData.onChainData.minting}
+				<a
+					href="/admin/mint"
+					class="sidebar-link"
+					class:active={$page.url.pathname.includes('mint')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:coin" />
+					</div>
+					Mint
+				</a>
+			{/if}
 			<a
 				href="/admin/withdraw"
 				class="sidebar-link distribute-display"

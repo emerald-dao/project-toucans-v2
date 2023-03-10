@@ -5,6 +5,7 @@
 	import type { Writable } from 'svelte/store';
 	import { Button } from '@emerald-dao/component-library';
 	import MultisigManager from '$lib/features/add-signature/components/MultisigManager.svelte';
+	import { updateMultisigExecution } from '$flow/actions';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -41,6 +42,13 @@
 		activeDaoData.onChainData.signers.length !== addresses.length
 			? 'active'
 			: 'disabled'}
+		on:click={() =>
+			updateMultisigExecution(
+				activeDaoData.generalInfo.owner,
+				activeDaoData.generalInfo.project_id,
+				addresses,
+				threshold
+			)}
 	>
 		Submit changes
 	</Button>

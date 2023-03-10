@@ -17,6 +17,7 @@ import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
 import proposeFUSDWithdrawTx from './cadence/transactions/treasury-actions/propose_fusd_withdraw.cdc?raw';
 import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_flow_token_withdraw.cdc?raw';
+import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
@@ -185,29 +186,60 @@ export const proposeWithdrawExecution = (
 	amount: string
 ) => executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
 
-const signAction = async (actionMessage: string, actionUUID: number) => {
+const updateMultisig = async (
+	projectOwner: string,
+	projectId: string,
+	newSigners: string[],
+	newThreshold: number
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(updateMultiSigTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(newSigners, t.Array(t.Address)),
+			arg(newThreshold, t.UInt64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const updateMultisigExecution = (
+	projectOwner: string,
+	projectId: string,
+	newSigners: string[],
+	newThreshold: number
+) => executeTransaction(() => updateMultisig(projectOwner, projectId, newSigners, newThreshold));
+
+const signAction = async (actionMessage: string, actionUUID: string) => {
 	const intent = actionMessage;
 	const latestBlock = await fcl.block(true);
 	const intentHex = Buffer.from(`${intent}`).toString('hex');
 	const MSG = `${actionUUID}${intentHex}${latestBlock.id}`;
+	console.log(MSG)
 	const sig = await fcl.currentUser().signUserMessage(MSG);
 	const keyIds = sig.map((s) => {
 		return s.keyId;
 	});
 	const signatures = sig.map((s) => {
-		return s.signature.signature;
+		return s.signature;
 	});
+	console.log(keyIds)
+	console.log(signatures)
 
-	return { keyIds, signatures, MSG, signatureBlock: latestBlock };
+	return { keyIds, signatures, MSG, signatureBlock: latestBlock.height };
 };
 
 const acceptAction = async (
 	projectOwner: string,
 	projectId: string,
 	actionMessage: string,
-	actionUUID: number
+	actionUUID: string
 ) => {
-	const { keyIds, signatures, MSG, signatureBlock } = signAction(actionMessage, actionUUID);
+	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
 
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(acceptActionTx),
@@ -231,16 +263,16 @@ export const acceptActionExecution = (
 	projectOwner: string,
 	projectId: string,
 	actionMessage: string,
-	actionUUID: number
+	actionUUID: string
 ) => executeTransaction(() => acceptAction(projectOwner, projectId, actionMessage, actionUUID));
 
 const declineAction = async (
 	projectOwner: string,
 	projectId: string,
 	actionMessage: string,
-	actionUUID: number
+	actionUUID: string
 ) => {
-	const { keyIds, signatures, MSG, signatureBlock } = signAction(actionMessage, actionUUID);
+	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
 
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(declineActionTx),
@@ -264,7 +296,7 @@ export const declineActionExecution = (
 	projectOwner: string,
 	projectId: string,
 	actionMessage: string,
-	actionUUID: number
+	actionUUID: string
 ) => executeTransaction(() => declineAction(projectOwner, projectId, actionMessage, actionUUID));
 
 // const tranferTokens = async () => {

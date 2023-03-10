@@ -15,6 +15,7 @@ pub contract ToucansMultiSign {
     //
     pub struct interface Action {
         pub let intent: String
+        pub let title: String
         pub fun execute(_ params: {String: AnyStruct})
     }
 
@@ -23,7 +24,6 @@ pub contract ToucansMultiSign {
     //
     pub resource MultiSignAction {
 
-        pub let intent: String
         access(contract) let action: {Action}
         access(self) let signers: [Address]
         access(self) let votes: {Address: Bool}
@@ -114,7 +114,7 @@ pub contract ToucansMultiSign {
             
             // message: {uuid of this resource}{intent}{blockId}
             let uuidString = self.uuid.toString()
-            let intentHex = String.encodeHex(self.intent.utf8)
+            let intentHex = String.encodeHex(self.action.intent.utf8)
             let blockIdHexStr: String = String.encodeHex(blockIds)
 
             // Matches the `uuid` of this resource
@@ -170,6 +170,7 @@ pub contract ToucansMultiSign {
             return self.signers
         }
 
+        // Only returns people who have actually voted
         pub fun getVotes(): {Address: Bool} {
             return self.votes
         }
@@ -194,19 +195,18 @@ pub contract ToucansMultiSign {
             return count
         }
 
-        init(_signers: [Address], _intent: String, _action: {Action}) {
+        init(_signers: [Address], _action: {Action}) {
             self.signers = _signers
             self.votes = {}
-            self.intent = _intent
             self.action = _action
         }
     }
 
     pub resource interface ManagerPublic {
+        pub var threshold: UInt64
         pub fun borrowAction(actionUUID: UInt64): &MultiSignAction
         pub fun readyToFinalize(actionUUID: UInt64): Bool
         pub fun getIDs(): [UInt64]
-        pub fun getIntents(): {UInt64: String}
         pub fun getSigners(): [Address]
     }
     
@@ -219,7 +219,7 @@ pub contract ToucansMultiSign {
         access(self) let actions: @{UInt64: MultiSignAction}
 
         pub fun createMultiSign(action: {Action}) {
-            let newAction <- create MultiSignAction(_signers: self.signers.keys, _intent: action.intent, _action: action)
+            let newAction <- create MultiSignAction(_signers: self.signers.keys, _action: action)
             self.actions[newAction.uuid] <-! newAction
         }
 
@@ -233,8 +233,8 @@ pub contract ToucansMultiSign {
 
         // We do not make this public because if anyone else wants to use
         // this contract, they may want specific access control over who can
-        // actually execute an action, and/or implement requirements
-        // (like the treasury must have >= 10 $FLOW before an action can be executed)
+        // actually execute an action, post conditions, and/or implement requirements
+        // (like the treasury must have >= 10 $FLOW before an action can be executed).
         pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
             pre {
                 self.readyToFinalize(actionUUID: actionUUID):
@@ -263,9 +263,9 @@ pub contract ToucansMultiSign {
             self.signers.remove(key: signer)
 
             if Int(self.threshold) > self.signers.length {
-                // Automatically reduce the threshold by 1 to prevent it from
+                // Automatically reduce the threshold to prevent it from
                 // being higher than the number of signers
-                self.threshold = self.threshold - 1
+                self.threshold = UInt64(self.signers.length)
             }
 
             self.assertValidTreasury()
@@ -283,14 +283,6 @@ pub contract ToucansMultiSign {
 
         pub fun getIDs(): [UInt64] {
             return self.actions.keys
-        }
-
-        pub fun getIntents(): {UInt64: String} {
-            let returnVal: {UInt64: String} = {}
-            for id in self.actions.keys {
-                returnVal[id] = self.borrowAction(actionUUID: id).intent
-            }
-            return returnVal
         }
 
         pub fun getSigners(): [Address] {

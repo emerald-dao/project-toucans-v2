@@ -133,8 +133,8 @@ pub contract Toucans {
       self.timeframe = timeframe
       self.extra = extra
 
-      // 2.5% goes to EC Treasury
-      self.payouts = payouts.concat([Payout(Toucans.account.address, 0.025)])
+      // 5% goes to EC Treasury
+      self.payouts = payouts.concat([Payout(Toucans.account.address, 0.05)])
 
       var percentCount: UFix64 = 0.0
       for payout in self.payouts {
@@ -233,6 +233,9 @@ pub contract Toucans {
     }
 
     pub fun finalizeAction(actionUUID: UInt64) {
+      post {
+        self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
+      }
       let selfRef: &Project = &self as &Project
       self.multiSignManager.finalizeAction(actionUUID: actionUUID, {"treasury": selfRef})
     }
@@ -335,19 +338,24 @@ pub contract Toucans {
         Toucans.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentTokensSent * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
       }
 
-      // No overflow if:
-      // 1. Funding target is nil
-      // 2. The amount sent + current sent <= the target
-      let fundingTarget = fundingCycleRef.details.fundingTarget
-      if fundingTarget == nil || (fundingCycleRef.paymentTokensSent + paymentTokensSent <= fundingTarget!) {
-        // No overflow, deposit the rest right to treasury
+      // 3 cases:
+      // 1. Funding target is nil OR amount sent won't exceed the target (deposit everything to treasury)
+      // 2. Funding goal is already reached (deposit everything to overflow)
+      // 3. Amount sent will make us reach the goal (split between overflow and treasury)
+      let fundingTarget: UFix64? = fundingCycleRef.details.fundingTarget
+      let amountLeftToTreasury: UFix64 = paymentTokens.balance
+      if fundingTarget == nil || (fundingCycleRef.paymentTokensSent + amountLeftToTreasury <= fundingTarget!) {
+        // Deposit everything to treasury because there's no such thing as overflow
         self.depositToTreasury(vault: <- paymentTokens)
+      } else if fundingCycleRef.paymentTokensSent >= fundingTarget! {
+        // deposit everything to overflow
+        self.depositToOverflow(vault: <- paymentTokens)
       } else {
-        let amountToTreasury = fundingTarget! - fundingCycleRef.paymentTokensSent
+        let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.paymentTokensSent
         self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
         self.depositToOverflow(vault: <- paymentTokens)
       }
-
+  
       fundingCycleRef.handlePaymentReceipt(projectTokensPurchased: amount, paymentTokensSent: paymentTokensSent, causer: payer)
       // Tokens were purchased, so increment amount raised
       self.totalFunding = self.totalFunding + paymentTokensSent
@@ -633,6 +641,9 @@ pub contract Toucans {
       minting: Bool,
       extra: {String: AnyStruct}
     ) {
+      pre {
+        signers.contains(self.owner!.address): "Project owner must be one of the initial signers."
+      }
       let cycleNum: UInt64 = 0
 
       let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, extra: extra)

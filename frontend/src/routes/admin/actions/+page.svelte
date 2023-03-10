@@ -23,9 +23,14 @@
 		<p class="small">Actions waiting for signatures</p>
 	</div>
 	<div>
-		<ActionElement actionType="Withdraw" actionId="0x3213" signed={true} />
-		<ActionElement actionType="NewFundingCycle" actionId="0x3213" signed={false} />
-		<ActionElement actionType="RemoveSigner" actionId="0x3213" signed={true} />
+		{#each activeDaoData.onChainData.actions as action}
+			<ActionElement
+				projectOwner={activeDaoData.generalInfo.owner}
+				projectId={activeDaoData.generalInfo.project_id}
+				{action}
+				threshold={activeDaoData.onChainData.threshold}
+			/>
+		{/each}
 	</div>
 </div>
 

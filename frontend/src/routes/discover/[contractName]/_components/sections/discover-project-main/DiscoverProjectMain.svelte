@@ -118,7 +118,7 @@
 					<TabPanel>
 						<div class="rounds-wrapper">
 							{#each daoData.onChainData.fundingCycles as round, i}
-								<RoundDetail {round} {i} />
+								<RoundDetail {round} {i} projectToken={daoData.generalInfo.token_symbol} />
 							{/each}
 						</div>
 					</TabPanel>

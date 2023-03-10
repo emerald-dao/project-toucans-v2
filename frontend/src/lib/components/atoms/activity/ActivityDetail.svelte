@@ -3,15 +3,15 @@
 	import FundingStats from '$lib/components/atoms/FundingStats.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Label, StatusCircle, Currency, Modal, getModal } from '@emerald-dao/component-library';
-	import type { Action } from '$lib/types/dao-project/dao-event/dao-event.type';
+	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
-	import type { Dao } from '$lib/types/dao-project/dao-project.interface';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 
-	export let action: Action;
+	export let action: DaoEvent;
 	export let i: number;
 
-	let daoData: Dao = getContext('daoData');
+	let daoData: DAOProject = getContext('daoData');
 </script>
 
 <div class="main-wrapper">
@@ -71,9 +71,10 @@
 			</div>
 			<Modal background="var(--clr-background-secondary)" id={`funding-stats-activity-${i}`}>
 				<FundingStats
-					fundingCycleData={getFundingCycleData(daoData, action.cycleNum)}
+					round={getFundingCycleData(daoData, action.cycleNum)}
 					hasBorder={false}
 					title="Funding round data"
+					projectToken={daoData.generalInfo.token_symbol}
 				/>
 			</Modal>
 		{/if}

@@ -1,21 +1,26 @@
 <script lang="ts">
 	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
 	import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
 	import Icon from '@iconify/svelte';
+	import { user } from '$stores/flow/FlowStore';
+	import { acceptActionExecution } from '$flow/actions';
 
-	export let actionType: MultisigActions;
-	export let actionId: string;
-	export let signed: boolean;
+	export let action: ActionData;
+	export let threshold: string;
+	export let projectOwner: string;
+	export let projectId: string;
 	export let daoId: string | undefined = undefined;
 	export let daoLogo: string | undefined =
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
+
+	const signed = Object.keys(action.votes).includes($user.addr);
+	const yesCount = Object.values(action.votes).filter((v) => v === true).length;
 
 	const actionTypeToIcon: {
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'tabler:outbound',
-		Mint: 'tabler:coin',
-		NewFundingCycle: 'tabler:pig-money',
 		RemoveSigner: 'tabler:pencil-off',
 		AddSigner: 'tabler:pencil-plus',
 		UpdateThreshold: 'tabler:alert-triangle'
@@ -25,8 +30,6 @@
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'Withdraw',
-		Mint: 'Mint',
-		NewFundingCycle: 'New Funding Cycle',
 		RemoveSigner: 'Remove Signer',
 		AddSigner: 'Add Signer',
 		UpdateThreshold: 'Update Threshold'
@@ -36,8 +39,8 @@
 <div class="main-wrapper">
 	<div class="row-6 align-center">
 		<div class="row-2 align-center">
-			<IconCircle icon={actionTypeToIcon[actionType]} />
-			<span class="action-name small">{actionTypeToText[actionType]}</span>
+			<IconCircle icon={actionTypeToIcon[action.title]} />
+			<span class="action-name small">{actionTypeToText[action.title]}</span>
 		</div>
 		{#if daoId}
 			<div class="dao-project">
@@ -49,17 +52,25 @@
 		{/if}
 		<div>
 			<span class="xsmall action-id">Action ID</span>
-			<span class="xsmall">{actionId}</span>
+			<span class="xsmall">{action.id}</span>
+		</div>
+		<div>
+			<span class="xsmall action-id">Info</span>
+			<span class="xsmall">{action.intent}</span>
 		</div>
 	</div>
 	<div class="row-4">
 		<div class="threshold-wrapper">
 			<span class="xsmall">Signatures</span>
-			<span class="threshold"><strong>1</strong>/4</span>
+			<span class="threshold"><strong>{yesCount}</strong>/{threshold}</span>
 		</div>
 		{#if !signed}
 			<div class="row-2">
-				<div class="action-wrapper sign">
+				<div
+					class="action-wrapper sign"
+					on:click={() => acceptActionExecution(projectOwner, projectId, action.intent, action.id)}
+					on:keydown
+				>
 					<Icon icon="tabler:pencil-plus" />
 				</div>
 				<div class="action-wrapper trash">

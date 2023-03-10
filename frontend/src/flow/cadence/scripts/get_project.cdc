@@ -1,6 +1,7 @@
 import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
+import ToucansMultiSign from "../ToucansMultiSign.cdc"
 
 pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -23,7 +24,9 @@ pub struct Info {
   pub let balances: {Address: UFix64}
   pub let funders: {Address: UFix64}
   pub let signers: [Address]
-  pub let actions: {UInt64: String}
+  pub let threshold: UInt64
+  pub let actions: [Action]
+  pub let minting: Bool
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -37,9 +40,30 @@ pub struct Info {
     self.balances = ExampleToken.getBalances()
     self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
+    self.minting = info.minting
 
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()
-    self.actions = manager.getIntents()
+    self.threshold = manager.threshold
+    self.actions = []
+    for actionId in manager.getIDs() {
+      let action = manager.borrowAction(actionUUID: actionId)
+      let actionDetails = action.getAction()
+      self.actions.append(Action(actionId, actionDetails.intent, actionDetails.title, action.getVotes()))
+    }
+  }
+}
+
+pub struct Action {
+  pub let id: UInt64
+  pub let intent: String
+  pub let title: String
+  pub let votes: {Address: Bool}
+
+  init(_ id: UInt64, _ i: String, _ t: String, _ s: {Address: Bool}) {
+    self.id = id
+    self.intent = i
+    self.title = t
+    self.votes = s
   }
 }

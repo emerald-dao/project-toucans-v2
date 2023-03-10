@@ -1,5 +1,6 @@
 import type { DaoEvent } from './dao-event/dao-event.type';
 import type { FundingCycle } from './funding-rounds/funding-cycle.interface';
+import type { MultisigActions } from './multisig-actions/multisig-actions.type';
 
 // A DAO Project is a combination of two data types: DAOBlockchainData and DaoDatabaseData.
 // DAOBlockchainData is the data that is stored on the blockchain.
@@ -46,9 +47,7 @@ export interface DaoBlockchainData {
 	overflowBalance: string;
 	signers: string[];
 	threshold: string;
-	actions: {
-		[address: string]: string;
-	};
+	actions: ActionData[];
 	minting: boolean;
 }
 
@@ -59,4 +58,13 @@ export interface TokenInfo {
 	receiverPath: string;
 	publicPath: string;
 	storagePath: string;
+}
+
+export interface ActionData {
+	id: string,
+	intent: string,
+	title: MultisigActions,
+	votes: {
+		[voter: string]: boolean
+	}
 }
