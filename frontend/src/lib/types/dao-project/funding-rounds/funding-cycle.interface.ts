@@ -2,6 +2,7 @@ export interface FundingCycle {
 	details: FundingCycleDetails;
 	projectTokensPurchased: string;
 	paymentTokensSent: string;
+	raisedTowardsGoal: string;
 	funders: {
 		[address: string]: string;
 	};

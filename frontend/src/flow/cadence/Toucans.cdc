@@ -147,19 +147,33 @@ pub contract Toucans {
   pub struct FundingCycle {
     pub(set) var details: FundingCycleDetails
     pub var projectTokensPurchased: UFix64
+    // The total amount of payment tokens sent through
     pub var paymentTokensSent: UFix64
+    // The amount towards the goal (is capped at `details.fundingTarget`)
+    pub var raisedTowardsGoal: UFix64
     pub let funders: {Address: UFix64}
 
-    // causer is either the payer or an admin converting overflow
-    pub fun handlePaymentReceipt(projectTokensPurchased: UFix64, paymentTokensSent: UFix64, causer: Address) {
+    // called when a purchase happens
+    pub fun handlePaymentReceipt(projectTokensPurchased: UFix64, paymentTokensSent: UFix64, payer: Address) {
       self.projectTokensPurchased = self.projectTokensPurchased + projectTokensPurchased
-      self.funders[causer] = (self.funders[causer] ?? 0.0) + paymentTokensSent
+      self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
       self.paymentTokensSent = self.paymentTokensSent + paymentTokensSent
+    }
+
+    // called when overflow is converted
+    pub fun raise(amount: UFix64) {
+      post {
+        self.details.fundingTarget == nil || (self.raisedTowardsGoal <= self.details.fundingTarget!):
+          "Cannot raise more than the funding target."
+      }
+
+      self.raisedTowardsGoal = self.raisedTowardsGoal + amount
     }
 
     init(details: FundingCycleDetails) {
       self.details = details
       self.projectTokensPurchased = 0.0
+      self.raisedTowardsGoal = 0.0
       self.funders = {}
       self.paymentTokensSent = 0.0
     }
@@ -344,19 +358,21 @@ pub contract Toucans {
       // 3. Amount sent will make us reach the goal (split between overflow and treasury)
       let fundingTarget: UFix64? = fundingCycleRef.details.fundingTarget
       let amountLeftToTreasury: UFix64 = paymentTokens.balance
-      if fundingTarget == nil || (fundingCycleRef.paymentTokensSent + amountLeftToTreasury <= fundingTarget!) {
+      if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + amountLeftToTreasury <= fundingTarget!) {
         // Deposit everything to treasury because there's no such thing as overflow
+        fundingCycleRef.raise(amount: paymentTokens.balance)
         self.depositToTreasury(vault: <- paymentTokens)
-      } else if fundingCycleRef.paymentTokensSent >= fundingTarget! {
+      } else if fundingCycleRef.raisedTowardsGoal == fundingTarget! {
         // deposit everything to overflow
         self.depositToOverflow(vault: <- paymentTokens)
       } else {
-        let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.paymentTokensSent
+        let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
+        fundingCycleRef.raise(amount: amountToTreasury)
         self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
         self.depositToOverflow(vault: <- paymentTokens)
       }
   
-      fundingCycleRef.handlePaymentReceipt(projectTokensPurchased: amount, paymentTokensSent: paymentTokensSent, causer: payer)
+      fundingCycleRef.handlePaymentReceipt(projectTokensPurchased: amount, paymentTokensSent: paymentTokensSent, payer: payer)
       // Tokens were purchased, so increment amount raised
       self.totalFunding = self.totalFunding + paymentTokensSent
       self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
@@ -466,10 +482,12 @@ pub contract Toucans {
     //   \____/  \_/ \___|_|  |_| |_|\___/ \_/\_/  
                                                                         
 
+    // can only be called if amount does not put us over the funding target
     pub fun convertOverflow(amount: UFix64) {
       let cycle = self.borrowCurrentFundingCycleRef() ?? panic("There must be an active funding cycle in order to do this.")
       let overflow <- self.treasury[self.paymentTokenInfo.tokenType]?.withdraw!(amount: amount)
-      cycle.handlePaymentReceipt(projectTokensPurchased: 0.0, paymentTokensSent: overflow.balance, causer: self.owner!.address)
+      // will fail if this puts the cycle over the funding target
+      cycle.raise(amount: amount)
       self.depositToTreasury(vault: <- overflow)
     }
 
@@ -480,6 +498,7 @@ pub contract Toucans {
       let balance: UFix64 = tokenVault.balance
       let totalSupply: UFix64 = getAccount(self.projectTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: self.projectTokenInfo.contractName)!.totalSupply
       let percent: UFix64 = balance / totalSupply
+      assert(percent >= 0.0 && percent <= 1.0, message: "Percent must be a percent value.")
 
       let receiverType: Type = receiver.getType()
       let treasuryFlowBalance = self.getVaultBalanceInTreasury(vaultType: receiverType)!
