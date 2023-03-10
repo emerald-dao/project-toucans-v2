@@ -37,7 +37,9 @@
 		on:keydown
 	>
 		<h1>
-			{userDaos[activeDao].generalInfo.name}
+			{#if userDaos[activeDao]}
+				{userDaos[activeDao].generalInfo.name}
+			{/if}
 		</h1>
 		<div class="icon-wrapper" class:selected={displayDropDown}>
 			<Icon icon="tabler:chevron-down" width="1.2rem" />

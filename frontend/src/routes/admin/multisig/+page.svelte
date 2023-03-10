@@ -19,13 +19,21 @@
 	let allWalletsValid: boolean = false;
 	let thresholdValid: boolean = true;
 
-	let addresses: string[] = [''];
+	let existingAddresses: string[];
 	let threshold: number;
+	let newAddresses: string[] = [];
+
+	const reloadData = () => {
+		existingAddresses = activeDaoData.onChainData.signers;
+		threshold = Number(activeDaoData.onChainData.threshold);
+		newAddresses = [];
+	};
 
 	onMount(() => {
-		addresses = activeDaoData.onChainData.signers;
-		threshold = Number(activeDaoData.onChainData.threshold);
+		reloadData();
 	});
+
+	$: activeDaoData && reloadData();
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
@@ -33,19 +41,25 @@
 		<h5>Multisig</h5>
 		<p class="small">Manage the signers of your DAO.</p>
 	</div>
-	<MultisigManager bind:addresses bind:allWalletsValid bind:thresholdValid bind:threshold />
+	<MultisigManager
+		bind:existingAddresses
+		bind:newAddresses
+		bind:allWalletsValid
+		bind:thresholdValid
+		bind:threshold
+	/>
 	<Button
 		state={allWalletsValid &&
 		thresholdValid &&
 		Number(activeDaoData.onChainData.threshold) !== threshold &&
-		activeDaoData.onChainData.signers.length !== addresses.length
+		activeDaoData.onChainData.signers.length !== newAddresses.length
 			? 'active'
 			: 'disabled'}
 		on:click={() =>
 			updateMultisigExecution(
 				activeDaoData.generalInfo.owner,
 				activeDaoData.generalInfo.project_id,
-				addresses,
+				existingAddresses.concat(newAddresses),
 				threshold
 			)}
 	>

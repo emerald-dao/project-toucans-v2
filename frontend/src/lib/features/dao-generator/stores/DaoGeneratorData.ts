@@ -21,6 +21,7 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		walletAddresses: []
 	},
 	multisig: {
+		owner: '',
 		addresses: [],
 		threshold: 1
 	}

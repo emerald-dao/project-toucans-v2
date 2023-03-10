@@ -19,6 +19,7 @@ export interface DaoGeneratorData {
 		walletAddresses: string[];
 	};
 	multisig: {
+		owner: string;
 		addresses: string[];
 		threshold: number;
 	};

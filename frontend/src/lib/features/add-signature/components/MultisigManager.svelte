@@ -4,31 +4,30 @@
 	import SignatureElement from './atoms/signature-element/SignatureElement.svelte';
 	import { validationSuite } from './validation';
 
-	export let addresses: string[];
+	export let existingAddresses: string[];
+	export let newAddresses: string[] = [];
 	export let threshold: number = 1;
 	export let allWalletsValid: boolean;
 	export let thresholdValid: boolean;
 
-	let walletsValidations: boolean[] = [true];
-
-	const existingAddresses = addresses.length;
+	let walletsValidations: boolean[] = [];
 
 	const addMultisig = () => {
-		addresses = [...addresses, ''];
+		newAddresses = [...newAddresses, ''];
 		walletsValidations = [...walletsValidations, false];
 	};
 
-	const deleteMultisig = (i: number) => {
-		if (i > existingAddresses) {
-			addresses = addresses.filter((_, index) => index !== i);
-			walletsValidations = walletsValidations.filter((_, index) => index !== i);
-		} else {
-			alert('Submit action to delete this signer');
-		}
+	const deleteNewAddress = (i: number) => {
+		newAddresses = newAddresses.filter((_, index) => index !== i);
+		walletsValidations = walletsValidations.filter((_, index) => index !== i);
+	};
+
+	const deleteExistingAddress = (i: number) => {
+		alert('Submit action to delete this signer');
 	};
 
 	const handleChange = () => {
-		res = validationSuite(threshold, addresses.length);
+		res = validationSuite(threshold, newAddresses.length + existingAddresses.length);
 	};
 
 	let res = validationSuite.get();
@@ -52,7 +51,7 @@
 					type="number"
 					bind:value={threshold}
 					on:input={handleChange}
-					max={addresses.length}
+					max={existingAddresses.length + newAddresses.length}
 					min={1}
 				/>
 			</InputWrapper>
@@ -60,13 +59,21 @@
 	</div>
 	<div class="column-1">
 		<span class="large">Signers</span>
-		{#each addresses as multisigAdress, i}
+		{#each existingAddresses as multisigAddress, i}
+			<SignatureElement
+				owner={i === 0}
+				{i}
+				on:delete={() => deleteExistingAddress(i)}
+				bind:address={multisigAddress}
+			/>
+		{/each}
+		{#each newAddresses as address, i}
 			<SignatureElement
 				{i}
-				on:delete={() => deleteMultisig(i)}
-				bind:address={multisigAdress}
+				on:delete={() => deleteNewAddress(i)}
+				bind:address
 				bind:walletValid={walletsValidations[i]}
-				editable={i > existingAddresses}
+				editable
 			/>
 		{/each}
 		<div class="add-wallet-wrapper">

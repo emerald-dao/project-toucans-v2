@@ -8,6 +8,7 @@
 
 	export let address: string;
 	export let i: number;
+	export let owner: boolean = false;
 	export let editable = false;
 	export let walletValid = false;
 
@@ -19,7 +20,7 @@
 
 	let res = validationSuite.get();
 
-	$: walletValid = i > 0 ? res.isValid(`multisig-wallet-${i}`) : true;
+	$: walletValid = res.isValid(`multisig-wallet-${i}`);
 </script>
 
 <div class="main-wrapper" in:fly|local={{ x: 10, duration: 400 }}>
@@ -28,7 +29,7 @@
 			<img src="/avatar-2.png" alt="" />
 			<span class="number">{i + 1}</span>
 		</div>
-		{#if editable && i > 0}
+		{#if editable && !owner}
 			<InputWrapper
 				name={`multisig-wallet-${i}`}
 				errors={res.isValid(`multisig-wallet-${i}`) ? [] : ['']}
@@ -40,7 +41,7 @@
 					type="text"
 					placeholder="0x1234567890abcdef"
 					maxlength="18"
-					disabled={i === 0}
+					disabled={owner}
 					bind:value={address}
 					on:input={handleChange}
 				/>
@@ -49,7 +50,7 @@
 			<span class="small address">{address}</span>
 		{/if}
 	</div>
-	{#if i === 0}
+	{#if owner}
 		<Label size="x-small" hasBorder={false}>Owner</Label>
 	{:else}
 		<div class="trash-wrapper" on:click={() => dispatch('delete', i)} on:keydown>

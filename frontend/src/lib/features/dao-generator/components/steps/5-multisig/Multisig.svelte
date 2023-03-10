@@ -9,14 +9,15 @@
 	let thresholdValid: boolean = true;
 
 	onMount(() => {
-		$daoGeneratorData.multisig.addresses = [$user.addr as string];
+		$daoGeneratorData.multisig.owner = $user.addr as string;
 	});
 </script>
 
 <MultisigManager
 	bind:allWalletsValid
 	bind:thresholdValid
-	bind:addresses={$daoGeneratorData.multisig.addresses}
+	existingAddresses={[$daoGeneratorData.multisig.owner]}
+	bind:newAddresses={$daoGeneratorData.multisig.addresses}
 	threshold={$daoGeneratorData.multisig.threshold}
 />
 <StepButtons active={allWalletsValid && thresholdValid} />
