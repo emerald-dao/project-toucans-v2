@@ -3,6 +3,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import Icon from '@iconify/svelte';
+	import AlertNumber from '$components/atoms/AlertNumber.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -40,12 +41,9 @@
 			{/if}
 		</div>
 		<a class="pending-actions" href="/admin/actions">
-			<span
-				class="w-medium pending-actions-number center"
-				class:done={Number(daoData.onChainData.actions.length) === 0}
-			>
-				{daoData.onChainData.actions.length}
-			</span>
+			<div class="alert-number-wrapper">
+				<AlertNumber number={Number(daoData.onChainData.actions.length)} />
+			</div>
 			<IconCircle icon="tabler:signature" color="primary" />
 		</a>
 	</div>
@@ -90,19 +88,10 @@
 			text-decoration: none;
 			color: var(--clr-heading-inverse);
 
-			.pending-actions-number {
+			.alert-number-wrapper {
 				top: -4px;
 				right: -4px;
-				width: 12px;
-				height: 12px;
-				background-color: var(--clr-alert-main);
 				position: absolute;
-				font-size: 0.5rem;
-				border-radius: 50%;
-
-				&.done {
-					background-color: var(--clr-primary-main);
-				}
 			}
 		}
 	}

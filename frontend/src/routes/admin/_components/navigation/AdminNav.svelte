@@ -8,6 +8,7 @@
 	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
 	import dappInfo from '$lib/config/config';
+	import AlertNumber from '$components/atoms/AlertNumber.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -99,6 +100,9 @@
 					<Icon icon="tabler:layout-list" />
 				</div>
 				Actions Queue
+				{#if Number(activeDaoData.onChainData.actions.length) > 0}
+					<AlertNumber number={Number(activeDaoData.onChainData.actions.length)} />
+				{/if}
 			</a>
 			<a
 				href="/admin/multisig"
