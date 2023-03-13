@@ -2,6 +2,8 @@ import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
 import ToucansMultiSign from "../ToucansMultiSign.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import FUSD from "../utility/FUSD.cdc"
 
 pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -22,6 +24,7 @@ pub struct Info {
   pub let totalSupply: UFix64
   pub let overflowBalance: UFix64
   pub let balances: {Address: UFix64}
+  pub let treasuryBalances: {String: UFix64}
   pub let funders: {Address: UFix64}
   pub let signers: [Address]
   pub let threshold: UInt64
@@ -41,6 +44,11 @@ pub struct Info {
     self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
     self.minting = info.minting
+    self.treasuryBalances = {
+      "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
+      "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FUSD.Vault>()) ?? 0.0,
+      "ExampleToken": info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
+    }
 
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()
