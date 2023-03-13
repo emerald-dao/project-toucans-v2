@@ -35,7 +35,6 @@
 		}
 
 		.holder-name {
-			color: var(--clr-heading-main);
 			font-size: var(--font-size-0);
 		}
 	}
