@@ -19,4 +19,6 @@ export type DaoEventName =
 	| 'Withdraw'
 	| 'NewFundingCycle'
 	| 'Donate'
-	| 'ProjectCreated';
+	| 'ProjectCreated'
+	| 'UpdatedThreshold'
+	| 'AddedSigner';

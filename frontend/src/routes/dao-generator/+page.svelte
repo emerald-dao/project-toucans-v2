@@ -1,5 +1,5 @@
 <script type="ts">
-	import CreateProjectStepsCard from '$components/atoms/cards/CreateProjectStepsCard.svelte';
+	import CreateProjectStepsCard from '$components/cards/CreateProjectStepsCard.svelte';
 	import { user } from '$stores/flow/FlowStore';
 </script>
 
@@ -10,21 +10,20 @@
 		{:else}
 			<div class="column-2">
 				<h4>Connect Wallet</h4>
-				<span>
-					Please connect your wallet to create a project.
-				</span>
+				<span> Please connect your wallet to create a project. </span>
 			</div>
 		{/if}
 	</div>
 </section>
 
 <style type="scss">
-	section {		
+	section {
 		.container {
 			min-height: 70vh;
 		}
 
-		h4, span {
+		h4,
+		span {
 			text-align: center;
 		}
 	}

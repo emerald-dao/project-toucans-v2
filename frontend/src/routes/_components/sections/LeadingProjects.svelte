@@ -1,9 +1,8 @@
 <script type="ts">
-	import { Column, AdaptableGrid } from '@mateoroldos/svelte.bones';
-	import { LeadingProjectCard } from '$components/atoms/cards/index';
-	import type { LeadingDao } from '$lib/types/leading-dao.interface';
+	import { AdaptableGrid } from '@mateoroldos/svelte.bones';
+	import { LeadingProjectCard } from '$components/cards/index';
 
-	let testDaos: LeadingDao[] = [
+	let testDaos = [
 		{
 			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
@@ -48,7 +47,7 @@
 		<div class="projects-wrapper">
 			<AdaptableGrid gap="small">
 				{#each testDaos as testDao, i}
-				<LeadingProjectCard daoData={testDao} number={i + 1} />
+					<LeadingProjectCard daoData={testDao} number={i + 1} />
 				{/each}
 			</AdaptableGrid>
 		</div>
@@ -61,18 +60,17 @@
 		border-block: 1px solid var(--clr-border-primary);
 
 		.container {
-		display: flex;
-		flex-direction: column;
+			display: flex;
+			flex-direction: column;
 
-		.title-wrapper {
-			text-align: center;
-			margin-bottom: var(--space-8);
+			.title-wrapper {
+				text-align: center;
+				margin-bottom: var(--space-8);
 
-			h2 {
-				margin-top: var(--space-6);
+				h2 {
+					margin-top: var(--space-6);
+				}
 			}
 		}
 	}
-	}
-	
 </style>

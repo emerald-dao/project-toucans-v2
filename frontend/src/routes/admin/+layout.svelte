@@ -6,7 +6,6 @@
 	import { user } from '$stores/flow/FlowStore';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
-	import { invalidate } from '$app/navigation';
 
 	interface Data {
 		projects: DAOProject[];
@@ -64,11 +63,11 @@
 			@include mq(medium) {
 				display: grid;
 				grid-template-columns: 280px auto;
-				gap: var(--space-16);
+				gap: var(--space-12);
 			}
 
 			.main-wrapper {
-				padding-block: var(--space-14);
+				padding-block: var(--space-11);
 				display: flex;
 				flex-direction: column;
 			}

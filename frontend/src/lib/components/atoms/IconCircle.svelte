@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let icon: string;
-	export let color: 'primary' | 'secondary' | 'tertiary' = 'tertiary';
+	export let color: 'primary' | 'secondary' | 'tertiary' | 'alert' = 'tertiary';
 </script>
 
 <div class={`icon-wrapper ${color}`}>
@@ -46,6 +46,15 @@
 
 			span {
 				color: var(--clr-tertiary-main);
+			}
+		}
+
+		&.alert {
+			background-color: var(--clr-alert-badge);
+			color: var(--clr-alert-main);
+
+			span {
+				color: var(--clr-alert-main);
 			}
 		}
 	}

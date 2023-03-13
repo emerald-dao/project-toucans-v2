@@ -6,6 +6,7 @@ import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';
 import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
+import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 
 export const ssr = false;
 
@@ -21,11 +22,7 @@ export const load: LayoutLoad = async () => {
 
 		const projectsInfo = await Promise.all(
 			data.map(async (project: DaoDatabaseData) => {
-				const { data: actionData } = await supabase
-					.from('events')
-					.select()
-					.eq('project_id', project.project_id);
-				const eventsData = actionData as DaoEvent[];
+				const events = await fetchProjectEvents(project.project_id);
 
 				return {
 					generalInfo: project,
@@ -34,7 +31,7 @@ export const load: LayoutLoad = async () => {
 						project.owner,
 						project.project_id
 					),
-					events: eventsData?.reverse() || []
+					events: events && events.actions ? events.actions.reverse() : []
 				};
 			})
 		);

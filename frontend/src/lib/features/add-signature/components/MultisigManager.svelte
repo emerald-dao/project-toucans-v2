@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import SignatureElement from './atoms/signature-element/SignatureElement.svelte';
+	import { SignersListElement } from '$components/dao-data-blocks';
 	import { validationSuite } from './validation';
 
 	export let existingAddresses: string[];
@@ -60,7 +60,7 @@
 	<div class="column-1">
 		<span class="large">Signers</span>
 		{#each existingAddresses as multisigAddress, i}
-			<SignatureElement
+			<SignersListElement
 				owner={i === 0}
 				{i}
 				on:delete={() => deleteExistingAddress(i)}
@@ -68,7 +68,7 @@
 			/>
 		{/each}
 		{#each newAddresses as address, i}
-			<SignatureElement
+			<SignersListElement
 				{i}
 				on:delete={() => deleteNewAddress(i)}
 				bind:address

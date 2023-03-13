@@ -1,0 +1,47 @@
+<script lang="ts">
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
+	import { EventsList, RoundsList } from '$components/dao-data-blocks';
+	import RoundsCard from '$components/dao-data-blocks/funding-rounds/RoundsCard.svelte';
+
+	export let daoData: DAOProject;
+</script>
+
+<div class="main-wrapper">
+	<Tabs>
+		<TabList>
+			<Tab>Recent Events</Tab>
+			{#if daoData.onChainData.currentFundingCycle}
+				<Tab>Active Round</Tab>
+			{/if}
+			<Tab>Rounds</Tab>
+		</TabList>
+		<TabPanel>
+			<EventsList {daoData} />
+		</TabPanel>
+		{#if daoData.onChainData.currentFundingCycle}
+			<TabPanel>
+				<div class="round-card-wrapper card">
+					<RoundsCard
+						round={daoData.onChainData.fundingCycles[
+							Number(daoData.onChainData.currentFundingCycle)
+						]}
+						projectToken={daoData.generalInfo.token_symbol}
+						hasBorder={false}
+					/>
+				</div>
+			</TabPanel>
+		{/if}
+		<TabPanel>
+			<RoundsList {daoData} />
+		</TabPanel>
+	</Tabs>
+</div>
+
+<style lang="scss">
+	.main-wrapper {
+		.round-card-wrapper {
+			margin-top: var(--space-4);
+		}
+	}
+</style>

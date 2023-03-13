@@ -19,7 +19,6 @@
 			$fundingData.daoName = daoData.generalInfo.name;
 			$fundingData.daoAddress = daoData.generalInfo.owner;
 			$fundingData.funderAddress = $user.addr;
-			$fundingData.contractName = daoData.generalInfo.contract_name;
 			$fundingData.projectId = daoData.generalInfo.project_id;
 			$fundingData.currency = ECurrencies.FLOW;
 			$fundingData.issuanceRate = Math.trunc(

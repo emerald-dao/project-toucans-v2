@@ -5,7 +5,7 @@
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import DropDownHeading from '$lib/components/atoms/DropDownHeading.svelte';
+	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
 	import dappInfo from '$lib/config/config';
 
@@ -54,9 +54,9 @@
 		<div class="column-8">
 			<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 				<div class="sidebar-link-icon">
-					<Icon icon="tabler:chart-infographic" />
+					<Icon icon="tabler:home" />
 				</div>
-				Stats
+				Home
 			</a>
 			<a
 				href="/admin/rounds"

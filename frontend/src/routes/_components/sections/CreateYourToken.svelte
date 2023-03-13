@@ -1,5 +1,5 @@
 <script type="ts">
-	import CreateProjectStepsCard from '$components/atoms/cards/CreateProjectStepsCard.svelte';
+	import CreateProjectStepsCard from '$components/cards/CreateProjectStepsCard.svelte';
 	import IntersectionObserver from 'svelte-intersection-observer';
 
 	interface stepData {

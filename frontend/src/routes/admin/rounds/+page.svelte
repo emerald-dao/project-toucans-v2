@@ -2,9 +2,9 @@
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
-	import RoundDetail from '$components/atoms/roundDetail/RoundDetail.svelte';
 	import type { Writable } from 'svelte/store';
 	import RoundGeneratorModal from '$lib/features/round-generator/components/RoundGeneratorModal.svelte';
+	import { RoundsList } from '$components/dao-data-blocks';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -22,9 +22,7 @@
 		{#if activeDaoData.onChainData.fundingCycles.length < 1}
 			<span><em>This project has no funding rounds yet</em></span>
 		{:else}
-			{#each activeDaoData.onChainData.fundingCycles as round, i}
-				<RoundDetail {round} {i} projectToken={activeDaoData.generalInfo.token_symbol} />
-			{/each}
+			<RoundsList daoData={activeDaoData} />
 		{/if}
 	</div>
 	<div class="create-round-wrapper">
