@@ -10,6 +10,7 @@ transaction(
   // PAYMENT TOKEN INFO
   ptContractName: String,
   ptContractAddress: Address,
+  ptSymbol: String,
   ptReceiverPath: PublicPath,
   ptPublicPath: PublicPath,
   ptStoragePath: StoragePath,
@@ -42,7 +43,7 @@ transaction(
     deployer.contracts.add(
       name: contractName,
       code: contractCode.decodeHex(),
-      _paymentTokenInfo: Toucans.TokenInfo(ptContractName, ptContractAddress, ptReceiverPath, ptPublicPath, ptStoragePath),
+      _paymentTokenInfo: Toucans.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath),
       _editDelay: editDelay,
       _signers: initialSigners,
       _threshold: threshold,

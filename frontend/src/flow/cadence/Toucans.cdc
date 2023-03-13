@@ -18,15 +18,17 @@ pub contract Toucans {
     pub let contractName: String
     pub let contractAddress: Address
     pub let tokenType: Type
+    pub let symbol: String
     pub let receiverPath: PublicPath
     pub let publicPath: PublicPath
     pub let storagePath: StoragePath
 
-    init(_ cn: String, _ ca: Address, _ rp: PublicPath, _ pp: PublicPath, _ sp: StoragePath) {
+    init(_ cn: String, _ ca: Address, _ s: String, _ rp: PublicPath, _ pp: PublicPath, _ sp: StoragePath) {
       self.contractName = cn
       self.contractAddress = ca
       let caToString: String = ca.toString()
       self.tokenType = CompositeType("A.".concat(caToString.slice(from: 2, upTo: caToString.length)).concat(".".concat(cn)).concat(".Vault"))!
+      self.symbol = s
       self.receiverPath = rp
       self.publicPath = pp
       self.storagePath = sp

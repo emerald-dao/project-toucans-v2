@@ -72,10 +72,10 @@ export const dummyTransactionExecution = () => executeTransaction(dummyTransacti
 const deployContract = async (data) => {
 	console.log(data);
 	let contractCode = rawExampleTokenCode
-		.replace('INSERT NAME', data.daoDetails.name)
-		.replace('INSERT DESCRIPTION', data.daoDetails.description)
-		.replace('INSERT SYMBOL', data.daoDetails.tokenName)
-		.replace('INSERT URL', data.daoDetails.website);
+		.replaceAll('INSERT NAME', data.daoDetails.name)
+		.replaceAll('INSERT DESCRIPTION', data.daoDetails.description)
+		.replaceAll('INSERT SYMBOL', data.daoDetails.tokenName)
+		.replaceAll('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.contractName;
 	const paymentCurrency = data.tokenomics.paymentCurrency;
 	const paymentCurrencyInfo = currencies[paymentCurrency];
@@ -95,6 +95,7 @@ const deployContract = async (data) => {
 			arg(hexCode, t.String),
 			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses.FlowToken, t.Address),
+			arg(paymentCurrencyInfo.symbol, t.String),
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),

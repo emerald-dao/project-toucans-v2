@@ -5,6 +5,7 @@ export const currencies: { [key: string]: TokenInfo } = {
 	FLOW: {
 		contractName: 'FlowToken',
 		contractAddress: addresses.FlowToken,
+		symbol: 'FLOW',
 		receiverPath: 'flowTokenReceiver',
 		publicPath: 'flowTokenBalance',
 		storagePath: 'flowTokenVault',
@@ -13,6 +14,7 @@ export const currencies: { [key: string]: TokenInfo } = {
 	FUSD: {
 		contractName: 'FUSD',
 		contractAddress: addresses.FUSD,
+		symbol: 'FUSD',
 		receiverPath: 'fusdReceiver',
 		publicPath: 'fusdBalance',
 		storagePath: 'fusdVault',

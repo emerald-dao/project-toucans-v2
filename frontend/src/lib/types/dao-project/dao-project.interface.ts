@@ -54,6 +54,7 @@ export interface DaoBlockchainData {
 export interface TokenInfo {
 	contractName: string;
 	contractAddress: string;
+	symbol: string;
 	tokenType: string;
 	receiverPath: string;
 	publicPath: string;

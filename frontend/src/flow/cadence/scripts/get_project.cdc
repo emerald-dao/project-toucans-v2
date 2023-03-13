@@ -47,7 +47,7 @@ pub struct Info {
     self.treasuryBalances = {
       "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
       "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FUSD.Vault>()) ?? 0.0,
-      "ExampleToken": info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
+      info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
 
     let manager = info.borrowManagerPublic()

@@ -174,7 +174,7 @@ pub contract ExampleToken: FungibleToken {
 
       let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
       toucansProjectCollection.createProject(
-        projectTokenInfo: Toucans.TokenInfo("ExampleToken", self.account.address, self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
+        projectTokenInfo: Toucans.TokenInfo("ExampleToken", self.account.address, "INSERT SYMBOL", self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 
         minter: <- create Minter(), 
         editDelay: _editDelay, 
