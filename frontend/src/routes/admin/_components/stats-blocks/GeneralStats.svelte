@@ -14,7 +14,7 @@
 		<div class="currency-card card column-3">
 			<span class="xsmall"> Circulating Supply </span>
 			<Currency
-				amount={234324}
+				amount={Number(daoData.onChainData.totalSupply)}
 				currency={daoData.generalInfo.token_symbol}
 				color="heading"
 				fontSize="var(--font-size-5)"
@@ -22,7 +22,12 @@
 		</div>
 		<div class="currency-card card column-3">
 			<span class="xsmall">Total Funding</span>
-			<Currency amount={13324} currency="FLOW" color="heading" fontSize="var(--font-size-5)" />
+			<Currency
+				amount={Number(daoData.onChainData.totalFunding)}
+				currency="FLOW"
+				color="heading"
+				fontSize="var(--font-size-5)"
+			/>
 		</div>
 		<!-- <div class="currency-card column">
 			<Currency amount={9999999} currency="FLOW" color="heading" fontSize="var(--font-size-4)" />
