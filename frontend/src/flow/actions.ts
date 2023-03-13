@@ -94,7 +94,7 @@ const deployContract = async (data) => {
 			arg(formatFix(data.tokenomics.editDelay), t.UFix64),
 			arg(hexCode, t.String),
 			arg(paymentCurrencyInfo.contractName, t.String),
-			arg(addresses.FlowToken, t.Address),
+			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
 			arg(paymentCurrencyInfo.symbol, t.String),
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
