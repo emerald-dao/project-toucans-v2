@@ -2,16 +2,25 @@
 	import { Label, StatusCircle } from '@emerald-dao/component-library';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import Icon from '@iconify/svelte';
 
 	export let daoData: DAOProject;
-
-	daoData.onChainData.actions;
 </script>
 
 <div class="main-wrapper">
 	<div class="row-3 align-center">
 		<img src={daoData.generalInfo.logo} alt="dao-logo" />
-		<h2>{daoData.generalInfo.name}</h2>
+		<div class="row-2 name-wrapper">
+			<h2>{daoData.generalInfo.name}</h2>
+			<a
+				href={`/discover/${daoData.generalInfo.project_id}`}
+				target="_blank"
+				class="header-link"
+				rel="noreferrer"
+			>
+				<Icon icon="tabler:external-link" />
+			</a>
+		</div>
 		<Label color="tertiary" size="x-small" hasBorder={false}>
 			{`$${daoData.generalInfo.token_symbol}`}
 		</Label>
@@ -52,8 +61,12 @@
 		padding-bottom: var(--space-4);
 		border-radius: var(--radius-6);
 
-		h2 {
-			font-size: var(--font-size-4);
+		.name-wrapper {
+			align-items: baseline;
+
+			h2 {
+				font-size: var(--font-size-4);
+			}
 		}
 
 		img {
