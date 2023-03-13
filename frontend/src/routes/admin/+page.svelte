@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -21,7 +22,7 @@
 	$: activeDaoData = adminData.userDaos[$activeDaoStore];
 </script>
 
-<div class="main-wrapper column-5">
+<div class="main-wrapper column-5" in:fly={{ x: 10, duration: 400 }}>
 	<DaoStatsIntro daoData={activeDaoData} />
 	<div class="secondary-wrapper">
 		<div class="column-8">

@@ -1,9 +1,15 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
+
 	export let number: number;
 </script>
 
 <span class="w-medium center" class:done={number === 0}>
-	{number}
+	{#if number === 0}
+		<Icon icon="tabler:check" />
+	{:else}
+		{number}
+	{/if}
 </span>
 
 <style type="scss">
