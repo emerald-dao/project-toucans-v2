@@ -11,9 +11,9 @@ const resolver = async () => {
 	};
 };
 
-export const network: 'mainnet' | 'tesntet' | 'emulator' = env.PUBLIC_FLOW_NETWORK as
+export const network: 'mainnet' | 'testnet' | 'emulator' = env.PUBLIC_FLOW_NETWORK as
 	| 'mainnet'
-	| 'tesntet'
+	| 'testnet'
 	| 'emulator';
 
 // EMULATOR
