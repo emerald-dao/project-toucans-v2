@@ -22,42 +22,42 @@
 		};
 	} = {
 		NewFundingCycle: {
-			icon: 'tabler:arrow-up-right',
+			icon: 'tabler:pig-money',
 			text: 'New funding cycle',
 			color: 'tertiary'
 		},
 		ProjectCreated: {
-			icon: 'tabler:arrow-up-right',
+			icon: 'tabler:mood-plus',
 			text: 'Project created',
 			color: 'tertiary'
 		},
 		Purchase: {
-			icon: 'tabler:arrow-up-right',
+			icon: 'tabler:cash',
 			text: 'Purchase',
 			color: 'primary'
 		},
 		Donate: {
-			icon: 'tabler:arrow-up-right',
+			icon: 'tabler:heart-handshake',
 			text: 'Donate',
 			color: 'primary'
 		},
 		Withdraw: {
-			icon: 'tabler:arrow-down-left',
+			icon: 'tabler:circle-arrow-up-right',
 			text: 'Withdraw',
 			color: 'alert'
 		},
 		Distribute: {
-			icon: 'tabler:arrow-down-left',
+			icon: 'tabler:arrows-move',
 			text: 'Distribute',
 			color: 'alert'
 		},
 		UpdatedThreshold: {
-			icon: 'tabler:arrow-up-right',
+			icon: 'tabler:signature',
 			text: 'Updated threshold',
 			color: 'tertiary'
 		},
 		AddedSigner: {
-			icon: 'tabler:arrow-up-right',
+			icon: 'tabler:signature',
 			text: 'Added signer',
 			color: 'tertiary'
 		}
