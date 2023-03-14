@@ -20,6 +20,7 @@ pub fun main(user: Address, projectOwners: [Address], projectIds: [String]): {St
     }
     
     answer[projectId] = Project(manager.getSigners().contains(user), actions, manager.threshold)
+    i = i + 1
   }
 
   return answer

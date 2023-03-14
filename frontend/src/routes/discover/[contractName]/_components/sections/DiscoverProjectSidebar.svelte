@@ -6,6 +6,9 @@
 	import { ECurrencies } from '$lib/types/common/enums';
 	import { fundingData } from '$lib/features/funding/stores/FundingData';
 	import { fundActiveStep, fundingSteps } from '$lib/features/funding/stores/FundingSteps';
+	import { get } from 'svelte/store';
+	import { addNotification } from '$lib/features/notifications/functions/postNotification';
+	import { getNotifications } from '$lib/features/notifications/functions/getNotifications';
 
 	export let daoData: DAOProject;
 
@@ -41,7 +44,12 @@
 		<div class="column-4">
 			<div class="image-and-follow-wrapper">
 				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
-				<Button size="x-small" color="neutral" on:click={() => alert('todo')}>
+				<Button
+					size="x-small"
+					color="neutral"
+					on:click={() =>
+						addNotification(daoData.generalInfo.project_id, daoData.generalInfo.owner)}
+				>
 					Follow
 					<Icon icon="tabler:bell-plus" />
 				</Button>

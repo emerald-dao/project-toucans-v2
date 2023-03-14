@@ -7,7 +7,7 @@ export const postProject = async (
 	projectId: string,
 	logoUrl: string
 ) => {
-	const res = await fetch('/api/add', {
+	const res = await fetch('/api/add-project', {
 		method: 'POST',
 		body: JSON.stringify({
 			user,

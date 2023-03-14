@@ -437,7 +437,7 @@ export const getPendingActionsInMany = async (userAddress: string, projectOwners
 			cadence: replaceWithProperValues(getPendingActionsInManyScript),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
-				arg(projectOwners, t.Array(t.String)),
+				arg(projectOwners, t.Array(t.Address)),
 				arg(projectIds, t.Array(t.String))
 			]
 		});
