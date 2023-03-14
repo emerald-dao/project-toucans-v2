@@ -44,28 +44,28 @@
 		/>
 		<span class="slider" />
 	</label>
-	<div class="payment-currency-wrapper">
-		<label for="payment-currency">Payment currency</label>
-		<div class="row-7">
-			<label for="flow" class="w-regular">
+	<div class="payment-currency column-2">
+		<label for="currencies">Payment currency</label>
+		<div class="radio-tabs" id="currencies">
+			<label>
+				$FLOW
 				<input
 					type="radio"
 					id="flow"
-					name="payment-currency"
+					name="currency"
 					value={ECurrencies.FLOW}
 					bind:group={$daoGeneratorData.tokenomics.paymentCurrency}
 				/>
-				$FLOW
 			</label>
-			<label for="fusd" class="w-regular">
+			<label>
+				$FUSD
 				<input
 					type="radio"
 					id="fusd"
-					name="payment-currency"
+					name="currency"
 					value={ECurrencies.FUSD}
 					bind:group={$daoGeneratorData.tokenomics.paymentCurrency}
 				/>
-				$FUSD
 			</label>
 		</div>
 	</div>
@@ -73,10 +73,7 @@
 </form>
 
 <style lange="scss">
-	.payment-currency-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-3);
-		margin: var(--space-6) 0;
+	.payment-currency {
+		margin: var(--space-5) 0;
 	}
 </style>

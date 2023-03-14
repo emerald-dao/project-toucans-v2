@@ -24,31 +24,6 @@
 <div class="main-wrapper" in:fade={{ duration: 300 }}>
 	<form autocomplete="off">
 		<StepTitle title="Round conditions" stepNumber={2} />
-		<div class="form-section-wrapper currency">
-			<label for="currencies">Currency</label>
-			<div class="radio-tabs" id="currencies">
-				<label>
-					$FLOW
-					<input
-						type="radio"
-						id="flow"
-						name="currency"
-						value={ECurrencies.FLOW}
-						bind:group={$roundGeneratorData.currency}
-					/>
-				</label>
-				<label>
-					$FUSD
-					<input
-						type="radio"
-						id="fusd"
-						name="currency"
-						value={ECurrencies.FUSD}
-						bind:group={$roundGeneratorData.currency}
-					/>
-				</label>
-			</div>
-		</div>
 		<div class="form-section-wrapper funding-goal">
 			<label for="funding-goal">Funding goal</label>
 			<label for="infinite-goal" class="switch">
@@ -148,10 +123,6 @@
 				display: flex;
 				flex-direction: column;
 
-				&.currency {
-					margin-bottom: var(--space-3);
-				}
-
 				&.funding-goal {
 					gap: var(--space-1);
 
@@ -168,34 +139,11 @@
 					font-size: var(--font-size-1);
 				}
 
-				.date-inputs-wrapper {
-					display: grid;
-					grid-template-columns: 1fr 1fr;
-					gap: var(--space-4);
-				}
-
 				.range-wrapper {
 					margin-bottom: var(--space-7);
 
 					label[for='reserveRate'] {
 						margin-bottom: var(--space-1);
-					}
-				}
-
-				.radio-tabs {
-					margin-bottom: var(--space-2);
-
-					label {
-						font-size: var(--font-size-0);
-					}
-
-					label:has(input:checked) {
-						background-color: var(--clr-neutral-badge);
-					}
-
-					label.disabled {
-						background-color: transparent !important;
-						color: var(--clr-text-off) !important;
 					}
 				}
 			}

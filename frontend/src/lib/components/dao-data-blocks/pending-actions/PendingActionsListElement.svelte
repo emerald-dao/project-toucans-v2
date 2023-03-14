@@ -5,6 +5,7 @@
 	import Icon from '@iconify/svelte';
 	import { user } from '$stores/flow/FlowStore';
 	import { acceptActionExecution } from '$flow/actions';
+	import { Label } from '@emerald-dao/component-library';
 
 	export let action: ActionData;
 	export let threshold: string;
@@ -15,8 +16,10 @@
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
 	export let showDetail = true;
 
-	const signed = Object.keys(action.votes).includes($user.addr as string);
-	const yesCount = Object.values(action.votes).filter((v) => v === true).length;
+	console.log(action);
+
+	$: signed = Object.keys(action.votes).includes($user.addr as string);
+	$: yesCount = Object.values(action.votes).filter((v) => v === true).length;
 
 	const actionTypeToIcon: {
 		[key in MultisigActions]: string;
@@ -59,13 +62,25 @@
 			<span class="action-message xsmall">{action.intent}</span>
 		{/if}
 	</div>
-	<div class="row-4">
+	<div class="row-4 align-center">
 		<div class="threshold-wrapper">
 			<span class="xsmall">Signatures</span>
-			<span class="threshold"><strong>{yesCount}</strong>/{threshold}</span>
+			<span class="threshold">{yesCount}/{threshold}</span>
 		</div>
-		{#if !signed}
-			<div class="row-2">
+		<div class="row-2 align-center">
+			{#if signed && $user.addr && action.votes[$user.addr] === false}
+				<Label size="xx-small" hasBorder={false}>
+					Voted
+					<Icon icon="tabler:x" />
+				</Label>
+			{/if}
+			{#if signed && $user.addr && action.votes[$user.addr] === true}
+				<Label size="xx-small" hasBorder={false}>
+					Voted
+					<Icon icon="tabler:check" />
+				</Label>
+			{/if}
+			{#if !signed || ($user.addr && action.votes[$user.addr] === false)}
 				<div
 					class="action-wrapper sign"
 					on:click={() => acceptActionExecution(projectOwner, projectId, action.intent, action.id)}
@@ -73,15 +88,13 @@
 				>
 					<Icon icon="tabler:pencil-plus" />
 				</div>
+			{/if}
+			{#if !signed || ($user.addr && action.votes[$user.addr] === true)}
 				<div class="action-wrapper trash">
 					<Icon icon="tabler:x" />
 				</div>
-			</div>
-		{:else}
-			<div class="row align-center">
-				<Icon icon="tabler:check" width="1rem" color="var(--clr-primary-main)" />
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 </div>
 
@@ -153,7 +166,7 @@
 			flex-direction: row;
 			align-items: center;
 			gap: var(--space-1);
-			background-color: var(--clr-surface-primary);
+			border: 0.5px solid var(--clr-border-primary);
 			padding: 0 var(--space-4);
 			border-radius: var(--radius-8);
 
