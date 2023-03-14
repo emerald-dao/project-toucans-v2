@@ -8,7 +8,6 @@
 	import { fundActiveStep, fundingSteps } from '$lib/features/funding/stores/FundingSteps';
 
 	export let daoData: DAOProject;
-	console.log(daoData);
 
 	const initFunding = () => {
 		if (daoData.onChainData.fundingCycles != undefined && $user) {
@@ -29,6 +28,10 @@
 				)
 			);
 		}
+	};
+
+	const initDonation = () => {
+		alert('todo');
 	};
 </script>
 
@@ -77,11 +80,21 @@
 			{/if}
 			<p class="small">{daoData.generalInfo.description}</p>
 		</div>
-
 		{#if daoData.onChainData.currentFundingCycle}
-			<Button size="large" width="full-width" on:click={initFunding}>
-				<Icon icon="tabler:cash-banknote" />
-				Fund
+			<div class="row-4">
+				<Button size="large" width="full-width" on:click={initFunding}>
+					<Icon icon="tabler:cash-banknote" />
+					Fund
+				</Button>
+				<Button size="large" type="ghost" color="neutral" on:click={initDonation}>
+					<Icon icon="tabler:heart-handshake" />
+					Donate
+				</Button>
+			</div>
+		{:else}
+			<Button size="large" width="full-width" on:click={initDonation}>
+				<Icon icon="tabler:heart-handshake" />
+				Donate
 			</Button>
 		{/if}
 	</div>
