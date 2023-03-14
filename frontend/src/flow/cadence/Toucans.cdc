@@ -75,7 +75,8 @@ pub contract Toucans {
     currentCycle: UInt64?,
     amount: UFix64,
     vaultType: Type,
-    by: Address
+    by: Address,
+    message: String
   )
 
   pub event Withdraw(
@@ -193,7 +194,7 @@ pub contract Toucans {
     pub fun proposeAction(action: {ToucansMultiSign.Action})
     // If the action is ready to execute, then allow anyone to do it.
     pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct})
-    pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address)
+    pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
     
@@ -430,15 +431,20 @@ pub contract Toucans {
       vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
     }
 
-    pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address) {
+    pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
       emit Donate(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: vault.balance,
         vaultType: vault.getType(),
-        by: payer
+        by: payer,
+        message: message
       )
+      if vault.getType() == self.paymentTokenInfo.tokenType {
+        self.totalFunding = self.totalFunding + vault.balance
+        self.funders[payer] = (self.funders[payer] ?? 0.0) + vault.balance
+      }
       if let existingVault = &self.treasury[vault.getType()] as &FungibleToken.Vault? {
         existingVault.deposit(from: <- vault)
       } else {

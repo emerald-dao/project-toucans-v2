@@ -9,6 +9,7 @@ import { executeTransaction, formatFix, replaceWithProperValues } from './utils'
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
+import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
@@ -31,6 +32,7 @@ import { fundingData } from '$lib/features/funding/stores/FundingData';
 import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
 import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
+import { ECurrencies } from '$lib/types/common/enums';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -117,8 +119,12 @@ const fundProject = async () => {
 	const projectId = get(fundingData).projectId;
 	const amount = get(fundingData).amount;
 	const message = get(fundingData).specialMessage;
+	let txCode = fundProjectTx;
+	if (get(fundingData).currency === ECurrencies.FUSD) {
+		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD')
+	}
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(fundProjectTx, projectId, projectOwner),
+		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
@@ -133,6 +139,32 @@ const fundProject = async () => {
 };
 
 export const fundProjectExecution = () => executeTransaction(fundProject);
+
+const donate = async () => {
+	const projectOwner = get(fundingData).daoAddress;
+	const projectId = get(fundingData).projectId;
+	const amount = get(fundingData).amount;
+	const message = get(fundingData).specialMessage;
+	let txCode = donateTx;
+	if (get(fundingData).currency === ECurrencies.FUSD) {
+		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD')
+	}
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64),
+			arg(message, t.String)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const donateExecution = () => executeTransaction(donate);
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
