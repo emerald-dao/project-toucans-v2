@@ -62,8 +62,6 @@
 			color: 'tertiary'
 		}
 	};
-
-	console.log(event);
 </script>
 
 <div class="main-wrapper">

@@ -63,7 +63,7 @@ fcl.events(`${actionIdentifierPrefix}RemoveSigner`).subscribe((event) => {
 });
 
 async function appendAction(projectId, data, type) {
-  console.log(type + ' Action: ', eventData);
+  console.log(type + ' Action: ', data);
   const result = await supabase.from('events').insert({
     project_id: projectId,
     type,
