@@ -3,16 +3,26 @@
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import DistributionStaging from './sections/DistributionStaging.svelte';
 	import DistributionForms from './sections/DistributionForms.svelte';
-	import { Button } from '@emerald-dao/component-library';
+	import { Button, Currency } from '@emerald-dao/component-library';
 	import { fly } from 'svelte/transition';
 	import { setContext } from 'svelte';
 	import { mintTokens } from '../functions/mintTokens';
 	import { withdrawTokens } from '../functions/withdrawTokens';
+	import type { ECurrencies } from '$lib/types/common/enums';
 
 	export let daoData: DAOProject;
 	export let distributionType: 'mint' | 'withdraw';
 
 	setContext('daoData', daoData);
+
+	let currencyToDistribute: ECurrencies | string =
+		distributionType === 'mint'
+			? daoData.generalInfo.token_symbol
+			: Object.entries(daoData.onChainData.treasuryBalances)[0][0];
+	$: availableBalance =
+		distributionType === 'mint'
+			? undefined
+			: Number(daoData.onChainData.treasuryBalances[currencyToDistribute]);
 
 	let distStaging: Distribution[] = [];
 
@@ -53,7 +63,41 @@
 			{/if}
 		</div>
 		<slot />
-		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
+		{#if distributionType === 'withdraw'}
+			<div class="radio-tabs" id="currencies">
+				{#each Object.entries(daoData.onChainData.treasuryBalances) as [currency], i}
+					<label>
+						{currency}
+						<input
+							type="radio"
+							id="flow"
+							name="currency"
+							value={currency}
+							bind:group={currencyToDistribute}
+						/>
+					</label>
+				{/each}
+			</div>
+			{#if distributionType === 'withdraw' && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
+				<div class="row-2 align-center">
+					<span class="small">Available balance:</span>
+					<Currency
+						amount={Number(daoData.onChainData.treasuryBalances[currencyToDistribute])}
+						currency={currencyToDistribute}
+						color="heading"
+					/>
+				</div>
+			{/if}
+		{/if}
+		{#if (distributionType === 'withdraw' && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint'}
+			<DistributionForms
+				bind:formDist
+				bind:csvDist
+				bind:currencyToDistribute
+				bind:availableBalance
+				{addToStaging}
+			/>
+		{/if}
 	</div>
 	<div class="dist-wrapper sub-wrapper card">
 		<DistributionStaging bind:distStaging tokenName={daoData.generalInfo.token_symbol} />

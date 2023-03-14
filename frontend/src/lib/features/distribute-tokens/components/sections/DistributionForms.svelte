@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import Papa from 'papaparse';
@@ -8,12 +9,13 @@
 	import { InputWrapper, Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 	import type { SuiteRunResult } from 'vest';
+	import type { ECurrencies } from '$lib/types/common/enums';
 
 	export let formDist: Distribution;
 	export let csvDist: Distribution[];
+	export let currencyToDistribute: ECurrencies | string;
+	export let availableBalance: number | undefined;
 	export let addToStaging: (validForm: boolean) => void;
-
-	const daoData: DAOProject = getContext('daoData');
 
 	let csvFile: File[] = [];
 
@@ -41,7 +43,7 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
-		res = validationSuite(formDist, target.name);
+		res = validationSuite(formDist, target.name, availableBalance);
 
 		if (target.name === 'address') {
 			addressPending = true;
@@ -54,74 +56,76 @@
 	};
 </script>
 
-<Tabs>
-	<TabList>
-		<Tab>
-			<span class="xsmall"> Manual distribution </span>
-		</Tab>
-		<Tab><span class="xsmall">Bulk distribution (CSV)</span></Tab>
-	</TabList>
-	<TabPanel>
-		<form
-			id="dist-form"
-			on:submit|preventDefault={() => addToStaging(res.isValid())}
-			autocomplete="off"
-			class="wrapper"
-		>
-			<InputWrapper
-				name="address"
-				label="Address"
-				pending={addressPending}
-				pendingMessage={addressPendingMessage}
-				errors={res.getErrors('address')}
-				isValid={res.isValid('address')}
+<div transition:fly|local={{ duration: 200, y: 30 }}>
+	<Tabs>
+		<TabList>
+			<Tab>
+				<span class="xsmall"> Manual distribution </span>
+			</Tab>
+			<Tab><span class="xsmall">Bulk distribution (CSV)</span></Tab>
+		</TabList>
+		<TabPanel>
+			<form
+				id="dist-form"
+				on:submit|preventDefault={() => addToStaging(res.isValid())}
+				autocomplete="off"
+				class="wrapper"
 			>
-				<input
+				<InputWrapper
 					name="address"
-					type="text"
-					maxlength="18"
-					bind:value={formDist.account}
-					on:input={handleChange}
+					label="Address"
+					pending={addressPending}
+					pendingMessage={addressPendingMessage}
+					errors={res.getErrors('address')}
+					isValid={res.isValid('address')}
+				>
+					<input
+						name="address"
+						type="text"
+						maxlength="18"
+						bind:value={formDist.account}
+						on:input={handleChange}
+					/>
+				</InputWrapper>
+				<InputWrapper
+					name="amount"
+					label="Amount"
+					iconText={`$${currencyToDistribute}`}
+					errors={res.getErrors('amount')}
+					isValid={res.isValid('amount')}
+				>
+					<input name="amount" type="text" bind:value={formDist.tokens} on:input={handleChange} />
+				</InputWrapper>
+				<Button
+					form="dist-form"
+					type="ghost"
+					color="neutral"
+					width="full-width"
+					state={res.isValid() ? 'active' : 'disabled'}
+					>Add <Icon icon="tabler:arrow-narrow-right" /></Button
+				>
+			</form>
+		</TabPanel>
+		<TabPanel>
+			<div class="wrapper">
+				<DropZone
+					name="distribution-csv"
+					accept={['text/csv']}
+					bind:bindValue={csvFile}
+					maxAmountOfFiles={1}
 				/>
-			</InputWrapper>
-			<InputWrapper
-				name="amount"
-				label="Amount"
-				iconText={`$${daoData.generalInfo.token_symbol}`}
-				errors={res.getErrors('amount')}
-				isValid={res.isValid('amount')}
-			>
-				<input name="amount" type="text" bind:value={formDist.tokens} on:input={handleChange} />
-			</InputWrapper>
+			</div>
 			<Button
 				form="dist-form"
 				type="ghost"
 				color="neutral"
 				width="full-width"
-				state={res.isValid() ? 'active' : 'disabled'}
+				state={csvDist.length > 0 ? 'active' : 'disabled'}
 				>Add <Icon icon="tabler:arrow-narrow-right" /></Button
 			>
-		</form>
-	</TabPanel>
-	<TabPanel>
-		<div class="wrapper">
-			<DropZone
-				name="distribution-csv"
-				accept={['text/csv']}
-				bind:bindValue={csvFile}
-				maxAmountOfFiles={1}
-			/>
-		</div>
-		<Button
-			form="dist-form"
-			type="ghost"
-			color="neutral"
-			width="full-width"
-			state={csvDist.length > 0 ? 'active' : 'disabled'}
-			>Add <Icon icon="tabler:arrow-narrow-right" /></Button
-		>
-	</TabPanel>
-</Tabs>
+		</TabPanel>
+	</Tabs>
+</div>
 
 <style lang="scss">
 	.wrapper,
