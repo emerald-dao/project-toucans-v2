@@ -28,7 +28,7 @@
 	<div class="data-wrapper">
 		<div class="row-space-between">
 			<div class="row-2 align-center">
-				<h4 class="title">{title}</h4>
+				<h4 class="title w-regular">{title}</h4>
 				{#if goalReached}
 					<GoalReached />
 				{/if}
@@ -102,13 +102,15 @@
 		gap: var(--space-6);
 
 		.title {
-			font-size: var(--font-size-3);
+			font-size: var(--font-size-2);
+			color: var(--clr-font-text);
 		}
 
 		.time-left {
 			display: flex;
 			align-items: center;
 			gap: var(--space-1);
+			color: var(--clr-text-off);
 		}
 
 		.funding-stats-wrapper {

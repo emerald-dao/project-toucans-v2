@@ -8,6 +8,8 @@
 
 	setContext('daoData', data);
 
+	console.log(data);
+
 	// let seeMore = false;
 </script>
 
