@@ -19,10 +19,9 @@ export async function POST({ request }: { request: RequestHandler }) {
 
 	const { projectId, projectOwner } = data;
 
-	const { error } = await supabase.rpc('append_notification', {
-		_user_address: data.user.addr,
-		_project_owner: projectOwner,
-		_project_id: projectId
+	const { error } = await supabase.from('notifications').insert({
+		project_id: projectId,
+		user_address: data.user.addr
 	});
 	console.log('Error adding new notification', error);
 

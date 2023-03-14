@@ -18,11 +18,12 @@ export async function POST({ request }: { request: RequestHandler }) {
 
 	const { projectId, projectOwner } = data;
 
-	const { error } = await supabase.rpc('remove_notification', {
-		_user_address: data.user.addr,
-		_project_owner: projectOwner,
-		_project_id: projectId
-	});
+	// TODO
+	// const { error } = await supabase.rpc('remove_notification', {
+	// 	_user_address: data.user.addr,
+	// 	_project_owner: projectOwner,
+	// 	_project_id: projectId
+	// });
 	console.log('Error removing new notification', error);
 
 	return json({ error });
