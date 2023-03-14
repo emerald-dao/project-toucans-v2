@@ -345,6 +345,7 @@ pub contract Toucans {
 
       // Tax the purchased tokens with reserve rate
       let tax: @FungibleToken.Vault <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.details.reserveRate)
+      fundingCycleRef.handlePaymentReceipt(projectTokensPurchased: mintedTokens.balance, paymentTokensSent: paymentTokensSent, payer: payer)
       // Deposit new tokens to payer
       projectTokenReceiver.deposit(from: <- mintedTokens)
       // Deposit tax to project treasury
@@ -375,7 +376,6 @@ pub contract Toucans {
         self.depositToOverflow(vault: <- paymentTokens)
       }
   
-      fundingCycleRef.handlePaymentReceipt(projectTokensPurchased: amount, paymentTokensSent: paymentTokensSent, payer: payer)
       // Tokens were purchased, so increment amount raised
       self.totalFunding = self.totalFunding + paymentTokensSent
       self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
