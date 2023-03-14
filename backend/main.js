@@ -44,41 +44,30 @@ fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
   appendAction(projectId, rest, 'Withdraw');
 });
 
-fcl.events(`${actionIdentifierPrefix}UpdatedThreshold`).subscribe((event) => {
+fcl.events(`${actionIdentifierPrefix}UpdateThreshold`).subscribe((event) => {
   const { projectId, ...rest } = event;
 
-  appendAction(projectId, rest, 'UpdatedThreshold');
+  appendAction(projectId, rest, 'UpdateThreshold');
 });
 
-fcl.events(`${actionIdentifierPrefix}AddedSigner`).subscribe(async (event) => {
+fcl.events(`${actionIdentifierPrefix}AddSigner`).subscribe(async (event) => {
   const { projectId, signer } = event;
 
-  // const result = await supabase.rpc('append_signer', {
-  //   _user_address: signer,
-  //   _project_id: projectId
-  // });
-  // if (result.error) {
-  //   console.log('Result Error:', result);
-  // }
-
-  appendAction(projectId, { signer }, 'AddedSigner')
+  appendAction(projectId, { signer }, 'AddSigner')
 });
 
-fcl.events(`${actionIdentifierPrefix}RemovedSigner`).subscribe((event) => {
+fcl.events(`${actionIdentifierPrefix}RemoveSigner`).subscribe((event) => {
   const { projectId, signer } = event;
 
-  appendAction(projectId, { signer }, 'RemovedSigner')
+  appendAction(projectId, { signer }, 'RemoveSigner')
 });
 
 async function appendAction(projectId, eventData, type) {
   console.log(type + ' Action: ', eventData);
-  const result = await supabase.rpc('append_action', {
+  const result = await supabase.rpc('add_event', {
     _project_id: projectId,
-    _action: {
-      ...eventData,
-      type,
-      timestamp: Date.now() / 1000, // seconds
-    }
+    _event_type: type,
+    _data: eventData
   });
   if (result.error) {
     console.log('Result Error:', result);

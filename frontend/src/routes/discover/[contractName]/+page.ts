@@ -30,7 +30,7 @@ export const load: PageLoad = async ({ params }) => {
 			generalInfo.owner,
 			generalInfo.project_id
 		),
-		events: events && events.actions ? events.actions.reverse() : [],
+		events: events.reverse(),
 		userBalance
 	};
 };

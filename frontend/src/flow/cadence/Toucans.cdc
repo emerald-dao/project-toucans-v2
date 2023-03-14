@@ -37,7 +37,7 @@ pub contract Toucans {
 
   pub event ProjectCreated(
     projectId: String,
-    tokenType: Type,
+    tokenTypeIdentifier: String,
     by: Address
   )
 
@@ -680,7 +680,7 @@ pub contract Toucans {
 
       emit ProjectCreated(
         projectId: projectId,
-        tokenType: projectTokenInfo.tokenType,
+        tokenTypeIdentifier: projectTokenInfo.tokenType.identifier,
         by: self.owner!.address
       )
     }

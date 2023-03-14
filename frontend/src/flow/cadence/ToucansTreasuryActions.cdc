@@ -5,9 +5,9 @@ import Toucans from "./Toucans.cdc"
 
 pub contract ToucansTreasuryActions {
 
-  pub event AddedSigner(projectId: String, signer: Address)
-  pub event RemovedSigner(projectId: String, signer: Address)
-  pub event UpdatedThreshold(projectId: String, newThreshold: UInt64)
+  pub event AddSigner(projectId: String, signer: Address)
+  pub event RemoveSigner(projectId: String, signer: Address)
+  pub event UpdateThreshold(projectId: String, newThreshold: UInt64)
 
   // Transfers `amount` tokens from the treasury to `recipientVault`
   pub struct WithdrawToken: ToucansMultiSign.Action {
@@ -60,7 +60,7 @@ pub contract ToucansTreasuryActions {
       let validSig = ToucansMultiSign.verifySignature(uuid: uuid, intent: intent, acctAddress: self.signer, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
       assert(validSig, message: "The signer that will be added must have signed the request to be added.")
 
-      emit AddedSigner(projectId: treasuryRef.projectId, signer: self.signer)
+      emit AddSigner(projectId: treasuryRef.projectId, signer: self.signer)
     }
 
     init(_signer: Address) {
@@ -85,7 +85,7 @@ pub contract ToucansTreasuryActions {
       let manager = treasuryRef.borrowManager()
       manager.removeSigner(signer: self.signer)
 
-      emit RemovedSigner(projectId: treasuryRef.projectId, signer: self.signer)
+      emit RemoveSigner(projectId: treasuryRef.projectId, signer: self.signer)
     }
 
     init(_signer: Address) {
@@ -108,7 +108,7 @@ pub contract ToucansTreasuryActions {
       assert(manager.getSigners().length >= Int(self.threshold), message: "You cannot assign a new threshold higher than the current number of signers.")
       manager.updateThreshold(newThreshold: self.threshold)
 
-      emit UpdatedThreshold(projectId: treasuryRef.projectId, newThreshold: self.threshold)
+      emit UpdateThreshold(projectId: treasuryRef.projectId, newThreshold: self.threshold)
     }
 
     init(_threshold: UInt64) {

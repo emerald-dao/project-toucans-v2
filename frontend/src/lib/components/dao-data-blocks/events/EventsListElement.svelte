@@ -51,17 +51,19 @@
 			text: 'Distribute',
 			color: 'alert'
 		},
-		UpdatedThreshold: {
+		UpdateThreshold: {
 			icon: 'tabler:signature',
 			text: 'Updated threshold',
 			color: 'tertiary'
 		},
-		AddedSigner: {
+		AddSigner: {
 			icon: 'tabler:signature',
 			text: 'Added signer',
 			color: 'tertiary'
 		}
 	};
+
+	console.log(event);
 </script>
 
 <div class="main-wrapper">
@@ -74,20 +76,20 @@
 		</div>
 	</div>
 	<div class="row-3">
-		{#if event.type === 'Purchase' && event.message}
+		{#if event.type === 'Purchase' && event.data.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>
 			<Modal background="var(--clr-background-secondary)" id={`message-${i}`}>
 				<span class="special-message-heading">Special Message</span>
-				<p class="special-message">{event.message}</p>
+				<p class="special-message">{event.data.message}</p>
 			</Modal>
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'Distribute'}
 			<Currency
 				amount={event.type === 'Withdraw' || event.type === 'Distribute'
-					? -Number(event.amount)
-					: Number(event.amount)}
+					? -Number(event.data.amount)
+					: Number(event.data.amount)}
 				currency="FLOW"
 				color="heading"
 				fontSize="0.85rem"
@@ -102,7 +104,7 @@
 			</div>
 			<Modal background="var(--clr-background-secondary)" id={`funding-stats-activity-${i}`}>
 				<RoundsCard
-					round={getFundingCycleData(daoData, Number(event.cycleNum))}
+					round={getFundingCycleData(daoData, Number(event.data.cycleNum))}
 					hasBorder={false}
 					title="Funding round data"
 					projectToken={daoData.generalInfo.token_symbol}
