@@ -23,20 +23,20 @@ transaction(projectOwner: Address, projectId: String, newSigners: [Address], new
     // Propose the new action
     for newSigner in newSigners {
         if !existingSigners.contains(newSigner) {
-          let addSignerAction = ToucansTreasuryActions.AddSigner(_signer: newSigner)
+          let addSignerAction = ToucansTreasuryActions.AddOneSigner(_signer: newSigner)
           self.Project.proposeAction(action: addSignerAction)
         }
     }
 
     for oldSigner in existingSigners {
       if !newSigners.contains(oldSigner) {
-        let removeSignerAction = ToucansTreasuryActions.RemoveSigner(_signer: oldSigner)
+        let removeSignerAction = ToucansTreasuryActions.RemoveOneSigner(_signer: oldSigner)
         self.Project.proposeAction(action: removeSignerAction)
       }
     }
 
     if newThreshold != existingThreshold {
-      let updateThresholdAction = ToucansTreasuryActions.UpdateThreshold(_threshold: newThreshold)
+      let updateThresholdAction = ToucansTreasuryActions.UpdateTreasuryThreshold(_threshold: newThreshold)
       self.Project.proposeAction(action: updateThresholdAction)
     }
   }

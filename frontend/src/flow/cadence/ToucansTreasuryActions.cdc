@@ -40,7 +40,7 @@ pub contract ToucansTreasuryActions {
   }
 
   // Add a new signer to the treasury
-  pub struct AddSigner: ToucansMultiSign.Action {
+  pub struct AddOneSigner: ToucansMultiSign.Action {
     pub let signer: Address
     pub let intent: String
     pub let title: String
@@ -74,7 +74,7 @@ pub contract ToucansTreasuryActions {
   // NOTE: If this reduces the # of signers to 
   // below the threshold, this will automatically
   // reduce the threshold to the # of signers
-  pub struct RemoveSigner: ToucansMultiSign.Action {
+  pub struct RemoveOneSigner: ToucansMultiSign.Action {
     pub let signer: Address
     pub let intent: String
     pub let title: String
@@ -96,7 +96,7 @@ pub contract ToucansTreasuryActions {
   }
 
   // Update the threshold of signers
-  pub struct UpdateThreshold: ToucansMultiSign.Action {
+  pub struct UpdateTreasuryThreshold: ToucansMultiSign.Action {
     pub let threshold: UInt64
     pub let intent: String
     pub let title: String
