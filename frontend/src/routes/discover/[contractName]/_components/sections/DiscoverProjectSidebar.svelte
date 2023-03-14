@@ -39,7 +39,13 @@
 	<img src="/toucans-illustration.png" alt="Background illustration" class="banner-image" />
 	<div class="content-wrapper column-14">
 		<div class="column-4">
-			<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
+			<div class="image-and-follow-wrapper">
+				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
+				<Button size="x-small" color="neutral" on:click={() => alert('todo')}>
+					Follow
+					<Icon icon="tabler:bell-plus" />
+				</Button>
+			</div>
 			<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
 			{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
 				<div class="row-3 align-end">
@@ -125,12 +131,19 @@
 			margin-top: -70px;
 			z-index: 2;
 
-			.dao-logo {
-				width: 130px;
-				aspect-ratio: 1 / 1;
-				object-fit: cover;
-				border-radius: var(--radius-2);
-				border: 1px var(--clr-border-primary) solid;
+			.image-and-follow-wrapper {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: flex-end;
+
+				.dao-logo {
+					width: 130px;
+					aspect-ratio: 1 / 1;
+					object-fit: cover;
+					border-radius: var(--radius-2);
+					border: 1px var(--clr-border-primary) solid;
+				}
 			}
 
 			.header-link {
