@@ -27,6 +27,10 @@
 	.main-wrapper {
 		padding-inline: var(--space-5);
 
+		span {
+			color: inherit;
+		}
+
 		.panels-wrapper {
 			overflow-y: auto;
 		}

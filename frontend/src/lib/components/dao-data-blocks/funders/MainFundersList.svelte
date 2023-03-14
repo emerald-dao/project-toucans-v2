@@ -3,10 +3,30 @@
 	import UserBalanceListElement from '../atoms/UserBalanceListElement.svelte';
 
 	export let daoData: DAOProject;
+
+	$: fundersEntries = Object.entries(daoData.onChainData.funders);
 </script>
 
 <div class="column-2 align-start">
-	{#each Object.entries(daoData.onChainData.funders) as [address, balance]}
-		<UserBalanceListElement {address} {balance} tokenSymbol={daoData.generalInfo.token_symbol} />
-	{/each}
+	{#if fundersEntries.length > 0}
+		{#each fundersEntries as [address, balance]}
+			<UserBalanceListElement {address} {balance} tokenSymbol={daoData.generalInfo.token_symbol} />
+		{/each}
+	{:else}
+		<div class="no-funders-wrapper">
+			<span class="small"><em>No funders yet</em></span>
+		</div>
+	{/if}
 </div>
+
+<style lang="scss">
+	.no-funders-wrapper {
+		display: flex;
+		justify-content: center;
+		margin-top: var(--space-4);
+
+		em {
+			color: var(--clr-text-off);
+		}
+	}
+</style>

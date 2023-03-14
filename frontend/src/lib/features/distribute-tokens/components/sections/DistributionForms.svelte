@@ -123,9 +123,13 @@
 	</TabPanel>
 </Tabs>
 
-<style types="ts">
+<style lang="scss">
 	.wrapper,
 	form {
 		margin-block: var(--space-4);
+	}
+
+	span {
+		color: inherit;
 	}
 </style>

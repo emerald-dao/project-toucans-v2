@@ -53,6 +53,7 @@
 
 		span {
 			max-width: 26ch;
+			color: var(--clr-text-off);
 
 			&:first-child {
 				margin-bottom: var(--space-4);

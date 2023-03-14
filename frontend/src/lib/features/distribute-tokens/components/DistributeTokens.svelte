@@ -40,7 +40,7 @@
 </script>
 
 <div class="main-wrapper">
-	<div class="forms-wrapper sub-wrapper">
+	<div class="forms-wrapper sub-wrapper column-8">
 		<div class="introduction">
 			{#if distributionType === 'mint'}
 				<h5>Mint</h5>
@@ -52,6 +52,7 @@
 				<p class="small">Withdraw tokens from your treasury to external wallets.</p>
 			{/if}
 		</div>
+		<slot />
 		<DistributionForms bind:formDist bind:csvDist {addToStaging} />
 	</div>
 	<div class="dist-wrapper sub-wrapper card">
@@ -70,24 +71,28 @@
 		grid-template-columns: 2fr 3fr;
 		gap: var(--space-13);
 		height: 100%;
+		flex: 1;
 
 		.sub-wrapper {
-			.introduction {
-				margin-bottom: var(--space-8);
+			display: flex;
+			flex: 1;
+			flex-direction: column;
 
+			.introduction {
 				h5 {
 					margin-bottom: var(--space-2);
 					margin-top: 0;
 				}
 			}
-		}
 
-		.dist-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 1.4rem;
-			transition: 3s;
-			padding: var(--space-8);
+			.dist-wrapper {
+				display: flex;
+				flex: 1;
+				flex-direction: column;
+				gap: 1.4rem;
+				transition: 3s;
+				padding: var(--space-8);
+			}
 		}
 	}
 </style>

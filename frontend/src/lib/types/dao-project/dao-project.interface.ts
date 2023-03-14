@@ -49,12 +49,16 @@ export interface DaoBlockchainData {
 	threshold: string;
 	actions: ActionData[];
 	minting: boolean;
+	treasuryBalances: {
+		FLOW?: string;
+		FUSD?: string;
+		[key: string]: string | undefined;
+	};
 }
 
 export interface TokenInfo {
 	contractName: string;
 	contractAddress: string;
-	symbol: string;
 	tokenType: string;
 	receiverPath: string;
 	publicPath: string;
@@ -62,10 +66,10 @@ export interface TokenInfo {
 }
 
 export interface ActionData {
-	id: string,
-	intent: string,
-	title: MultisigActions,
+	id: string;
+	intent: string;
+	title: MultisigActions;
 	votes: {
-		[voter: string]: boolean
-	}
+		[voter: string]: boolean;
+	};
 }

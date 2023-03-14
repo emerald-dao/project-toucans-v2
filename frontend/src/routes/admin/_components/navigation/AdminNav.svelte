@@ -117,12 +117,16 @@
 		</div>
 	</div>
 	<div class="column-6">
-		<div class="treasury-wallet-card">
+		<div class="treasury-wallet-card column-2">
 			<div class="icon-wrapper">
 				<Icon icon="tabler:wallet" />
 			</div>
-			<Currency amount={34321} currency="FLOW" color="heading" fontSize="1.1rem" />
 			<span class="xsmall row-1 align-center"> Treasury funds </span>
+			<div class="column-1">
+				{#each Object.entries(activeDaoData.onChainData.treasuryBalances) as [token, balance]}
+					<Currency amount={Number(balance)} currency={token} color="heading" fontSize="1.1rem" />
+				{/each}
+			</div>
 		</div>
 		<a
 			href="/admin/info"
