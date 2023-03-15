@@ -19,10 +19,26 @@
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
 	import { invalidateAll } from '$app/navigation';
+	import { checkUser } from '$lib/features/users/functions/checkUser';
+	import { addUser } from '$lib/features/users/functions/postUser';
+	import type { CurrentUserObject } from '@onflow/fcl';
 
 	$: if ($user) {
 		console.log($user);
 	}
+
+	const connect = async () => {
+		logIn().then(async () => {
+			const userExists = await checkUser($user as CurrentUserObject);
+
+			if (userExists) {
+				console.log('User exists');
+			} else {
+				addUser($user as CurrentUserObject);
+				console.log('User added');
+			}
+		});
+	};
 
 	// If the connected address changes, invalidate all fetched data to get data for the new address
 	$: $user.addr && invalidateAll();
@@ -34,7 +50,7 @@
 />
 <Header
 	themeStore={theme}
-	{logIn}
+	logIn={() => connect()}
 	{unauthenticate}
 	{getFindProfile}
 	user={$user}

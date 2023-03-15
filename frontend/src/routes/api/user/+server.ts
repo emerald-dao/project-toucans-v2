@@ -13,17 +13,14 @@ export async function POST({ request }) {
 	if (!verifyAccount) {
 		return new Response(JSON.stringify({ error: 'Error verifying user' }), { status: 401 });
 	}
-	const { projectId, user } = data;
 
-	const { error } = await supabase.from('notifications').insert({
-		project_id: projectId,
-		user_address: user.addr
+	const { error } = await supabase.from('users').insert({
+		address: data.user.addr
 	});
-	console.log('Error adding new notification', error);
 
 	if (error) {
-		return new Response(JSON.stringify({ error: 'Error adding notification' }), { status: 401 });
+		return new Response(JSON.stringify({ error: 'Error inserting user' }), { status: 401 });
 	} else {
-		return new Response(JSON.stringify({ success: 'Notification added' }), { status: 201 });
+		return new Response(JSON.stringify({ success: 'User added' }), { status: 201 });
 	}
 }
