@@ -1,4 +1,6 @@
 import Toucans from "../Toucans.cdc"
+import ToucansMultiSign from "../ToucansMultiSign.cdc"
+import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
 
 pub fun main(user: Address, projectOwners: [Address], projectIds: [String]): {String: Project} {
   pre {
@@ -15,8 +17,14 @@ pub fun main(user: Address, projectOwners: [Address], projectIds: [String]): {St
     let actions: [Action] = []
     for actionId in manager.getIDs() {
       let action = manager.borrowAction(actionUUID: actionId)
-      let actionDetails = action.getAction()
-      actions.append(Action(actionId, actionDetails.intent, actionDetails.title, action.getVotes()))
+      let actionDetails: {ToucansMultiSign.Action} = action.getAction()
+      let optionalData: {String: AnyStruct} = {}
+      if actionDetails.getType() == Type<ToucansTreasuryActions.AddOneSigner>() {
+        let castedAction = actionDetails as! ToucansTreasuryActions.AddOneSigner
+        optionalData["newSigner"] = castedAction.signer
+        optionalData["pendingSignature"] = action.getVotes().length == Int(manager.threshold)
+      }
+      actions.append(Action(actionId, actionDetails.intent, actionDetails.title, action.getVotes(), optionalData))
     }
     
     answer[projectId] = Project(manager.getSigners().contains(user), actions, manager.threshold)
@@ -43,11 +51,13 @@ pub struct Action {
   pub let intent: String
   pub let title: String
   pub let votes: {Address: Bool}
+  pub let optionalData: {String: AnyStruct}
 
-  init(_ id: UInt64, _ i: String, _ t: String, _ s: {Address: Bool}) {
+  init(_ id: UInt64, _ i: String, _ t: String, _ s: {Address: Bool}, _ o: {String: AnyStruct}) {
     self.id = id
     self.intent = i
     self.title = t
     self.votes = s
+    self.optionalData = o
   }
 }

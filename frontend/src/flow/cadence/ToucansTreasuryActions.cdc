@@ -137,5 +137,11 @@ pub contract ToucansTreasuryActions {
       self.cap = _cap
     }
   }
+
+  pub fun cantExecuteAutomatically(): [Type] {
+    return [
+      AddSigner.getType()
+    ]
+  }
 }
  

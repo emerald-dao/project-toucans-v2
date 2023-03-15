@@ -1,4 +1,6 @@
 import Toucans from "../Toucans.cdc"
+import ToucansMultiSign from "../ToucansMultiSign.cdc"
+import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
 
 transaction(projectOwner: Address, projectId: String, actionUUID: UInt64, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
 
@@ -17,8 +19,8 @@ transaction(projectOwner: Address, projectId: String, actionUUID: UInt64, messag
     let action = manager.borrowAction(actionUUID: actionUUID)
     action.decline(acctAddress: self.SignerAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
 
-    let cantExecuteAutomatically = ["AddSigner"]
-    if !cantExecuteAutomatically.contains(action.getAction().title) && manager.readyToFinalize(actionUUID: actionUUID) {
+    if manager.getActionState(actionUUID: actionUUID) == ToucansMultiSign.ActionState.DECLINED || 
+       (manager.getActionState(actionUUID: actionUUID) == ToucansMultiSign.ActionState.ACCEPTED && !ToucansTreasuryActions.cantExecuteAutomatically().contains(action.getAction().getType())) {
         self.Project.finalizeAction(actionUUID: actionUUID, {})
     }
   }

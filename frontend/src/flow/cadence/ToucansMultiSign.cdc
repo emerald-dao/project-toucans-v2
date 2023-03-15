@@ -3,6 +3,12 @@ import FungibleToken from "./utility/FungibleToken.cdc"
 
 pub contract ToucansMultiSign {
 
+    pub enum ActionState: UInt8 {
+        pub case ACCEPTED
+        pub case DECLINED
+        pub case PENDING
+    }
+
     //
     // ------- Resource Interfaces ------- 
     //
@@ -91,6 +97,7 @@ pub contract ToucansMultiSign {
     pub resource interface ManagerPublic {
         pub var threshold: UInt64
         pub fun borrowAction(actionUUID: UInt64): &MultiSignAction
+        pub fun getActionState(actionUUID: UInt64): ActionState
         pub fun readyToFinalize(actionUUID: UInt64): Bool
         pub fun getIDs(): [UInt64]
         pub fun getSigners(): [Address]
@@ -109,12 +116,21 @@ pub contract ToucansMultiSign {
             self.actions[newAction.uuid] <-! newAction
         }
 
-        pub fun readyToFinalize(actionUUID: UInt64): Bool {
+        pub fun getActionState(actionUUID: UInt64): ActionState {
             let actionRef: &MultiSignAction = (&self.actions[actionUUID] as &MultiSignAction?)!
-            let accepted: Bool = actionRef.getAccepted() >= self.threshold
-            let declined: Bool = actionRef.getDeclined() > UInt64(actionRef.getSigners().length) - self.threshold
+            if actionRef.getAccepted() >= self.threshold {
+                return ActionState.ACCEPTED
+            }
+            if actionRef.getDeclined() > UInt64(actionRef.getSigners().length) - self.threshold {
+                return ActionState.DECLINED
+            }
 
-            return accepted || declined
+            return ActionState.PENDING
+        }
+
+        pub fun readyToFinalize(actionUUID: UInt64): Bool {
+            let actionState = self.getActionState(actionUUID: actionUUID)
+            return actionState != ActionState.PENDING
         }
 
         // We do not make this public because if anyone else wants to use
@@ -122,16 +138,14 @@ pub contract ToucansMultiSign {
         // actually execute an action, post conditions, and/or implement requirements
         // (like the treasury must have >= 10 $FLOW before an action can be executed).
         pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
-            pre {
-                self.readyToFinalize(actionUUID: actionUUID):
-                    "This action has not received enough signatures to be accepted or declined yet."
-            }
+            let actionState = self.getActionState(actionUUID: actionUUID)
+            assert(actionState != ActionState.PENDING, message: "This action has not received enough signatures to be accepted or declined yet.")
             let action: @MultiSignAction <- self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
             params.insert(key: "uuid", actionUUID)
             params.insert(key: "intent", action.getAction().intent)
 
             // If it's accepted
-            if action.getAccepted() >= self.threshold {
+            if actionState == ActionState.ACCEPTED {
                 action.action.execute(params)
             }
             // Will destroy if it's accepted or denied

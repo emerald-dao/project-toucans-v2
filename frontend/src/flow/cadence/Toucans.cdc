@@ -74,7 +74,7 @@ pub contract Toucans {
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
-    vaultType: Type,
+    tokenTypeIdentifier: String,
     by: Address,
     message: String
   )
@@ -83,6 +83,7 @@ pub contract Toucans {
     projectId: String,
     projectOwner: Address, 
     currentCycle: UInt64?,
+    tokenTypeIdentifier: String,
     amount: UFix64,
     by: Address
   )
@@ -383,7 +384,7 @@ pub contract Toucans {
       emit Purchase(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum()!,
+        currentCycle: fundingCycleRef.details.cycleNum,
         amount: paymentTokensSent,
         by: payer,
         message: message
@@ -425,6 +426,7 @@ pub contract Toucans {
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
+        tokenTypeIdentifier: vault.getType().identifier,
         amount: amount,
         by: vault.owner!.address
       )
@@ -437,7 +439,7 @@ pub contract Toucans {
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: vault.balance,
-        vaultType: vault.getType(),
+        tokenTypeIdentifier: vault.getType().identifier,
         by: payer,
         message: message
       )
@@ -509,10 +511,9 @@ pub contract Toucans {
       let percent: UFix64 = balance / totalSupply
       assert(percent >= 0.0 && percent <= 1.0, message: "Percent must be a percent value.")
 
-      let receiverType: Type = receiver.getType()
-      let treasuryFlowBalance = self.getVaultBalanceInTreasury(vaultType: receiverType)!
+      let treasuryBalanceForType = self.getVaultBalanceInTreasury(vaultType: receiver.getType())!
 
-      receiver.deposit(from: <- self.treasury[receiverType]?.withdraw!(amount: treasuryFlowBalance * percent))
+      self.withdrawFromTreasury(vault: receiver, amount: treasuryBalanceForType * percent)
       self.depositToTreasury(vault: <- tokenVault)
     }
 
