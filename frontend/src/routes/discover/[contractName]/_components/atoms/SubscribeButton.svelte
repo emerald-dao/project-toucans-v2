@@ -55,7 +55,7 @@
 		{#if buttonHover}
 			<Icon icon="tabler:bell-minus" />
 		{:else}
-			<Icon icon="tabler:bell" />
+			<Icon icon="tabler:bell-check" />
 		{/if}
 	</button>
 {:else}
@@ -68,7 +68,7 @@
 		{#if buttonHover}
 			<Icon icon="tabler:bell-plus" />
 		{:else}
-			<Icon icon="tabler:bell" />
+			<Icon icon="tabler:bell-off" />
 		{/if}
 	</button>
 {/if}
