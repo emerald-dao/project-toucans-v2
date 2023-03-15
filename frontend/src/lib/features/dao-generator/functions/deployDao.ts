@@ -10,6 +10,7 @@ import { emptyDaoGeneratorData } from '../stores/DaoGeneratorData';
 import type { CurrentUserObject, TransactionStatusObject } from '@onflow/fcl';
 import type { ProjectCreatedEvent } from '$lib/types/dao-project/dao-event/events/project-created.interface';
 import { postProject } from '$lib/features/dao-generator/functions/postDao';
+import { addNotification } from '$lib/features/notifications/functions/postNotification';
 
 const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
@@ -42,6 +43,7 @@ export const deployDao = async () => {
 			goto(`/discover/${projectData.daoDetails.contractName}`);
 			generatorActiveStep.reset();
 			daoGeneratorData.set(emptyDaoGeneratorData);
+			addNotification(eventData.projectId, get(user).addr as string);
 		});
 	};
 
