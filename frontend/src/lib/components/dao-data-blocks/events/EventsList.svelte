@@ -10,11 +10,17 @@
 </script>
 
 <div class="align-start">
-	{#each recentActivity as event, i}
-		<div class="activity-wrapper">
-			<EventsListElement {event} {i} />
+	{#if recentActivity.length > 0}
+		{#each recentActivity as event, i}
+			<div class="activity-wrapper">
+				<EventsListElement {event} {i} />
+			</div>
+		{/each}
+	{:else}
+		<div class="no-events-wrapper">
+			<span class="small"><em>This DAO has no events yet</em></span>
 		</div>
-	{/each}
+	{/if}
 </div>
 
 <style type="scss">
@@ -25,5 +31,14 @@
 		width: 100%;
 		padding: var(--space-2);
 		border-bottom: 1px solid var(--clr-neutral-badge);
+	}
+
+	.no-events-wrapper {
+		display: flex;
+		margin-top: var(--space-4);
+
+		em {
+			color: var(--clr-text-off);
+		}
 	}
 </style>
