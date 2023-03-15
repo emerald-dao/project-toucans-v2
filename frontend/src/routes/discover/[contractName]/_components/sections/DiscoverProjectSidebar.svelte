@@ -1,7 +1,7 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { user } from '$stores/flow/FlowStore';
-	import { Button, Label, Modal, getModal } from '@emerald-dao/component-library';
+	import { Button, Label, Modal, getModal, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import { fundingData } from '$lib/features/funding/stores/FundingData';
@@ -41,13 +41,24 @@
 	<div class="content-wrapper column-14">
 		<div class="column-4">
 			<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
-			<div class="commands-wrapper">
+			<div class="commands-wrapper row-2 align-center">
+				{#if daoData.onChainData.minting}
+					<Label size="xx-small" color="neutral" hasBorder={false}>
+						Minting enabled
+						<TooltipIcon
+							width={0.6}
+							tooltip={`Project signers can mint $${daoData.generalInfo.token_symbol}`}
+							backgroundColor="var(--clr-neutral-badge)"
+							borderColor="var(--clr-neutral-badge)"
+						/>
+					</Label>
+				{/if}
 				<SubscribeButton
 					projectId={daoData.generalInfo.project_id}
 					projectOwner={daoData.generalInfo.owner}
 				/>
 			</div>
-			<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
+			<h1 class="h2 w-medium">{daoData.generalInfo.name}</h1>
 			{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
 				<div class="row-3 align-end">
 					<Label size="small" color="tertiary" hasBorder={false}
@@ -61,7 +72,7 @@
 								class="header-link"
 								target="_blank"
 							>
-								<Icon icon="tabler:brand-twitter" width="18" />
+								<Icon icon="tabler:brand-twitter" width="16" />
 							</a>
 						{/if}
 						{#if daoData.generalInfo.discord && daoData.generalInfo.discord != 'https://discord.gg/'}
@@ -71,7 +82,7 @@
 								class="header-link"
 								target="_blank"
 							>
-								<Icon icon="tabler:brand-discord" width="18" />
+								<Icon icon="tabler:brand-discord" width="16" />
 							</a>
 						{/if}
 						{#if daoData.generalInfo.website}
@@ -81,7 +92,7 @@
 								class="header-link"
 								target="_blank"
 							>
-								<Icon icon="tabler:world" width="18" />
+								<Icon icon="tabler:world" width="16" />
 							</a>
 						{/if}
 					</div>
@@ -118,7 +129,6 @@
 	.card-primary {
 		height: fit-content;
 		padding: 0;
-		overflow: hidden;
 
 		.banner-image {
 			position: relative;
@@ -127,6 +137,7 @@
 			object-fit: cover;
 			opacity: 0.7;
 			border-bottom: 1px var(--clr-border-primary) solid;
+			border-radius: var(--radius-4) var(--radius-4) 0 0;
 		}
 
 		.content-wrapper {

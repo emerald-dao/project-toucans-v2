@@ -19,7 +19,6 @@ export async function POST({ request }) {
 		project_id: projectId,
 		user_address: user.addr
 	});
-	console.log('Error adding new notification', error);
 
 	if (error) {
 		return new Response(JSON.stringify({ error: 'Error adding notification' }), { status: 401 });
