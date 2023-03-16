@@ -29,7 +29,6 @@ import getPendingActionsInManyScript from './cadence/scripts/get_pending_actions
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 
 import { get } from 'svelte/store';
-import { fundingData } from '$lib/features/funding/stores/FundingData';
 import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
 import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
@@ -46,14 +45,12 @@ export const unauthenticate = () => fcl.unauthenticate();
 export const logIn = async () => await fcl.logIn();
 export const signUp = () => fcl.signUp();
 
-
-//   _______                             _   _                 
-//  |__   __|                           | | (_)                
-//     | |_ __ __ _ _ __  ___  __ _  ___| |_ _  ___  _ __  ___ 
+//   _______                             _   _
+//  |__   __|                           | | (_)
+//     | |_ __ __ _ _ __  ___  __ _  ___| |_ _  ___  _ __  ___
 //     | | '__/ _` | '_ \/ __|/ _` |/ __| __| |/ _ \| '_ \/ __|
 //     | | | | (_| | | | \__ \ (_| | (__| |_| | (_) | | | \__ \
-//     |_|_|  \__,_|_| |_|___/\__,_|\___|\__|_|\___/|_| |_|___/                                             
-
+//     |_|_|  \__,_|_| |_|___/\__,_|\___|\__|_|\___/|_| |_|___/
 
 const dummyTransaction = async () => {
 	return await fcl.mutate({
@@ -124,7 +121,7 @@ const fundProject = async (
 ) => {
 	let txCode = fundProjectTx;
 	if (currency === ECurrencies.FUSD) {
-		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD')
+		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -158,7 +155,7 @@ const donate = async (
 ) => {
 	let txCode = donateTx;
 	if (currency === ECurrencies.FUSD) {
-		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD')
+		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -279,7 +276,7 @@ const signAction = async (actionMessage: string, actionUUID: string) => {
 	const latestBlock = await fcl.block(true);
 	const intentHex = Buffer.from(`${intent}`).toString('hex');
 	const MSG = `${actionUUID}${intentHex}${latestBlock.id}`;
-	console.log(MSG)
+	console.log(MSG);
 	const sig = await fcl.currentUser().signUserMessage(MSG);
 	const keyIds = sig.map((s) => {
 		return s.keyId;
@@ -287,8 +284,8 @@ const signAction = async (actionMessage: string, actionUUID: string) => {
 	const signatures = sig.map((s) => {
 		return s.signature;
 	});
-	console.log(keyIds)
-	console.log(signatures)
+	console.log(keyIds);
+	console.log(signatures);
 
 	return { keyIds, signatures, MSG, signatureBlock: latestBlock.height };
 };
@@ -390,18 +387,17 @@ export const finalizeAddSignerExecution = (
 	projectId: string,
 	actionMessage: string,
 	actionUUID: string
-) => executeTransaction(() => finalizeAddSigner(projectOwner, projectId, actionMessage, actionUUID));
+) =>
+	executeTransaction(() => finalizeAddSigner(projectOwner, projectId, actionMessage, actionUUID));
 
-
-//    _____           _       _       
-//   / ____|         (_)     | |      
-//  | (___   ___ _ __ _ _ __ | |_ ___ 
+//    _____           _       _
+//   / ____|         (_)     | |
+//  | (___   ___ _ __ _ _ __ | |_ ___
 //   \___ \ / __| '__| | '_ \| __/ __|
 //   ____) | (__| |  | | |_) | |_\__ \
 //  |_____/ \___|_|  |_| .__/ \__|___/
-//                     | |            
-//                     |_|            
-
+//                     | |
+//                     |_|
 
 export const getProjectInfo: (
 	contractAddress: string,
@@ -448,7 +444,11 @@ export const getPendingActionInDAO = async (owner: string, projectId: string) =>
 	}
 };
 
-export const getPendingActionsInMany = async (userAddress: string, projectOwners: string[], projectIds: string[]) => {
+export const getPendingActionsInMany = async (
+	userAddress: string,
+	projectOwners: string[],
+	projectIds: string[]
+) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getPendingActionsInManyScript),
@@ -469,9 +469,7 @@ export const getBalances = async (userAddress: string) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getBalancesScript),
-			args: (arg, t) => [
-				arg(userAddress, t.Address)
-			]
+			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
 		return response;
 	} catch (e) {

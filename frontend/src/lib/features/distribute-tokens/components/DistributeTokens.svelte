@@ -97,6 +97,10 @@
 				bind:availableBalance
 				{addToStaging}
 			/>
+		{:else}
+			<div class="row-2 align-center">
+				<span class="small no-tokens-message"><em>No tokens available to distribute.</em></span>
+			</div>
 		{/if}
 	</div>
 	<div class="dist-wrapper sub-wrapper card">
@@ -121,6 +125,10 @@
 			display: flex;
 			flex: 1;
 			flex-direction: column;
+
+			.no-tokens-message {
+				color: var(--clr-text-off);
+			}
 
 			.introduction {
 				h5 {

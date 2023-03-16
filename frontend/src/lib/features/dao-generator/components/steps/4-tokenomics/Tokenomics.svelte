@@ -1,4 +1,5 @@
 <script type="ts">
+	import CurrencySelect from './../../../../../components/atoms/CurrencySelect.svelte';
 	import { fly } from 'svelte/transition';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
@@ -46,28 +47,10 @@
 	</label>
 	<div class="payment-currency column-2">
 		<label for="currencies">Payment currency</label>
-		<div class="radio-tabs" id="currencies">
-			<label>
-				$FLOW
-				<input
-					type="radio"
-					id="flow"
-					name="currency"
-					value={ECurrencies.FLOW}
-					bind:group={$daoGeneratorData.tokenomics.paymentCurrency}
-				/>
-			</label>
-			<label>
-				$FUSD
-				<input
-					type="radio"
-					id="fusd"
-					name="currency"
-					value={ECurrencies.FUSD}
-					bind:group={$daoGeneratorData.tokenomics.paymentCurrency}
-				/>
-			</label>
-		</div>
+		<CurrencySelect
+			currencies={[ECurrencies.FLOW, ECurrencies.FUSD]}
+			bind:value={$daoGeneratorData.tokenomics.paymentCurrency}
+		/>
 	</div>
 	<StepButtons active={res.isValid()} />
 </form>

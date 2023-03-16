@@ -1,35 +1,11 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { user } from '$stores/flow/FlowStore';
-	import { Button, Label, Modal, getModal, TooltipIcon } from '@emerald-dao/component-library';
+	import { Button, Label, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { ECurrencies } from '$lib/types/common/enums';
-	import { fundingData } from '$lib/features/funding/stores/FundingData';
-	import { fundActiveStep, fundingSteps } from '$lib/features/funding/stores/FundingSteps';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
+	import PaymentModal from '$lib/features/funding-and-donations/components/PaymentModal.svelte';
 
 	export let daoData: DAOProject;
-
-	const initFunding = () => {
-		if (daoData.onChainData.fundingCycles != undefined && $user) {
-			fundActiveStep.reset();
-
-			getModal().open();
-
-			$fundingData.daoName = daoData.generalInfo.name;
-			$fundingData.daoAddress = daoData.generalInfo.owner;
-			$fundingData.funderAddress = $user.addr;
-			$fundingData.projectId = daoData.generalInfo.project_id;
-			$fundingData.currency = ECurrencies.FLOW;
-			$fundingData.issuanceRate = Math.trunc(
-				Number(
-					daoData.onChainData.fundingCycles[
-						Number(daoData.onChainData.fundingCycles[daoData.onChainData.fundingCycles.length - 1])
-					].details.issuanceRate
-				)
-			);
-		}
-	};
 
 	const initDonation = () => {
 		alert('todo');
@@ -58,7 +34,7 @@
 					projectOwner={daoData.generalInfo.owner}
 				/>
 			</div>
-			<h1 class="h2 w-medium">{daoData.generalInfo.name}</h1>
+			<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
 			{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
 				<div class="row-3 align-end">
 					<Label size="small" color="tertiary" hasBorder={false}
@@ -102,28 +78,14 @@
 		</div>
 		{#if daoData.onChainData.currentFundingCycle}
 			<div class="row-4">
-				<Button size="large" width="full-width" on:click={initFunding}>
-					<Icon icon="tabler:cash-banknote" />
-					Fund
-				</Button>
-				<Button size="large" type="ghost" color="neutral" on:click={initDonation}>
-					<Icon icon="tabler:heart-handshake" />
-					Donate
-				</Button>
+				<PaymentModal {daoData} paymentType="fund" />
+				<PaymentModal {daoData} paymentType="donate" />
 			</div>
 		{:else}
-			<Button size="large" width="full-width" on:click={initDonation}>
-				<Icon icon="tabler:heart-handshake" />
-				Donate
-			</Button>
+			<PaymentModal {daoData} paymentType="donate" />
 		{/if}
 	</div>
 </div>
-<Modal>
-	<div class="modal-content">
-		<svelte:component this={$fundingSteps[$fundActiveStep].component} />
-	</div>
-</Modal>
 
 <style type="scss">
 	.card-primary {
@@ -165,9 +127,5 @@
 				font-size: var(--font-size-3);
 			}
 		}
-	}
-
-	.modal-content {
-		max-width: 300px;
 	}
 </style>
