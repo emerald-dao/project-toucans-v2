@@ -14,11 +14,6 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
 const actionIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.ToucansTreasuryActions.`;
 
-fcl.events(`${eventIdentifierPrefix}ProjectCreated`).subscribe((event) => {
-  const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'ProjectCreated');
-});
-
 fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
   const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'NewFundingCycle');

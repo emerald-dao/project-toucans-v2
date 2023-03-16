@@ -34,5 +34,12 @@ export async function POST({ request }: { request: RequestHandler }) {
 	});
 	console.log('Error adding new project', ProjectError);
 
+	const { error: EventError } = await supabase.from('events').insert({
+		project_id: data.daoDetails.contractName,
+		type: "ProjectCreated",
+		data: { by: data.user.addr, tokenTypeIdentifier: `A.${data.user.addr.slice(2)}.${data.daoDetails.contractName}.Vault` }
+	});
+	console.log('Error adding new ProjectCreated event', EventError);
+
 	return json({ ProjectError });
 }
