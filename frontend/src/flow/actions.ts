@@ -114,13 +114,15 @@ const deployContract = async (data) => {
 export const deployContractExecution = (data, actionAfterSucceed) =>
 	executeTransaction(() => deployContract(data), actionAfterSucceed);
 
-const fundProject = async () => {
-	const projectOwner = get(fundingData).daoAddress;
-	const projectId = get(fundingData).projectId;
-	const amount = get(fundingData).amount;
-	const message = get(fundingData).specialMessage;
+const fundProject = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	message: string,
+	currency: ECurrencies
+) => {
 	let txCode = fundProjectTx;
-	if (get(fundingData).currency === ECurrencies.FUSD) {
+	if (currency === ECurrencies.FUSD) {
 		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD')
 	}
 	return await fcl.mutate({
@@ -138,15 +140,23 @@ const fundProject = async () => {
 	});
 };
 
-export const fundProjectExecution = () => executeTransaction(fundProject);
+export const fundProjectExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	message: string,
+	currency: ECurrencies
+) => executeTransaction(() => fundProject(projectOwner, projectId, amount, message, currency));
 
-const donate = async () => {
-	const projectOwner = get(fundingData).daoAddress;
-	const projectId = get(fundingData).projectId;
-	const amount = get(fundingData).amount;
-	const message = get(fundingData).specialMessage;
+const donate = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	message: string,
+	currency: ECurrencies
+) => {
 	let txCode = donateTx;
-	if (get(fundingData).currency === ECurrencies.FUSD) {
+	if (currency === ECurrencies.FUSD) {
 		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD')
 	}
 	return await fcl.mutate({
@@ -164,7 +174,13 @@ const donate = async () => {
 	});
 };
 
-export const donateExecution = () => executeTransaction(donate);
+export const donateExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	message: string,
+	currency: ECurrencies
+) => executeTransaction(() => donate(projectOwner, projectId, amount, message, currency));
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
