@@ -8,7 +8,7 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
  
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let Payment: @FlowToken.Vault
-  let ProjectTokenReceiver: &ExampleToken.Vault{FungibleToken.Receiver}
+  let Payer: Address
 
   prepare(user: AuthAccount) {
     // Setup User Account
@@ -32,12 +32,10 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
                   ?? panic("Project does not exist, at least in this collection.")
     
     self.Payment <- user.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
-    
-    self.ProjectTokenReceiver = user.getCapability(ExampleToken.ReceiverPublicPath)
-                  .borrow<&ExampleToken.Vault{FungibleToken.Receiver}>()!
+    self.Payer = user.address          
   }
 
   execute {
-    self.Project.purchase(paymentTokens: <- self.Payment, projectTokenReceiver: self.ProjectTokenReceiver, message: message)
+    self.Project.donateToTreasury(vault: <- self.Payment, payer: self.Payer, message: message)
   }
 }
