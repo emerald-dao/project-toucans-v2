@@ -26,6 +26,7 @@ import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw';
 import getPendingActionsInManyScript from './cadence/scripts/get_pending_actions_in_many.cdc?raw';
+import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 
 import { get } from 'svelte/store';
 import { fundingData } from '$lib/features/funding/stores/FundingData';
@@ -464,3 +465,17 @@ export const getPendingActionsInMany = async (userAddress: string, projectOwners
 	}
 };
 
+export const getBalances = async (userAddress: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getBalancesScript),
+			args: (arg, t) => [
+				arg(userAddress, t.Address)
+			]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getBalances');
+		console.log(e);
+	}
+};
