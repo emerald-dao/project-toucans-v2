@@ -20,7 +20,6 @@ transaction(projectOwner: Address, projectId: String, recipientAddr: Address, am
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
 
     self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/fusdReceiver)
-    assert(self.RecipientVault.getType() == Type<&FUSD.Vault>(), message: "This is not an FUSD Vault.")
   }
 
   execute {

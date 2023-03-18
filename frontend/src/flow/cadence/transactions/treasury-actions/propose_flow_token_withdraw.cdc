@@ -19,7 +19,6 @@ transaction(projectOwner: Address, projectId: String, recipientAddr: Address, am
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
     self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
-    assert(self.RecipientVault.getType() == Type<&FlowToken.Vault>(), message: "This is not an FlowToken Vault.")
   }
 
   execute {

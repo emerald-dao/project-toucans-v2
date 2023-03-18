@@ -33,6 +33,7 @@ import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
 import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
 import { ECurrencies } from '$lib/types/common/enums';
+import { paymentData } from '$lib/features/funding-and-donations/stores/PaymentData';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -242,6 +243,37 @@ export const proposeWithdrawExecution = (
 	recipient: string,
 	amount: string
 ) => executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
+
+const proposePaymentWithdraw = async (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string,
+	currency: ECurrencies
+) => {
+	const txCode = currency === ECurrencies.FLOW ? proposeFlowTokenWithdrawTx : proposeFUSDWithdrawTx;
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(txCode),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(recipient, t.Address),
+			arg(amount, t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const proposePaymentWithdrawExecution = (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string,
+	currency: ECurrencies
+) => executeTransaction(() => proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency));
 
 const updateMultisig = async (
 	projectOwner: string,

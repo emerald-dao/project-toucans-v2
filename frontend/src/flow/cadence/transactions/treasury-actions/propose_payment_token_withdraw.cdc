@@ -19,7 +19,6 @@ transaction(projectOwner: Address, projectId: String, recipientAddr: Address, am
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
     let paymentTokenType = self.Project.paymentTokenInfo
     self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(paymentTokenType.publicPath)
-    assert(self.RecipientVault.getType() == paymentTokenType.getType(), message: "This is not the correct type.")
   }
 
   execute {
