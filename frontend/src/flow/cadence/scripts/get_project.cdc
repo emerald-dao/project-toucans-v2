@@ -45,9 +45,9 @@ pub struct Info {
     self.overflowBalance = info.getOverflowBalance()
     self.minting = info.minting
     self.treasuryBalances = {
-      "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
+      "FLOW": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
       "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FUSD.Vault>()) ?? 0.0,
-      info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
+      info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
 
     let manager = info.borrowManagerPublic()
