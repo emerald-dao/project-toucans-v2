@@ -1,0 +1,13 @@
+<div class="column-2">
+	<h4>Disclaimer</h4>
+	<p class="small">
+		By agreeing to fund this project, you are instilling trust upon this project. Toucans is not
+		responsible for funds lost or stolen, or any losses by projects or their supporters.
+	</p>
+</div>
+
+<style lang="scss">
+	h4 {
+		font-size: var(--font-size-5);
+	}
+</style>

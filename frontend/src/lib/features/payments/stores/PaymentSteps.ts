@@ -1,9 +1,11 @@
 import { createActiveStep } from '$stores/custom/steps/ActiveStep';
 import { createSteps } from '$stores/custom/steps/Steps';
-import { fundProjectExecution } from '$flow/actions';
 import Disclaimer from '../components/steps/1-disclaimer/Disclaimer.svelte';
 import Fund from '../components/steps/2-fund/Fund.svelte';
 import Thanks from '../components/steps/3-thanks/Thanks.svelte';
+import { submitPayment } from '../functions/submitPayment';
+import { get } from 'svelte/store';
+import { paymentData } from './PaymentData';
 
 export const paymentSteps = createSteps([
 	{
@@ -11,14 +13,21 @@ export const paymentSteps = createSteps([
 		component: Disclaimer,
 		action: null,
 		form: false,
-		state: 'active'
+		state: 'active',
+		button: {
+			text: 'Accept'
+		}
 	},
 	{
 		name: 'Fund',
 		component: Fund,
-		action: fundProjectExecution,
+		action: () => submitPayment(get(paymentData)),
 		form: false,
-		state: 'inactive'
+		state: 'inactive',
+		button: {
+			text: 'Pay',
+			icon: 'tabler:cash'
+		}
 	},
 	{
 		name: 'Thank You!',

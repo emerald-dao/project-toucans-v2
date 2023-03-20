@@ -2,6 +2,8 @@ import * as fcl from '@onflow/fcl';
 import { transactionStore } from '$stores/flow/TransactionStore';
 import { addresses } from '$stores/flow/FlowStore';
 import { network } from './config';
+import type { TransactionStatusObject } from '@onflow/fcl';
+import type { ActionExecutionResult } from '$lib/stores/custom/steps/step.interface';
 
 export function replaceWithProperValues(script, contractName = '', contractAddress = '') {
 	return (
@@ -43,31 +45,52 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 	);
 }
 
-export const executeTransaction = async (
-	transaction: () => Promise<any>,
-	actionAfterSucceed?: () => Promise<any>
-) => {
+export const executeTransaction: (
+	transaction: () => Promise<string>,
+	actionAfterSucceed?: (res?: unknown) => Promise<unknown>
+) => Promise<ActionExecutionResult> = async (transaction, actionAfterSucceed) => {
 	transactionStore.initTransaction();
 
 	try {
 		const transactionId = await transaction();
 
-		fcl.tx(transactionId).subscribe(async (res) => {
+		fcl.tx(transactionId).subscribe(async (res: TransactionStatusObject) => {
 			transactionStore.subscribeTransaction(res);
-
-			if (res.status === 4) {
-				if (res.statusCode === 0 && actionAfterSucceed != undefined) {
-					await actionAfterSucceed(res);
-					transactionStore.resetTransaction();
-					return;
-				}
-				setTimeout(() => transactionStore.resetTransaction(), 2000);
-			}
 		});
+
+		const executionResult = await fcl
+			.tx(transactionId)
+			.onceSealed()
+			.then((res) => {
+				if (actionAfterSucceed) {
+					actionAfterSucceed(res);
+				}
+
+				transactionStore.resetTransaction();
+
+				return {
+					state: 'success',
+					errorMessage: ''
+				} as ActionExecutionResult;
+			})
+			.catch((e) => {
+				transactionStore.resetTransaction();
+
+				return {
+					state: 'error',
+					errorMessage: e
+				} as ActionExecutionResult;
+			});
+
+		return executionResult;
 	} catch (e) {
 		transactionStore.resetTransaction();
-		console.log(e);
-		throw e;
+		console.log('Error in executeTransaction: ', e);
+
+		return {
+			state: 'error',
+			errorMessage: e
+		} as ActionExecutionResult;
 	}
 };
 
