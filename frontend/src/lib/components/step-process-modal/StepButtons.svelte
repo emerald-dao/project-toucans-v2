@@ -1,0 +1,48 @@
+<script type="ts">
+	import { fade } from 'svelte/transition';
+	import type { createActiveStep } from '$stores/custom/steps/ActiveStep';
+	import type { Step } from '$stores/custom/steps/step.interface';
+	import { Button } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
+
+	export let activeStepStore: ReturnType<typeof createActiveStep>;
+	export let step: Step;
+
+	$: BUTTON_STATE = {
+		loading: 'loading',
+		active: step.isValid === undefined || step.isValid === true ? 'active' : 'disabled',
+		success: 'done',
+		error: 'active',
+		inactive: 'disabled'
+	};
+</script>
+
+{#if step.button}
+	<div class="row-space-between" in:fade={{ duration: 300 }}>
+		<div class="row align-center">
+			{#if $activeStepStore > 0}
+				<Button
+					size="small"
+					color="neutral"
+					type="transparent"
+					on:click={activeStepStore.decrement}
+				>
+					<Icon icon="tabler:arrow-left" />
+					Back
+				</Button>
+			{/if}
+		</div>
+		<Button
+			form="fund-form"
+			size="large"
+			width="extended"
+			state={BUTTON_STATE[step.state]}
+			on:click={activeStepStore.increment}
+		>
+			{step.button.text}
+			{#if step.button.icon}
+				<Icon icon={step.button.icon} />
+			{/if}
+		</Button>
+	</div>
+{/if}

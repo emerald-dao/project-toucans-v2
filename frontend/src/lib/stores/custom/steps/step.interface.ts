@@ -5,7 +5,17 @@ export interface Step {
 	name: string;
 	slug?: string;
 	component: typeof SvelteComponent;
-	action: null | (() => Promise<void>);
+	action: null | (() => Promise<ActionExecutionResult>);
 	form: boolean;
+	isValid?: boolean;
 	state: ProgressStates;
+	button?: {
+		text: string;
+		icon?: string;
+	};
+}
+
+export interface ActionExecutionResult {
+	state: 'success' | 'error';
+	errorMessage: string;
 }

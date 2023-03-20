@@ -1,6 +1,6 @@
 <script type="ts">
 	import { fly, fade } from 'svelte/transition';
-	import { paymentData } from '$lib/features/funding-and-donations/stores/PaymentData';
+	import { paymentData } from '$lib/features/payments/stores/PaymentData';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
 	let viewSpecialMessage = false;
@@ -26,7 +26,7 @@
 <div class="main-wrapper row-1 align-center">
 	{#if !viewSpecialMessage}
 		<button on:click|preventDefault={onToggleSpecialMessage} class="row-2">
-			<div in:fly|local={{ duration: 100, x: -10 }}>
+			<div in:fly|local={{ duration: 200, x: -10 }}>
 				<IconCircle icon="tabler:plus" color="neutral" />
 			</div>
 			Add a special message

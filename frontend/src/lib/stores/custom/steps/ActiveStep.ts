@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store';
 import type { Subscriber, Unsubscriber } from 'svelte/store';
-import type { Step } from '$lib/types/dao-generator/generator-step.interface';
 import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
+import type { Step } from './step.interface';
 
 export function createActiveStep(steps: {
 	subscribe: (this: void, run: Subscriber<Step[]>) => Unsubscriber;
@@ -12,6 +12,9 @@ export function createActiveStep(steps: {
 	const { subscribe, set, update } = activeStep;
 
 	async function increment() {
+		console.log('activeStep: ' + get(activeStep));
+		console.log('increment');
+
 		const activeStepNumber = get(activeStep);
 		const action = get(steps)[activeStepNumber].action;
 		const numberOfSteps = get(steps).length;
@@ -19,16 +22,19 @@ export function createActiveStep(steps: {
 		if (numberOfSteps - 1 >= activeStepNumber) {
 			if (action != null) {
 				steps.changeStepState(activeStepNumber, 'loading');
-				try {
-					await action();
+
+				const actionResult = await action();
+
+				if (actionResult.state === 'error') {
+					steps.changeStepState(activeStepNumber, 'error');
+					console.error('Error in action: ' + actionResult.errorMessage);
+					return;
+				} else if (actionResult.state === 'success') {
 					steps.changeStepState(activeStepNumber, 'success');
 					if (numberOfSteps - 1 !== activeStepNumber) {
 						steps.changeStepState(activeStepNumber + 1, 'active');
 						update((n) => n + 1);
 					}
-				} catch (e) {
-					console.error('Error has occured: ' + e);
-					steps.changeStepState(activeStepNumber, 'error');
 				}
 			} else {
 				steps.changeStepState(activeStepNumber, 'success');

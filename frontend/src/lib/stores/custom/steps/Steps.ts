@@ -1,13 +1,13 @@
-import type { Step } from '$lib/types/dao-generator/generator-step.interface';
 import type { ProgressStates } from '@emerald-dao/component-library/components/ProgressStep/progress-states.type';
 import { writable } from 'svelte/store';
+import type { Step } from './step.interface';
 
 export function createSteps(steps: Step[]) {
 	steps.forEach((step, index) => {
 		index > 0 ? (step.state = 'inactive') : (step.state = 'active');
 	});
 
-	const { subscribe, update } = writable(steps);
+	const { subscribe, update, set } = writable(steps);
 
 	function changeStepState(index: number, state: ProgressStates) {
 		update((steps) => {
@@ -31,6 +31,7 @@ export function createSteps(steps: Step[]) {
 
 	return {
 		subscribe,
+		set,
 		changeStepState,
 		resetStates
 	};

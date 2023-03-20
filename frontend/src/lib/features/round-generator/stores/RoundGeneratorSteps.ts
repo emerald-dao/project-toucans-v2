@@ -1,13 +1,10 @@
 import { createActiveStep } from '$stores/custom/steps/ActiveStep';
 import { createSteps } from '$stores/custom/steps/Steps';
-import { newRoundExecution } from '$flow/actions';
 import GeneralData from '../components/steps/2-general-data/GeneralData.svelte';
 import Duration from '../components/steps/1-duration/Duration.svelte';
 import Distribution from '../components/steps/3-distribution/Distribution.svelte';
-
-const onLaunchRound = async () => {
-	newRoundExecution();
-};
+import Thanks from '../components/steps/4-thanks/Thanks.svelte';
+import { launchRound } from '../functions/launchRound';
 
 export const roundGeneratorSteps = createSteps([
 	{
@@ -15,19 +12,40 @@ export const roundGeneratorSteps = createSteps([
 		component: Duration,
 		action: null,
 		form: false,
-		state: 'active'
+		isValid: false,
+		state: 'active',
+		button: {
+			text: 'Next',
+			icon: 'tabler:arrow-right'
+		}
 	},
 	{
-		name: 'GeneralData',
+		name: 'Conditions',
 		component: GeneralData,
 		action: null,
 		form: false,
-		state: 'active'
+		isValid: false,
+		state: 'active',
+		button: {
+			text: 'Next',
+			icon: 'tabler:arrow-right'
+		}
 	},
 	{
 		name: 'Distribution',
 		component: Distribution,
-		action: onLaunchRound,
+		action: () => launchRound(),
+		form: false,
+		state: 'inactive',
+		button: {
+			text: 'Launch round',
+			icon: 'tabler:arrow-right'
+		}
+	},
+	{
+		name: 'Thank You!',
+		component: Thanks,
+		action: null,
 		form: false,
 		state: 'inactive'
 	}

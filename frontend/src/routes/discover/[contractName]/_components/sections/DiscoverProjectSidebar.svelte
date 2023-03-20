@@ -3,7 +3,7 @@
 	import { Button, Label, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
-	import PaymentModal from '$lib/features/funding-and-donations/components/PaymentModal.svelte';
+	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
 
 	export let daoData: DAOProject;
 

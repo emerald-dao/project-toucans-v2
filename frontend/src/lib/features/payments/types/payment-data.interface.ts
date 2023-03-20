@@ -1,13 +1,11 @@
 import type { ECurrencies } from '$lib/types/common/enums';
 
 export interface DonationData extends PaymentData {
-	type: 'donation';
-	issuanceRate: undefined;
-	reserveRate: undefined;
+	type: 'donation' | undefined;
 }
 
 export interface FundData extends PaymentData {
-	type: 'fund';
+	type: 'fund' | undefined;
 	issuanceRate: number;
 	reserveRate: number;
 }

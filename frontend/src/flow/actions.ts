@@ -33,7 +33,8 @@ import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
 import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
 import { ECurrencies } from '$lib/types/common/enums';
-import { paymentData } from '$lib/features/funding-and-donations/stores/PaymentData';
+import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-generator-data.interface';
+import type { TransactionStatusObject } from '@onflow/fcl';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -70,7 +71,7 @@ const dummyTransaction = async () => {
 };
 export const dummyTransactionExecution = () => executeTransaction(dummyTransaction);
 
-const deployContract = async (data) => {
+const deployContract = async (data: DaoGeneratorData) => {
 	console.log(data);
 	let contractCode = rawExampleTokenCode
 		.replaceAll('INSERT NAME', data.daoDetails.name)
@@ -110,8 +111,10 @@ const deployContract = async (data) => {
 	});
 };
 
-export const deployContractExecution = (data, actionAfterSucceed) =>
-	executeTransaction(() => deployContract(data), actionAfterSucceed);
+export const deployContractExecution = (
+	data: DaoGeneratorData,
+	actionAfterSucceed: (res: TransactionStatusObject) => Promise<unknown>
+) => executeTransaction(() => deployContract(data), actionAfterSucceed);
 
 const fundProject = async (
 	projectOwner: string,

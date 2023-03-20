@@ -1,9 +1,9 @@
 <script type="ts">
-	import { paymentData } from '$lib/features/funding-and-donations/stores/PaymentData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 
 	export let daoData: DAOProject;
+	export let title: string;
 </script>
 
 <div class="column-6 align-center">
@@ -13,7 +13,7 @@
 		</div>
 		<img src={daoData.generalInfo.logo} alt="Toucans" />
 	</div>
-	<h4>Disclaimer</h4>
+	<h4>{title}</h4>
 </div>
 
 <style lang="scss">
