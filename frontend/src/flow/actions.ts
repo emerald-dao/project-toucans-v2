@@ -276,10 +276,7 @@ export const proposePaymentWithdrawExecution = (
 	recipient: string,
 	amount: string,
 	currency: ECurrencies
-) =>
-	executeTransaction(() =>
-		proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency)
-	);
+) => executeTransaction(() => proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency));
 
 const updateMultisig = async (
 	projectOwner: string,
