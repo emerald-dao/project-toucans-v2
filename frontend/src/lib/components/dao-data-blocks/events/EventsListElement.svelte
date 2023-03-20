@@ -70,11 +70,11 @@
 		<span class="event-name">{EVENTS_DATA[event.type].text}</span>
 		<div class="column info-wrapper">
 			<!-- <p class="address">{event.by}</p> -->
-			<span class="date">{formatDate(new Date(event.timestamp * 1000))}</span>
+			<span class="date">{formatDate(new Date(event.timestamp))}</span>
 		</div>
 	</div>
 	<div class="row-3">
-		{#if event.type === 'Purchase' && event.data.message}
+		{#if (event.type === 'Purchase' || event.type === 'Donate') && event.data.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>

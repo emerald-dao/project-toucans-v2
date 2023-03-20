@@ -27,10 +27,13 @@ pub contract ToucansTreasuryActions {
       pre {
         _recipientVault.check(): "Invalid recipient capability."
       }
+      let tokenTypeIdentifier: String = _recipientVault.borrow()!.getType().identifier
+      let suffix = tokenTypeIdentifier.slice(from: 19, upTo: tokenTypeIdentifier.length)
+      let tokenTypeString = suffix.slice(from: 0, upTo: suffix.length - 6)
       self.intent = "Withdraw "
                         .concat(_amount.toString())
                         .concat(" ")
-                        .concat(_recipientVault.getType().identifier)
+                        .concat(tokenTypeString)
                         .concat(" tokens from the treasury to ")
                         .concat((_recipientVault.borrow()!.owner!.address as Address).toString())
       self.title = "Withdraw"
@@ -140,7 +143,7 @@ pub contract ToucansTreasuryActions {
 
   pub fun cantExecuteAutomatically(): [Type] {
     return [
-      AddSigner.getType()
+      Type<AddOneSigner>()
     ]
   }
 }

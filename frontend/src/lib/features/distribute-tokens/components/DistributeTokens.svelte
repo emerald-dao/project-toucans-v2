@@ -44,7 +44,7 @@
 		if (distributionType === 'mint') {
 			mintTokens(daoData, distStaging);
 		} else if (distributionType === 'withdraw') {
-			withdrawTokens(daoData, distStaging);
+			withdrawTokens(daoData, distStaging, currencyToDistribute as ECurrencies);
 		}
 	};
 </script>
@@ -107,7 +107,9 @@
 		<DistributionStaging bind:distStaging tokenName={daoData.generalInfo.token_symbol} />
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
-				<Button width="full-width" on:click={distributeTokens}>Distribute</Button>
+				<Button width="full-width" on:click={distributeTokens}>
+					{distributionType === 'withdraw' ? 'Withdraw' : 'Distribute'}
+				</Button>
 			</div>
 		{/if}
 	</div>

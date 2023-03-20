@@ -5,7 +5,9 @@
 	export let daoData: DAOProject;
 
 	$: recentActivity = daoData.events
-		? daoData.events.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6)
+		? daoData.events
+				.sort((a, b) => (a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0))
+				.slice(0, 6)
 		: [];
 </script>
 

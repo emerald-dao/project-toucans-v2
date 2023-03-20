@@ -247,6 +247,40 @@ export const proposeWithdrawExecution = (
 	amount: string
 ) => executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
 
+const proposePaymentWithdraw = async (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string,
+	currency: ECurrencies
+) => {
+	const txCode = currency === ECurrencies.FLOW ? proposeFlowTokenWithdrawTx : proposeFUSDWithdrawTx;
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(txCode),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(recipient, t.Address),
+			arg(amount, t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const proposePaymentWithdrawExecution = (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string,
+	currency: ECurrencies
+) =>
+	executeTransaction(() =>
+		proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency)
+	);
+
 const updateMultisig = async (
 	projectOwner: string,
 	projectId: string,

@@ -447,11 +447,7 @@ pub contract Toucans {
         self.totalFunding = self.totalFunding + vault.balance
         self.funders[payer] = (self.funders[payer] ?? 0.0) + vault.balance
       }
-      if let existingVault = &self.treasury[vault.getType()] as &FungibleToken.Vault? {
-        existingVault.deposit(from: <- vault)
-      } else {
-        self.treasury[vault.getType()] <-! vault
-      }
+      self.depositToTreasury(vault: <- vault)
     }
 
 

@@ -49,16 +49,6 @@ pub contract ExampleToken: FungibleToken {
             destroy vault
         }
 
-        pub fun transfer(amount: UFix64, recipient: &Vault{FungibleToken.Receiver}) {
-            let owner = self.owner!.address
-            let recipientAddr = recipient.owner!.address
-            self.balance = self.balance - amount
-            emit TokensTransferred(amount: amount, from: owner, to: recipientAddr)
-            ExampleToken.balances[owner] = (ExampleToken.balances[owner] ?? amount) - amount
-            ExampleToken.balances[recipientAddr] = (ExampleToken.balances[recipientAddr] ?? 0.0) + amount
-            recipient.deposit(from: <- create Vault(balance: amount))
-        }
-
         pub fun getViews(): [Type]{
             return [Type<FungibleTokenMetadataViews.FTView>(),
                     Type<FungibleTokenMetadataViews.FTDisplay>(),
@@ -107,14 +97,14 @@ pub contract ExampleToken: FungibleToken {
             }
             return nil
         }
-
+  
         init(balance: UFix64) {
             self.balance = balance
         }
 
         destroy() {
-            ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
             emit TokensBurned(amount: self.balance)
+            ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
         }
     }
 
