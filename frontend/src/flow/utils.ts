@@ -4,6 +4,7 @@ import { addresses } from '$stores/flow/FlowStore';
 import { network } from './config';
 import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$lib/stores/custom/steps/step.interface';
+import { get } from 'svelte/store';
 
 export function replaceWithProperValues(script, contractName = '', contractAddress = '') {
 	return (
@@ -47,60 +48,57 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 
 export const executeTransaction: (
 	transaction: () => Promise<string>,
-	actionAfterSucceed?: (res?: unknown) => Promise<unknown>
+	actionAfterSucceed?: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
 ) => Promise<ActionExecutionResult> = async (transaction, actionAfterSucceed) => {
 	transactionStore.initTransaction();
 
 	try {
+		// We start the transaction
 		const transactionId = await transaction();
 
+		// We connect our TransactionStore to the transaction to get the status
 		fcl.tx(transactionId).subscribe(async (res: TransactionStatusObject) => {
+			console.log(res);
 			transactionStore.subscribeTransaction(res);
 		});
 
-		const executionResult = await fcl
-			.tx(transactionId)
-			.onceSealed()
-			.then((res) => {
-				if (actionAfterSucceed) {
-					actionAfterSucceed(res)
-						.then(() => {
-							transactionStore.resetTransaction();
+		// We wait for the transaction to be sealed to get the result
+		const executionResult = (await fcl.tx(transactionId).onceSealed()) as TransactionStatusObject;
 
-							return {
-								state: 'success',
-								errorMessage: ''
-							} as ActionExecutionResult;
-						})
-						.catch((e) => {
-							transactionStore.resetTransaction();
+		// Once sealed, we check if the execution has an actionAfterSucceed, if so, we execute it
+		if (actionAfterSucceed) {
+			try {
+				// We execute the actionAfterSucceed and return the result
+				const action = await actionAfterSucceed(executionResult);
 
-							return {
-								state: 'error',
-								errorMessage: 'Error in actionAfterSucceed: ' + e
-							} as ActionExecutionResult;
-						});
-				} else {
+				setTimeout(() => {
 					transactionStore.resetTransaction();
+				}, 2000);
 
-					return {
-						state: 'success',
-						errorMessage: ''
-					} as ActionExecutionResult;
-				}
-			})
-			.catch((e) => {
+				return action;
+			} catch (e) {
 				transactionStore.resetTransaction();
 
 				return {
 					state: 'error',
-					errorMessage: e
+					errorMessage: 'Error executing actionAfterSucceed: ' + e
 				} as ActionExecutionResult;
-			});
+			}
+		} else {
+			setTimeout(() => {
+				transactionStore.resetTransaction();
+			}, 2000);
 
-		return executionResult;
+			return {
+				state: 'success',
+				errorMessage: ''
+			} as ActionExecutionResult;
+		}
 	} catch (e) {
-		transactionStore.resetTransaction();
+		setTimeout(() => {
+			transactionStore.resetTransaction();
+		}, 8000);
+
 		console.log('Error in executeTransaction: ', e);
 
 		return {

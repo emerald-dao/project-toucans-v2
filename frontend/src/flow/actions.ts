@@ -35,6 +35,7 @@ import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.inter
 import { ECurrencies } from '$lib/types/common/enums';
 import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-generator-data.interface';
 import type { TransactionStatusObject } from '@onflow/fcl';
+import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -113,7 +114,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 
 export const deployContractExecution = (
 	data: DaoGeneratorData,
-	actionAfterSucceed: (res: TransactionStatusObject) => Promise<unknown>
+	actionAfterSucceed: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
 ) => executeTransaction(() => deployContract(data), actionAfterSucceed);
 
 const fundProject = async (
@@ -276,7 +277,10 @@ export const proposePaymentWithdrawExecution = (
 	recipient: string,
 	amount: string,
 	currency: ECurrencies
-) => executeTransaction(() => proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency));
+) =>
+	executeTransaction(() =>
+		proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency)
+	);
 
 const updateMultisig = async (
 	projectOwner: string,

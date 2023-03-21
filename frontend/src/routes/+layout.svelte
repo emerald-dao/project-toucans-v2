@@ -47,6 +47,7 @@
 <TransactionModal
 	transactionInProgress={$transactionStore.progress}
 	transactionStatus={$transactionStore.transaction}
+	on:close={() => transactionStore.resetTransaction()}
 />
 <Header
 	themeStore={theme}

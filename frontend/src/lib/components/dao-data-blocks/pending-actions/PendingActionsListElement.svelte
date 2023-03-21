@@ -16,8 +16,6 @@
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
 	export let showDetail = true;
 
-	console.log(action);
-
 	$: signed = Object.keys(action.votes).includes($user.addr as string);
 	$: yesCount = Object.values(action.votes).filter((v) => v === true).length;
 

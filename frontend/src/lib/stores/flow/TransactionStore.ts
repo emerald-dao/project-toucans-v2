@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
-import type { FlowTransaction } from '$lib/types/flow/flow-transaction.interface';
+import type { TransactionStatusObject } from '@onflow/fcl';
 
-function createTransaction(transaction: FlowTransaction) {
+function createTransaction(transaction: TransactionStatusObject) {
 	const { subscribe, set } = writable({
 		progress: false,
 		transaction: transaction
@@ -14,7 +14,7 @@ function createTransaction(transaction: FlowTransaction) {
 		});
 	}
 
-	function subscribeTransaction(transaction: FlowTransaction) {
+	function subscribeTransaction(transaction: TransactionStatusObject) {
 		set({
 			progress: true,
 			transaction: transaction

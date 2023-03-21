@@ -12,9 +12,6 @@ export function createActiveStep(steps: {
 	const { subscribe, set, update } = activeStep;
 
 	async function increment() {
-		console.log('activeStep: ' + get(activeStep));
-		console.log('increment');
-
 		const activeStepNumber = get(activeStep);
 		const action = get(steps)[activeStepNumber].action;
 		const numberOfSteps = get(steps).length;
@@ -24,8 +21,6 @@ export function createActiveStep(steps: {
 				steps.changeStepState(activeStepNumber, 'loading');
 
 				const actionResult = await action();
-
-				console.log(actionResult);
 
 				if (actionResult.state === 'error') {
 					steps.changeStepState(activeStepNumber, 'error');
