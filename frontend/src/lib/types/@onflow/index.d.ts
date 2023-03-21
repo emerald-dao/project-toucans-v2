@@ -55,7 +55,7 @@ declare module '@onflow/fcl' {
 		status: TrnsactionStatus;
 		statusString: '' | 'UNKNOWN' | 'PENDING' | 'FINALIZED' | 'EXECUTED' | 'SEALED' | 'EXPIRED';
 		errorMessage: string;
-		statusCode: string;
+		statusCode: number;
 	};
 
 	/** https://developers.flow.com/tools/fcl-js/reference/api#event-object */

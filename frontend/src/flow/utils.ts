@@ -73,7 +73,7 @@ export const executeTransaction: (
 
 				setTimeout(() => {
 					transactionStore.resetTransaction();
-				}, 2000);
+				}, 1000);
 
 				return action;
 			} catch (e) {
@@ -87,7 +87,7 @@ export const executeTransaction: (
 		} else {
 			setTimeout(() => {
 				transactionStore.resetTransaction();
-			}, 2000);
+			}, 1000);
 
 			return {
 				state: 'success',
@@ -95,9 +95,18 @@ export const executeTransaction: (
 			} as ActionExecutionResult;
 		}
 	} catch (e) {
+		transactionStore.subscribeTransaction({
+			blockId: '',
+			events: [],
+			status: 4,
+			statusString: '',
+			errorMessage: e as string,
+			statusCode: 1
+		});
+
 		setTimeout(() => {
 			transactionStore.resetTransaction();
-		}, 8000);
+		}, 6000);
 
 		console.log('Error in executeTransaction: ', e);
 
