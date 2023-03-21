@@ -18,8 +18,6 @@
 
 	const checkUserSubscription = async () => {
 		if ($user.loggedIn) {
-			console.log(checkSubscription(projectId, $user));
-
 			userSubscribed = await checkSubscription(projectId, $user);
 		} else {
 			userSubscribed = false;

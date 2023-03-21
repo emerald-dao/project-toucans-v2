@@ -63,15 +63,31 @@ export const executeTransaction: (
 			.onceSealed()
 			.then((res) => {
 				if (actionAfterSucceed) {
-					actionAfterSucceed(res);
+					actionAfterSucceed(res)
+						.then(() => {
+							transactionStore.resetTransaction();
+
+							return {
+								state: 'success',
+								errorMessage: ''
+							} as ActionExecutionResult;
+						})
+						.catch((e) => {
+							transactionStore.resetTransaction();
+
+							return {
+								state: 'error',
+								errorMessage: 'Error in actionAfterSucceed: ' + e
+							} as ActionExecutionResult;
+						});
+				} else {
+					transactionStore.resetTransaction();
+
+					return {
+						state: 'success',
+						errorMessage: ''
+					} as ActionExecutionResult;
 				}
-
-				transactionStore.resetTransaction();
-
-				return {
-					state: 'success',
-					errorMessage: ''
-				} as ActionExecutionResult;
 			})
 			.catch((e) => {
 				transactionStore.resetTransaction();

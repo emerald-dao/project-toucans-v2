@@ -40,12 +40,13 @@ export const deployDao = async () => {
 		const logo = await uploadLogoToIPFS();
 
 		postProject(get(user) as CurrentUserObject, projectData, eventData.projectId, logo).then(() => {
-			goto(`/discover/${projectData.daoDetails.contractName}`);
-			generatorActiveStep.reset();
-			daoGeneratorData.set(emptyDaoGeneratorData);
-			addNotification(eventData.projectId, get(user).addr as string);
+			goto(`/discover/${projectData.daoDetails.contractName}`).then(() => {
+				generatorActiveStep.reset();
+				daoGeneratorData.set(emptyDaoGeneratorData);
+				addNotification(eventData.projectId, get(user).addr as string);
+			});
 		});
 	};
 
-	deployContractExecution(projectData, actionAfterDeployment);
+	return deployContractExecution(projectData, actionAfterDeployment);
 };

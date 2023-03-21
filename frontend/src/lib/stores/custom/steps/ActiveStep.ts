@@ -25,6 +25,8 @@ export function createActiveStep(steps: {
 
 				const actionResult = await action();
 
+				console.log(actionResult);
+
 				if (actionResult.state === 'error') {
 					steps.changeStepState(activeStepNumber, 'error');
 					console.error('Error in action: ' + actionResult.errorMessage);

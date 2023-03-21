@@ -8,7 +8,7 @@
 	export let activeStepStore: ReturnType<typeof createActiveStep>;
 	export let step: Step;
 
-	$: BUTTON_STATE = {
+	$: buttonState = {
 		loading: 'loading',
 		active: step.isValid === undefined || step.isValid === true ? 'active' : 'disabled',
 		success: 'done',
@@ -33,14 +33,13 @@
 			{/if}
 		</div>
 		<Button
-			form="fund-form"
 			size="large"
 			width="extended"
-			state={BUTTON_STATE[step.state]}
+			state={buttonState[step.state]}
 			on:click={activeStepStore.increment}
 		>
 			{step.button.text}
-			{#if step.button.icon}
+			{#if step.button.icon && step.state !== 'loading'}
 				<Icon icon={step.button.icon} />
 			{/if}
 		</Button>
