@@ -10,8 +10,7 @@
 	export let action: ActionData;
 	export let threshold: string;
 	export let projectOwner: string;
-	export let projectId: string;
-	export let daoId: string | undefined = undefined;
+	export let daoId: string;
 	export let daoLogo: string | undefined =
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
 	export let showDetail = true;
@@ -81,7 +80,7 @@
 			{#if !signed || ($user.addr && action.votes[$user.addr] === false)}
 				<div
 					class="action-wrapper sign"
-					on:click={() => acceptActionExecution(projectOwner, projectId, action.intent, action.id)}
+					on:click={() => acceptActionExecution(projectOwner, daoId, action.intent, action.id)}
 					on:keydown
 				>
 					<Icon icon="tabler:pencil-plus" />

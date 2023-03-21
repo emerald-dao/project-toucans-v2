@@ -1,7 +1,10 @@
 import { getPendingActionsInMany } from '$flow/actions';
 import { supabase } from '$lib/supabaseClient';
+import type { ProjectNotifications } from '../types/notifications.interface';
 
-export const getNotifications = async (userAddress: string) => {
+export const getNotifications: (userAddress: string) => Promise<ProjectNotifications> = async (
+	userAddress
+) => {
 	const { data } = await supabase
 		.from('notifications')
 		.select(
@@ -30,5 +33,6 @@ export const getNotifications = async (userAddress: string) => {
 
 	const notifications = await getPendingActionsInMany(userAddress, projectOwners, projectIds);
 	console.log(notifications);
-	return {};
+
+	return notifications;
 };

@@ -3,6 +3,9 @@
 	import { fly } from 'svelte/transition';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/PendingActionsListElement.svelte';
+	import { notifications } from '$lib/features/notifications/stores/NotificationsStore';
+
+	console.log($notifications);
 </script>
 
 {#if !$user.addr}
@@ -14,24 +17,15 @@
 			<p class="small">Actions waiting for your signature</p>
 		</div>
 		<div>
-			<PendingActionsListElement
-				actionType="Withdraw"
-				actionId="0x3213"
-				signed={true}
-				daoId="some-dao-name"
-			/>
-			<PendingActionsListElement
-				actionType="AddSigner"
-				actionId="0x3213"
-				signed={false}
-				daoId="some-dao-name"
-			/>
-			<PendingActionsListElement
-				actionType="RemoveSigner"
-				actionId="0x3213"
-				signed={true}
-				daoId="some-dao-name"
-			/>
+			{#if $notifications}
+				{#each Object.entries($notifications) as [key, value]}
+					{#each value.actions as action}
+						<PendingActionsListElement {action} threshold={value.threshold} daoId={key} />
+					{/each}
+				{/each}
+			{:else}
+				<p class="small">No pending actions</p>
+			{/if}
 		</div>
 	</section>
 {/if}

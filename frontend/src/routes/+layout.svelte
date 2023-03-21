@@ -22,10 +22,11 @@
 	import { checkUser } from '$lib/features/users/functions/checkUser';
 	import { addUser } from '$lib/features/users/functions/postUser';
 	import type { CurrentUserObject } from '@onflow/fcl';
-
-	$: if ($user) {
-		console.log($user);
-	}
+	import {
+		getNotificationsNumber,
+		notifications,
+		setNotifications
+	} from '$lib/features/notifications/stores/NotificationsStore';
 
 	const connect = async () => {
 		logIn().then(async () => {
@@ -42,6 +43,10 @@
 
 	// If the connected address changes, invalidate all fetched data to get data for the new address
 	$: $user.addr && invalidateAll();
+	$: $user.addr && setNotifications($user.addr);
+	$: !$user.addr && ($notifications = null);
+
+	$: notificationsNumber = getNotificationsNumber($notifications);
 </script>
 
 <TransactionModal
@@ -62,6 +67,7 @@
 	transactionInProgress={$transactionStore.progress}
 	logoText="Toucans"
 	logoUrl="/ec-logo.png"
+	{notificationsNumber}
 />
 <main>
 	<slot />

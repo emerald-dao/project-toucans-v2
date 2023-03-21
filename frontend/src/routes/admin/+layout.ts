@@ -5,7 +5,6 @@ import '$flow/config.ts';
 import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';
 import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 
 export const ssr = false;
@@ -31,7 +30,7 @@ export const load: LayoutLoad = async () => {
 						project.owner,
 						project.project_id
 					),
-					events: events && events.actions ? events.actions.reverse() : []
+					events: events.reverse()
 				};
 			})
 		);

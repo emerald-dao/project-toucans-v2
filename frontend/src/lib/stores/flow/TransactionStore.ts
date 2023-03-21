@@ -42,5 +42,5 @@ export const transactionStore = createTransaction({
 	status: -1,
 	statusString: '',
 	errorMessage: '',
-	statusCode: ''
+	statusCode: 1
 });
