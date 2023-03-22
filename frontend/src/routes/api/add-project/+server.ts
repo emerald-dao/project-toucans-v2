@@ -3,11 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 import { env as PrivateEnv } from '$env/dynamic/private';
 import { env as PublicEnv } from '$env/dynamic/public';
 import { verifyAccountOwnership } from '$flow/utils.js';
-import type { RequestHandler } from './$types';
 
 const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
 
-export async function POST({ request }: { request: RequestHandler }) {
+export async function POST({ request }) {
 	const data = await request.json();
 
 	// Make sure a valid user was passed in
@@ -36,8 +35,11 @@ export async function POST({ request }: { request: RequestHandler }) {
 
 	const { error: EventError } = await supabase.from('events').insert({
 		project_id: data.daoDetails.contractName,
-		type: "ProjectCreated",
-		data: { by: data.user.addr, tokenTypeIdentifier: `A.${data.user.addr.slice(2)}.${data.daoDetails.contractName}.Vault` }
+		type: 'ProjectCreated',
+		data: {
+			by: data.user.addr,
+			tokenTypeIdentifier: `A.${data.user.addr.slice(2)}.${data.daoDetails.contractName}.Vault`
+		}
 	});
 	console.log('Error adding new ProjectCreated event', EventError);
 

@@ -15,7 +15,7 @@
 
 	const activeDao = writable(0);
 
-	setContext<{
+	$: setContext<{
 		activeDao: Writable<number>;
 		userDaos: DAOProject[];
 	}>('admin-data', {

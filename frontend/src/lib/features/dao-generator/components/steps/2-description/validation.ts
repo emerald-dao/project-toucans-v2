@@ -1,13 +1,8 @@
-import { create, enforce, test } from 'vest';
+import { descriptionValidation } from '$lib/utilities/validations/descriptionValidation';
+import { create } from 'vest';
 
 const validationSuite = create((data = {}) => {
-	test('description', 'Description is needed', () => {
-		enforce(data.description).isNotBlank();
-	});
-
-	test('description', 'Description should be longer than 20 chars', () => {
-		enforce(data.description).longerThan(20);
-	});
+	descriptionValidation(data.description);
 });
 
 export default validationSuite;
