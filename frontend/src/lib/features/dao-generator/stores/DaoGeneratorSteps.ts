@@ -25,7 +25,7 @@ export const daoGeneratorSteps = createSteps([
 		component: Description,
 		action: null,
 		form: true,
-		state: 'active'
+		state: 'inactive'
 	},
 	{
 		name: 'Socials',
@@ -33,7 +33,7 @@ export const daoGeneratorSteps = createSteps([
 		component: Socials,
 		action: null,
 		form: true,
-		state: 'active'
+		state: 'inactive'
 	},
 	{
 		name: 'Tokenomics',

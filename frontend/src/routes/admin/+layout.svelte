@@ -6,6 +6,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	interface Data {
 		projects: DAOProject[];
@@ -22,6 +23,8 @@
 		userDaos: data.projects,
 		activeDao
 	});
+
+	$: $user.addr && invalidateAll();
 </script>
 
 {#if !$user.addr}

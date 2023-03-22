@@ -41,8 +41,6 @@
 		});
 	};
 
-	// If the connected address changes, invalidate all fetched data to get data for the new address
-	$: $user.addr && invalidateAll();
 	$: $user.addr && setNotifications($user.addr);
 	$: !$user.addr && ($notifications = null);
 

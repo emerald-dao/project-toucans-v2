@@ -1,4 +1,5 @@
 <script type="ts">
+	import { goto } from '$app/navigation';
 	import { daoGeneratorSteps } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { Button, ProgressSteps } from '@emerald-dao/component-library';
 

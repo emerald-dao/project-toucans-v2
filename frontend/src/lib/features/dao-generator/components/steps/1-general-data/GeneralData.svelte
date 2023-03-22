@@ -5,13 +5,28 @@
 		daoGeneratorSteps,
 		generatorActiveStep
 	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
-	import { page } from '$app/stores';
 	import { fly } from 'svelte/transition';
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
-	import validationSuite from './validation';
+	import validationSuite, { type DaoProject } from './validation';
 	import type { SuiteRunResult } from 'vest';
+	import { onMount } from 'svelte';
+	import { supabase } from '$lib/supabaseClient';
+	import { goto } from '$app/navigation';
 
 	export let validForm = false;
+
+	let existingProjects: DaoProject[];
+
+	onMount(async () => {
+		const { data } = await supabase.from('projects').select('name, token_symbol, project_id');
+
+		if (data) {
+			existingProjects = data;
+		} else {
+			console.error('Error fetching projects');
+			goto('/404');
+		}
+	});
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
@@ -26,7 +41,7 @@
 			tokenNamePending = true;
 		}
 
-		res = validationSuite($daoGeneratorData.daoDetails, target.name, $page.data.data.body);
+		res = validationSuite($daoGeneratorData.daoDetails, existingProjects, target.name);
 
 		(res as SuiteRunResult).done((result) => {
 			res = result;

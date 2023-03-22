@@ -1,7 +1,10 @@
 import { create, enforce, test, skipWhen, only, include, optional } from 'vest';
 
-const validationSuite = create((data = {}, currentField, daoProjects) => {
-	only(currentField);
+const validationSuite = create((data = {}, daoProjects, currentField?) => {
+	if (currentField) {
+		only(currentField);
+	}
+
 	include('contractName').when(() => currentField === 'name');
 
 	optional(['website', 'discord', 'twitter']);
@@ -86,7 +89,7 @@ const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<
 	});
 };
 
-interface DaoProject {
+export interface DaoProject {
 	name: string;
 	token_symbol: string;
 	project_id: string;

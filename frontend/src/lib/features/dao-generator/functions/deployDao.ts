@@ -12,6 +12,7 @@ import { postProject } from '$lib/features/dao-generator/functions/postDao';
 import { addNotification } from '$lib/features/notifications/functions/postNotification';
 import { ECurrencies } from '../../../types/common/enums';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
+import { restartAllSuites } from './restartAllSuites';
 
 const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
@@ -29,6 +30,8 @@ export const deployDao = async () => {
 		const eventData = projectCreatedEvent.data as ProjectCreatedEvent;
 
 		console.log('ProjectCreatedEvent', projectCreatedEvent);
+
+		restartAllSuites();
 
 		const uploadLogoToIPFS = async () => {
 			if (projectData.daoDetails.logo) {

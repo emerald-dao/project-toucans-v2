@@ -12,7 +12,7 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 			'address',
 			"Address doesn't exist",
 			async () => {
-				return await dummyCheckAddress(true);
+				return (await dummyCheckAddress(true)) as string;
 			},
 			[data.account]
 		);
