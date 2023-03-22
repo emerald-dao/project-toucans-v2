@@ -14,6 +14,7 @@
 	export let daoLogo: string | undefined =
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
 	export let showDetail = true;
+	export let isSigner: boolean;
 
 	$: signed = Object.keys(action.votes).includes($user.addr as string);
 	$: yesCount = Object.values(action.votes).filter((v) => v === true).length;
@@ -64,34 +65,36 @@
 			<span class="xsmall">Signatures</span>
 			<span class="threshold">{yesCount}/{threshold}</span>
 		</div>
-		<div class="row-2 align-center">
-			{#if signed && $user.addr && action.votes[$user.addr] === false}
-				<Label size="xx-small" hasBorder={false}>
-					Voted
-					<Icon icon="tabler:x" />
-				</Label>
-			{/if}
-			{#if signed && $user.addr && action.votes[$user.addr] === true}
-				<Label size="xx-small" hasBorder={false}>
-					Voted
-					<Icon icon="tabler:check" />
-				</Label>
-			{/if}
-			{#if !signed || ($user.addr && action.votes[$user.addr] === false)}
-				<div
-					class="action-wrapper sign"
-					on:click={() => acceptActionExecution(projectOwner, daoId, action.intent, action.id)}
-					on:keydown
-				>
-					<Icon icon="tabler:pencil-plus" />
-				</div>
-			{/if}
-			{#if !signed || ($user.addr && action.votes[$user.addr] === true)}
-				<div class="action-wrapper trash">
-					<Icon icon="tabler:x" />
-				</div>
-			{/if}
-		</div>
+		{#if isSigner}
+			<div class="row-2 align-center">
+				{#if signed && $user.addr && action.votes[$user.addr] === false}
+					<Label size="xx-small" hasBorder={false}>
+						Voted
+						<Icon icon="tabler:x" />
+					</Label>
+				{/if}
+				{#if signed && $user.addr && action.votes[$user.addr] === true}
+					<Label size="xx-small" hasBorder={false}>
+						Voted
+						<Icon icon="tabler:check" />
+					</Label>
+				{/if}
+				{#if !signed || ($user.addr && action.votes[$user.addr] === false)}
+					<div
+						class="action-wrapper sign"
+						on:click={() => acceptActionExecution(projectOwner, daoId, action.intent, action.id)}
+						on:keydown
+					>
+						<Icon icon="tabler:pencil-plus" />
+					</div>
+				{/if}
+				{#if !signed || ($user.addr && action.votes[$user.addr] === true)}
+					<div class="action-wrapper trash">
+						<Icon icon="tabler:x" />
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 

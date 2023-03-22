@@ -4,25 +4,53 @@
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/PendingActionsListElement.svelte';
 	import { notifications } from '$lib/features/notifications/stores/NotificationsStore';
+	import { supabase } from '$lib/supabaseClient';
 
-	console.log($notifications);
+	const getDaosData = async () => {
+		if ($notifications) {
+			const { data } = await supabase
+				.from('projects')
+				.select()
+				.in('project_id', Object.keys($notifications));
+
+			if (data) {
+				return data.reduce((acc, project) => {
+					acc[project.project_id] = project;
+					return acc;
+				}, {});
+			} else {
+				return {};
+			}
+		} else {
+			return {};
+		}
+	};
 </script>
 
 {#if !$user.addr}
 	<ConnectPage />
 {:else}
-	<section in:fly={{ x: 10, duration: 400 }} class="container-small column-4">
+	<section in:fly={{ x: 10, duration: 400 }} class="container column-4">
 		<div>
 			<h5>Signatures Queue</h5>
-			<p class="small">Actions waiting for your signature</p>
+			<p class="small">Actions waiting for signatures</p>
 		</div>
 		<div>
 			{#if $notifications}
-				{#each Object.entries($notifications) as [key, value]}
-					{#each value.actions as action}
-						<PendingActionsListElement {action} threshold={value.threshold} daoId={key} />
+				{#await getDaosData() then daosData}
+					{#each Object.entries($notifications) as [key, value]}
+						{#each value.actions as action}
+							<PendingActionsListElement
+								{action}
+								threshold={value.threshold}
+								daoId={key}
+								isSigner={value.isSigner}
+								daoLogo={daosData[key].logo}
+								projectOwner={daosData[key].owner}
+							/>
+						{/each}
 					{/each}
-				{/each}
+				{/await}
 			{:else}
 				<p class="small">No pending actions</p>
 			{/if}
