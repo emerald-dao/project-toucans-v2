@@ -1,3 +1,4 @@
+import { notifications } from '../features/notifications/stores/NotificationsStore';
 export const navElements = [
 	{
 		name: 'Generate DAO',
@@ -55,10 +56,11 @@ export const avatarDropdownNav = [
 		icon: 'tabler:home'
 	},
 	{
-		name: 'Signatures queue',
+		name: 'Pending actions',
 		url: '/signatures-queue',
 		prefetch: true,
-		icon: 'tabler:pencil-plus'
+		icon: 'tabler:pencil-plus',
+		notifications: 0
 	},
 	{
 		name: 'Create new DAO',

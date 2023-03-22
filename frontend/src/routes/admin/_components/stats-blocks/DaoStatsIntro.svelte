@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { Label, StatusCircle } from '@emerald-dao/component-library';
+	import { Label, StatusCircle, AlertNumber } from '@emerald-dao/component-library';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import Icon from '@iconify/svelte';
-	import AlertNumber from '$components/atoms/AlertNumber.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -44,7 +43,7 @@
 			<div class="alert-number-wrapper">
 				<AlertNumber number={Number(daoData.onChainData.actions.length)} />
 			</div>
-			<IconCircle icon="tabler:signature" color="primary" />
+			<IconCircle icon="tabler:layout-list" color="primary" />
 		</a>
 	</div>
 </div>

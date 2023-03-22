@@ -1,14 +1,13 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { page } from '$app/stores';
-	import { Currency, Label } from '@emerald-dao/component-library';
+	import { Currency, Label, AlertNumber } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
 	import dappInfo from '$lib/config/config';
-	import AlertNumber from '$components/atoms/AlertNumber.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;

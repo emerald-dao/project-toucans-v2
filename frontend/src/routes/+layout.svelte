@@ -47,6 +47,7 @@
 	$: !$user.addr && ($notifications = null);
 
 	$: notificationsNumber = getNotificationsNumber($notifications);
+	$: if (notificationsNumber > 0) avatarDropdownNav[1].notifications = notificationsNumber;
 </script>
 
 <TransactionModal
