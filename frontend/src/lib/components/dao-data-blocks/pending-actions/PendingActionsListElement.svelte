@@ -15,6 +15,7 @@
 		'https://avatars.githubusercontent.com/u/6936373?s=200&v=4';
 	export let showDetail = true;
 	export let isSigner: boolean;
+	export let showDao = true;
 
 	$: signed = Object.keys(action.votes).includes($user.addr as string);
 	$: yesCount = Object.values(action.votes).filter((v) => v === true).length;
@@ -44,7 +45,7 @@
 			<IconCircle icon={actionTypeToIcon[action.title]} />
 			<span class="action-name small">{actionTypeToText[action.title]}</span>
 		</div>
-		{#if daoId}
+		{#if daoId && showDao}
 			<div class="dao-project">
 				<img src={daoLogo} alt="dao logo" />
 				<span class="xsmall">
