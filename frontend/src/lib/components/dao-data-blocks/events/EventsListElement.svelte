@@ -1,7 +1,7 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
-	import { Label, Currency, Modal, getModal } from '@emerald-dao/component-library';
+	import { Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import type { DaoEvent, DaoEventName } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
@@ -11,6 +11,8 @@
 
 	export let event: DaoEvent;
 	export let i: number;
+
+	console.log(event);
 
 	let daoData: DAOProject = getContext('daoData');
 
@@ -69,7 +71,6 @@
 		<IconCircle icon={EVENTS_DATA[event.type].icon} color={EVENTS_DATA[event.type].color} />
 		<span class="event-name">{EVENTS_DATA[event.type].text}</span>
 		<div class="column info-wrapper">
-			<!-- <p class="address">{event.by}</p> -->
 			<span class="date">{formatDate(new Date(event.timestamp))}</span>
 		</div>
 	</div>

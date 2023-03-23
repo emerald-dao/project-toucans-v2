@@ -6,10 +6,10 @@ import type { DistributeEvent } from './events/distribute.interface';
 import type { ProjectCreatedEvent } from './events/project-created.interface';
 
 export type DaoEvent =
-	| DistributeEvent
+	| DistributeEvent // TODO: Update event type
 	| PurchaseEvent
 	| FundingCycleEvent
-	| WithdrawEvent
+	| WithdrawEvent // TODO: Update event type
 	| DonateEvent
 	| ProjectCreatedEvent;
 

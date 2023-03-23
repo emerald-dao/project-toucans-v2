@@ -11,17 +11,17 @@
 	export let hasBorder = true;
 	export let projectToken: string;
 
-	const goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
-	const funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
+	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
+	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
 
-	const goalReached = goal !== 'infinite' ? goal < funding : false;
+	$: goalReached = goal !== 'infinite' ? goal < funding : false;
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
 	const endDate = round.details.timeframe.endTime
 		? new Date(Number(round.details.timeframe.endTime) * 1000)
 		: null;
 
-	const active = endDate ? endDate >= new Date() : true;
+	$: active = endDate ? endDate >= new Date() : true;
 </script>
 
 <div class:card={hasBorder}>

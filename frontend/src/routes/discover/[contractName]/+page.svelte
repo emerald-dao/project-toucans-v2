@@ -1,25 +1,60 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
-	import Icon from '@iconify/svelte';
 	import { setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { get, readable, writable, type Readable, type Writable } from 'svelte/store';
+	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
+	import { supabase } from '$lib/supabaseClient';
+	import { getProjectInfo, getTokenBalance } from '$flow/actions';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let data: DAOProject;
 
-	setContext('daoData', data);
+	const daoDataStore: Writable<DAOProject> = writable(data, (set) => {
+		const subscription = supabase
+			.from('events')
+			.on('INSERT', (payload) => {
+				const newEvent = payload.new as DaoEvent;
 
-	console.log(data);
+				reloadBlockchainData(newEvent);
 
-	// let seeMore = false;
+				$daoDataStore.events?.push(newEvent);
+
+				return set($daoDataStore);
+			})
+			.subscribe();
+
+		return () => supabase.removeSubscription(subscription);
+	});
+
+	setContext('daoData', $daoDataStore);
+
+	const reloadBlockchainData = async (event: DaoEvent) => {
+		$daoDataStore.onChainData = await getProjectInfo(
+			data.generalInfo.contract_address,
+			data.generalInfo.owner,
+			data.generalInfo.project_id
+		);
+
+		if (event.type === 'Purchase' && event.data.by === $user.addr) {
+			console.log('bala');
+
+			$daoDataStore.userBalance = await getTokenBalance(
+				data.generalInfo.project_id,
+				data.generalInfo.contract_address,
+				$user.addr
+			);
+		}
+	};
 </script>
 
 <section class="container">
 	<div class="main-wrapper">
 		<div class="project-sidebar-wrapper">
-			<DiscoverProjectSidebar daoData={data} />
+			<DiscoverProjectSidebar daoData={$daoDataStore} />
 		</div>
 		<div class="secondary-wrapper">
-			<DiscoverProjectMain daoData={data} />
+			<DiscoverProjectMain daoData={$daoDataStore} />
 		</div>
 	</div>
 	<!-- <div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>

@@ -8,9 +8,14 @@
 
 	export let daoData: DAOProject;
 
-	const currentFundingCycleData = daoData.onChainData.currentFundingCycle
-		? getFundingCycleData(daoData, Number(daoData.onChainData.currentFundingCycle))
-		: null;
+	$: currentFundingCycleData =
+		daoData.onChainData.currentFundingCycle && daoData.events
+			? getFundingCycleData(
+					daoData.onChainData.fundingCycles,
+					daoData.events,
+					Number(daoData.onChainData.currentFundingCycle)
+			  )
+			: null;
 </script>
 
 {#if daoData}

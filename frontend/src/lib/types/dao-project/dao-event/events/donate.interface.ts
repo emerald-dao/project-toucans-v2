@@ -2,6 +2,12 @@ import type { BaseEvent } from './common/base-event.interface';
 
 export interface DonateEvent extends BaseEvent {
 	type: 'Donate';
-	amount: string;
-	projectOwner: string;
+	data: {
+		amount: string;
+		message: string;
+		projectOwner: string;
+		tokenTypeIdentifier: string;
+		currentCycle: string;
+		by: string;
+	};
 }

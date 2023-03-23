@@ -12,17 +12,6 @@ export const load: PageLoad = async ({ params }) => {
 	const generalInfo = await fetchProjectDatabaseData(params.contractName);
 	const userAddress = get(user).addr;
 
-	const events = await fetchProjectEvents(generalInfo.project_id);
-
-	let userBalance = null;
-	if (userAddress != undefined) {
-		userBalance = await getTokenBalance(
-			generalInfo.project_id,
-			generalInfo.contract_address,
-			userAddress
-		);
-	}
-
 	return {
 		generalInfo,
 		onChainData: getProjectInfo(
@@ -30,7 +19,9 @@ export const load: PageLoad = async ({ params }) => {
 			generalInfo.owner,
 			generalInfo.project_id
 		),
-		events: events.reverse(),
-		userBalance
+		events: (await fetchProjectEvents(generalInfo.project_id)).reverse(),
+		userBalance: userAddress
+			? await getTokenBalance(generalInfo.project_id, generalInfo.contract_address, userAddress)
+			: null
 	};
 };
