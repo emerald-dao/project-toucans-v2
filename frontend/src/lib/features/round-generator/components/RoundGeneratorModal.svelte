@@ -10,9 +10,9 @@
 
 	export let daoData: DAOProject;
 
-	const tokenSymbol = daoData.generalInfo.token_symbol;
-	const projectId = daoData.generalInfo.project_id;
-	const editDelay = daoData.onChainData.editDelay;
+	$: tokenSymbol = daoData.generalInfo.token_symbol;
+	$: projectId = daoData.generalInfo.project_id;
+	$: editDelay = daoData.onChainData.editDelay;
 
 	const id = `round-generator-${daoData.generalInfo.project_id}`;
 

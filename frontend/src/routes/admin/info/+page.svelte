@@ -6,7 +6,6 @@
 	import { Button, InputWrapper } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 	import { applyAction, enhance } from '$app/forms';
-	import { invalidate, invalidateAll } from '$app/navigation';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
 	export let form;
@@ -23,6 +22,7 @@
 
 	let changesSubmmited = false;
 	let submitionOnCourse = false;
+	let formHasChanges = false;
 	let formData = {
 		website: '',
 		twitter: '',
@@ -30,12 +30,7 @@
 		description: ''
 	};
 
-	onMount(() => {
-		formData.website = activeDaoData.generalInfo.website ? activeDaoData.generalInfo.website : '';
-		formData.twitter = activeDaoData.generalInfo.twitter ? activeDaoData.generalInfo.twitter : '';
-		formData.discord = activeDaoData.generalInfo.discord ? activeDaoData.generalInfo.discord : '';
-		formData.description = activeDaoData.generalInfo.description;
-	});
+	onMount(() => populateFormData());
 
 	const onSubmit = async () => {
 		validationSuite.reset();
@@ -52,22 +47,45 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
+		formHasChanges = checkDataChanges();
 
 		if (!formHasChanges) {
-			validationSuite.reset();
-			res = validationSuite.get();
+			resetValidation();
 		} else {
 			res = validationSuite(formData, target.name);
 		}
 	};
 
+	const populateFormData = () => {
+		formData.website = activeDaoData.generalInfo.website ? activeDaoData.generalInfo.website : '';
+		formData.twitter = activeDaoData.generalInfo.twitter ? activeDaoData.generalInfo.twitter : '';
+		formData.discord = activeDaoData.generalInfo.discord ? activeDaoData.generalInfo.discord : '';
+		formData.description = activeDaoData.generalInfo.description;
+	};
+
+	const checkDataChanges = () => {
+		if (activeDaoData) {
+			return (
+				formData.website !== activeDaoData.generalInfo.website ||
+				formData.twitter !== activeDaoData.generalInfo.twitter ||
+				formData.discord !== activeDaoData.generalInfo.discord ||
+				formData.description !== activeDaoData.generalInfo.description
+			);
+		} else {
+			return false;
+		}
+	};
+
+	const resetValidation = () => {
+		validationSuite.reset();
+		res = validationSuite.get();
+	};
+
 	let res = validationSuite.get();
 
-	$: formHasChanges =
-		formData.website !== activeDaoData.generalInfo.website ||
-		formData.twitter !== activeDaoData.generalInfo.twitter ||
-		formData.discord !== activeDaoData.generalInfo.discord ||
-		formData.description !== activeDaoData.generalInfo.description;
+	$: activeDaoData && populateFormData();
+	$: activeDaoData && (formHasChanges = checkDataChanges());
+	$: activeDaoData && resetValidation();
 </script>
 
 <form
@@ -166,7 +184,7 @@
 
 <style lang="scss">
 	form {
-		max-width: 40ch;
+		width: 40ch;
 
 		textarea {
 			height: 10rem;

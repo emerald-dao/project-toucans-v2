@@ -9,7 +9,9 @@ import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEven
 
 export const ssr = false;
 
-export const load: LayoutLoad = async () => {
+export const load: LayoutLoad = async ({ depends }) => {
+	depends('app:admin');
+
 	if (get(user).loggedIn) {
 		const { data } = await supabase.from('projects').select().eq('owner', get(user).addr);
 
@@ -36,5 +38,7 @@ export const load: LayoutLoad = async () => {
 				})
 			)
 		};
+	} else {
+		return { projects: [] };
 	}
 };

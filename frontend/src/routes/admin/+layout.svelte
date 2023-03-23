@@ -6,10 +6,10 @@
 	import { user } from '$stores/flow/FlowStore';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
-	import { invalidateAll } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
-	import { getProjectInfo, getTokenBalance } from '$flow/actions';
+	import { getProjectInfo } from '$flow/actions';
 
 	interface Data {
 		projects: DAOProject[];
@@ -72,7 +72,12 @@
 		activeDao
 	});
 
-	$: $user.addr && invalidateAll();
+	const onChangeUser = async () => {
+		await invalidate('app:admin');
+		$daosDataStore = data.projects;
+	};
+
+	$: $user.addr && onChangeUser();
 </script>
 
 {#if !$user.addr}
