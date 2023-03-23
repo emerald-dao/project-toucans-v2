@@ -50,7 +50,7 @@
 		"@emerald-dao/component-library": "^3.48.2",
 		"@emerald-dao/design-system": "^2.0.0",
 		"@onflow/fcl": "^1.2.1",
-		"@supabase/supabase-js": "^1.35.7",
+		"@supabase/supabase-js": "^2.0.0",
 		"@types/papaparse": "^5.3.7",
 		"buffer": "^6.0.3",
 		"chart.js": "^3.9.1",

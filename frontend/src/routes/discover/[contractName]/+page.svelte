@@ -12,19 +12,28 @@
 
 	const daoDataStore: Writable<DAOProject> = writable(data, (set) => {
 		const subscription = supabase
-			.from('events')
-			.on('INSERT', (payload) => {
-				const newEvent = payload.new as DaoEvent;
+			.channel('events')
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'events',
+					filter: `project_id=eq.${data.generalInfo.project_id}`
+				},
+				(payload) => {
+					const newEvent = payload.new as DaoEvent;
 
-				reloadBlockchainData(newEvent);
+					reloadBlockchainData(newEvent);
 
-				$daoDataStore.events?.push(newEvent);
+					$daoDataStore.events?.push(newEvent);
 
-				return set($daoDataStore);
-			})
+					return set($daoDataStore);
+				}
+			)
 			.subscribe();
 
-		return () => supabase.removeSubscription(subscription);
+		return () => supabase.removeChannel(subscription);
 	});
 
 	setContext('daoData', $daoDataStore);
@@ -37,8 +46,6 @@
 		);
 
 		if (event.type === 'Purchase' && event.data.by === $user.addr) {
-			console.log('bala');
-
 			$daoDataStore.userBalance = await getTokenBalance(
 				data.generalInfo.project_id,
 				data.generalInfo.contract_address,
