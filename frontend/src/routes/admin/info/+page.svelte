@@ -13,12 +13,13 @@
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: DAOProject[];
+		userDaos: Writable<DAOProject[]>;
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
+	const userDaosStore = adminData.userDaos;
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore];
+	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
 	let changesSubmmited = false;
 	let submitionOnCourse = false;

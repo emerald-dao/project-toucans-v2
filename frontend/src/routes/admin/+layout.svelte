@@ -7,6 +7,9 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import { invalidateAll } from '$app/navigation';
+	import { supabase } from '$lib/supabaseClient';
+	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
+	import { getProjectInfo, getTokenBalance } from '$flow/actions';
 
 	interface Data {
 		projects: DAOProject[];
@@ -16,11 +19,56 @@
 
 	const activeDao = writable(0);
 
+	const daosDataStore: Writable<DAOProject[]> = writable(data.projects, (set) => {
+		const getProjectsIds = () => {
+			const ids = data.projects.map((project) => project.generalInfo.project_id);
+
+			console.log('ids', ids.join(','));
+
+			return ids.join(',');
+		};
+
+		const subscription = supabase
+			.channel('events')
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'events',
+					filter: `project_id=in.(${getProjectsIds()})`
+				},
+				(payload) => {
+					const newEvent = payload.new as DaoEvent;
+					const projectIndex = data.projects
+						.map((project) => project.generalInfo.project_id)
+						.indexOf(newEvent.project_id);
+
+					reloadBlockchainData(data.projects[projectIndex], projectIndex);
+
+					$daosDataStore[projectIndex].events?.push(newEvent);
+
+					return set($daosDataStore);
+				}
+			)
+			.subscribe();
+
+		return () => supabase.removeChannel(subscription);
+	});
+
+	const reloadBlockchainData = async (projectData: DAOProject, projectIndex: number) => {
+		$daosDataStore[projectIndex].onChainData = await getProjectInfo(
+			projectData.generalInfo.contract_address,
+			projectData.generalInfo.owner,
+			projectData.generalInfo.project_id
+		);
+	};
+
 	$: setContext<{
 		activeDao: Writable<number>;
-		userDaos: DAOProject[];
+		userDaos: Writable<DAOProject[]>;
 	}>('admin-data', {
-		userDaos: data.projects,
+		userDaos: daosDataStore,
 		activeDao
 	});
 
@@ -29,7 +77,7 @@
 
 {#if !$user.addr}
 	<ConnectPage />
-{:else if data.projects.length < 1}
+{:else if $daosDataStore.length < 1}
 	<section class="centered">
 		<div class="card-primary column-7 align-center">
 			<span>You don't have any DAO yet</span>

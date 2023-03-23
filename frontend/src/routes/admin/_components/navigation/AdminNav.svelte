@@ -11,12 +11,13 @@
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: DAOProject[];
+		userDaos: Writable<DAOProject[]>;
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
+	const userDaosStore = adminData.userDaos;
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore];
+	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
 	const copyToClipboard = () => {
 		const app = new CopyToClipboard({
@@ -31,7 +32,7 @@
 	<div class="column-10">
 		<div class="row-3 align-center">
 			<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
-			<DropDownHeading bind:activeDao={$activeDaoStore} userDaos={adminData.userDaos}>
+			<DropDownHeading bind:activeDao={$activeDaoStore} userDaos={$userDaosStore}>
 				<div id="clipboard" />
 				<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>
 					<Label color="neutral" size="small">

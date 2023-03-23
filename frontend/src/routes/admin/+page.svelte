@@ -14,12 +14,13 @@
 
 	const adminData: {
 		activeDao: Writable<number>;
-		userDaos: DAOProject[];
+		userDaos: Writable<DAOProject[]>;
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
+	const userDaosStore = adminData.userDaos;
 
-	$: activeDaoData = adminData.userDaos[$activeDaoStore];
+	$: activeDaoData = $userDaosStore[$activeDaoStore];
 </script>
 
 <div class="main-wrapper column-5" in:fly={{ x: 10, duration: 400 }}>

@@ -19,26 +19,22 @@ export const load: LayoutLoad = async () => {
 			};
 		}
 
-		const projectsInfo = await Promise.all(
-			data.map(async (project: DaoDatabaseData) => {
-				const events = await fetchProjectEvents(project.project_id);
-
-				return {
-					generalInfo: project,
-					onChainData: await getProjectInfo(
-						project.contract_address,
-						project.owner,
-						project.project_id
-					),
-					events: events.reverse()
-				};
-			})
-		);
-
-		console.log(projectsInfo);
-
 		return {
-			projects: projectsInfo
+			projects: await Promise.all(
+				(data as DaoDatabaseData[]).map(async (project: DaoDatabaseData) => {
+					const events = await fetchProjectEvents(project.project_id);
+
+					return {
+						generalInfo: project,
+						onChainData: await getProjectInfo(
+							project.contract_address,
+							project.owner,
+							project.project_id
+						),
+						events: events.reverse()
+					};
+				})
+			)
 		};
 	}
 };
