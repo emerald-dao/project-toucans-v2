@@ -7,6 +7,7 @@
 	export let hideLastStep = false;
 	export let heading: string;
 	export let icon: string | undefined = undefined;
+	export let description: string | undefined = undefined;
 
 	$: if (hideLastStep) {
 		steps = steps.slice(0, -1);
@@ -15,14 +16,19 @@
 
 <div class="main-wrapper">
 	{#if heading}
-		<div class="row-3">
+		<div class="heading-wrapper row-3 align-center">
 			{#if icon}
-				<IconCircle color="tertiary" {icon} />
+				<IconCircle color="primary" {icon} />
 			{/if}
 			<h2>{heading}</h2>
 		</div>
 	{/if}
-	<ProgressSteps {steps} direction="column-reverse" diameter={0.9} gap={1.4} fontSize="medium" />
+	{#if description}
+		<p class="small">{description}</p>
+	{/if}
+	{#if steps.length > 1}
+		<ProgressSteps {steps} direction="column-reverse" diameter={0.9} gap={1.4} fontSize="medium" />
+	{/if}
 </div>
 
 <style lang="scss">
@@ -33,9 +39,12 @@
 		align-items: flex-start;
 		padding: var(--space-8) var(--space-10);
 
-		h2 {
-			padding-bottom: 2rem;
-			font-size: var(--font-size-4);
+		.heading-wrapper {
+			margin-bottom: var(--space-3);
+
+			h2 {
+				font-size: var(--font-size-4);
+			}
 		}
 	}
 </style>

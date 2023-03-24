@@ -8,13 +8,14 @@
 	export let steps: Step[];
 	export let heading: string;
 	export let icon: string;
+	export let description: string | undefined = undefined;
 	export let id: string;
 	export let activeStepStore: ReturnType<typeof createActiveStep>;
 </script>
 
 <Modal background="none" unstyled={true} {id}>
-	<div class="round-modal-wrapper">
-		<StepsOverview {steps} {heading} {icon} hideLastStep={true} />
+	<div class="round-modal-wrapper" class:grid={steps.length > 2}>
+		<StepsOverview {steps} {heading} {icon} {description} hideLastStep={true} />
 		<div class="main-wrapper column-space-between">
 			<slot />
 			{#each steps as step, i}
@@ -39,6 +40,7 @@
 
 		.main-wrapper {
 			padding: var(--space-11);
+			width: 100%;
 		}
 	}
 </style>

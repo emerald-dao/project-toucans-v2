@@ -2,7 +2,7 @@
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
 	import { setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { get, readable, writable, type Readable, type Writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { supabase } from '$lib/supabaseClient';
 	import { getProjectInfo, getTokenBalance } from '$flow/actions';
