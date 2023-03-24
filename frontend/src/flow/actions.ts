@@ -122,7 +122,8 @@ const fundProject = async (
 	projectId: string,
 	amount: string,
 	message: string,
-	currency: ECurrencies
+	currency: ECurrencies,
+	expectedAmount: string
 ) => {
 	let txCode = fundProjectTx;
 	if (currency === ECurrencies.FUSD) {
@@ -134,7 +135,8 @@ const fundProject = async (
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
 			arg(formatFix(amount), t.UFix64),
-			arg(message, t.String)
+			arg(message, t.String),
+			arg(expectedAmount, t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -148,8 +150,9 @@ export const fundProjectExecution = (
 	projectId: string,
 	amount: string,
 	message: string,
-	currency: ECurrencies
-) => executeTransaction(() => fundProject(projectOwner, projectId, amount, message, currency));
+	currency: ECurrencies,
+	expectedAmount: string
+) => executeTransaction(() => fundProject(projectOwner, projectId, amount, message, currency, expectedAmount));
 
 const donate = async (
 	projectOwner: string,

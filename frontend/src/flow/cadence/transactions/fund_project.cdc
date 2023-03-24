@@ -4,11 +4,11 @@ import Toucans from "../Toucans.cdc"
 import ExampleToken from "../ExampleToken.cdc"
 import MetadataViews from "../utility/MetadataViews.cdc"
 
-transaction(projectOwner: Address, projectId: String, amount: UFix64, message: String) {
+transaction(projectOwner: Address, projectId: String, amount: UFix64, message: String, expectedAmount: UFix64) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let Payment: @FlowToken.Vault
-  let ProjectTokenReceiver: &ExampleToken.Vault{FungibleToken.Receiver}
+  let ProjectTokenReceiver: &ExampleToken.Vault{FungibleToken.Receiver, FungibleToken.Balance}
 
   prepare(user: AuthAccount) {
     // Setup User Account
@@ -34,10 +34,15 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
     self.Payment <- user.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
     
     self.ProjectTokenReceiver = user.getCapability(ExampleToken.ReceiverPublicPath)
-                  .borrow<&ExampleToken.Vault{FungibleToken.Receiver}>()!
+                  .borrow<&ExampleToken.Vault{FungibleToken.Receiver, FungibleToken.Balance}>()!
   }
 
   execute {
+    let currentBalance: UFix64 = self.ProjectTokenReceiver.balance
     self.Project.purchase(paymentTokens: <- self.Payment, projectTokenReceiver: self.ProjectTokenReceiver, message: message)
+    assert(
+      currentBalance + expectedAmount == self.ProjectTokenReceiver.balance,
+      message: "The expected amount of tokens was not minted."
+    )
   }
 }
