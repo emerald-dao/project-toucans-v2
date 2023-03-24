@@ -30,6 +30,7 @@ pub struct Info {
   pub let threshold: UInt64
   pub let actions: [Action]
   pub let minting: Bool
+  pub let paymentCurrency: String
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -49,6 +50,7 @@ pub struct Info {
       "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FUSD.Vault>()) ?? 0.0,
       info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
+    self.paymentCurrency = info.paymentTokenInfo.symbol
 
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()
