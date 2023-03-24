@@ -38,11 +38,16 @@
 		$paymentData.payerAddress = $user.addr as string;
 		$paymentData.projectId = daoData.generalInfo.project_id;
 		$paymentData.currency = ECurrencies.FLOW;
+		$paymentData.tokenName = daoData.generalInfo.token_symbol;
 
 		if ($paymentData.type === 'fund') {
 			$paymentData.issuanceRate = Number(
 				daoData.onChainData.fundingCycles[Number(daoData.onChainData.currentFundingCycle)].details
 					.issuanceRate
+			);
+			$paymentData.reserveRate = Number(
+				daoData.onChainData.fundingCycles[Number(daoData.onChainData.currentFundingCycle)].details
+					.reserveRate
 			);
 		}
 	};

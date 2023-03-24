@@ -1,5 +1,4 @@
 <script type="ts">
-	import { paymentSteps } from './../../../stores/PaymentSteps';
 	import { Currency, InputWrapper } from '@emerald-dao/component-library';
 	import { paymentActiveStep } from '$lib/features/payments/stores/PaymentSteps';
 	import validationSuite from './validation';
@@ -62,16 +61,58 @@
 	</div>
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
-		<div class="issuance-wrapper">
-			<span class="small">You will recieve</span>
-			<Currency
-				currency={$paymentData.tokenName}
-				amount={($paymentData.amount ? $paymentData.amount : 0) * $paymentData.issuanceRate}
-				color="heading"
-			/>
-			<span class="issuance xsmall"
-				>{`$${$paymentData.issuanceRate} ${$paymentData.tokenName} ~ $1 ${$paymentData.currency}`}</span
-			>
+		<div class="funding-data-wrapper">
+			<div class="row-2 align-center">
+				<span class="small">Issuance rate:</span>
+				<div class="surface">
+					<Currency
+						currency={$paymentData.tokenName}
+						amount={$paymentData.issuanceRate}
+						color="heading"
+						fontSize="var(--font-size-1)"
+					/>
+				</div>
+				<span class="small">minted per</span>
+				<div class="surface">
+					<Currency
+						currency={$paymentData.currency}
+						amount={1}
+						color="heading"
+						fontSize="var(--font-size-1)"
+					/>
+				</div>
+				<span class="small">funded</span>
+			</div>
+			<div class:receipts-grid={$paymentData.reserveRate > 0}>
+				<div class="issuance-secondary-wrapper">
+					<span class="small">You will receive</span>
+					<Currency
+						currency={$paymentData.tokenName}
+						amount={($paymentData.amount ? $paymentData.amount : 0) *
+							$paymentData.issuanceRate *
+							(1 - $paymentData.reserveRate)}
+						color="heading"
+					/>
+					<span class="issuance xsmall"
+						>{`${100 - $paymentData.reserveRate * 100}% of the minted tokens`}</span
+					>
+				</div>
+				{#if $paymentData.reserveRate > 0}
+					<div class="issuance-secondary-wrapper">
+						<span class="small">DAO treasury will receive</span>
+						<Currency
+							currency={$paymentData.tokenName}
+							amount={($paymentData.amount ? $paymentData.amount : 0) *
+								$paymentData.issuanceRate *
+								$paymentData.reserveRate}
+							color="heading"
+						/>
+						<span class="issuance xsmall"
+							>{`${$paymentData.reserveRate * 100}% of the minted tokens`}</span
+						>
+					</div>
+				{/if}
+			</div>
 		</div>
 	{/if}
 </form>
@@ -96,14 +137,30 @@
 			padding-block: 0;
 		}
 
-		.issuance-wrapper {
-			background-color: var(--clr-surface-primary);
-			padding: var(--space-4);
-			border-radius: var(--radius-3);
-			margin-top: var(--space-4);
+		.funding-data-wrapper {
+			margin-top: var(--space-8);
 
-			.issuance {
-				color: var(--clr-text-off);
+			.surface {
+				background-color: var(--clr-surface-secondary);
+				padding: 2px var(--space-2);
+				border-radius: var(--radius-1);
+			}
+
+			.issuance-secondary-wrapper {
+				background-color: var(--clr-surface-primary);
+				padding: var(--space-4);
+				border-radius: var(--radius-3);
+				margin-top: var(--space-4);
+
+				.issuance {
+					color: var(--clr-text-off);
+				}
+			}
+
+			.receipts-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: var(--space-4);
 			}
 		}
 	}
