@@ -136,7 +136,7 @@ const fundProject = async (
 			arg(projectId, t.String),
 			arg(formatFix(amount), t.UFix64),
 			arg(message, t.String),
-			arg(expectedAmount, t.UFix64)
+			arg(formatFix(expectedAmount), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

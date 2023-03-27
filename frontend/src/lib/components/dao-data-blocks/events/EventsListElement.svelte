@@ -103,7 +103,11 @@
 			</div>
 			<Modal background="var(--clr-background-secondary)" id={`funding-stats-activity-${i}`}>
 				<RoundsCard
-					round={getFundingCycleData(daoData, Number(event.data.cycleNum))}
+					round={getFundingCycleData(
+						daoData.onChainData.fundingCycles,
+						daoData.events,
+						Number(event.data.cycleNum)
+					)}
 					hasBorder={false}
 					title="Funding round data"
 					projectToken={daoData.generalInfo.token_symbol}

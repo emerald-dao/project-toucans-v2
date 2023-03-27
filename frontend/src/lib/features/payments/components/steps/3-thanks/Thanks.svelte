@@ -28,7 +28,7 @@
 		</p>
 	</div>
 	<div>
-		<Divider text="Share it" />
+		<Divider text="Share" />
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
 				<Button

@@ -1,5 +1,4 @@
 <script type="ts">
-	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import PieChart from '$components/charts/PieChart.svelte';
 

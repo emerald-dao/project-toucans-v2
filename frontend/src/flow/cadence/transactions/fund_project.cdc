@@ -33,8 +33,7 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
     
     self.Payment <- user.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
     
-    self.ProjectTokenReceiver = user.getCapability(ExampleToken.ReceiverPublicPath)
-                  .borrow<&ExampleToken.Vault{FungibleToken.Receiver, FungibleToken.Balance}>()!
+    self.ProjectTokenReceiver = user.borrow<&ExampleToken.Vault{FungibleToken.Receiver, FungibleToken.Balance}>(from: ExampleToken.VaultStoragePath)!
   }
 
   execute {
@@ -46,3 +45,4 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
     )
   }
 }
+ 
