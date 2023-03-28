@@ -1,7 +1,7 @@
 <script type="ts">
 	import StepTitle from './../../atoms/StepTitle.svelte';
 	import Icon from '@iconify/svelte';
-	import { Button, Divider } from '@emerald-dao/component-library';
+	import { Button, Currency, Divider } from '@emerald-dao/component-library';
 	import { fade } from 'svelte/transition';
 	import { paymentData } from '$lib/features/payments/stores/PaymentData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
@@ -14,7 +14,14 @@
 		<StepTitle {daoData} title="Thanks!" />
 		<p>
 			{#if $paymentData.type === 'donation'}
-				{`You donated $${$paymentData.currency} ${$paymentData.amount} to ${$paymentData.daoName}`}
+				{`You donated`}
+				<span class="strong">
+					{`$${$paymentData.currency} ${$paymentData.amount}`}
+				</span>
+				to
+				<span class="strong">
+					{`${$paymentData.daoName}.`}
+				</span>
 			{:else if $paymentData.type === 'fund' && $paymentData.amount != undefined}
 				{`You funded ${$paymentData.daoName} with`}
 				<span class="strong">
@@ -22,12 +29,12 @@
 				</span>
 				and got
 				<span class="strong">
-					{`$${$paymentData.tokenName} ${$paymentData.amount * $paymentData.issuanceRate}`}
+					{`$${$paymentData.tokenName} ${$paymentData.amount * $paymentData.issuanceRate}.`}
 				</span>
 			{/if}
 		</p>
 	</div>
-	<div>
+	<div class="column-4">
 		<Divider text="Share" />
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
@@ -61,7 +68,7 @@
 
 <style type="scss">
 	.main-wrapper {
-		width: 100%;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
