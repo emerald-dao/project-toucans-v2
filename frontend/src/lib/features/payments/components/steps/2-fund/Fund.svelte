@@ -11,21 +11,30 @@
 
 	export let isValid: boolean;
 
+	let amountInput: HTMLInputElement;
+	let amountValue: string;
+
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
+
+		// Workaround to make input element be displayed with commas
+		let numericString = amountValue.toString().replace(/[^0-9]/g, '');
+		let number = Number(numericString);
+		let formattedValue = Intl.NumberFormat('en-US').format(number);
+
+		$paymentData.amount = number;
+		amountInput.value = formattedValue;
 
 		res = validationSuite($paymentData, target.name);
 	};
 
 	let res = validationSuite.get();
 
-	$: isValid = res.isValid();
-
-	let amountInput: HTMLInputElement;
-
 	onMount(() => {
 		amountInput.focus();
 	});
+
+	$: isValid = res.isValid();
 </script>
 
 <form
@@ -49,10 +58,10 @@
 					{`$${$paymentData.currency}`}
 				</span>
 				<input
-					type="number"
+					type="text"
 					name="amount"
 					placeholder="0.00"
-					bind:value={$paymentData.amount}
+					bind:value={amountValue}
 					bind:this={amountInput}
 					on:input={handleChange}
 				/>

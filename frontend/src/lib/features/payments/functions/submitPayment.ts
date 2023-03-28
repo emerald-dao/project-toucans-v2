@@ -13,12 +13,17 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 
 		return paymentResult;
 	} else {
+
+		const expectedAmount = (paymentData.amount as number) *
+			(paymentData as FundData).issuanceRate *
+			(1 - (paymentData as FundData).reserveRate);
 		const paymentResult = await fundProjectExecution(
 			paymentData.daoAddress,
 			paymentData.projectId,
 			(paymentData.amount as number).toString(),
 			paymentData.specialMessage,
-			paymentData.currency
+			paymentData.currency,
+			expectedAmount
 		);
 
 		return paymentResult;
