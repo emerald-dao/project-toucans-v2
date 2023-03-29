@@ -23,5 +23,8 @@
 	description="When funding rounds get overfunded, all token holders can exchange their tokens for part of the overflow."
 	{id}
 >
-	<svelte:component this={$holderClaimSteps[$holderClaimActiveStep].component} />
+	<svelte:component
+		this={$holderClaimSteps[$holderClaimActiveStep].component}
+		bind:isValid={$holderClaimSteps[$holderClaimActiveStep].isValid}
+	/>
 </StepsProcessModal>

@@ -4,37 +4,12 @@
 	import validationSuite from './validation';
 	import { fade } from 'svelte/transition';
 	import { paymentData } from '$lib/features/payments/stores/PaymentData';
-	import { onMount } from 'svelte';
 	import SpecialMessage from '../../atoms/SpecialMessage.svelte';
 	import CurrencySelect from '$components/atoms/CurrencySelect.svelte';
 	import { ECurrencies } from '$lib/types/common/enums';
+	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 
 	export let isValid: boolean;
-
-	let amountInput: HTMLInputElement;
-	let amountValue: string;
-
-	const handleChange = (input: Event) => {
-		const target = input.target as HTMLInputElement;
-
-		// Workaround to make input element be displayed with commas
-		let numericString = amountValue.toString().replace(/[^0-9]/g, '');
-		let number = Number(numericString);
-		let formattedValue = Intl.NumberFormat('en-US').format(number);
-
-		$paymentData.amount = number;
-		amountInput.value = formattedValue;
-
-		res = validationSuite($paymentData, target.name);
-	};
-
-	let res = validationSuite.get();
-
-	onMount(() => {
-		amountInput.focus();
-	});
-
-	$: isValid = res.isValid();
 </script>
 
 <form
@@ -52,21 +27,13 @@
 		</div>
 	{/if}
 	<div>
-		<InputWrapper name="amount" isValid={res.isValid('amount')}>
-			<div class="row align-center">
-				<span class="currency-prefix large">
-					{`$${$paymentData.currency}`}
-				</span>
-				<input
-					type="text"
-					name="amount"
-					placeholder="0.00"
-					bind:value={amountValue}
-					bind:this={amountInput}
-					on:input={handleChange}
-				/>
-			</div>
-		</InputWrapper>
+		<CurrencyInput
+			{validationSuite}
+			autofocus={true}
+			currency={$paymentData.currency}
+			bind:value={$paymentData.amount}
+			bind:isValid
+		/>
 	</div>
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
@@ -133,17 +100,6 @@
 
 		.currency-select-wrapper {
 			margin-bottom: var(--space-4);
-		}
-
-		.currency-prefix {
-			color: var(--clr-text-off);
-		}
-
-		input[name='amount'] {
-			border: none;
-			font-size: var(--font-size-7);
-			color: var(--clr-heading-main);
-			padding-block: 0;
 		}
 
 		.funding-data-wrapper {
