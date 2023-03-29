@@ -8,7 +8,9 @@ import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEven
 
 export const ssr = false;
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, depends }) => {
+	depends('app:discover');
+
 	const generalInfo = await fetchProjectDatabaseData(params.contractName);
 	const userAddress = get(user).addr;
 

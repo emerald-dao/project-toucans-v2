@@ -5,10 +5,12 @@
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import SeeRoundDetailsModal from './atoms/SeeRoundDetailsModal.svelte';
 	import GoalReached from '$components/atoms/GoalReached.svelte';
+	import type { ECurrencies } from '$lib/types/common/enums';
 
 	export let round: FundingCycle;
 	export let i: number;
 	export let projectToken: string;
+	export let paymentToken: ECurrencies;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
@@ -26,7 +28,7 @@
 <div class="main-wrapper row-space-between align-center">
 	<div class="row-4 align-center">
 		<IconCircle icon={`${i + 1}`} color={active ? 'primary' : 'tertiary'} />
-		<FundingNumbers {goal} {funding} />
+		<FundingNumbers {goal} {funding} {paymentToken} />
 		{#if goalReached}
 			<GoalReached />
 		{/if}

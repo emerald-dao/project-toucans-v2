@@ -14,6 +14,7 @@
 	export let projectToken: string;
 	export let paymentToken: ECurrencies;
 	export let projectId: string;
+	export let claimOverflow = false;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
@@ -27,8 +28,6 @@
 		: null;
 
 	$: active = endDate ? endDate >= new Date() : true;
-
-	console.log('round', round);
 </script>
 
 <div class:card={hasBorder}>
@@ -53,7 +52,7 @@
 			</span>
 		</div>
 		{#if overflow > 0}
-			<OverflowCard {projectId} />
+			<OverflowCard {projectId} {claimOverflow} />
 		{/if}
 		{#if goal !== 'infinite'}
 			<ProgressBar

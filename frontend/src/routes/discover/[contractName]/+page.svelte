@@ -1,16 +1,17 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { supabase } from '$lib/supabaseClient';
 	import { getProjectInfo, getTokenBalance } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
+	import { invalidate } from '$app/navigation';
 
 	export let data: DAOProject;
 
-	const daoDataStore: Writable<DAOProject> = writable(data, (set) => {
+	let daoDataStore: Writable<DAOProject> = writable(data, (set) => {
 		const subscription = supabase
 			.channel('events')
 			.on(
@@ -24,7 +25,11 @@
 				(payload) => {
 					const newEvent = payload.new as DaoEvent;
 
-					reloadBlockchainData(newEvent);
+					reloadBlockchainData();
+
+					if (newEvent.type === 'Purchase' && newEvent.data.by === $user.addr) {
+						reloadUserBalance();
+					}
 
 					$daoDataStore.events?.push(newEvent);
 
@@ -38,14 +43,16 @@
 
 	setContext('daoData', $daoDataStore);
 
-	const reloadBlockchainData = async (event: DaoEvent) => {
+	const reloadBlockchainData = async () => {
 		$daoDataStore.onChainData = await getProjectInfo(
 			data.generalInfo.contract_address,
 			data.generalInfo.owner,
 			data.generalInfo.project_id
 		);
+	};
 
-		if (event.type === 'Purchase' && event.data.by === $user.addr) {
+	const reloadUserBalance = async () => {
+		if ($user.addr) {
 			$daoDataStore.userBalance = await getTokenBalance(
 				data.generalInfo.project_id,
 				data.generalInfo.contract_address,
@@ -53,6 +60,8 @@
 			);
 		}
 	};
+
+	$: $user.addr && reloadUserBalance();
 </script>
 
 <section class="container">

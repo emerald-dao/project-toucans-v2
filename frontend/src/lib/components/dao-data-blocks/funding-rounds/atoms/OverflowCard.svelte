@@ -3,6 +3,7 @@
 	import HolderClaimModal from '$lib/features/overfund/holder-claim/HolderClaimModal.svelte';
 
 	export let projectId: string;
+	export let claimOverflow: boolean;
 </script>
 
 <div class="row-3 align-center">
@@ -10,7 +11,9 @@
 		<IconCircle icon="tabler:bell-ringing" />
 		<span class="xsmall"> Overfunded </span>
 	</div>
-	<HolderClaimModal {projectId} />
+	{#if claimOverflow}
+		<HolderClaimModal {projectId} />
+	{/if}
 </div>
 
 <style lang="scss">
