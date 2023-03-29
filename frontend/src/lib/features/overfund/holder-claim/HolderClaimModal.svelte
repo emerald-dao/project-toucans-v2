@@ -14,7 +14,7 @@
 	};
 </script>
 
-<Button size="x-small" on:click={initClaim}>Claim</Button>
+<Button size="x-small" color="neutral" type="ghost" on:click={initClaim}>Claim overflow</Button>
 <StepsProcessModal
 	steps={$holderClaimSteps}
 	activeStepStore={holderClaimActiveStep}

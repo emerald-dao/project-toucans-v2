@@ -4,12 +4,12 @@
 	export let goal: number | string;
 	export let funding: number;
 	export let fontSize: string = '1rem';
-	export let paymenToken: ECurrencies;
+	export let paymentToken: ECurrencies;
 </script>
 
 <div class="main-wrapper" style={`font-size: ${fontSize}`}>
 	<span class="funding w-regular">{`$${funding.toLocaleString()}`}</span>
-	<span class="goal w-regular">{`/ ${goal.toLocaleString()} ${paymenToken}`}</span>
+	<span class="goal w-regular">{`/ ${goal.toLocaleString()} ${paymentToken}`}</span>
 </div>
 
 <style lang="scss">

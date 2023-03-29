@@ -53,7 +53,7 @@
 			</span>
 		</div>
 		{#if overflow > 0}
-			<OverflowCard {overflow} {round} {paymentToken} {projectId} />
+			<OverflowCard {projectId} />
 		{/if}
 		{#if goal !== 'infinite'}
 			<ProgressBar
