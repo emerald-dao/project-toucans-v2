@@ -8,7 +8,12 @@
 <div class="rounds-wrapper">
 	{#if daoData.onChainData.fundingCycles.length > 0}
 		{#each daoData.onChainData.fundingCycles as round, i}
-			<RoundsListElement {round} {i} projectToken={daoData.generalInfo.token_symbol} />
+			<RoundsListElement
+				{round}
+				{i}
+				projectToken={daoData.generalInfo.token_symbol}
+				paymentToken={daoData.onChainData.paymentCurrency}
+			/>
 		{/each}
 	{:else}
 		<div class="no-rounds-wrapper">

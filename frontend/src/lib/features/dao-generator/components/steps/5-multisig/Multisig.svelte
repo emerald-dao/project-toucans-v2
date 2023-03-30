@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 	import { user } from '$stores/flow/FlowStore';
-	import MultisigManager from '$lib/features/add-signature/components/MultisigManager.svelte';
+	import MultisigManager from '$lib/features/multisig-manager/components/MultisigManager.svelte';
 	import StepButtons from '../../atoms/StepButtons.svelte';
 	import { onMount } from 'svelte';
 

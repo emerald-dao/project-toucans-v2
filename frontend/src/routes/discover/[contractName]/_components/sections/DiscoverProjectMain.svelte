@@ -5,6 +5,7 @@
 	import ProjectCharts from './discover-project-blocks/ProjectCharts.svelte';
 	import ProjectLists from './discover-project-blocks/ProjectLists.svelte';
 	import { RoundsCard } from '$components/dao-data-blocks';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let daoData: DAOProject;
 
@@ -22,7 +23,15 @@
 	<div class="column-6">
 		<TokenStats {daoData} />
 		{#if currentFundingCycleData}
-			<RoundsCard round={currentFundingCycleData} projectToken={daoData.generalInfo.token_symbol} />
+			<RoundsCard
+				round={currentFundingCycleData}
+				projectId={daoData.generalInfo.project_id}
+				projectToken={daoData.generalInfo.token_symbol}
+				paymentToken={daoData.onChainData.paymentCurrency}
+				claimOverflow={daoData.userBalance != undefined &&
+					daoData.userBalance > 0 &&
+					$user.addr != undefined}
+			/>
 		{/if}
 		<ProjectCharts {daoData} />
 		<ProjectLists {daoData} />

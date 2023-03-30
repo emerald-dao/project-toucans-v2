@@ -7,27 +7,27 @@
 	export let onClean: (() => void) | undefined = undefined;
 </script>
 
-<div class="card">
+<div class="card-primary">
 	<h4>{title}</h4>
 	<div class="column-3 align-start">
 		<slot />
 	</div>
 	<div class="edit-wrapper">
-		{#if onEdit !== undefined}
+		{#if onEdit != undefined}
 			<div class="header-link" on:click={() => onEdit()} on:keydown>
-				<Icon icon="tabler:edit"/>
+				<Icon icon="tabler:edit" />
 			</div>
 		{/if}
-		{#if onClean !== undefined}
+		{#if onClean != undefined}
 			<div class="header-link" on:click={() => onClean()} on:keydown>
-				<Icon icon="tabler:trash"/>
+				<Icon icon="tabler:trash" />
 			</div>
 		{/if}
 	</div>
 </div>
 
 <style type="scss">
-	.card {
+	.card-primary {
 		position: relative;
 		display: flex;
 		flex-direction: column;

@@ -3,11 +3,12 @@
 
 	export let icon: string;
 	export let color: 'primary' | 'secondary' | 'tertiary' | 'neutral' | 'alert' = 'tertiary';
+	export let width = '0.9rem';
 </script>
 
-<div class={`icon-wrapper ${color}`}>
+<div class={`icon-wrapper ${color}`} style={`font-size: ${width}`}>
 	{#if icon.length > 1}
-		<Icon {icon} width="0.9rem" />
+		<Icon {icon} {width} />
 	{:else}
 		<span class="xsmall w-medium">{icon}</span>
 	{/if}

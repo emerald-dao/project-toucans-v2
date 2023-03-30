@@ -5,16 +5,22 @@
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import FundingNumbers from './atoms/FundingNumbers.svelte';
 	import GoalReached from '../../atoms/GoalReached.svelte';
+	import OverflowCard from './atoms/OverflowCard.svelte';
+	import type { ECurrencies } from '$lib/types/common/enums';
 
 	export let round: FundingCycle;
 	export let title = 'Active Funding Round';
 	export let hasBorder = true;
 	export let projectToken: string;
+	export let paymentToken: ECurrencies;
+	export let projectId: string;
+	export let claimOverflow = false;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
 
 	$: goalReached = goal !== 'infinite' ? goal < funding : false;
+	$: overflow = goal !== 'infinite' ? funding - (goal as number) : 0;
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
 	const endDate = round.details.timeframe.endTime
@@ -45,6 +51,9 @@
 				{/if}
 			</span>
 		</div>
+		{#if overflow > 0}
+			<OverflowCard {projectId} {claimOverflow} />
+		{/if}
 		{#if goal !== 'infinite'}
 			<ProgressBar
 				value={Number(round.paymentTokensSent)}
@@ -54,11 +63,11 @@
 				min={0}
 			>
 				<div slot="label">
-					<FundingNumbers {goal} {funding} fontSize="1.2rem" />
+					<FundingNumbers {goal} {funding} {paymentToken} fontSize="1.2rem" />
 				</div>
 			</ProgressBar>
 		{:else}
-			<FundingNumbers {goal} {funding} fontSize="1.2rem" />
+			<FundingNumbers {goal} {funding} {paymentToken} fontSize="1.2rem" />
 		{/if}
 		<div class="funding-stats-wrapper">
 			<div class="chart-data-card">
