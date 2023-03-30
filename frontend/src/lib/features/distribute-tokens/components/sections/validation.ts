@@ -1,6 +1,7 @@
-import { create, enforce, test, only, skipWhen } from 'vest';
+import { hasVaultSetup } from '$flow/actions';
+import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
 
-const validationSuite = create((data = {}, currentField, availableBalance: number | undefined) => {
+const validationSuite = create((data = {}, currentField, availableBalance: number | undefined, projectOwner: string, projectId: string) => {
 	only(currentField);
 
 	test('address', 'Address should have 18 chars', () => {
@@ -10,9 +11,9 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 	skipWhen(validationSuite.get().hasErrors('address'), () => {
 		test.memo(
 			'address',
-			"Address doesn't exist",
+			"Address doesn't have a vault set up.",
 			async () => {
-				return (await dummyCheckAddress(true)) as string;
+				return (await checkAddress(data.account, projectOwner, projectId)) as string;
 			},
 			[data.account]
 		);
@@ -22,16 +23,17 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 		enforce(data.tokens).greaterThan(0);
 	});
 
-	skipWhen(availableBalance === undefined, () => {
+	omitWhen(availableBalance === undefined, () => {
 		test('amount', 'Amount should be less than your available balance', () => {
 			enforce(data.tokens).lessThan(availableBalance);
 		});
 	});
 });
 
-const dummyCheckAddress = async (success: boolean) => {
+const checkAddress = async (address: string, projectOwner: string, projectId: string) => {
 	return new Promise((resolve, reject) => {
-		setTimeout(() => {
+		setTimeout(async () => {
+			const success = await hasVaultSetup(projectOwner, projectId, address)
 			if (success) {
 				resolve(true);
 			} else {

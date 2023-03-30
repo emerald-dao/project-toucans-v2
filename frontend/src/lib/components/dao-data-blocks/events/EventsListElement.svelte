@@ -89,7 +89,7 @@
 				amount={event.type === 'Withdraw' || event.type === 'Distribute'
 					? -Number(event.data.amount)
 					: Number(event.data.amount)}
-				currency="FLOW"
+				currency={event.data.tokenSymbol}
 				color="heading"
 				fontSize="0.85rem"
 			/>

@@ -13,6 +13,7 @@ import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
+import mintTokensTx from './cadence/transactions/mint_tokens.cdc?raw';
 import finalizeAddSignerActionTx from './cadence/transactions/finalize_add_signer_action.cdc?raw';
 
 // Treasury Actions
@@ -27,6 +28,7 @@ import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw';
 import getPendingActionsInManyScript from './cadence/scripts/get_pending_actions_in_many.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
+import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
 
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
@@ -104,7 +106,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg(data.tokenomics.mintTokens, t.Bool),
-			arg(formatFix(data.tokenomics.totalSupply), t.UFix64)
+			arg('0.0', t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -433,6 +435,34 @@ export const finalizeAddSignerExecution = (
 ) =>
 	executeTransaction(() => finalizeAddSigner(projectOwner, projectId, actionMessage, actionUUID));
 
+const mintTokens = async (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(mintTokensTx, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64),
+			arg(recipient, t.Address)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const mintTokensExecution = (
+	projectOwner: string,
+	projectId: string,
+	recipient: string,
+	amount: string
+) =>
+	executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
+
 //    _____           _       _
 //   / ____|         (_)     | |
 //  | (___   ___ _ __ _ _ __ | |_ ___
@@ -517,6 +547,20 @@ export const getBalances = async (userAddress: string) => {
 		return response;
 	} catch (e) {
 		console.log('Error in getBalances');
+		console.log(e);
+	}
+};
+
+export const hasVaultSetup = async (projectOwner: string, projectId: string, userAddress: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, projectOwner),
+			args: (arg, t) => [arg(userAddress, t.Address)]
+		});
+		console.log(response)
+		return response;
+	} catch (e) {
+		console.log('Error in hasVaultSetup');
 		console.log(e);
 	}
 };

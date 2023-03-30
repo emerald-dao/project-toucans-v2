@@ -95,6 +95,8 @@
 				bind:csvDist
 				bind:currencyToDistribute
 				bind:availableBalance
+				projectOwner={daoData.generalInfo.owner}
+				projectId={daoData.generalInfo.project_id}
 				{addToStaging}
 			/>
 		{:else}

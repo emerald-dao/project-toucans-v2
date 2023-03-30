@@ -16,6 +16,8 @@
 	export let currencyToDistribute: ECurrencies | string;
 	export let availableBalance: number | undefined;
 	export let addToStaging: (validForm: boolean) => void;
+	export let projectOwner: string;
+	export let projectId: string;
 
 	let csvFile: File[] = [];
 
@@ -43,7 +45,7 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
-		res = validationSuite(formDist, target.name, availableBalance);
+		res = validationSuite(formDist, target.name, availableBalance, projectOwner, projectId);
 
 		if (target.name === 'address') {
 			addressPending = true;

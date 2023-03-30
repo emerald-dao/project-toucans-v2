@@ -47,7 +47,8 @@
 		},
 		"Toucans": "./src/flow/cadence/Toucans.cdc",
 		"ToucansMultiSign": "./src/flow/cadence/ToucansMultiSign.cdc",
-		"ToucansTreasuryActions": "./src/flow/cadence/ToucansTreasuryActions.cdc"
+		"ToucansTreasuryActions": "./src/flow/cadence/ToucansTreasuryActions.cdc",
+		"ToucansTokens": "./src/flow/cadence/ToucansTokens.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -72,13 +73,18 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
+				"ToucansTokens",
 				"ToucansMultiSign",
 				"Toucans",
 				"ToucansTreasuryActions"
 			]
 		},
 		"testnet": {
-			"testnet-account": ["ToucansMultiSign", "Toucans", "ToucansTreasuryActions"]
+			"testnet-account": [
+				"ToucansMultiSign",
+				"Toucans",
+				"ToucansTreasuryActions"
+			]
 		}
 	}
 }

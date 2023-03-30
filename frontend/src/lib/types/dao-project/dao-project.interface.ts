@@ -63,6 +63,7 @@ export interface TokenInfo {
 	contractAddress: string;
 	tokenType: string;
 	receiverPath: string;
+	symbol: string;
 	publicPath: string;
 	storagePath: string;
 }

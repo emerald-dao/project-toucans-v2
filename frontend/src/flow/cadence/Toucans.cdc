@@ -1,5 +1,6 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import ToucansMultiSign from "./ToucansMultiSign.cdc"
+import ToucansTokens from "./ToucansTokens.cdc"
 
 pub contract Toucans {
 
@@ -11,27 +12,6 @@ pub contract Toucans {
       post {
         result.balance == amount: "Did not mint correct number of tokens."
       }
-    }
-  }
-
-  pub struct TokenInfo {
-    pub let contractName: String
-    pub let contractAddress: Address
-    pub let tokenType: Type
-    pub let symbol: String
-    pub let receiverPath: PublicPath
-    pub let publicPath: PublicPath
-    pub let storagePath: StoragePath
-
-    init(_ cn: String, _ ca: Address, _ s: String, _ rp: PublicPath, _ pp: PublicPath, _ sp: StoragePath) {
-      self.contractName = cn
-      self.contractAddress = ca
-      let caToString: String = ca.toString()
-      self.tokenType = CompositeType("A.".concat(caToString.slice(from: 2, upTo: caToString.length)).concat(".".concat(cn)).concat(".Vault"))!
-      self.symbol = s
-      self.receiverPath = rp
-      self.publicPath = pp
-      self.storagePath = sp
     }
   }
 
@@ -56,6 +36,7 @@ pub contract Toucans {
     projectId: String,
     projectOwner: Address, 
     currentCycle: UInt64,
+    tokenSymbol: String,
     amount: UFix64,
     by: Address,
     message: String
@@ -65,6 +46,7 @@ pub contract Toucans {
     projectId: String,
     by: Address, 
     currentCycle: UInt64?,
+    tokenSymbol: String,
     to: Address,
     amount: UFix64
   )
@@ -74,7 +56,7 @@ pub contract Toucans {
     projectOwner: Address, 
     currentCycle: UInt64?,
     amount: UFix64,
-    tokenTypeIdentifier: String,
+    tokenSymbol: String,
     by: Address,
     message: String
   )
@@ -83,7 +65,7 @@ pub contract Toucans {
     projectId: String,
     projectOwner: Address, 
     currentCycle: UInt64?,
-    tokenTypeIdentifier: String,
+    tokenSymbol: String,
     amount: UFix64,
     by: Address
   )
@@ -185,8 +167,8 @@ pub contract Toucans {
 
   pub resource interface ProjectPublic {
     pub let projectId: String
-    pub let projectTokenInfo: TokenInfo
-    pub let paymentTokenInfo: TokenInfo
+    pub let projectTokenInfo: ToucansTokens.TokenInfo
+    pub let paymentTokenInfo: ToucansTokens.TokenInfo
     pub var totalFunding: UFix64
     pub let editDelay: UFix64
     pub let minting: Bool
@@ -214,8 +196,8 @@ pub contract Toucans {
 
   pub resource Project: ProjectPublic {
     pub let projectId: String
-    pub let projectTokenInfo: TokenInfo
-    pub let paymentTokenInfo: TokenInfo
+    pub let projectTokenInfo: ToucansTokens.TokenInfo
+    pub let paymentTokenInfo: ToucansTokens.TokenInfo
     // Of payment tokens
     pub var totalFunding: UFix64
     // You cannot edit or start a new cycle within this time frame
@@ -385,6 +367,7 @@ pub contract Toucans {
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: fundingCycleRef.details.cycleNum,
+        tokenSymbol: self.paymentTokenInfo.symbol,
         amount: paymentTokensSent,
         by: payer,
         message: message
@@ -421,12 +404,23 @@ pub contract Toucans {
       return &self.multiSignManager as &ToucansMultiSign.Manager
     }
 
+    access(self) fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
+      if inputVaultType == self.projectTokenInfo.tokenType {
+        return self.projectTokenInfo
+      } else if let tokenInfo = ToucansTokens.getTokenInfo(tokenType: inputVaultType) {
+        return tokenInfo
+      }
+      return nil
+    }
+
     access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType()) 
+                ?? panic("Unsupported token type for withdrawing.")
       emit Withdraw(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
-        tokenTypeIdentifier: vault.getType().identifier,
+        tokenSymbol: tokenInfo.symbol,
         amount: amount,
         by: vault.owner!.address
       )
@@ -434,12 +428,14 @@ pub contract Toucans {
     }
 
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType())
+                ?? panic("Unsupported token type for donating.")
       emit Donate(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
         amount: vault.balance,
-        tokenTypeIdentifier: vault.getType().identifier,
+        tokenSymbol: tokenInfo.symbol,
         by: payer,
         message: message
       )
@@ -461,13 +457,11 @@ pub contract Toucans {
     //                              |___/ 
 
 
-    pub fun distribute(recipient: Address, amount: UFix64) {
+    pub fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
       pre {
         self.minting: "Minting is off. You cannot do this."
       }
 
-      let recipientVault = getAccount(recipient).getCapability(self.projectTokenInfo.publicPath)
-                      .borrow<&{FungibleToken.Receiver}>() ?? panic("The recipient does not have a Vault set up.")
       let tokens <- self.minter.mint(amount: amount)
       recipientVault.deposit(from: <- tokens)
 
@@ -475,7 +469,8 @@ pub contract Toucans {
         projectId: self.projectId,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleNum(),
-        to: recipient,
+        tokenSymbol: self.projectTokenInfo.symbol,
+        to: recipientVault.owner!.address,
         amount: amount
       )
     }
@@ -609,8 +604,8 @@ pub contract Toucans {
     }
 
     init(
-      projectTokenInfo: TokenInfo,
-      paymentTokenInfo: TokenInfo,
+      projectTokenInfo: ToucansTokens.TokenInfo,
+      paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
       signers: [Address],
@@ -619,6 +614,9 @@ pub contract Toucans {
       initialSupply: UFix64,
       extra: {String: AnyStruct}
     ) {
+      pre {
+        ToucansTokens.getTokenInfo(tokenType: paymentTokenInfo.tokenType) != nil: "Unsupported token type for payment."
+      }
       self.projectId = projectTokenInfo.contractName
       self.totalFunding = 0.0
       self.extra = extra
@@ -658,8 +656,8 @@ pub contract Toucans {
     pub let projects: @{String: Project}
 
     pub fun createProject(
-      projectTokenInfo:TokenInfo, 
-      paymentTokenInfo: TokenInfo,
+      projectTokenInfo: ToucansTokens.TokenInfo, 
+      paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
       signers: [Address],

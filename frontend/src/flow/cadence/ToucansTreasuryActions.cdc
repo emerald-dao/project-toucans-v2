@@ -2,6 +2,7 @@ import ToucansMultiSign from "./ToucansMultiSign.cdc"
 import FungibleToken from "./utility/FungibleToken.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import Toucans from "./Toucans.cdc"
+import ToucansTokens from "./ToucansTokens.cdc"
 
 pub contract ToucansTreasuryActions {
 

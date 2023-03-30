@@ -2,6 +2,7 @@ import FungibleToken from "./utility/FungibleToken.cdc"
 import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
 import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
+import ToucansTokens from "./ToucansTokens.cdc"
  
 pub contract ExampleToken: FungibleToken {
 
@@ -125,7 +126,7 @@ pub contract ExampleToken: FungibleToken {
     }
 
     init(
-      _paymentTokenInfo: Toucans.TokenInfo,
+      _paymentTokenInfo: ToucansTokens.TokenInfo,
       _editDelay: UFix64,
       _signers: [Address],
       _threshold: UInt64,
@@ -165,7 +166,7 @@ pub contract ExampleToken: FungibleToken {
 
       let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
       toucansProjectCollection.createProject(
-        projectTokenInfo: Toucans.TokenInfo("ExampleToken", self.account.address, "INSERT SYMBOL", self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
+        projectTokenInfo: ToucansTokens.TokenInfo("ExampleToken", self.account.address, "INSERT SYMBOL", self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 
         minter: <- create Minter(), 
         editDelay: _editDelay, 

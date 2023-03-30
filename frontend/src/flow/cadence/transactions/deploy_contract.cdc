@@ -2,6 +2,7 @@ import FungibleToken from "../utility/FungibleToken.cdc"
 import FUSD from "../utility/FUSD.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import Toucans from "../Toucans.cdc"
+import ToucansTokens from "../ToucansTokens.cdc"
 
 transaction(
   contractName: String,
@@ -44,7 +45,7 @@ transaction(
     deployer.contracts.add(
       name: contractName,
       code: contractCode.decodeHex(),
-      _paymentTokenInfo: Toucans.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath),
+      _paymentTokenInfo: ToucansTokens.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath),
       _editDelay: editDelay,
       _signers: initialSigners,
       _threshold: threshold,

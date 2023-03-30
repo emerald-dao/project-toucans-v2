@@ -24,7 +24,7 @@
 			<span class="xsmall">Total Funding</span>
 			<Currency
 				amount={Number(daoData.onChainData.totalFunding)}
-				currency="FLOW"
+				currency={daoData.onChainData.paymentCurrency}
 				color="heading"
 				fontSize="var(--font-size-5)"
 			/>
