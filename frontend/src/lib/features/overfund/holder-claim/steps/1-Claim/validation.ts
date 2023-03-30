@@ -1,17 +1,17 @@
 import { create, enforce, test, only } from 'vest';
 
-const validationSuite = create((data = {}, currentField, maxAmount) => {
-	console.log(data, currentField);
-
+const validationSuite = create((claimAmount, currentField, maxAmount) => {
 	only(currentField);
 
+	console.log('claimAmount', claimAmount);
+
 	test('amount', 'Amount should be greater than 0', () => {
-		enforce(data.amount).greaterThan(0);
+		enforce(claimAmount).greaterThan(0);
 	});
 
 	if (maxAmount) {
-		test('amount', 'Amount should be less than your holdings', () => {
-			enforce(data.amount).lessThanOrEquals(maxAmount);
+		test('amount', 'Amount is bigger that what you are allowed to claim', () => {
+			enforce(claimAmount).lessThanOrEquals(maxAmount);
 		});
 	}
 });

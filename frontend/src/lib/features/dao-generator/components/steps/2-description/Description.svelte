@@ -8,12 +8,19 @@
 	import { fly } from 'svelte/transition';
 	import validationSuite from './validation';
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
+	import { onMount } from 'svelte';
 
 	const handleChange = () => {
 		res = validationSuite($daoGeneratorData.daoDetails);
 	};
 
 	let res = validationSuite.get();
+
+	let firstInput: HTMLTextAreaElement;
+
+	onMount(() => {
+		firstInput.focus();
+	});
 </script>
 
 <form
@@ -34,6 +41,7 @@
 			placeholder="A DAO for the people"
 			bind:value={$daoGeneratorData.daoDetails.description}
 			on:input={handleChange}
+			bind:this={firstInput}
 		/>
 	</InputWrapper>
 	<StepButtons active={res.isValid()} />

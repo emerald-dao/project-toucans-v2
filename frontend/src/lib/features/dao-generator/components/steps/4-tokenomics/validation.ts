@@ -1,14 +1,25 @@
-import { create, enforce, test, only } from 'vest';
+import { create, enforce, test, omitWhen } from 'vest';
 
-const validationSuite = create((data = {}, currentField) => {
-	only(currentField);
+const validationSuite = create((data = {}) => {
+	omitWhen(
+		() => data.hasMaxSupply === false,
+		() => {
+			test('maxSupply', 'Max supply should be greater than 0', () => {
+				enforce(data.maxSupply).greaterThan(0);
+			});
 
-	test('editDelay', 'Edit delay is needed', () => {
-		enforce(data.editDelay).isNotEmpty();
-	});
+			test('maxMinting', 'Max minting should be less than max supply', () => {
+				enforce(data.maxMinting).lessThanOrEquals(data.maxSupply);
+			});
 
-	test('editDelay', 'Edit delay should be greater than 0', () => {
-		enforce(data.editDelay).greaterThan(0);
+			test('initialSupply', 'Initial supply should be less than max supply', () => {
+				enforce(data.initialSupply).lessThanOrEquals(data.maxSupply);
+			});
+		}
+	);
+
+	test('initialSupply', 'Initial supply greater than or equals 0', () => {
+		enforce(data.initialSupply).greaterThanOrEquals(0);
 	});
 });
 

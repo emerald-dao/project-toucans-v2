@@ -13,9 +13,12 @@ export interface DaoGeneratorData {
 	};
 	tokenomics: {
 		paymentCurrency: ECurrencies;
-		totalSupply: number | undefined;
-		editDelay: string | undefined;
+		initialSupply: number;
+		hasMaxSupply: boolean;
+		maxSupply?: number;
 		mintTokens: boolean;
+		maxMinting?: number;
+		editDelay: string | undefined;
 		walletAddresses: string[];
 	};
 	multisig: {
