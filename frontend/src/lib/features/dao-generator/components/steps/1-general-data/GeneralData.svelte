@@ -62,6 +62,12 @@
 
 	let res = validationSuite.get();
 
+	let firstInput: HTMLInputElement;
+
+	onMount(() => {
+		firstInput.focus();
+	});
+
 	$: $daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
 		.replace(/[^\w\s]|\s/gi, '')
 		.toLowerCase();
@@ -98,6 +104,7 @@
 			maxlength="30"
 			bind:value={$daoGeneratorData.daoDetails.name}
 			on:input={handleChange}
+			bind:this={firstInput}
 		/>
 	</InputWrapper>
 	<InputWrapper
