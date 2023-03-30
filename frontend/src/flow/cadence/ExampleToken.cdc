@@ -130,6 +130,7 @@ pub contract ExampleToken: FungibleToken {
       _signers: [Address],
       _threshold: UInt64,
       _minting: Bool,
+      _initialSupply: UFix64,
       _extra: {String: AnyStruct}
     ) {
 
@@ -171,6 +172,7 @@ pub contract ExampleToken: FungibleToken {
         signers: _signers,
         threshold: _threshold,
         minting: _minting,
+        initialSupply: _initialSupply,
         extra: _extra
       )
 

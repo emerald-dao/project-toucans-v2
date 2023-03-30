@@ -103,7 +103,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
-			arg(data.tokenomics.mintTokens, t.Bool)
+			arg(data.tokenomics.mintTokens, t.Bool),
+			arg(formatFix(data.tokenomics.totalSupply), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

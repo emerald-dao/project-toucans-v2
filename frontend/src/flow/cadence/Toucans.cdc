@@ -616,6 +616,7 @@ pub contract Toucans {
       signers: [Address],
       threshold: UInt64,
       minting: Bool,
+      initialSupply: UFix64,
       extra: {String: AnyStruct}
     ) {
       self.projectId = projectTokenInfo.contractName
@@ -630,11 +631,11 @@ pub contract Toucans {
       self.minting = minting
       self.additions <- {}
 
-      let testMint: @FungibleToken.Vault <- self.minter.mint(amount: 0.0)
-      assert(testMint.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
+      let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialSupply)
+      assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
       let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
       let emptyPaymentVault <- paymentContract.createEmptyVault()
-      self.treasury <- {projectTokenInfo.tokenType: <- testMint, emptyPaymentVault.getType(): <- emptyPaymentVault}
+      self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       self.overflow <- paymentContract.createEmptyVault()
       self.multiSignManager <- ToucansMultiSign.createMultiSigManager(signers: signers, threshold: threshold)
     }
@@ -664,6 +665,7 @@ pub contract Toucans {
       signers: [Address],
       threshold: UInt64,
       minting: Bool,
+      initialSupply: UFix64,
       extra: {String: AnyStruct}
     ) {
       pre {
@@ -671,7 +673,7 @@ pub contract Toucans {
       }
       let cycleNum: UInt64 = 0
 
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, extra: extra)
+      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, initialSupply: initialSupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
 

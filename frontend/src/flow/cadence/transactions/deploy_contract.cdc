@@ -16,7 +16,8 @@ transaction(
   ptStoragePath: StoragePath,
   // DAO TREASURY
   signers: [Address],
-  minting: Bool
+  minting: Bool,
+  initialSupply: UFix64
 ) {
 
   prepare(deployer: AuthAccount) {
@@ -48,6 +49,7 @@ transaction(
       _signers: initialSigners,
       _threshold: threshold,
       _minting: minting,
+      _initialSupply: initialSupply,
       _extra: extra
     )
   }
