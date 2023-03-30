@@ -104,7 +104,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg(data.tokenomics.mintTokens, t.Bool),
-			arg(formatFix(data.tokenomics.totalSupply), t.UFix64)
+			arg(formatFix(data.tokenomics.initialSupply), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -153,7 +153,10 @@ export const fundProjectExecution = (
 	message: string,
 	currency: ECurrencies,
 	expectedAmount: string
-) => executeTransaction(() => fundProject(projectOwner, projectId, amount, message, currency, expectedAmount));
+) =>
+	executeTransaction(() =>
+		fundProject(projectOwner, projectId, amount, message, currency, expectedAmount)
+	);
 
 const donate = async (
 	projectOwner: string,

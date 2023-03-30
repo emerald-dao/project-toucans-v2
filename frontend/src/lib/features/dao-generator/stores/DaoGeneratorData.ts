@@ -15,7 +15,10 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 	},
 	tokenomics: {
 		paymentCurrency: ECurrencies.FLOW,
-		totalSupply: undefined,
+		initialSupply: 0,
+		hasMaxSupply: false,
+		maxMinting: undefined,
+		maxSupply: undefined,
 		editDelay: '0.0',
 		mintTokens: false,
 		walletAddresses: []

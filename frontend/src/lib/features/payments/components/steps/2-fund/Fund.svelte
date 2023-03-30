@@ -9,7 +9,17 @@
 	import { ECurrencies } from '$lib/types/common/enums';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 
-	export let isValid: boolean;
+	export let isValid = false;
+
+	const handleChange = (input: Event) => {
+		const target = input.target as HTMLInputElement;
+
+		res = validationSuite($paymentData, target.name);
+
+		isValid = res.isValid();
+	};
+
+	let res = validationSuite.get();
 </script>
 
 <form
@@ -28,11 +38,14 @@
 	{/if}
 	<div>
 		<CurrencyInput
-			{validationSuite}
-			autofocus={true}
+			autofocus
 			currency={$paymentData.currency}
+			errors={res.getErrors('amount')}
+			isValid={res.isValid('amount')}
+			fontSize="var(--font-size-7)"
+			hasBorder={false}
+			on:input={(input) => handleChange(input.detail)}
 			bind:value={$paymentData.amount}
-			bind:isValid
 		/>
 	</div>
 	<SpecialMessage />

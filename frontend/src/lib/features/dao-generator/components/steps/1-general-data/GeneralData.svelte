@@ -66,6 +66,10 @@
 		.replace(/[^\w\s]|\s/gi, '')
 		.toLowerCase();
 
+	$: $daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName
+		.toUpperCase()
+		.replace(/[^A-Z]/g, '');
+
 	$: validForm =
 		res.isValid() && $daoGeneratorData.daoDetails.logo
 			? $daoGeneratorData.daoDetails.logo.length > 0

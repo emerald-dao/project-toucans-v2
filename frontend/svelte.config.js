@@ -17,7 +17,6 @@ const config = {
 			}
 		})
 	],
-
 	kit: {
 		adapter: adapter(),
 		alias: {

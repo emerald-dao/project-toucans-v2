@@ -1,4 +1,4 @@
-import { create, enforce, test, only, skipWhen } from 'vest';
+import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
 
 const validationSuite = create((data = {}, currentField, availableBalance: number | undefined) => {
 	only(currentField);
@@ -22,7 +22,7 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 		enforce(data.tokens).greaterThan(0);
 	});
 
-	skipWhen(availableBalance === undefined, () => {
+	omitWhen(availableBalance === undefined, () => {
 		test('amount', 'Amount should be less than your available balance', () => {
 			enforce(data.tokens).lessThan(availableBalance);
 		});

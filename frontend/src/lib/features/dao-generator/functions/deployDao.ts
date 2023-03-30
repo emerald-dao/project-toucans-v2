@@ -7,7 +7,6 @@ import { env as PublicEnv } from '$env/dynamic/public';
 import { goto } from '$app/navigation';
 import { generatorActiveStep } from '../stores/DaoGeneratorSteps';
 import type { CurrentUserObject, TransactionStatusObject } from '@onflow/fcl';
-import type { ProjectCreatedEvent } from '$lib/types/dao-project/dao-event/events/project-created.interface';
 import { postProject } from '$lib/features/dao-generator/functions/postDao';
 import { addNotification } from '$lib/features/notifications/functions/postNotification';
 import { ECurrencies } from '../../../types/common/enums';
@@ -27,7 +26,7 @@ export const deployDao = async () => {
 		const [projectCreatedEvent] = res.events.filter((event) =>
 			event.type.includes('Toucans.ProjectCreated')
 		);
-		const eventData = projectCreatedEvent.data as ProjectCreatedEvent;
+		const eventData = projectCreatedEvent.data;
 
 		console.log('ProjectCreatedEvent', projectCreatedEvent);
 
@@ -63,7 +62,7 @@ export const deployDao = async () => {
 			},
 			tokenomics: {
 				paymentCurrency: ECurrencies.FLOW,
-				totalSupply: undefined,
+				initialSupply: undefined,
 				editDelay: '0.0',
 				mintTokens: false,
 				walletAddresses: []

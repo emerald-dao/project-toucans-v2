@@ -1,15 +1,24 @@
 <script lang="ts">
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Currency, Range } from '@emerald-dao/component-library';
-	import { getContext } from 'svelte';
 	import validationSuite from './validation';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { Currency } from '@emerald-dao/component-library';
+	import { getContext } from 'svelte';
 
-	export let isValid: boolean;
+	export let isValid = false;
+
+	const handleChange = (input: Event) => {
+		const target = input.target as HTMLInputElement;
+
+		res = validationSuite(claimAmount, target.name, maxClaimAmount);
+
+		isValid = res.isValid();
+	};
 
 	const daoData: DAOProject = getContext('daoData');
 
+	let res = validationSuite.get();
 	let claimAmount = 0;
 
 	$: holdingPercentage = Number(daoData.userBalance) / Number(daoData.onChainData.totalSupply);
@@ -27,12 +36,14 @@
 		/>
 	</div>
 	<CurrencyInput
-		{validationSuite}
-		autofocus={true}
+		autofocus
 		currency={daoData.onChainData.paymentCurrency}
-		maxAmount={maxClaimAmount}
+		errors={res.getErrors('amount')}
+		isValid={res.isValid('amount')}
+		fontSize="var(--font-size-7)"
+		hasBorder={false}
+		on:input={(input) => handleChange(input.detail)}
 		bind:value={claimAmount}
-		bind:isValid
 	/>
 	<div class="card-primary row-12 align-center justify-center">
 		<div class="column-1 align-end">
