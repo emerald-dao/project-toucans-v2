@@ -4,7 +4,7 @@
 	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import { Button } from '@emerald-dao/component-library';
-	import MultisigManager from '$lib/features/add-signature/components/MultisigManager.svelte';
+	import MultisigManager from '$lib/features/multisig-manager/components/MultisigManager.svelte';
 	import { updateMultisigExecution } from '$flow/actions';
 
 	const adminData: {
