@@ -18,7 +18,7 @@ export interface DaoGeneratorData {
 		maxSupply?: number;
 		mintTokens: boolean;
 		maxMinting?: number;
-		editDelay: string | undefined;
+		editDelay: string;
 		walletAddresses: string[];
 	};
 	multisig: {

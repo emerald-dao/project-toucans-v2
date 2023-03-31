@@ -7,6 +7,7 @@ import {
 	Socials,
 	Tokenomics,
 	ReviewAndDeploy,
+	EditDelay,
 	Multisig
 } from '../components/steps';
 
@@ -41,6 +42,14 @@ export const daoGeneratorSteps = createSteps([
 		component: Tokenomics,
 		action: null,
 		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'Edit Delay',
+		slug: 'edita-delay',
+		component: EditDelay,
+		action: null,
+		form: false,
 		state: 'inactive'
 	},
 	{
