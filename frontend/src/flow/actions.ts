@@ -14,6 +14,7 @@ import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 import mintTokensTx from './cadence/transactions/mint_tokens.cdc?raw';
+import mintTokensToTreasuryTx from './cadence/transactions/mint_tokens_to_treasury.cdc?raw';
 import finalizeAddSignerActionTx from './cadence/transactions/finalize_add_signer_action.cdc?raw';
 
 // Treasury Actions
@@ -465,6 +466,29 @@ export const mintTokensExecution = (
 	amount: string
 ) =>
 	executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
+
+const mintTokensToTreasury = async (
+	projectId: string,
+	amount: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(mintTokensToTreasuryTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+	
+export const mintTokensToTreasuryExecution = (
+	projectId: string,
+	amount: string
+) =>
+	executeTransaction(() => mintTokensToTreasury(projectId, amount));
 
 //    _____           _       _
 //   / ____|         (_)     | |

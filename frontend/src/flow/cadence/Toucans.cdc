@@ -475,6 +475,11 @@ pub contract Toucans {
       )
     }
 
+    pub fun mintToTreasury(amount: UFix64) {
+      let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
+      self.mint(recipientVault: ref, amount: amount)
+    }
+
 
     //    ____                  __ _               
     //   / __ \                / _| |              
