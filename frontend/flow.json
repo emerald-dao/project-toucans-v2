@@ -1,9 +1,15 @@
 {
 	"contracts": {
-		"FCLCrypto": "./src/flow/cadence/utility/FCLCrypto.cdc",
+		"FCLCrypto": {
+			"source": "./src/flow/cadence/utility/FCLCrypto.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
 		"FUSD": {
 			"source": "./src/flow/cadence/utility/FUSD.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0x3c5959b568896393",
 				"testnet": "0xe223d8a629e49c68"
 			}
@@ -27,6 +33,7 @@
 		"FungibleTokenMetadataViews": {
 			"source": "./src/flow/cadence/utility/FungibleTokenMetadataViews.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0xf233dcee88fe0abe",
 				"testnet": "0x9a0766d93b6608b7"
 			}
@@ -34,6 +41,7 @@
 		"MetadataViews": {
 			"source": "./src/flow/cadence/utility/MetadataViews.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0x1d7e57aa55817448",
 				"testnet": "0x631e88ae7f1d7c20"
 			}
@@ -41,14 +49,35 @@
 		"NonFungibleToken": {
 			"source": "./src/flow/cadence/utility/NonFungibleToken.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0x1d7e57aa55817448",
 				"testnet": "0x631e88ae7f1d7c20"
 			}
 		},
-		"Toucans": "./src/flow/cadence/Toucans.cdc",
-		"ToucansMultiSign": "./src/flow/cadence/ToucansMultiSign.cdc",
-		"ToucansTreasuryActions": "./src/flow/cadence/ToucansTreasuryActions.cdc",
-		"ToucansTokens": "./src/flow/cadence/ToucansTokens.cdc"
+		"Toucans": {
+			"source": "./src/flow/cadence/Toucans.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansMultiSign": {
+			"source": "./src/flow/cadence/ToucansMultiSign.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansTreasuryActions": {
+			"source": "./src/flow/cadence/ToucansTreasuryActions.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansTokens": {
+			"source": "./src/flow/cadence/ToucansTokens.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		}
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
