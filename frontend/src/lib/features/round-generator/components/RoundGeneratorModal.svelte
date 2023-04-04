@@ -56,5 +56,6 @@
 		{tokenSymbol}
 		{projectId}
 		{editDelay}
+		{daoData}
 	/>
 </StepsProcessModal>
