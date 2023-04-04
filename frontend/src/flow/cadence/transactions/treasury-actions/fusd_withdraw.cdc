@@ -1,11 +1,11 @@
-import ToucansTreasuryActions from "../../ToucansTreasuryActions.cdc"
+import ToucansActions from "../../ToucansActions.cdc"
 import Toucans from "../../Toucans.cdc"
 import FungibleToken from "../../utility/FungibleToken.cdc"
-import FlowToken from "../../utility/FlowToken.cdc"
+import FUSD from "../../utility/FUSD.cdc"
 
 // An example of proposing an action.
 //
-// Proposed ACTION: Withdraw `amount` `Flow Token` from the treasury
+// Proposed ACTION: Withdraw `amount` `FUSD` from the treasury
 // at `projectOwner` to `recipientAddr`
 
 transaction(projectOwner: Address, projectId: String, recipientAddr: Address, amount: UFix64) {
@@ -18,12 +18,13 @@ transaction(projectOwner: Address, projectId: String, recipientAddr: Address, am
                     .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
-    self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+
+    self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/fusdReceiver)
   }
 
   execute {
     // Propose the new action
-    let action = ToucansTreasuryActions.WithdrawToken(_recipientVault: self.RecipientVault, _amount: amount)
+    let action = ToucansActions.WithdrawToken(_recipientVault: self.RecipientVault, _amount: amount)
     self.Project.proposeAction(action: action)
   }
 }

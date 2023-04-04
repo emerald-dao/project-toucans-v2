@@ -13,21 +13,19 @@ import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
-import mintTokensTx from './cadence/transactions/mint_tokens.cdc?raw';
-import mintTokensToTreasuryTx from './cadence/transactions/mint_tokens_to_treasury.cdc?raw';
-import finalizeAddSignerActionTx from './cadence/transactions/finalize_add_signer_action.cdc?raw';
 
 // Treasury Actions
-import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
-import proposeFUSDWithdrawTx from './cadence/transactions/treasury-actions/propose_fusd_withdraw.cdc?raw';
-import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_flow_token_withdraw.cdc?raw';
+import paymentTokenWithdrawTx from './cadence/transactions/treasury-actions/payment_token_withdraw.cdc?raw';
+import FUSDWithdrawTx from './cadence/transactions/treasury-actions/fusd_withdraw.cdc?raw';
+import FLOWWithdrawTx from './cadence/transactions/treasury-actions/flow_token_withdraw.cdc?raw';
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
+import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
+import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
-import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw';
-import getPendingActionsInManyScript from './cadence/scripts/get_pending_actions_in_many.cdc?raw';
+import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
 
@@ -237,7 +235,7 @@ const proposeWithdraw = async (
 	amount: string
 ) => {
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(proposePaymentTokenWithdrawTx),
+		cadence: replaceWithProperValues(paymentTokenWithdrawTx),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
@@ -265,7 +263,7 @@ const proposePaymentWithdraw = async (
 	amount: string,
 	currency: ECurrencies
 ) => {
-	const txCode = currency === ECurrencies.FLOW ? proposeFlowTokenWithdrawTx : proposeFUSDWithdrawTx;
+	const txCode = currency === ECurrencies.FLOW ? FLOWWithdrawTx : FUSDWithdrawTx;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode),
 		args: (arg, t) => [
@@ -530,28 +528,14 @@ export const getTokenBalance = async (projectId: string, contractAddress: string
 	}
 };
 
-export const getPendingActionInDAO = async (owner: string, projectId: string) => {
-	console.log(projectId);
-	try {
-		const response = await fcl.query({
-			cadence: replaceWithProperValues(getPendingActionsInDAOScript),
-			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
-		});
-		return response;
-	} catch (e) {
-		console.log('Error in getPendingActionInDAO');
-		console.log(e);
-	}
-};
-
-export const getPendingActionsInMany = async (
+export const getPendingActions = async (
 	userAddress: string,
 	projectOwners: string[],
 	projectIds: string[]
 ) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getPendingActionsInManyScript),
+			cadence: replaceWithProperValues(getPendingActionsScript),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
 				arg(projectOwners, t.Array(t.Address)),

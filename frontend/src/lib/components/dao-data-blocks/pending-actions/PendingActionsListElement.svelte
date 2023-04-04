@@ -26,7 +26,9 @@
 		Withdraw: 'tabler:outbound',
 		RemoveSigner: 'tabler:pencil-off',
 		AddSigner: 'tabler:pencil-plus',
-		UpdateThreshold: 'tabler:alert-triangle'
+		UpdateThreshold: 'tabler:alert-triangle',
+		Mint: 'tabler:coin',
+		MintToTreasury: 'tabler:pig-money'
 	};
 
 	const actionTypeToText: {
@@ -35,7 +37,9 @@
 		Withdraw: 'Withdraw',
 		RemoveSigner: 'Remove Signer',
 		AddSigner: 'Add Signer',
-		UpdateThreshold: 'Update Threshold'
+		UpdateThreshold: 'Update Threshold',
+		Mint: 'Mint',
+		MintToTreasury: 'Mint to Treasury'
 	};
 </script>
 

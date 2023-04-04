@@ -1,6 +1,8 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
-import ToucansMultiSign from "./ToucansMultiSign.cdc"
+import Crypto
 import ToucansTokens from "./ToucansTokens.cdc"
+import ToucansUtils from "./ToucansUtils.cdc"
+import ToucansActions from "./ToucansActions.cdc"
 
 pub contract Toucans {
 
@@ -42,15 +44,6 @@ pub contract Toucans {
     message: String
   )
 
-  pub event Distribute(
-    projectId: String,
-    by: Address, 
-    currentCycle: UInt64?,
-    tokenSymbol: String,
-    to: Address,
-    amount: UFix64
-  )
-
   pub event Donate(
     projectId: String,
     projectOwner: Address, 
@@ -61,6 +54,7 @@ pub contract Toucans {
     message: String
   )
 
+  // Multi Sign Actions
   pub event Withdraw(
     projectId: String,
     projectOwner: Address, 
@@ -69,6 +63,17 @@ pub contract Toucans {
     amount: UFix64,
     by: Address
   )
+  pub event Distribute(
+    projectId: String,
+    by: Address, 
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    to: Address,
+    amount: UFix64
+  )
+  pub event AddSigner(projectId: String, signer: Address)
+  pub event RemoveSigner(projectId: String, signer: Address)
+  pub event UpdateThreshold(projectId: String, newThreshold: UInt64)
 
   pub struct CycleTimeFrame {
     pub let startTime: UFix64
@@ -174,9 +179,11 @@ pub contract Toucans {
     pub let minting: Bool
 
     // Setters
-    pub fun proposeAction(action: {ToucansMultiSign.Action})
+    // Some proposals we think make sense to be public initially
+    pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     // If the action is ready to execute, then allow anyone to do it.
-    pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct})
+    pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
@@ -191,7 +198,7 @@ pub contract Toucans {
     pub fun getExtra(): {String: AnyStruct}
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
-    pub fun borrowManagerPublic(): &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic}
+    pub fun borrowManagerPublic(): &Manager{ManagerPublic}
   }
 
   pub resource Project: ProjectPublic {
@@ -206,7 +213,7 @@ pub contract Toucans {
 
     access(self) let fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
-    access(self) let multiSignManager: @ToucansMultiSign.Manager
+    access(self) let multiSignManager: @Manager
     access(self) let overflow: @FungibleToken.Vault
     access(self) let minter: @{Minter}
     access(self) let funders: {Address: UFix64}
@@ -224,21 +231,83 @@ pub contract Toucans {
     //                                  |___/       
 
 
-    pub fun proposeAction(action: {ToucansMultiSign.Action}) {
-      // Keep this restriction to prevent bad actions displaying
-      pre {
-        "0x".concat(action.getType().identifier.slice(from: 2, upTo: 18)) == Toucans.account.address.toString(): "Must be a type allowed by Toucans."
-      }
+    pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: recipientVault.borrow()!.getType()) 
+                ?? panic("Unsupported token type for withdrawing.")
+      let action = ToucansActions.WithdrawToken(recipientVault, amount, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
+    pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
+      pre {
+        recipientVault.borrow()!.getType() == self.projectTokenInfo.tokenType: 
+          "This vault cannot receive the projects token."
+        self.minting: "Minting is turned off."
+      }
+      let action = ToucansActions.MintTokens(recipientVault, amount, tokenSymbol: self.projectTokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeMintToTreasury(amount: UFix64) {
+      pre {
+        self.minting: "Minting is turned off."
+      }
+      let action = ToucansActions.MintTokensToTreasury(amount, tokenSymbol: self.projectTokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeAddSigner(signer: Address) {
+      let action = ToucansActions.AddOneSigner(signer)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeRemoveSigner(signer: Address) {
+      let action = ToucansActions.RemoveOneSigner(signer)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeUpdateThreshold(threshold: UInt64) {
+      let action = ToucansActions.UpdateTreasuryThreshold(threshold)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun finalizeAction(actionUUID: UInt64) {
       post {
         self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
       }
-      let selfRef: &Project = &self as &Project
-      params.insert(key: "treasury", selfRef)
-      self.multiSignManager.finalizeAction(actionUUID: actionUUID, params)
+      assert(
+        self.multiSignManager.readyToFinalize(actionUUID: actionUUID),
+        message: "Cannot finalize this action yet."
+      )
+      let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
+      let action: {ToucansActions.Action} = actionWrapper.action
+      switch action.getType() {
+        case Type<ToucansActions.WithdrawToken>():
+          let withdraw = action as! ToucansActions.WithdrawToken
+          self.withdrawFromTreasury(vault: withdraw.recipientVault.borrow()!, amount: withdraw.amount)
+        case Type<ToucansActions.MintTokens>():
+          let mint = action as! ToucansActions.MintTokens
+          self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
+        case Type<ToucansActions.MintTokensToTreasury>():
+          let mint = action as! ToucansActions.MintTokensToTreasury
+          let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
+          self.mint(recipientVault: ref, amount: mint.amount)
+        case Type<ToucansActions.AddOneSigner>():
+          let addSigner = action as! ToucansActions.AddOneSigner
+          self.multiSignManager.addSigner(signer: addSigner.signer)
+          emit AddSigner(projectId: self.projectId, signer: addSigner.signer)
+        case Type<ToucansActions.RemoveOneSigner>():
+          let removeSigner = action as! ToucansActions.RemoveOneSigner
+          self.multiSignManager.removeSigner(signer: removeSigner.signer)
+          emit AddSigner(projectId: self.projectId, signer: removeSigner.signer)
+        case Type<ToucansActions.UpdateTreasuryThreshold>():
+          let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
+          self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
+          emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
+      }
+
+      // Will delete the action and make sure everything is good to go
+      self.multiSignManager.finalizeAction(actionUUID: actionUUID)
     }
 
 
@@ -337,7 +406,7 @@ pub contract Toucans {
 
       // Calculate payouts
       for payout in fundingCycleRef.details.payouts {
-        Toucans.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentTokensSent * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+        ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentTokensSent * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
       }
 
       // 3 cases:
@@ -400,11 +469,11 @@ pub contract Toucans {
       self.overflow.deposit(from: <- vault)
     }
 
-    access(account) fun borrowManager(): &ToucansMultiSign.Manager {
-      return &self.multiSignManager as &ToucansMultiSign.Manager
+    access(account) fun borrowManager(): &Manager {
+      return &self.multiSignManager as &Manager
     }
 
-    access(self) fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
+    pub fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
       if inputVaultType == self.projectTokenInfo.tokenType {
         return self.projectTokenInfo
       } else if let tokenInfo = ToucansTokens.getTokenInfo(tokenType: inputVaultType) {
@@ -457,7 +526,7 @@ pub contract Toucans {
     //                              |___/ 
 
 
-    pub fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
+    access(account) fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
       pre {
         self.minting: "Minting is off. You cannot do this."
       }
@@ -473,11 +542,6 @@ pub contract Toucans {
         to: recipientVault.owner!.address,
         amount: amount
       )
-    }
-
-    pub fun mintToTreasury(amount: UFix64) {
-      let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
-      self.mint(recipientVault: ref, amount: amount)
     }
 
 
@@ -604,8 +668,8 @@ pub contract Toucans {
       return nil
     }
 
-    pub fun borrowManagerPublic(): &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic} {
-      return &self.multiSignManager as &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic}
+    pub fun borrowManagerPublic(): &Manager{ManagerPublic} {
+      return &self.multiSignManager as &Manager{ManagerPublic}
     }
 
     init(
@@ -640,7 +704,7 @@ pub contract Toucans {
       let emptyPaymentVault <- paymentContract.createEmptyVault()
       self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       self.overflow <- paymentContract.createEmptyVault()
-      self.multiSignManager <- ToucansMultiSign.createMultiSigManager(signers: signers, threshold: threshold)
+      self.multiSignManager <- create Manager(_initialSigners: signers, _initialThreshold: threshold)
     }
 
     destroy() {
@@ -708,14 +772,218 @@ pub contract Toucans {
     }
   }
 
-  pub fun createCollection(): @Collection {
-    return <- create Collection()
+
+  //   __  __                                   
+  //  |  \/  |                                  
+  //  | \  / | __ _ _ __   __ _  __ _  ___ _ __ 
+  //  | |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '__|
+  //  | |  | | (_| | | | | (_| | (_| |  __/ |   
+  //  |_|  |_|\__,_|_| |_|\__,_|\__, |\___|_|   
+  //                             __/ |          
+  //                            |___/      
+
+
+  pub enum ActionState: UInt8 {
+    pub case ACCEPTED
+    pub case DECLINED
+    pub case PENDING
   }
 
-  pub fun depositTokensToAccount(funds: @FungibleToken.Vault, to: Address, publicPath: PublicPath) {
-    let vault = getAccount(to).getCapability(publicPath).borrow<&{FungibleToken.Receiver}>() 
-              ?? panic("Account does not have a proper Vault set up.")
-    vault.deposit(from: <- funds)
+  pub resource MultiSignAction {
+      pub let action: {ToucansActions.Action}
+      access(self) let signers: [Address]
+      access(self) let votes: {Address: Bool}
+      pub let threshold: UInt64
+
+      pub fun decline(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+        pre {
+          self.signers.contains(acctAddress): "This person cannot vote."
+        }
+        let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+        if sign {
+          self.votes[acctAddress] = false
+        }
+      }
+
+      pub fun accept(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+        pre {
+          self.signers.contains(acctAddress): "This person cannot vote."
+        }
+        let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+        if sign {
+          self.votes[acctAddress] = true
+        }
+      }
+
+      pub fun getSigners(): [Address] {
+          return self.signers
+      }
+
+      // Only returns people who have actually voted
+      pub fun getVotes(): {Address: Bool} {
+        return self.votes
+      }
+
+      pub fun getAccepted(): UInt64 {
+        var count: UInt64 = 0
+        for voter in self.votes.keys {
+            if self.votes[voter]! {
+                count = count + 1
+            }
+        }
+        return count
+      }
+
+      pub fun getDeclined(): UInt64 {
+        var count: UInt64 = 0
+        for voter in self.votes.keys {
+            if !self.votes[voter]! {
+                count = count + 1
+            }
+        }
+        return count
+      }
+
+      pub fun getActionState(): ActionState {
+        // If this action is to add a signer,
+        // and the person being added declined it,
+        // it is automatically declined.
+        if self.action.getType() == Type<ToucansActions.AddOneSigner>() {
+          let addSignerAction: ToucansActions.AddOneSigner = self.action as! ToucansActions.AddOneSigner
+          if self.votes[addSignerAction.signer] == false {
+            return ActionState.DECLINED
+          }
+        }
+
+        if self.getAccepted() >= self.threshold {
+            return ActionState.ACCEPTED
+        }
+        if self.getDeclined() > UInt64(self.getSigners().length) - self.threshold {
+            return ActionState.DECLINED
+        }
+
+        return ActionState.PENDING
+      }
+
+      init(_threshold: UInt64, _signers: [Address], _action: {ToucansActions.Action}) {
+        self.threshold = _threshold
+        self.signers = _signers
+        self.votes = {}
+        self.action = _action
+      }
+  }
+
+  pub resource interface ManagerPublic {
+      pub var threshold: UInt64
+      pub fun borrowAction(actionUUID: UInt64): &MultiSignAction
+      pub fun getActionState(actionUUID: UInt64): ActionState
+      pub fun readyToFinalize(actionUUID: UInt64): Bool
+      pub fun getIDs(): [UInt64]
+      pub fun getSigners(): [Address]
+  }
+  
+  pub resource Manager: ManagerPublic {
+    pub var threshold: UInt64
+    access(self) let signers: {Address: Bool}
+    // Maps the `uuid` of the MultiSignAction
+    // to the resource itself
+    access(self) let actions: @{UInt64: MultiSignAction}
+
+    pub fun createMultiSign(action: {ToucansActions.Action}) {
+      var threshold: UInt64 = self.threshold
+      var signers: [Address] = self.signers.keys
+      if action.getType() == Type<ToucansActions.AddOneSigner>() {
+        let addSignerAction = action as! ToucansActions.AddOneSigner
+        threshold = threshold + 1
+        signers.append(addSignerAction.signer)
+      }
+      let newAction <- create MultiSignAction(_threshold: threshold, _signers: signers, _action: action)
+      self.actions[newAction.uuid] <-! newAction
+    }
+
+    pub fun getActionState(actionUUID: UInt64): ActionState {
+      let actionRef: &MultiSignAction = (&self.actions[actionUUID] as &MultiSignAction?)!
+      return actionRef.getActionState()
+    }
+
+    pub fun readyToFinalize(actionUUID: UInt64): Bool {
+      let actionState: ActionState = self.getActionState(actionUUID: actionUUID)
+      return actionState != ActionState.PENDING
+    }
+
+    // We do not make this public because if anyone else wants to use
+    // this contract, they may want specific access control over who can
+    // actually execute an action, post conditions, and/or implement requirements
+    // (like the treasury must have >= 10 $FLOW before an action can be executed).
+    pub fun finalizeAction(actionUUID: UInt64) {
+      destroy self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
+      self.assertValidTreasury()
+    }
+
+    // These will be multisign actions themselves
+    access(account) fun addSigner(signer: Address) {
+      self.signers.insert(key: signer, true)
+      self.assertValidTreasury()
+    }
+
+    access(account) fun removeSigner(signer: Address) {
+      self.signers.remove(key: signer)
+
+      if Int(self.threshold) > self.signers.length {
+        // Automatically reduce the threshold to prevent it from
+        // being higher than the number of signers
+        self.threshold = UInt64(self.signers.length)
+      }
+
+      self.assertValidTreasury()
+    }
+
+    access(account) fun updateThreshold(newThreshold: UInt64) {
+      self.threshold = newThreshold
+      self.assertValidTreasury()
+    }
+
+    pub fun borrowAction(actionUUID: UInt64): &MultiSignAction {
+      return (&self.actions[actionUUID] as &MultiSignAction?)!
+    }
+
+    pub fun getIDs(): [UInt64] {
+      return self.actions.keys
+    }
+
+    pub fun getSigners(): [Address] {
+      return self.signers.keys
+    }
+
+    pub fun assertValidTreasury() {
+      assert(self.threshold > 0, message: "Threshold must be greater than 0.")
+      assert(self.signers.length > 0, message: "Number of signers must be greater than 0.")
+      assert(self.signers.length >= Int(self.threshold), message: "Number of signers must be greater than or equal to the threshold.")
+    }
+
+    init(_initialSigners: [Address], _initialThreshold: UInt64) {
+      self.signers = {}
+      self.actions <- {}
+      self.threshold = _initialThreshold
+
+      for signer in _initialSigners {
+        self.signers.insert(key: signer, true)
+      }
+
+      self.assertValidTreasury()
+    }
+
+    destroy() {
+      destroy self.actions
+    }
+  }
+      
+  pub fun createMultiSigManager(signers: [Address], threshold: UInt64): @Manager {
+      return <- create Manager(_initialSigners: signers, _initialThreshold: threshold)
+  }
+
+  pub fun createCollection(): @Collection {
+    return <- create Collection()
   }
 
   pub fun assertNonConflictingCycles(earlierCycle: FundingCycleDetails, laterCycle: FundingCycleDetails): Bool {

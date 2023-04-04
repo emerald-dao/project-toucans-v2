@@ -18,7 +18,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"../utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"../utility/FLOAT.cdc"', addresses.FLOAT)
 			.replace('"../Toucans.cdc"', addresses.Toucans)
-			.replace('"../ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"../ToucansActions.cdc"', addresses.Toucans)
 			.replace('"../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../ToucansTokens.cdc"', addresses.Toucans)
 			// Two directories deep
@@ -30,7 +30,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"../../utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"../../utility/FLOAT.cdc"', addresses.FLOAT)
 			.replace('"../../Toucans.cdc"', addresses.Toucans)
-			.replace('"../../ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"../../ToucansActions.cdc"', addresses.Toucans)
 			.replace('"../../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../../ToucansTokens.cdc"', addresses.Toucans)
 			// For Contract
@@ -42,7 +42,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"./utility/FUSD.cdc"', addresses.FUSD)
 			.replace('"./Toucans.cdc"', addresses.Toucans)
 			.replace('"./ToucansMultiSign.cdc"', addresses.Toucans)
-			.replace('"./ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"./ToucansActions.cdc"', addresses.Toucans)
 			.replace('"./ToucansTokens.cdc"', addresses.Toucans)
 			// For All
 			.replaceAll('ExampleToken', contractName)

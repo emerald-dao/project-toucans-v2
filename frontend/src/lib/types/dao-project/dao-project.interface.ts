@@ -72,6 +72,8 @@ export interface ActionData {
 	id: string;
 	intent: string;
 	title: MultisigActions;
+	threshold: string,
+	signers: string[],
 	votes: {
 		[voter: string]: boolean;
 	};

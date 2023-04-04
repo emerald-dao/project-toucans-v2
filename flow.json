@@ -60,20 +60,20 @@
 				"emulator": "0xf8d6e0586b0a20c7"
 			}
 		},
-		"ToucansMultiSign": {
-			"source": "./src/flow/cadence/ToucansMultiSign.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"ToucansTreasuryActions": {
-			"source": "./src/flow/cadence/ToucansTreasuryActions.cdc",
+		"ToucansActions": {
+			"source": "./src/flow/cadence/ToucansActions.cdc",
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7"
 			}
 		},
 		"ToucansTokens": {
 			"source": "./src/flow/cadence/ToucansTokens.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansUtils": {
+			"source": "./src/flow/cadence/ToucansUtils.cdc",
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7"
 			}
@@ -102,17 +102,17 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
+				"ToucansUtils",
 				"ToucansTokens",
-				"ToucansMultiSign",
 				"Toucans",
-				"ToucansTreasuryActions"
+				"ToucansActions"
 			]
 		},
 		"testnet": {
 			"testnet-account": [
-				"ToucansMultiSign",
+				"ToucansUtils",
 				"Toucans",
-				"ToucansTreasuryActions"
+				"ToucansActions"
 			]
 		}
 	}

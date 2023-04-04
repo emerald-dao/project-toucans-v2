@@ -1,4 +1,4 @@
-import ToucansTreasuryActions from "../../ToucansTreasuryActions.cdc"
+import ToucansActions from "../../ToucansActions.cdc"
 import Toucans from "../../Toucans.cdc"
 
 // An example of proposing an action.
@@ -7,13 +7,12 @@ import Toucans from "../../Toucans.cdc"
 
 transaction(projectOwner: Address, projectId: String, newSigners: [Address], newThreshold: UInt64) {
 
-  let Project: &Toucans.Project{Toucans.ProjectPublic}
+  let Project: &Toucans.Project
   
-  prepare(signer: AuthAccount) {
-    let collection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                    .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+  prepare(owner: AuthAccount) {
+    let collection = owner.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
                     ?? panic("A DAOTreasury doesn't exist here.")
-    self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
+    self.Project = collection.borrowProject(projectId: projectId) ?? panic("Project does not exist.")
   }
 
   execute {
@@ -23,21 +22,21 @@ transaction(projectOwner: Address, projectId: String, newSigners: [Address], new
     // Propose the new action
     for newSigner in newSigners {
         if !existingSigners.contains(newSigner) {
-          let addSignerAction = ToucansTreasuryActions.AddOneSigner(_signer: newSigner)
-          self.Project.proposeAction(action: addSignerAction)
+          let addSignerAction = ToucansActions.AddOneSigner(_signer: newSigner)
+          self.Project.proposeAddSigner(signer: newSigner)
         }
     }
 
     for oldSigner in existingSigners {
       if !newSigners.contains(oldSigner) {
-        let removeSignerAction = ToucansTreasuryActions.RemoveOneSigner(_signer: oldSigner)
-        self.Project.proposeAction(action: removeSignerAction)
+        let removeSignerAction = ToucansActions.RemoveOneSigner(_signer: oldSigner)
+        self.Project.proposeRemoveSigner(signer: oldSigner)
       }
     }
 
     if newThreshold != existingThreshold {
-      let updateThresholdAction = ToucansTreasuryActions.UpdateTreasuryThreshold(_threshold: newThreshold)
-      self.Project.proposeAction(action: updateThresholdAction)
+      let updateThresholdAction = ToucansActions.UpdateTreasuryThreshold(_threshold: newThreshold)
+      self.Project.proposeUpdateThreshold(threshold: newThreshold)
     }
   }
 }

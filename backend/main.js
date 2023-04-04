@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
-const actionIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.ToucansTreasuryActions.`;
+// const actionIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.ToucansActions.`;
 
 fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
   const { projectId, ...rest } = event;
@@ -39,19 +39,19 @@ fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
   appendAction(projectId, rest, 'Withdraw');
 });
 
-fcl.events(`${actionIdentifierPrefix}UpdateThreshold`).subscribe((event) => {
+fcl.events(`${eventIdentifierPrefix}UpdateThreshold`).subscribe((event) => {
   const { projectId, ...rest } = event;
 
   appendAction(projectId, rest, 'UpdateThreshold');
 });
 
-fcl.events(`${actionIdentifierPrefix}AddSigner`).subscribe(async (event) => {
+fcl.events(`${eventIdentifierPrefix}AddSigner`).subscribe(async (event) => {
   const { projectId, signer } = event;
 
   appendAction(projectId, { signer }, 'AddSigner')
 });
 
-fcl.events(`${actionIdentifierPrefix}RemoveSigner`).subscribe((event) => {
+fcl.events(`${eventIdentifierPrefix}RemoveSigner`).subscribe((event) => {
   const { projectId, signer } = event;
 
   appendAction(projectId, { signer }, 'RemoveSigner')
