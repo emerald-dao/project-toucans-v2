@@ -51,8 +51,8 @@
 					alert('todo');
 				}}
 			>
-				<Icon icon="tabler:player-stop-filled" />
-				Stop
+				<Icon icon="tabler:player-pause-filled" />
+				Pause
 			</Button>
 		{/if}
 		{#if goalReached}
