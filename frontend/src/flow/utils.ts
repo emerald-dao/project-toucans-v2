@@ -21,6 +21,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"../ToucansActions.cdc"', addresses.Toucans)
 			.replace('"../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../ToucansTokens.cdc"', addresses.Toucans)
+			.replace('"../utility/NFTCatalog.cdc"', addresses.NFTCatalog)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
@@ -33,6 +34,7 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"../../ToucansActions.cdc"', addresses.Toucans)
 			.replace('"../../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../../ToucansTokens.cdc"', addresses.Toucans)
+			.replace('"../../utility/NFTCatalog.cdc"', addresses.NFTCatalog)
 			// For Contract
 			.replace('"./utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
 			.replace('"./utility/MetadataViews.cdc"', addresses.MetadataViews)

@@ -15,7 +15,6 @@ pub contract ToucansUtils {
                 return true
             }
         }
-
     }
     
     return false
