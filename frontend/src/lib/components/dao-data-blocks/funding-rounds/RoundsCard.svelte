@@ -46,7 +46,7 @@
 			</div>
 			<span class="time-left xsmall">
 				<Icon icon="tabler:clock" />
-				{getRoundTiming(startDate, endDate)}
+				{getRoundTiming(startDate, endDate, roundStatus === 'active')}
 			</span>
 		</div>
 		{#if overflow > 0}

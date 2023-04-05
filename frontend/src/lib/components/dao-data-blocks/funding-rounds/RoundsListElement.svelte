@@ -61,7 +61,7 @@
 	</div>
 	<div class="row-5 align-center">
 		<span class="xsmall date">
-			{getRoundTiming(startDate, endDate)}
+			{getRoundTiming(startDate, endDate, roundStatus === 'active')}
 		</span>
 		<RoundStatusLabel status={roundStatus} />
 		<SeeRoundDetailsModal
