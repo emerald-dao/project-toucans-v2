@@ -30,6 +30,7 @@ pub struct Info {
   pub let actions: [Action]
   pub let minting: Bool
   pub let paymentCurrency: String
+  pub let maxSupply: UFix64?
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -51,6 +52,7 @@ pub struct Info {
       info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
     self.paymentCurrency = info.paymentTokenInfo.symbol
+    self.maxSupply = ExampleToken.maxSupply
 
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()

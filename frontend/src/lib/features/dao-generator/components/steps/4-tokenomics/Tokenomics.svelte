@@ -70,18 +70,6 @@
 		/>
 		<span class="slider" />
 	</label>
-	{#if $daoGeneratorData.tokenomics.mintTokens}
-		<CurrencyInput
-			name="maxMinting"
-			label="Max minting"
-			currency={$daoGeneratorData.daoDetails.tokenName}
-			errors={res.getErrors('maxMinting')}
-			isValid={res.isValid('maxMinting')}
-			autofocus
-			on:input={(input) => handleChange(input.detail)}
-			bind:value={$daoGeneratorData.tokenomics.maxMinting}
-		/>
-	{/if}
 	<StepButtons active={res.isValid()} />
 </form>
 

@@ -17,7 +17,6 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		paymentCurrency: ECurrencies.FLOW,
 		initialSupply: 0,
 		hasMaxSupply: false,
-		maxMinting: undefined,
 		maxSupply: undefined,
 		editDelay: '259200.00',
 		mintTokens: false,

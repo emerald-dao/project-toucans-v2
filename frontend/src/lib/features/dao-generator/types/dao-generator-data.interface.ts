@@ -17,7 +17,6 @@ export interface DaoGeneratorData {
 		hasMaxSupply: boolean;
 		maxSupply?: number;
 		mintTokens: boolean;
-		maxMinting?: number;
 		editDelay: string;
 		walletAddresses: string[];
 	};

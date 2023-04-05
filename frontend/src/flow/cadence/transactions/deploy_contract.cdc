@@ -18,7 +18,8 @@ transaction(
   // DAO TREASURY
   signers: [Address],
   minting: Bool,
-  initialSupply: UFix64
+  initialSupply: UFix64,
+  maxSupply: UFix64?,
 ) {
 
   prepare(deployer: AuthAccount) {
@@ -51,6 +52,7 @@ transaction(
       _threshold: threshold,
       _minting: minting,
       _initialSupply: initialSupply,
+      _maxSupply: maxSupply,
       _extra: extra
     )
   }
