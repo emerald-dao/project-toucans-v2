@@ -3,10 +3,7 @@
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import type { DaoEvent, DaoEventName } from '$lib/types/dao-project/dao-event/dao-event.type';
-	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
-	import RoundsCard from '../funding-rounds/RoundsCard.svelte';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import SeeRoundDetailsModal from '../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
 
@@ -98,6 +95,9 @@
 				paymentToken={daoData.onChainData.paymentCurrency}
 				roundNumber={Number(event.data.cycleNum)}
 				projectId={daoData.generalInfo.project_id}
+				activeRound={daoData.onChainData.currentFundingCycle
+					? Number(daoData.onChainData.currentFundingCycle)
+					: null}
 			/>
 		{/if}
 	</div>

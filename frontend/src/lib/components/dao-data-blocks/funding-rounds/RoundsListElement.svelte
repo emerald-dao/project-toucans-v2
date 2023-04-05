@@ -64,7 +64,14 @@
 			{getRoundTiming(startDate, endDate)}
 		</span>
 		<RoundStatusLabel status={roundStatus} />
-		<SeeRoundDetailsModal {round} {roundNumber} {projectToken} {paymentToken} {projectId} />
+		<SeeRoundDetailsModal
+			{round}
+			{roundNumber}
+			{projectToken}
+			{paymentToken}
+			{projectId}
+			{activeRound}
+		/>
 	</div>
 </div>
 

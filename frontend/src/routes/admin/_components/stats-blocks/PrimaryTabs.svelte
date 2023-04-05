@@ -30,6 +30,7 @@
 						paymentToken={daoData.onChainData.paymentCurrency}
 						projectId={daoData.generalInfo.project_id}
 						hasBorder={false}
+						activeRound={Number(daoData.onChainData.currentFundingCycle)}
 					/>
 				</div>
 			</TabPanel>
