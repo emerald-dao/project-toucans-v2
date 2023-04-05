@@ -16,7 +16,7 @@ import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 
 // Treasury Actions
 import paymentTokenWithdrawTx from './cadence/transactions/treasury-actions/payment_token_withdraw.cdc?raw';
-import FUSDWithdrawTx from './cadence/transactions/treasury-actions/fusd_withdraw.cdc?raw';
+import USDCWithdrawTx from './cadence/transactions/treasury-actions/usdc_withdraw.cdc?raw';
 import FLOWWithdrawTx from './cadence/transactions/treasury-actions/flow_token_withdraw.cdc?raw';
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
@@ -128,8 +128,8 @@ const fundProject = async (
 	expectedAmount: string
 ) => {
 	let txCode = fundProjectTx;
-	if (currency === ECurrencies.FUSD) {
-		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD');
+	if (currency === ECurrencies.USDC) {
+		txCode = txCode.replaceAll('flowTokenVault', 'USDCVault').replaceAll('FlowToken', 'FiatToken');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -167,8 +167,8 @@ const donate = async (
 	currency: ECurrencies
 ) => {
 	let txCode = donateTx;
-	if (currency === ECurrencies.FUSD) {
-		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD');
+	if (currency === ECurrencies.USDC) {
+		txCode = txCode.replaceAll('flowTokenVault', 'USDCVault').replaceAll('FlowToken', 'FiatToken');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -227,7 +227,7 @@ const newRound = async () => {
 
 export const newRoundExecution = () => executeTransaction(newRound);
 
-// TODO: IMPLEMENT FOR FLOW TOKEN AND FUSD
+// TODO: IMPLEMENT FOR FLOW TOKEN AND USDC
 const proposeWithdraw = async (
 	projectOwner: string,
 	projectId: string,
@@ -263,7 +263,7 @@ const proposePaymentWithdraw = async (
 	amount: string,
 	currency: ECurrencies
 ) => {
-	const txCode = currency === ECurrencies.FLOW ? FLOWWithdrawTx : FUSDWithdrawTx;
+	const txCode = currency === ECurrencies.FLOW ? FLOWWithdrawTx : USDCWithdrawTx;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode),
 		args: (arg, t) => [

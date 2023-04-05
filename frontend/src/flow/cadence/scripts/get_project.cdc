@@ -2,7 +2,7 @@ import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansActions from "../ToucansActions.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
-import FUSD from "../utility/FUSD.cdc"
+import FiatToken from "../utility/FiatToken.cdc"
 
 pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -46,7 +46,7 @@ pub struct Info {
     self.minting = info.minting
     self.treasuryBalances = {
       "FLOW": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
-      "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FUSD.Vault>()) ?? 0.0,
+      "USDC": info.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
       info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: info.paymentTokenInfo.tokenType) ?? 0.0,
       info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }

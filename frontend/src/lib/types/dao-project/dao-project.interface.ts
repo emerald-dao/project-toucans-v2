@@ -52,7 +52,7 @@ export interface DaoBlockchainData {
 	minting: boolean;
 	treasuryBalances: {
 		FLOW?: string;
-		FUSD?: string;
+		USDC?: string;
 		[key: string]: string | undefined;
 	};
 	paymentCurrency: ECurrencies;

@@ -1,7 +1,7 @@
 import ToucansActions from "../../ToucansActions.cdc"
 import Toucans from "../../Toucans.cdc"
 import FungibleToken from "../../utility/FungibleToken.cdc"
-import FUSD from "../../utility/FUSD.cdc"
+import FiatToken from "../../utility/FiatToken.cdc"
 
 // An example of proposing an action.
 //
@@ -19,7 +19,7 @@ transaction(projectOwner: Address, projectId: String, recipientAddr: Address, am
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
 
-    self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/fusdReceiver)
+    self.RecipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(/public/USDCVaultReceiver)
   }
 
   execute {

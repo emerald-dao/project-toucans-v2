@@ -22,6 +22,22 @@
 				"testnet": "0x7e60df042a9c0868"
 			}
 		},
+		"FiatToken": {
+			"source": "./src/flow/cadence/utility/FiatToken.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0xa983fecbed621163",
+				"mainnet": "0xb19436aae4d94622"
+			}
+		},
+		"OnChainMultiSig": {
+			"source": "./src/flow/cadence/utility/OnChainMultiSig.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x5a5b0a73a29e83f1",
+				"mainnet": "0x220c1b4155f86f2f"
+			}
+		},
 		"FungibleToken": {
 			"source": "./src/flow/cadence/utility/FungibleToken.cdc",
 			"aliases": {
@@ -102,6 +118,8 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
+				"OnChainMultiSig",
+				"FiatToken",
 				"ToucansUtils",
 				"ToucansTokens",
 				"Toucans",
@@ -117,3 +135,4 @@
 		}
 	}
 }
+ 

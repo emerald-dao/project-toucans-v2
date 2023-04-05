@@ -20,7 +20,7 @@
 	<div class="payment-currency column-2">
 		<label for="currencies">Payment currency</label>
 		<CurrencySelect
-			currencies={[ECurrencies.FLOW, ECurrencies.FUSD]}
+			currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
 			bind:value={$daoGeneratorData.tokenomics.paymentCurrency}
 		/>
 	</div>

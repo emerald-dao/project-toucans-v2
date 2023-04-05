@@ -11,13 +11,13 @@ export const currencies: { [key: string]: TokenInfo } = {
 		storagePath: 'flowTokenVault',
 		image: 'flow-logo.png'
 	},
-	FUSD: {
-		contractName: 'FUSD',
-		contractAddress: addresses.FUSD,
-		symbol: 'FUSD',
-		receiverPath: 'fusdReceiver',
-		publicPath: 'fusdBalance',
-		storagePath: 'fusdVault',
-		image: 'fusd-logo.png'
+	USDC: {
+		contractName: 'FiatToken',
+		contractAddress: addresses.USDC,
+		symbol: 'USDC',
+		receiverPath: 'USDCVaultReceiver',
+		publicPath: 'USDCVaultBalance',
+		storagePath: 'USDCVault',
+		image: 'usdc-logo.png'
 	}
 };
