@@ -175,3 +175,18 @@ export const formatFix = (value) => {
 	}
 	return i;
 };
+
+export const splitList = (list: string[], chunkSize: number) => {
+  const groups = []
+  let currentGroup = []
+  for (let i = 0; i < list.length; i++) {
+      const collectionID = list[i]
+      if (currentGroup.length >= chunkSize) {
+        groups.push([...currentGroup])
+        currentGroup = []
+      }
+      currentGroup.push(collectionID)
+  }
+  groups.push([...currentGroup])
+  return groups
+}

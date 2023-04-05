@@ -111,9 +111,11 @@ pub contract Toucans {
     pub let reserveRate: UFix64
     pub let timeframe: CycleTimeFrame
     pub let payouts: [Payout]
+    pub let allowedAddresses: [Address]?
+    pub let catalogCollectionIdentifier: String?
     pub let extra: {String: AnyStruct}
 
-    init(cycleNum: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], _ extra: {String: AnyStruct}) {
+    init(cycleNum: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, _ extra: {String: AnyStruct}) {
       pre {
         reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
@@ -122,6 +124,8 @@ pub contract Toucans {
       self.fundingTarget = fundingTarget
       self.reserveRate = reserveRate
       self.timeframe = timeframe
+      self.allowedAddresses = allowedAddresses
+      self.catalogCollectionIdentifier = catalogCollectionIdentifier
       self.extra = extra
 
       // 5% goes to EC Treasury
@@ -322,7 +326,7 @@ pub contract Toucans {
     // NOTES:
     // If fundingTarget is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], extra: {String: AnyStruct}) {
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
       }
@@ -335,6 +339,8 @@ pub contract Toucans {
         reserveRate: reserveRate,
         timeframe: timeframe,
         payouts: payouts,
+        allowedAddresses: allowedAddresses,
+        catalogCollectionIdentifier: catalogCollectionIdentifier,
         extra
       ))
 
@@ -387,8 +393,24 @@ pub contract Toucans {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
+      
       let paymentTokensSent: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
+
+      // If there is a limit on allowed addresses, check that here.
+      if let allowedAddresses = fundingCycleRef.details.allowedAddresses {
+        assert(
+          allowedAddresses.contains(payer),
+          message: "This account is not allowed to participate in this round."
+        )
+      }
+
+      if let catalogCollectionIdentifier: String = fundingCycleRef.details.catalogCollectionIdentifier {
+        assert(
+          ToucansUtils.ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: catalogCollectionIdentifier, user: payer),
+          message: "User does not own a requried NFT for participating in the round."
+        )
+      }
 
       let issuanceRate: UFix64 = self.getCurrentIssuanceRate()!
       let amount: UFix64 = issuanceRate * paymentTokensSent

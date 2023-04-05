@@ -68,9 +68,15 @@
 		firstInput.focus();
 	});
 
-	$: $daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
+	$: if ($daoGeneratorData.daoDetails.name) {
+		$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
 		.replace(/[^\w\s]|\s/gi, '')
 		.toLowerCase();
+	}
+
+	// $: $daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
+	// 	.replace(/[^\w\s]|\s/gi, '')
+	// 	.toLowerCase();
 
 	$: $daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName
 		.toUpperCase()

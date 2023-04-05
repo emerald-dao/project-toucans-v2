@@ -3,7 +3,7 @@ import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { addresses, user } from '$stores/flow/FlowStore';
-import { executeTransaction, formatFix, replaceWithProperValues } from './utils';
+import { executeTransaction, formatFix, replaceWithProperValues, splitList } from './utils';
 
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
@@ -28,6 +28,9 @@ import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
+// NFTCatalog
+import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
+import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
 
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
@@ -216,7 +219,9 @@ const newRound = async () => {
 			arg(startTime, t.UFix64),
 			arg(endTime, t.Optional(t.UFix64)),
 			arg(distributionAddresses, t.Array(t.Address)),
-			arg(distributionPercentages, t.Array(t.UFix64))
+			arg(distributionPercentages, t.Array(t.UFix64)),
+			arg(null, t.Optional(t.Array(t.Address))),
+			arg(null, t.Optional(t.String))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -572,6 +577,45 @@ export const hasVaultSetup = async (projectOwner: string, projectId: string, use
 		return response;
 	} catch (e) {
 		console.log('Error in hasVaultSetup');
+		console.log(e);
+	}
+};
+
+const getCatalogByCollectionIDs = async (group: string[]) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogListScript),
+			args: (arg, t) => [
+				arg(group, t.Array(t.String))
+			]
+		});
+
+		return response;
+	} catch (e) {
+		console.log('Error in getCatalogByCollectionIDs');
+		console.log(e);
+	}
+};
+
+export const getNFTCatalog = async () => {
+	try {
+		const catalogKeys = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogKeysScript),
+			args: (arg, t) => []
+		});
+		const groups = splitList(catalogKeys, 50);
+		const promises = groups.map((group) => {
+			return getCatalogByCollectionIDs(group)
+		})
+		const itemGroups = await Promise.all(promises)
+
+		const items = itemGroups.reduce((acc, current) => {
+			return Object.assign(acc, current)
+		}, {}) 
+		console.log(items);
+		return items;
+	} catch (e) {
+		console.log('Error in getNFTCatalog');
 		console.log(e);
 	}
 };

@@ -70,6 +70,28 @@
 				"testnet": "0x631e88ae7f1d7c20"
 			}
 		},
+		"NFTCatalog": {
+			"source": "./src/flow/cadence/utility/NFTCatalog.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x49a7cda3a1eecc29",
+				"testnet": "0x324c34e1c517e4db"
+			}
+		},
+		"NFTCatalogSnapshot": {
+			"source": "./src/flow/cadence/utility/NFTCatalogSnapshot.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x49a7cda3a1eecc29",
+				"testnet": "0x324c34e1c517e4db"
+			}
+		},
+		"ExampleNFT": {
+			"source": "./src/flow/cadence/utility/ExampleNFT.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
 		"Toucans": {
 			"source": "./src/flow/cadence/Toucans.cdc",
 			"aliases": {
@@ -119,6 +141,9 @@
 				"FungibleTokenMetadataViews",
 				"FUSD",
 				"OnChainMultiSig",
+				"NFTCatalogSnapshot",
+				"NFTCatalog",
+				"ExampleNFT",
 				"FiatToken",
 				"ToucansUtils",
 				"ToucansTokens",
