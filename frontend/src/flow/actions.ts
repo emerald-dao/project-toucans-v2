@@ -87,12 +87,6 @@ const deployContract = async (data: DaoGeneratorData) => {
 	const paymentCurrency = data.tokenomics.paymentCurrency;
 	const paymentCurrencyInfo = currencies[paymentCurrency];
 
-	contractCode = contractCode.replace(
-		'// INSERT MINTING HERE',
-		data.tokenomics.mintTokens
-			? `self.account.save(<- create Minter(), to: self.MinterStoragePath)`
-			: ''
-	);
 	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployExampleTokenTx),
@@ -108,7 +102,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg(data.tokenomics.mintTokens, t.Bool),
-			arg(formatFix(data.tokenomics.initialSupply), t.UFix64)
+			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
+			arg(data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null, t.Optional(t.UFix64))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

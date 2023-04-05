@@ -8,10 +8,6 @@ const validationSuite = create((data = {}) => {
 				enforce(data.maxSupply).greaterThan(0);
 			});
 
-			test('maxMinting', 'Max minting should be less than max supply', () => {
-				enforce(data.maxMinting).lessThanOrEquals(data.maxSupply);
-			});
-
 			test('initialSupply', 'Initial supply should be less than max supply', () => {
 				enforce(data.initialSupply).lessThanOrEquals(data.maxSupply);
 			});

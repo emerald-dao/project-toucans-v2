@@ -8,6 +8,8 @@ pub contract ExampleToken: FungibleToken {
 
     // The amount of tokens in existance
     pub var totalSupply: UFix64
+    // nil if there is none
+    pub var maxSupply: UFix64?
     access(self) let balances: {Address: UFix64}
 
     // Paths
@@ -119,6 +121,10 @@ pub contract ExampleToken: FungibleToken {
 
     pub resource Minter: Toucans.Minter {
         pub fun mint(amount: UFix64): @Vault {
+            post {
+                ExampleToken.maxSupply == nil || ExampleToken.totalSupply <= ExampleToken.maxSupply!: 
+                    "Exceeded the max supply of tokens allowd."
+            }
             ExampleToken.totalSupply = ExampleToken.totalSupply + amount
             emit TokensMinted(amount: amount)
             return <- create Vault(balance: amount)
@@ -132,11 +138,13 @@ pub contract ExampleToken: FungibleToken {
       _threshold: UInt64,
       _minting: Bool,
       _initialSupply: UFix64,
+      _maxSupply: UFix64?,
       _extra: {String: AnyStruct}
     ) {
 
       // Contract Variables
       self.totalSupply = 0.0
+      self.maxSupply = _maxSupply
       self.balances = {}
 
       // Paths
@@ -176,8 +184,6 @@ pub contract ExampleToken: FungibleToken {
         initialSupply: _initialSupply,
         extra: _extra
       )
-
-      // INSERT MINTING HERE
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)
