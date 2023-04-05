@@ -6,16 +6,17 @@
 	import RoundDatesPicker from '../../atoms/RoundDatesPicker.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { onMount } from 'svelte';
-	import { formatDate } from '$lib/utilities/formatDate';
 
 	export let projectId: string | undefined;
 	export let daoData: DAOProject;
 	export let isValid: boolean = false;
 
 	let now = new Date();
+	let minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 86400000);
 
 	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 86400000);
-	$: formattedMinTime = formatDate(minStartTime);
+
+	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
 
 	onMount(() => {
 		const interval = setInterval(() => {
@@ -55,7 +56,7 @@
 <form in:fade={{ duration: 300 }} autocomplete="off">
 	<RoundDatesPicker
 		rounds={daoData.onChainData.fundingCycles}
-		{minStartTime}
+		{minStartTimePlus5Minutes}
 		bind:startDate={$roundGeneratorData.startDate}
 		bind:endDate={$roundGeneratorData.endDate}
 		bind:infiniteDuration={$roundGeneratorData.infiniteDuration}

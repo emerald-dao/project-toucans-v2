@@ -8,7 +8,7 @@
 	export let startDate: string;
 	export let endDate: string;
 	export let infiniteDuration: boolean;
-	export let minStartTime: Date;
+	export let minStartTimePlus5Minutes: Date;
 
 	const fundingRoundsDates = rounds
 		.filter((round) => round.details.timeframe.startTime && round.details.timeframe.endTime)
@@ -26,7 +26,7 @@
 		mode: !infiniteDuration ? ('range' as 'range') : ('single' as 'single'),
 		enableTime: true,
 		inline: true,
-		minDate: new Date(minStartTime.getTime() + 5 * 60000),
+		minDate: minStartTimePlus5Minutes,
 		disable: fundingRoundsDates
 	};
 
@@ -45,7 +45,7 @@
 	$: if (infiniteDuration) {
 		options.mode = 'single';
 		endDate = '';
-		value = minStartTime;
+		value = minStartTimePlus5Minutes;
 	} else {
 		options.mode = 'range';
 	}
