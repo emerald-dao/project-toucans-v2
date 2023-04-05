@@ -14,9 +14,7 @@
 
 	let now = new Date();
 
-	$: minStartTime = new Date(
-		now.getTime() + 5 * 60000 + Number(daoData.onChainData.editDelay) * 86400000
-	);
+	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 86400000);
 	$: formattedMinTime = formatDate(minStartTime);
 
 	onMount(() => {
@@ -79,11 +77,17 @@
 		<div class="column-3">
 			<span class="heading">Conditions</span>
 			<ul>
+				{#if Number(daoData.onChainData.editDelay) > 0}
+					<li>
+						{`Your edit delay is ${Number(
+							daoData.onChainData.editDelay
+						)}, this means your rounds must start at least ${Number(
+							daoData.onChainData.editDelay
+						)} days after today.`}
+					</li>
+				{/if}
 				<li>
-					{`Funding round must start after ${formattedMinTime}.`}
-				</li>
-				<li>
-					{`Funding rounds that have and ending date can't overlap.`}
+					{`Funding rounds that have ending date can't overlap.`}
 				</li>
 				<li>
 					{`If a non infinite funding round overlaps a infinite round, the non infinite round will be prioritized and the infinite round will automatically end.`}
