@@ -1,9 +1,8 @@
 import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
-import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
-import ToucansMultiSign from "../ToucansMultiSign.cdc"
+import ToucansActions from "../ToucansActions.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
-import FUSD from "../utility/FUSD.cdc"
+import FiatToken from "../utility/FiatToken.cdc"
 
 pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -47,7 +46,7 @@ pub struct Info {
     self.minting = info.minting
     self.treasuryBalances = {
       "FLOW": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
-      "FUSD": info.getVaultBalanceInTreasury(vaultType: Type<@FUSD.Vault>()) ?? 0.0,
+      "USDC": info.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
       info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: info.paymentTokenInfo.tokenType) ?? 0.0,
       info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
@@ -59,8 +58,8 @@ pub struct Info {
     self.actions = []
     for actionId in manager.getIDs() {
       let action = manager.borrowAction(actionUUID: actionId)
-      let actionDetails = action.getAction()
-      self.actions.append(Action(actionId, actionDetails.intent, actionDetails.title, action.getVotes()))
+      let actionDetails = action.action
+      self.actions.append(Action(actionId, actionDetails.getIntent(), actionDetails.getTitle(), action.getVotes(), action.getSigners(), action.threshold))
     }
   }
 }
@@ -70,11 +69,15 @@ pub struct Action {
   pub let intent: String
   pub let title: String
   pub let votes: {Address: Bool}
+  pub let signers: [Address]
+  pub let threshold: UInt64
 
-  init(_ id: UInt64, _ i: String, _ t: String, _ s: {Address: Bool}) {
+  init(_ id: UInt64, _ i: String, _ t: String, _ s: {Address: Bool}, _ si: [Address], _ th: UInt64) {
     self.id = id
     self.intent = i
     self.title = t
     self.votes = s
+    self.signers = si
+    self.threshold = th
   }
 }

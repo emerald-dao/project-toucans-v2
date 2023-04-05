@@ -8,7 +8,9 @@ transaction(
     startTime: UFix64,
     endTime: UFix64?,
     payoutAddresses: [Address], 
-    payoutAmounts: [UFix64]
+    payoutAmounts: [UFix64],
+    allowedAddresses: [Address]?,
+    catalogCollectionIdentifier: String?
 ) {
 
   let Project: &Toucans.Project
@@ -30,6 +32,15 @@ transaction(
     for i, payoutAddress in payoutAddresses {
       payouts.append(Toucans.Payout(payoutAddresses[i], payoutAmounts[i]))
     }
-     self.Project.configureFundingCycle(fundingTarget: fundingTarget, issuanceRate: issuanceRate, reserveRate: reserveRate, timeframe: timeframe, payouts: payouts, extra: extra)
+     self.Project.configureFundingCycle(
+      fundingTarget: fundingTarget, 
+      issuanceRate: issuanceRate, 
+      reserveRate: reserveRate,
+      timeframe: timeframe, 
+      payouts: payouts, 
+      allowedAddresses: allowedAddresses, 
+      catalogCollectionIdentifier: catalogCollectionIdentifier,
+      extra: extra
+    )
   }
 }

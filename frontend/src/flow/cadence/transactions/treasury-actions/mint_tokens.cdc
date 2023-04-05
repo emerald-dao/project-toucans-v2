@@ -5,7 +5,7 @@ import ExampleToken from "../ExampleToken.cdc"
 transaction(projectId: String, amount: UFix64, recipient: Address) {
 
   let Project: &Toucans.Project
-  let ProjectTokenReceiver: &ExampleToken.Vault{FungibleToken.Receiver}
+  let ProjectTokenReceiver: Capability<&ExampleToken.Vault{FungibleToken.Receiver}>
 
   prepare(owner: AuthAccount) {
     let projectCollection = owner.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
@@ -13,13 +13,11 @@ transaction(projectId: String, amount: UFix64, recipient: Address) {
     self.Project = projectCollection.borrowProject(projectId: projectId)
                   ?? panic("Project does not exist, at least in this collection.")
     
-    self.ProjectTokenReceiver = getAccount(recipient).getCapability(ExampleToken.ReceiverPublicPath)
-              .borrow<&ExampleToken.Vault{FungibleToken.Receiver}>()
-              ?? panic("This receiver does not have a vault set up.")
+    self.ProjectTokenReceiver = getAccount(recipient).getCapability<&ExampleToken.Vault{FungibleToken.Receiver}>(ExampleToken.ReceiverPublicPath)
   }
 
   execute {
-    self.Project.mint(recipientVault: self.ProjectTokenReceiver, amount: amount)
+    self.Project.proposeMint(recipientVault: self.ProjectTokenReceiver, amount: amount)
   }
 }
  

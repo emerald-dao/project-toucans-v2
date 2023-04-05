@@ -6,7 +6,7 @@
 	export let autofocus = false;
 	export let isValid: boolean;
 	export let label: string | undefined = undefined;
-	export let currency: 'FUSD' | 'FLOW' | string;
+	export let currency: 'USDC' | 'FLOW' | string;
 	export let name = 'amount';
 	export let hasBorder: boolean = true;
 	export let fontSize: string | undefined = undefined;

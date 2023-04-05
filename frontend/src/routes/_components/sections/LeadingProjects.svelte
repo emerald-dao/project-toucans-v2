@@ -7,7 +7,7 @@
 			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
-			currency: 'FUSD',
+			currency: 'USDC',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
@@ -15,7 +15,7 @@
 			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
-			currency: 'FUSD',
+			currency: 'USDC',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
@@ -23,7 +23,7 @@
 			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
-			currency: 'FUSD',
+			currency: 'USDC',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
@@ -31,7 +31,7 @@
 			logoUrl: '/leading-projects-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
-			currency: 'FUSD',
+			currency: 'USDC',
 			numberOfPayments: 12,
 			variationPercentage: -0.5
 		}

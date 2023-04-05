@@ -1,9 +1,15 @@
 {
 	"contracts": {
-		"FCLCrypto": "./src/flow/cadence/utility/FCLCrypto.cdc",
+		"FCLCrypto": {
+			"source": "./src/flow/cadence/utility/FCLCrypto.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
 		"FUSD": {
 			"source": "./src/flow/cadence/utility/FUSD.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0x3c5959b568896393",
 				"testnet": "0xe223d8a629e49c68"
 			}
@@ -14,6 +20,22 @@
 				"emulator": "0x0ae53cb6e3f42a79",
 				"mainnet": "0x1654653399040a61",
 				"testnet": "0x7e60df042a9c0868"
+			}
+		},
+		"FiatToken": {
+			"source": "./src/flow/cadence/utility/FiatToken.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0xa983fecbed621163",
+				"mainnet": "0xb19436aae4d94622"
+			}
+		},
+		"OnChainMultiSig": {
+			"source": "./src/flow/cadence/utility/OnChainMultiSig.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x5a5b0a73a29e83f1",
+				"mainnet": "0x220c1b4155f86f2f"
 			}
 		},
 		"FungibleToken": {
@@ -27,6 +49,7 @@
 		"FungibleTokenMetadataViews": {
 			"source": "./src/flow/cadence/utility/FungibleTokenMetadataViews.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0xf233dcee88fe0abe",
 				"testnet": "0x9a0766d93b6608b7"
 			}
@@ -34,6 +57,7 @@
 		"MetadataViews": {
 			"source": "./src/flow/cadence/utility/MetadataViews.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0x1d7e57aa55817448",
 				"testnet": "0x631e88ae7f1d7c20"
 			}
@@ -41,14 +65,57 @@
 		"NonFungibleToken": {
 			"source": "./src/flow/cadence/utility/NonFungibleToken.cdc",
 			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
 				"mainnet": "0x1d7e57aa55817448",
 				"testnet": "0x631e88ae7f1d7c20"
 			}
 		},
-		"Toucans": "./src/flow/cadence/Toucans.cdc",
-		"ToucansMultiSign": "./src/flow/cadence/ToucansMultiSign.cdc",
-		"ToucansTreasuryActions": "./src/flow/cadence/ToucansTreasuryActions.cdc",
-		"ToucansTokens": "./src/flow/cadence/ToucansTokens.cdc"
+		"NFTCatalog": {
+			"source": "./src/flow/cadence/utility/NFTCatalog.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x49a7cda3a1eecc29",
+				"testnet": "0x324c34e1c517e4db"
+			}
+		},
+		"NFTCatalogSnapshot": {
+			"source": "./src/flow/cadence/utility/NFTCatalogSnapshot.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x49a7cda3a1eecc29",
+				"testnet": "0x324c34e1c517e4db"
+			}
+		},
+		"ExampleNFT": {
+			"source": "./src/flow/cadence/utility/ExampleNFT.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"Toucans": {
+			"source": "./src/flow/cadence/Toucans.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansActions": {
+			"source": "./src/flow/cadence/ToucansActions.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansTokens": {
+			"source": "./src/flow/cadence/ToucansTokens.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		},
+		"ToucansUtils": {
+			"source": "./src/flow/cadence/ToucansUtils.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7"
+			}
+		}
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -73,18 +140,24 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
+				"OnChainMultiSig",
+				"NFTCatalogSnapshot",
+				"NFTCatalog",
+				"ExampleNFT",
+				"FiatToken",
+				"ToucansUtils",
 				"ToucansTokens",
-				"ToucansMultiSign",
 				"Toucans",
-				"ToucansTreasuryActions"
+				"ToucansActions"
 			]
 		},
 		"testnet": {
 			"testnet-account": [
-				"ToucansMultiSign",
+				"ToucansUtils",
 				"Toucans",
-				"ToucansTreasuryActions"
+				"ToucansActions"
 			]
 		}
 	}
 }
+ 

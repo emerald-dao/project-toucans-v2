@@ -19,7 +19,7 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		hasMaxSupply: false,
 		maxMinting: undefined,
 		maxSupply: undefined,
-		editDelay: '3.00',
+		editDelay: '259200.00',
 		mintTokens: false,
 		walletAddresses: []
 	},

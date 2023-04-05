@@ -31,7 +31,7 @@
 	{#if $paymentData.type === 'donation'}
 		<div class="currency-select-wrapper">
 			<CurrencySelect
-				currencies={[ECurrencies.FLOW, ECurrencies.FUSD]}
+				currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
 				bind:value={$paymentData.currency}
 			/>
 		</div>
