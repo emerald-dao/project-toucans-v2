@@ -1,13 +1,14 @@
 <script lang="ts">
 	import Flatpickr from 'svelte-flatpickr';
-	import type flatpickr from 'flatpickr';
 	import 'flatpickr/dist/flatpickr.css';
+	import type flatpickr from 'flatpickr';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 
 	export let rounds: FundingCycle[];
 	export let startDate: string;
 	export let endDate: string;
 	export let infiniteDuration: boolean;
+	export let minStartTime: Date;
 
 	const fundingRoundsDates = rounds
 		.filter((round) => round.details.timeframe.startTime && round.details.timeframe.endTime)
@@ -25,14 +26,16 @@
 		mode: !infiniteDuration ? ('range' as 'range') : ('single' as 'single'),
 		enableTime: true,
 		inline: true,
-		minDate: 'today',
+		minDate: new Date(minStartTime.getTime() + 5 * 60000),
 		disable: fundingRoundsDates
 	};
 
 	const handleChange = (event: CustomEvent<[Date[], string, flatpickr.Instance]>) => {
 		const [selectedDates] = event.detail;
 
-		startDate = (selectedDates[0].getTime() / 1000).toString();
+		if (selectedDates[0]) {
+			startDate = (selectedDates[0].getTime() / 1000).toString();
+		}
 
 		if (selectedDates[1]) {
 			endDate = (selectedDates[1].getTime() / 1000).toString();
@@ -42,7 +45,7 @@
 	$: if (infiniteDuration) {
 		options.mode = 'single';
 		endDate = '';
-		value = new Date();
+		value = minStartTime;
 	} else {
 		options.mode = 'range';
 	}
@@ -90,6 +93,12 @@
 			.flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n + 1))
 		) {
 		box-shadow: -5px 0 0 var(--clr-primary-badge) !important;
+	}
+
+	:global(.flatpickr-day.selected, ) {
+		background: var(--clr-primary-main);
+		border-color: var(--clr-primary-main);
+		color: var(--clr-heading-inverse);
 	}
 
 	:global(.inRange) {
