@@ -1,48 +1,70 @@
 <script type="ts">
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import { daysOfDifference } from '$lib/utilities/formatDate';
 	import FundingNumbers from './atoms/FundingNumbers.svelte';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import SeeRoundDetailsModal from './atoms/SeeRoundDetailsModal.svelte';
 	import GoalReached from '$components/atoms/GoalReached.svelte';
 	import type { ECurrencies } from '$lib/types/common/enums';
+	import RoundStatusLabel from './atoms/RoundStatusLabel.svelte';
+	import { Button } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
+	import { getRoundTiming } from './helpers/getRoundTiming';
+	import { getRoundStatus } from './helpers/getRoundStatus';
 
 	export let round: FundingCycle;
-	export let i: number;
+	export let roundNumber: number;
 	export let projectToken: string;
 	export let paymentToken: ECurrencies;
+	export let projectId: string;
+	export let activeRound: number | null;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
 
-	$: goalReached = goal !== 'infinite' ? goal < funding : false;
+	$: goalReached = goal != 'infinite' ? (goal as number) < funding : false;
 
 	$: startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
 	$: endDate = round.details.timeframe.endTime
 		? new Date(Number(round.details.timeframe.endTime) * 1000)
 		: null;
 
-	$: active = endDate ? endDate >= new Date() : true;
+	let roundStatus = getRoundStatus(roundNumber, activeRound, startDate);
 </script>
 
 <div class="main-wrapper row-space-between align-center">
 	<div class="row-4 align-center">
-		<IconCircle icon={`${i + 1}`} color={active ? 'primary' : 'tertiary'} />
+		<IconCircle
+			icon={`${roundNumber + 1}`}
+			color={roundStatus === 'active'
+				? 'primary'
+				: roundStatus === 'upcoming'
+				? 'tertiary'
+				: 'alert'}
+		/>
 		<FundingNumbers {goal} {funding} {paymentToken} />
+		{#if endDate == null && roundStatus === 'active'}
+			<Button
+				color="neutral"
+				type="ghost"
+				size="x-small"
+				on:click={() => {
+					alert('todo');
+				}}
+			>
+				<Icon icon="tabler:player-stop-filled" />
+				Stop
+			</Button>
+		{/if}
 		{#if goalReached}
 			<GoalReached />
 		{/if}
 	</div>
 	<div class="row-5 align-center">
-		{#if endDate != null}
-			<span class="xsmall date">
-				{`${daysOfDifference(startDate, endDate)}`}
-				days left
-			</span>
-		{:else}
-			<span class="xsmall date">Infinite duration</span>
-		{/if}
-		<SeeRoundDetailsModal {round} {i} {projectToken} />
+		<span class="xsmall date">
+			{getRoundTiming(startDate, endDate)}
+		</span>
+		<RoundStatusLabel status={roundStatus} />
+		<SeeRoundDetailsModal {round} {roundNumber} {projectToken} {paymentToken} {projectId} />
 	</div>
 </div>
 

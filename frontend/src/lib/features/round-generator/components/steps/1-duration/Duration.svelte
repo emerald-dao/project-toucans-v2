@@ -13,6 +13,8 @@
 
 	let now = new Date(new Date().getTime() + 5 * 60000 + Number(editDelay));
 
+	console.log(now);
+
 	if ($user.addr) {
 		roundGeneratorData.set({
 			startDate: '',
@@ -31,7 +33,9 @@
 	$: isValid =
 		($roundGeneratorData.startDate.length > 0 &&
 			$roundGeneratorData.endDate.length > 0 &&
-			new Date($roundGeneratorData.startDate) > now) ||
+			new Date(Number($roundGeneratorData.startDate) * 1000) > now &&
+			new Date(Number($roundGeneratorData.startDate) * 1000) <
+				new Date(Number($roundGeneratorData.endDate) * 1000)) ||
 		$roundGeneratorData.infiniteDuration;
 </script>
 

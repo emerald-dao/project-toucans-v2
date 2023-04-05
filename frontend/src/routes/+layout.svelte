@@ -46,6 +46,8 @@
 
 	$: notificationsNumber = getNotificationsNumber($notifications);
 	$: if (notificationsNumber > 0) avatarDropdownNav[1].notifications = notificationsNumber;
+
+	console.log($page);
 </script>
 
 <TransactionModal
@@ -67,6 +69,7 @@
 	logoText="Toucans"
 	logoUrl="/ec-logo.png"
 	{notificationsNumber}
+	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
 />
 <main>
 	<slot />

@@ -7,6 +7,7 @@
 	import GoalReached from '../../atoms/GoalReached.svelte';
 	import OverflowCard from './atoms/OverflowCard.svelte';
 	import type { ECurrencies } from '$lib/types/common/enums';
+	import { getRoundTiming } from './helpers/getRoundTiming';
 
 	export let round: FundingCycle;
 	export let title = 'Active Funding Round';
@@ -19,7 +20,7 @@
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
 
-	$: goalReached = goal !== 'infinite' ? goal < funding : false;
+	$: goalReached = goal !== 'infinite' ? (goal as number) < funding : false;
 	$: overflow = goal !== 'infinite' ? funding - (goal as number) : 0;
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
@@ -41,14 +42,7 @@
 			</div>
 			<span class="time-left xsmall">
 				<Icon icon="tabler:clock" />
-				{#if active && endDate != null}
-					{`${daysOfDifference(startDate, endDate)}`}
-					days left
-				{:else if endDate === null}
-					{`Infinite duration`}
-				{:else}
-					Finished
-				{/if}
+				{getRoundTiming(startDate, endDate)}
 			</span>
 		</div>
 		{#if overflow > 0}

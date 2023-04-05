@@ -199,10 +199,8 @@ const newRound = async () => {
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	console.log(new Date(newRoundData.startDate));
-	const startTime = formatFix(Math.floor(new Date(newRoundData.startDate).getTime() / 1000));
-	const endTime = newRoundData.infiniteDuration
-		? null
-		: formatFix(Math.floor(new Date(newRoundData.endDate).getTime() / 1000));
+	const startTime = formatFix(newRoundData.startDate);
+	const endTime = newRoundData.infiniteDuration ? null : formatFix(newRoundData.endDate);
 	const [, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
 	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
 		formatFix(x[1] / 100)
@@ -463,8 +461,7 @@ export const mintTokensExecution = (
 	projectId: string,
 	recipient: string,
 	amount: string
-) =>
-	executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
+) => executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
 
 //    _____           _       _
 //   / ____|         (_)     | |
@@ -554,13 +551,17 @@ export const getBalances = async (userAddress: string) => {
 	}
 };
 
-export const hasVaultSetup = async (projectOwner: string, projectId: string, userAddress: string) => {
+export const hasVaultSetup = async (
+	projectOwner: string,
+	projectId: string,
+	userAddress: string
+) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, projectOwner),
 			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
-		console.log(response)
+		console.log(response);
 		return response;
 	} catch (e) {
 		console.log('Error in hasVaultSetup');

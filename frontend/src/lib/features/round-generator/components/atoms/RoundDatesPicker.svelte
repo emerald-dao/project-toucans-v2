@@ -32,10 +32,10 @@
 	const handleChange = (event: CustomEvent<[Date[], string, flatpickr.Instance]>) => {
 		const [selectedDates] = event.detail;
 
-		startDate = selectedDates[0].toISOString().split('.')[0];
+		startDate = (selectedDates[0].getTime() / 1000).toString();
 
 		if (selectedDates[1]) {
-			endDate = selectedDates[1].toISOString().split('.')[0];
+			endDate = (selectedDates[1].getTime() / 1000).toString();
 		}
 	};
 
@@ -78,7 +78,7 @@
 		border-color: transparent !important;
 	}
 
-	:global(.selected, .flatpickr-day.endRange, .flatpickr-day.startRange) {
+	:global(.flatpickr-day.endRange, .flatpickr-day.startRange) {
 		background-color: var(--clr-primary-600) !important;
 		border-color: var(--clr-primary-600) !important;
 		color: var(--clr-heading-inverse) !important;

@@ -27,13 +27,15 @@
 							Number(daoData.onChainData.currentFundingCycle)
 						]}
 						projectToken={daoData.generalInfo.token_symbol}
+						paymentToken={daoData.onChainData.paymentCurrency}
+						projectId={daoData.generalInfo.project_id}
 						hasBorder={false}
 					/>
 				</div>
 			</TabPanel>
 		{/if}
 		<TabPanel>
-			<RoundsList {daoData} />
+			<RoundsList {daoData} finishedFilter={false} />
 		</TabPanel>
 	</Tabs>
 </div>
