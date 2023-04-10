@@ -30,6 +30,7 @@
 		errors={res.getErrors('website')}
 		isValid={res.isValid('website') && $daoGeneratorData.daoDetails.website.length > 0}
 		prefix="https://"
+		icon="tabler:world"
 	>
 		<input
 			name="website"
@@ -45,6 +46,7 @@
 		errors={res.getErrors('twitter')}
 		isValid={res.isValid('twitter') && $daoGeneratorData.daoDetails.twitter.length > 0}
 		prefix="@"
+		icon="tabler:brand-twitter"
 	>
 		<input
 			name="twitter"
@@ -60,6 +62,7 @@
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord')}
 		prefix="https://discord.gg/invite/"
+		icon="tabler:brand-discord"
 	>
 		<input
 			name="discord"

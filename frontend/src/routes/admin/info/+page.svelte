@@ -121,9 +121,10 @@
 	<InputWrapper
 		name="website"
 		label="Website"
-		icon="tabler:world"
 		errors={res.getErrors('website')}
 		isValid={res.isValid('website') && formData.website.length > 0}
+		prefix="https://"
+		icon="tabler:world"
 	>
 		<input
 			name="website"
@@ -136,9 +137,10 @@
 	<InputWrapper
 		name="twitter"
 		label="Twitter"
-		icon="tabler:brand-twitter"
 		errors={res.getErrors('twitter')}
 		isValid={res.isValid('twitter') && formData.twitter.length > 0}
+		prefix="@"
+		icon="tabler:brand-twitter"
 	>
 		<input
 			name="twitter"
@@ -151,9 +153,10 @@
 	<InputWrapper
 		name="discord"
 		label="Discord invite"
-		icon="tabler:brand-discord"
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord') && formData.discord !== 'https://discord.gg/'}
+		prefix="https://discord.gg/invite/"
+		icon="tabler:brand-discord"
 	>
 		<input
 			name="discord"
