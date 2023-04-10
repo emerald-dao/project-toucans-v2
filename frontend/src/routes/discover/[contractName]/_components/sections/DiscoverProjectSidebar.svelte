@@ -51,9 +51,9 @@
 								<Icon icon="tabler:brand-twitter" width="16" />
 							</a>
 						{/if}
-						{#if daoData.generalInfo.discord && daoData.generalInfo.discord != 'https://discord.gg/'}
+						{#if daoData.generalInfo.discord}
 							<a
-								href={daoData.generalInfo.discord}
+								href={`https://discord.gg/invite/${daoData.generalInfo.discord}`}
 								rel="noreferrer"
 								class="header-link"
 								target="_blank"
@@ -63,7 +63,7 @@
 						{/if}
 						{#if daoData.generalInfo.website}
 							<a
-								href={daoData.generalInfo.website}
+								href={`https://${daoData.generalInfo.website}`}
 								rel="noreferrer"
 								class="header-link"
 								target="_blank"

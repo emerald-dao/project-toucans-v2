@@ -1,13 +1,12 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
-	import { onMount, setContext } from 'svelte';
+	import { setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { supabase } from '$lib/supabaseClient';
 	import { getProjectInfo, getTokenBalance } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
-	import { invalidate } from '$app/navigation';
 
 	export let data: DAOProject;
 
