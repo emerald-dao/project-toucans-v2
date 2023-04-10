@@ -9,7 +9,7 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		description: '',
 		website: '',
 		twitter: '',
-		discord: 'https://discord.gg/',
+		discord: '',
 		contractName: '',
 		logo: undefined
 	},

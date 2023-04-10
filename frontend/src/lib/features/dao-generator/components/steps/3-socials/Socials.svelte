@@ -27,9 +27,9 @@
 	<InputWrapper
 		name="website"
 		label="Website"
-		icon="tabler:world"
 		errors={res.getErrors('website')}
 		isValid={res.isValid('website') && $daoGeneratorData.daoDetails.website.length > 0}
+		prefix="https://"
 	>
 		<input
 			name="website"
@@ -42,14 +42,14 @@
 	<InputWrapper
 		name="twitter"
 		label="Twitter"
-		icon="tabler:brand-twitter"
 		errors={res.getErrors('twitter')}
 		isValid={res.isValid('twitter') && $daoGeneratorData.daoDetails.twitter.length > 0}
+		prefix="@"
 	>
 		<input
 			name="twitter"
 			type="text"
-			placeholder="@emerald_dao"
+			placeholder="emerald_dao"
 			bind:value={$daoGeneratorData.daoDetails.twitter}
 			on:input={handleChange}
 		/>
@@ -57,15 +57,14 @@
 	<InputWrapper
 		name="discord"
 		label="Discord invite"
-		icon="tabler:brand-discord"
 		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord') &&
-			$daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
+		isValid={res.isValid('discord')}
+		prefix="https://discord.gg/invite/"
 	>
 		<input
 			name="discord"
 			type="text"
-			placeholder="https://discord.gg/emeraldcity"
+			placeholder="emeraldcity"
 			bind:value={$daoGeneratorData.daoDetails.discord}
 			on:input={handleChange}
 		/>
