@@ -118,7 +118,7 @@
 	>
 		<input
 			type="text"
-			readonly
+			disabled
 			name="contractName"
 			placeholder="emeralddao"
 			bind:value={$daoGeneratorData.daoDetails.contractName}
