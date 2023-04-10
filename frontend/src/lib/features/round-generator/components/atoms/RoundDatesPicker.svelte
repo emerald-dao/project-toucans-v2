@@ -19,7 +19,7 @@
 			};
 		});
 
-	let value: Date;
+	let value: Date | Date[];
 	let formattedValue: string;
 
 	const options = {
@@ -45,13 +45,24 @@
 	$: if (infiniteDuration) {
 		options.mode = 'single';
 		endDate = '';
-		value = minStartTimePlus5Minutes;
+
+		if (value) {
+			if (Array.isArray(value)) {
+				startDate = (value[0].getTime() / 1000).toString();
+				value = value[0];
+			} else if (!Array.isArray(value)) {
+				startDate = (value.getTime() / 1000).toString();
+			}
+		} else {
+			value = minStartTimePlus5Minutes;
+		}
 	} else {
 		options.mode = 'range';
 	}
 </script>
 
 <div>
+	{startDate}
 	<Flatpickr {options} bind:value bind:formattedValue on:change={handleChange} name="date" />
 </div>
 
@@ -82,8 +93,8 @@
 	}
 
 	:global(.flatpickr-day.endRange, .flatpickr-day.startRange) {
-		background-color: var(--clr-primary-600) !important;
-		border-color: var(--clr-primary-600) !important;
+		background-color: var(--clr-primary-main) !important;
+		border-color: var(--clr-primary-main) !important;
 		color: var(--clr-heading-inverse) !important;
 	}
 

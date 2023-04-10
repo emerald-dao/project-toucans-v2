@@ -127,7 +127,7 @@
 
 		input:checked {
 			& + label {
-				border-color: var(--clr-primary-main);
+				border-color: var(--clr-heading-main);
 
 				h4 {
 					color: var(--clr-heading-main);
