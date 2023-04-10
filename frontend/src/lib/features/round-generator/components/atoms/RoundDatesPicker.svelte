@@ -47,7 +47,7 @@
 		endDate = '';
 
 		if (value) {
-			if (Array.isArray(value)) {
+			if (Array.isArray(value) && value[0]) {
 				startDate = (value[0].getTime() / 1000).toString();
 				value = value[0];
 			} else if (!Array.isArray(value)) {
@@ -62,7 +62,6 @@
 </script>
 
 <div>
-	{startDate}
 	<Flatpickr {options} bind:value bind:formattedValue on:change={handleChange} name="date" />
 </div>
 
