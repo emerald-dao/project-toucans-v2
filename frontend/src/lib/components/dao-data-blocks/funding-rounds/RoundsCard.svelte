@@ -31,7 +31,7 @@
 		? new Date(Number(round.details.timeframe.endTime) * 1000)
 		: null;
 
-	$: roundStatus = getRoundStatus(Number(round.details.cycleNum), activeRound, startDate);
+	$: roundStatus = getRoundStatus(Number(round.details.cycleId), activeRound, startDate);
 </script>
 
 <div class:card={hasBorder}>

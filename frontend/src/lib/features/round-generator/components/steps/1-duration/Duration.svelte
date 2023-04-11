@@ -12,9 +12,9 @@
 	export let isValid: boolean = false;
 
 	let now = new Date();
-	let minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 86400000);
+	let minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) / 86400);
 
-	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 86400000);
+	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) / 86400);
 
 	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
 
@@ -80,11 +80,11 @@
 			<ul>
 				{#if Number(daoData.onChainData.editDelay) > 0}
 					<li>
-						{`Your edit delay is ${Number(
-							daoData.onChainData.editDelay
-						)}, this means your rounds must start at least ${Number(
-							daoData.onChainData.editDelay
-						)} days after today.`}
+						{`Your edit delay is ${
+							Number(daoData.onChainData.editDelay) / 86400
+						}, this means your rounds must start at least ${
+							Number(daoData.onChainData.editDelay) / 86400
+						} days after today.`}
 					</li>
 				{/if}
 				<li>

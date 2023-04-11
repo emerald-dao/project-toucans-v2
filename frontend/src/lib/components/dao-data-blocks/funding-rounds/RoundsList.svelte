@@ -24,7 +24,7 @@
 					activeRound={daoData.onChainData.currentFundingCycle
 						? Number(daoData.onChainData.currentFundingCycle)
 						: null}
-					roundNumber={Number(round.details.cycleNum)}
+					roundNumber={Number(round.details.cycleId)}
 					projectToken={daoData.generalInfo.token_symbol}
 					paymentToken={daoData.onChainData.paymentCurrency}
 					projectId={daoData.generalInfo.project_id}
