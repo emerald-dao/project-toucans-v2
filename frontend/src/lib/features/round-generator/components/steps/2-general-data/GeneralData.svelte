@@ -1,7 +1,7 @@
 <script type="ts">
 	import { fly, fade } from 'svelte/transition';
 	import validationSuite from './validation';
-	import { InputWrapper, Range } from '@emerald-dao/component-library';
+	import { InputWrapper, Range, TooltipIcon } from '@emerald-dao/component-library';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import { roundGeneratorData } from '../../../stores/RoundGeneratorData';
 
@@ -84,6 +84,20 @@
 			/>
 		</div>
 	</div>
+	<label for="allow-overflow" class="switch">
+		<input
+			type="checkbox"
+			name="allow-overflow"
+			id="allow-overflow"
+			bind:checked={$roundGeneratorData.allowOverflow}
+			on:change={handleChange}
+		/>
+		<span class="slider" />
+		Allow overflow
+		<TooltipIcon
+			tooltip="If checked, the round will continue to accept contributions even if the funding goal is reached."
+		/>
+	</label>
 </form>
 
 <style type="scss">
