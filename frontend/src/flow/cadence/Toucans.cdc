@@ -1,6 +1,8 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
-import ToucansMultiSign from "./ToucansMultiSign.cdc"
+import Crypto
 import ToucansTokens from "./ToucansTokens.cdc"
+import ToucansUtils from "./ToucansUtils.cdc"
+import ToucansActions from "./ToucansActions.cdc"
 
 pub contract Toucans {
 
@@ -25,7 +27,7 @@ pub contract Toucans {
     projectId: String,
     by: Address, 
     currentCycle: UInt64?,
-    cycleNum: UInt64,
+    newCycleId: UInt64,
     fundingTarget: UFix64?,
     issuanceRate: UFix64,
     reserveRate: UFix64,
@@ -42,15 +44,6 @@ pub contract Toucans {
     message: String
   )
 
-  pub event Distribute(
-    projectId: String,
-    by: Address, 
-    currentCycle: UInt64?,
-    tokenSymbol: String,
-    to: Address,
-    amount: UFix64
-  )
-
   pub event Donate(
     projectId: String,
     projectOwner: Address, 
@@ -61,6 +54,7 @@ pub contract Toucans {
     message: String
   )
 
+  // Multi Sign Actions
   pub event Withdraw(
     projectId: String,
     projectOwner: Address, 
@@ -69,6 +63,17 @@ pub contract Toucans {
     amount: UFix64,
     by: Address
   )
+  pub event Distribute(
+    projectId: String,
+    by: Address, 
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    to: Address,
+    amount: UFix64
+  )
+  pub event AddSigner(projectId: String, signer: Address)
+  pub event RemoveSigner(projectId: String, signer: Address)
+  pub event UpdateThreshold(projectId: String, newThreshold: UInt64)
 
   pub struct CycleTimeFrame {
     pub let startTime: UFix64
@@ -98,7 +103,7 @@ pub contract Toucans {
   }
 
   pub struct FundingCycleDetails {
-    pub let cycleNum: UInt64
+    pub let cycleId: UInt64
     // nil if the funding target is infinity
     pub let fundingTarget: UFix64?
     pub let issuanceRate: UFix64
@@ -106,17 +111,21 @@ pub contract Toucans {
     pub let reserveRate: UFix64
     pub let timeframe: CycleTimeFrame
     pub let payouts: [Payout]
+    pub let allowedAddresses: [Address]?
+    pub let catalogCollectionIdentifier: String?
     pub let extra: {String: AnyStruct}
 
-    init(cycleNum: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], _ extra: {String: AnyStruct}) {
+    init(cycleId: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, _ extra: {String: AnyStruct}) {
       pre {
         reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
-      self.cycleNum = cycleNum
+      self.cycleId = cycleId
       self.issuanceRate = issuanceRate
       self.fundingTarget = fundingTarget
       self.reserveRate = reserveRate
       self.timeframe = timeframe
+      self.allowedAddresses = allowedAddresses
+      self.catalogCollectionIdentifier = catalogCollectionIdentifier
       self.extra = extra
 
       // 5% goes to EC Treasury
@@ -174,9 +183,11 @@ pub contract Toucans {
     pub let minting: Bool
 
     // Setters
-    pub fun proposeAction(action: {ToucansMultiSign.Action})
+    // Some proposals we think make sense to be public initially
+    pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     // If the action is ready to execute, then allow anyone to do it.
-    pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct})
+    pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
@@ -184,14 +195,14 @@ pub contract Toucans {
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64?
     pub fun getCurrentFundingCycle(): FundingCycle?
-    pub fun getCurrentFundingCycleNum(): UInt64?
+    pub fun getCurrentFundingCycleId(): UInt64?
     pub fun getFundingCycles(): [FundingCycle]
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
     pub fun getExtra(): {String: AnyStruct}
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
-    pub fun borrowManagerPublic(): &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic}
+    pub fun borrowManagerPublic(): &Manager{ManagerPublic}
   }
 
   pub resource Project: ProjectPublic {
@@ -203,10 +214,15 @@ pub contract Toucans {
     // You cannot edit or start a new cycle within this time frame
     pub let editDelay: UFix64
     pub let minting: Bool
+    pub var nextCycleId: UInt64
 
+    // Kept in order of start date
+    // i.e. every element in the array
+    // must have a start time greater
+    // than the one before it
     access(self) let fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
-    access(self) let multiSignManager: @ToucansMultiSign.Manager
+    access(self) let multiSignManager: @Manager
     access(self) let overflow: @FungibleToken.Vault
     access(self) let minter: @{Minter}
     access(self) let funders: {Address: UFix64}
@@ -224,21 +240,83 @@ pub contract Toucans {
     //                                  |___/       
 
 
-    pub fun proposeAction(action: {ToucansMultiSign.Action}) {
-      // Keep this restriction to prevent bad actions displaying
-      pre {
-        "0x".concat(action.getType().identifier.slice(from: 2, upTo: 18)) == Toucans.account.address.toString(): "Must be a type allowed by Toucans."
-      }
+    pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: recipientVault.borrow()!.getType()) 
+                ?? panic("Unsupported token type for withdrawing.")
+      let action = ToucansActions.WithdrawToken(recipientVault, amount, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun finalizeAction(actionUUID: UInt64, _ params: {String: AnyStruct}) {
+    pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
+      pre {
+        recipientVault.borrow()!.getType() == self.projectTokenInfo.tokenType: 
+          "This vault cannot receive the projects token."
+        self.minting: "Minting is turned off."
+      }
+      let action = ToucansActions.MintTokens(recipientVault, amount, tokenSymbol: self.projectTokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeMintToTreasury(amount: UFix64) {
+      pre {
+        self.minting: "Minting is turned off."
+      }
+      let action = ToucansActions.MintTokensToTreasury(amount, tokenSymbol: self.projectTokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeAddSigner(signer: Address) {
+      let action = ToucansActions.AddOneSigner(signer)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeRemoveSigner(signer: Address) {
+      let action = ToucansActions.RemoveOneSigner(signer)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeUpdateThreshold(threshold: UInt64) {
+      let action = ToucansActions.UpdateTreasuryThreshold(threshold)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun finalizeAction(actionUUID: UInt64) {
       post {
         self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
       }
-      let selfRef: &Project = &self as &Project
-      params.insert(key: "treasury", selfRef)
-      self.multiSignManager.finalizeAction(actionUUID: actionUUID, params)
+      assert(
+        self.multiSignManager.readyToFinalize(actionUUID: actionUUID),
+        message: "Cannot finalize this action yet."
+      )
+      let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
+      let action: {ToucansActions.Action} = actionWrapper.action
+      switch action.getType() {
+        case Type<ToucansActions.WithdrawToken>():
+          let withdraw = action as! ToucansActions.WithdrawToken
+          self.withdrawFromTreasury(vault: withdraw.recipientVault.borrow()!, amount: withdraw.amount)
+        case Type<ToucansActions.MintTokens>():
+          let mint = action as! ToucansActions.MintTokens
+          self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
+        case Type<ToucansActions.MintTokensToTreasury>():
+          let mint = action as! ToucansActions.MintTokensToTreasury
+          let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
+          self.mint(recipientVault: ref, amount: mint.amount)
+        case Type<ToucansActions.AddOneSigner>():
+          let addSigner = action as! ToucansActions.AddOneSigner
+          self.multiSignManager.addSigner(signer: addSigner.signer)
+          emit AddSigner(projectId: self.projectId, signer: addSigner.signer)
+        case Type<ToucansActions.RemoveOneSigner>():
+          let removeSigner = action as! ToucansActions.RemoveOneSigner
+          self.multiSignManager.removeSigner(signer: removeSigner.signer)
+          emit AddSigner(projectId: self.projectId, signer: removeSigner.signer)
+        case Type<ToucansActions.UpdateTreasuryThreshold>():
+          let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
+          self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
+          emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
+      }
+
+      // Will delete the action and make sure everything is good to go
+      self.multiSignManager.finalizeAction(actionUUID: actionUUID)
     }
 
 
@@ -250,48 +328,70 @@ pub contract Toucans {
     //  |_|   \__,_|_| |_|\__,_|_|  \__,_|_|___/\___|
                                                          
 
+    // Allows you to add a new funding round to the end of the array.
+    // This does not allow you to insert a funding round into the middle
+    // somewhere. Maybe we will allow this later.
     // NOTES:
-    // If fundingTarget is nil, that means this is an on-going funding round,
+    // If `fundingTarget` is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], extra: {String: AnyStruct}) {
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
       }
-      let cycleNum: UInt64 = UInt64(self.fundingCycles.length)
 
       let newFundingCycle: FundingCycle = FundingCycle(details: FundingCycleDetails(
-        cycleNum: cycleNum,
+        cycleId: self.nextCycleId,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
         timeframe: timeframe,
         payouts: payouts,
+        allowedAddresses: allowedAddresses,
+        catalogCollectionIdentifier: catalogCollectionIdentifier,
         extra
       ))
 
-      if cycleNum > 0 {
-        // Make sure it doesn't conflict with a cycle before it
-        let previousCycle: FundingCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
+      var i: Int = self.fundingCycles.length - 1
+      var insertAt: Int = 0
+      while i >= 0 {
+        let cycle: FundingCycle = self.fundingCycles[i]
+        if timeframe.startTime >= cycle.details.timeframe.startTime {
+          insertAt = i + 1
+          break
+        }
+        i = i - 1
+      }
+
+      self.fundingCycles.insert(at: insertAt, newFundingCycle)
+
+      // Make sure it doesn't conflict with a cycle before it
+      if insertAt > 0 {
+        let previousCycle: FundingCycle = self.getFundingCycle(cycleIndex: UInt64(insertAt - 1))
         Toucans.assertNonConflictingCycles(earlierCycle: previousCycle.details, laterCycle: newFundingCycle.details)
       }
-      
-      self.fundingCycles.append(newFundingCycle)
+
+      // Make sure it doesn't conflict with a cycle after it
+      if insertAt < self.fundingCycles.length - 1 {
+        let subsequentCycle: FundingCycle = self.getFundingCycle(cycleIndex: UInt64(insertAt + 1))
+        Toucans.assertNonConflictingCycles(earlierCycle: newFundingCycle.details, laterCycle: subsequentCycle.details)
+      }
 
       emit NewFundingCycle(
         projectId: self.projectId,
         by: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
-        cycleNum: cycleNum,
+        currentCycle: self.getCurrentFundingCycleId(),
+        newCycleId: self.nextCycleId,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
         timeframe: timeframe
       )
+      self.nextCycleId = self.nextCycleId + 1
     }
 
     // Allows you to edit a cycle that has not happened yet
-    pub fun editUpcomingCycle(cycleNum: UInt64, details: FundingCycleDetails) {
-      let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleNum: cycleNum)
+    pub fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
+      let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleIndex: cycleIndex)
       // This ensures the cycle is in the future
       assert(
         getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeframe.startTime,
@@ -299,15 +399,15 @@ pub contract Toucans {
       )
 
       // Check the cycle above it, if it exists
-      if Int(cycleNum) < self.fundingCycles.length - 1 {
-        let aboveCycle = self.getFundingCycle(cycleNum: cycleNum + 1)
-        assert(Toucans.assertNonConflictingCycles(earlierCycle: details, laterCycle: aboveCycle.details), message: "Conflicts with the cycle above it.")
+      if Int(cycleIndex) < self.fundingCycles.length - 1 {
+        let aboveCycle = self.getFundingCycle(cycleIndex: cycleIndex + 1)
+        Toucans.assertNonConflictingCycles(earlierCycle: details, laterCycle: aboveCycle.details)
       }
 
       // Check the cycle below it, if it exists
-      if cycleNum > 0 {
-        let belowCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
-        assert(Toucans.assertNonConflictingCycles(earlierCycle: belowCycle.details, laterCycle: details), message: "Conflicts with the cycle above it.")
+      if cycleIndex > 0 {
+        let belowCycle = self.getFundingCycle(cycleIndex: cycleIndex - 1)
+        Toucans.assertNonConflictingCycles(earlierCycle: belowCycle.details, laterCycle: details)
       }
 
       fundingCycle.details = details
@@ -318,8 +418,24 @@ pub contract Toucans {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
+      
       let paymentTokensSent: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
+
+      // If there is a limit on allowed addresses, check that here.
+      if let allowedAddresses = fundingCycleRef.details.allowedAddresses {
+        assert(
+          allowedAddresses.contains(payer),
+          message: "This account is not allowed to participate in this round."
+        )
+      }
+
+      if let catalogCollectionIdentifier: String = fundingCycleRef.details.catalogCollectionIdentifier {
+        assert(
+          ToucansUtils.ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: catalogCollectionIdentifier, user: payer),
+          message: "User does not own a requried NFT for participating in the round."
+        )
+      }
 
       let issuanceRate: UFix64 = self.getCurrentIssuanceRate()!
       let amount: UFix64 = issuanceRate * paymentTokensSent
@@ -337,7 +453,7 @@ pub contract Toucans {
 
       // Calculate payouts
       for payout in fundingCycleRef.details.payouts {
-        Toucans.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentTokensSent * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+        ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentTokensSent * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
       }
 
       // 3 cases:
@@ -366,7 +482,7 @@ pub contract Toucans {
       emit Purchase(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: fundingCycleRef.details.cycleNum,
+        currentCycle: fundingCycleRef.details.cycleId,
         tokenSymbol: self.paymentTokenInfo.symbol,
         amount: paymentTokensSent,
         by: payer,
@@ -400,11 +516,11 @@ pub contract Toucans {
       self.overflow.deposit(from: <- vault)
     }
 
-    access(account) fun borrowManager(): &ToucansMultiSign.Manager {
-      return &self.multiSignManager as &ToucansMultiSign.Manager
+    access(account) fun borrowManager(): &Manager {
+      return &self.multiSignManager as &Manager
     }
 
-    access(self) fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
+    pub fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
       if inputVaultType == self.projectTokenInfo.tokenType {
         return self.projectTokenInfo
       } else if let tokenInfo = ToucansTokens.getTokenInfo(tokenType: inputVaultType) {
@@ -419,7 +535,7 @@ pub contract Toucans {
       emit Withdraw(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
+        currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: tokenInfo.symbol,
         amount: amount,
         by: vault.owner!.address
@@ -433,7 +549,7 @@ pub contract Toucans {
       emit Donate(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
+        currentCycle: self.getCurrentFundingCycleId(),
         amount: vault.balance,
         tokenSymbol: tokenInfo.symbol,
         by: payer,
@@ -457,7 +573,7 @@ pub contract Toucans {
     //                              |___/ 
 
 
-    pub fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
+    access(account) fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
       pre {
         self.minting: "Minting is off. You cannot do this."
       }
@@ -468,7 +584,7 @@ pub contract Toucans {
       emit Distribute(
         projectId: self.projectId,
         by: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
+        currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: self.projectTokenInfo.symbol,
         to: recipientVault.owner!.address,
         amount: amount
@@ -526,17 +642,15 @@ pub contract Toucans {
       return self.treasury[vaultType]?.balance
     }
 
-    // Returns nil if there is no current round
-    pub fun getCurrentFundingCycle(): FundingCycle? {
-      let currentTime: UFix64 = getCurrentBlock().timestamp
+    pub fun getCurrentFundingCycleWithTime(timestamp: UFix64): FundingCycle? {
       var i: Int = self.fundingCycles.length - 1
 
       while i >= 0 {
         let cycle: FundingCycle = self.fundingCycles[i]
         // If at any time we're greater than the cycle we're inspecting's start
         // time, we will return something.
-        if currentTime >= cycle.details.timeframe.startTime {
-          if (cycle.details.timeframe.endTime == nil || currentTime <= cycle.details.timeframe.endTime!){
+        if timestamp >= cycle.details.timeframe.startTime {
+          if (cycle.details.timeframe.endTime == nil || timestamp <= cycle.details.timeframe.endTime!){
             // In this case, we're in the middle of the latest one
             return cycle
           } else {
@@ -549,9 +663,14 @@ pub contract Toucans {
       return nil
     }
 
-    pub fun getCurrentFundingCycleNum(): UInt64? {
+    // Returns nil if there is no current round
+    pub fun getCurrentFundingCycle(): FundingCycle? {
+      return self.getCurrentFundingCycleWithTime(timestamp: getCurrentBlock().timestamp)
+    }
+
+    pub fun getCurrentFundingCycleId(): UInt64? {
       let currentCycle = self.getCurrentFundingCycle()
-      return currentCycle?.details?.cycleNum
+      return currentCycle?.details?.cycleId
     }
 
     // Returns nil if there is no current round
@@ -559,8 +678,8 @@ pub contract Toucans {
       return self.getCurrentFundingCycle()?.details?.issuanceRate
     }
 
-    pub fun getFundingCycle(cycleNum: UInt64): FundingCycle {
-      return self.fundingCycles[cycleNum]
+    pub fun getFundingCycle(cycleIndex: UInt64): FundingCycle {
+      return self.fundingCycles[cycleIndex]
     }
 
     pub fun getFundingCycles(): [FundingCycle] {
@@ -588,19 +707,19 @@ pub contract Toucans {
     //  |____/ \___/|_|  |_|  \___/ \_/\_/  
                                                                 
 
-    access(self) fun borrowFundingCycleRef(cycleNum: UInt64): &FundingCycle {
-      return &self.fundingCycles[cycleNum] as &FundingCycle
+    access(self) fun borrowFundingCycleRef(cycleIndex: UInt64): &FundingCycle {
+      return &self.fundingCycles[cycleIndex] as &FundingCycle
     }
 
     access(self) fun borrowCurrentFundingCycleRef(): &FundingCycle? {
       if let currentCycle: FundingCycle = self.getCurrentFundingCycle() {
-        return self.borrowFundingCycleRef(cycleNum: currentCycle.details.cycleNum)
+        return self.borrowFundingCycleRef(cycleIndex: currentCycle.details.cycleId)
       }
       return nil
     }
 
-    pub fun borrowManagerPublic(): &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic} {
-      return &self.multiSignManager as &ToucansMultiSign.Manager{ToucansMultiSign.ManagerPublic}
+    pub fun borrowManagerPublic(): &Manager{ManagerPublic} {
+      return &self.multiSignManager as &Manager{ManagerPublic}
     }
 
     init(
@@ -618,6 +737,7 @@ pub contract Toucans {
         ToucansTokens.getTokenInfo(tokenType: paymentTokenInfo.tokenType) != nil: "Unsupported token type for payment."
       }
       self.projectId = projectTokenInfo.contractName
+      self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
       self.fundingCycles = []
@@ -635,7 +755,7 @@ pub contract Toucans {
       let emptyPaymentVault <- paymentContract.createEmptyVault()
       self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       self.overflow <- paymentContract.createEmptyVault()
-      self.multiSignManager <- ToucansMultiSign.createMultiSigManager(signers: signers, threshold: threshold)
+      self.multiSignManager <- create Manager(_initialSigners: signers, _initialThreshold: threshold)
     }
 
     destroy() {
@@ -669,8 +789,6 @@ pub contract Toucans {
       pre {
         signers.contains(self.owner!.address): "Project owner must be one of the initial signers."
       }
-      let cycleNum: UInt64 = 0
-
       let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, initialSupply: initialSupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
@@ -703,20 +821,224 @@ pub contract Toucans {
     }
   }
 
+
+  //   __  __                                   
+  //  |  \/  |                                  
+  //  | \  / | __ _ _ __   __ _  __ _  ___ _ __ 
+  //  | |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '__|
+  //  | |  | | (_| | | | | (_| | (_| |  __/ |   
+  //  |_|  |_|\__,_|_| |_|\__,_|\__, |\___|_|   
+  //                             __/ |          
+  //                            |___/      
+
+
+  pub enum ActionState: UInt8 {
+    pub case ACCEPTED
+    pub case DECLINED
+    pub case PENDING
+  }
+
+  pub resource MultiSignAction {
+      pub let action: {ToucansActions.Action}
+      access(self) let signers: [Address]
+      access(self) let votes: {Address: Bool}
+      pub let threshold: UInt64
+
+      pub fun decline(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+        pre {
+          self.signers.contains(acctAddress): "This person cannot vote."
+        }
+        let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+        if sign {
+          self.votes[acctAddress] = false
+        }
+      }
+
+      pub fun accept(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+        pre {
+          self.signers.contains(acctAddress): "This person cannot vote."
+        }
+        let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
+        if sign {
+          self.votes[acctAddress] = true
+        }
+      }
+
+      pub fun getSigners(): [Address] {
+          return self.signers
+      }
+
+      // Only returns people who have actually voted
+      pub fun getVotes(): {Address: Bool} {
+        return self.votes
+      }
+
+      pub fun getAccepted(): UInt64 {
+        var count: UInt64 = 0
+        for voter in self.votes.keys {
+            if self.votes[voter]! {
+                count = count + 1
+            }
+        }
+        return count
+      }
+
+      pub fun getDeclined(): UInt64 {
+        var count: UInt64 = 0
+        for voter in self.votes.keys {
+            if !self.votes[voter]! {
+                count = count + 1
+            }
+        }
+        return count
+      }
+
+      pub fun getActionState(): ActionState {
+        // If this action is to add a signer,
+        // and the person being added declined it,
+        // it is automatically declined.
+        if self.action.getType() == Type<ToucansActions.AddOneSigner>() {
+          let addSignerAction: ToucansActions.AddOneSigner = self.action as! ToucansActions.AddOneSigner
+          if self.votes[addSignerAction.signer] == false {
+            return ActionState.DECLINED
+          }
+        }
+
+        if self.getAccepted() >= self.threshold {
+            return ActionState.ACCEPTED
+        }
+        if self.getDeclined() > UInt64(self.getSigners().length) - self.threshold {
+            return ActionState.DECLINED
+        }
+
+        return ActionState.PENDING
+      }
+
+      init(_threshold: UInt64, _signers: [Address], _action: {ToucansActions.Action}) {
+        self.threshold = _threshold
+        self.signers = _signers
+        self.votes = {}
+        self.action = _action
+      }
+  }
+
+  pub resource interface ManagerPublic {
+      pub var threshold: UInt64
+      pub fun borrowAction(actionUUID: UInt64): &MultiSignAction
+      pub fun getActionState(actionUUID: UInt64): ActionState
+      pub fun readyToFinalize(actionUUID: UInt64): Bool
+      pub fun getIDs(): [UInt64]
+      pub fun getSigners(): [Address]
+  }
+  
+  pub resource Manager: ManagerPublic {
+    pub var threshold: UInt64
+    access(self) let signers: {Address: Bool}
+    // Maps the `uuid` of the MultiSignAction
+    // to the resource itself
+    access(self) let actions: @{UInt64: MultiSignAction}
+
+    pub fun createMultiSign(action: {ToucansActions.Action}) {
+      var threshold: UInt64 = self.threshold
+      var signers: [Address] = self.signers.keys
+      if action.getType() == Type<ToucansActions.AddOneSigner>() {
+        let addSignerAction = action as! ToucansActions.AddOneSigner
+        threshold = threshold + 1
+        signers.append(addSignerAction.signer)
+      }
+      let newAction <- create MultiSignAction(_threshold: threshold, _signers: signers, _action: action)
+      self.actions[newAction.uuid] <-! newAction
+    }
+
+    pub fun getActionState(actionUUID: UInt64): ActionState {
+      let actionRef: &MultiSignAction = (&self.actions[actionUUID] as &MultiSignAction?)!
+      return actionRef.getActionState()
+    }
+
+    pub fun readyToFinalize(actionUUID: UInt64): Bool {
+      let actionState: ActionState = self.getActionState(actionUUID: actionUUID)
+      return actionState != ActionState.PENDING
+    }
+
+    // We do not make this public because if anyone else wants to use
+    // this contract, they may want specific access control over who can
+    // actually execute an action, post conditions, and/or implement requirements
+    // (like the treasury must have >= 10 $FLOW before an action can be executed).
+    pub fun finalizeAction(actionUUID: UInt64) {
+      destroy self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
+      self.assertValidTreasury()
+    }
+
+    // These will be multisign actions themselves
+    access(account) fun addSigner(signer: Address) {
+      self.signers.insert(key: signer, true)
+      self.assertValidTreasury()
+    }
+
+    access(account) fun removeSigner(signer: Address) {
+      self.signers.remove(key: signer)
+
+      if Int(self.threshold) > self.signers.length {
+        // Automatically reduce the threshold to prevent it from
+        // being higher than the number of signers
+        self.threshold = UInt64(self.signers.length)
+      }
+
+      self.assertValidTreasury()
+    }
+
+    access(account) fun updateThreshold(newThreshold: UInt64) {
+      self.threshold = newThreshold
+      self.assertValidTreasury()
+    }
+
+    pub fun borrowAction(actionUUID: UInt64): &MultiSignAction {
+      return (&self.actions[actionUUID] as &MultiSignAction?)!
+    }
+
+    pub fun getIDs(): [UInt64] {
+      return self.actions.keys
+    }
+
+    pub fun getSigners(): [Address] {
+      return self.signers.keys
+    }
+
+    pub fun assertValidTreasury() {
+      assert(self.threshold > 0, message: "Threshold must be greater than 0.")
+      assert(self.signers.length > 0, message: "Number of signers must be greater than 0.")
+      assert(self.signers.length >= Int(self.threshold), message: "Number of signers must be greater than or equal to the threshold.")
+    }
+
+    init(_initialSigners: [Address], _initialThreshold: UInt64) {
+      self.signers = {}
+      self.actions <- {}
+      self.threshold = _initialThreshold
+
+      for signer in _initialSigners {
+        self.signers.insert(key: signer, true)
+      }
+
+      self.assertValidTreasury()
+    }
+
+    destroy() {
+      destroy self.actions
+    }
+  }
+      
+  pub fun createMultiSigManager(signers: [Address], threshold: UInt64): @Manager {
+      return <- create Manager(_initialSigners: signers, _initialThreshold: threshold)
+  }
+
   pub fun createCollection(): @Collection {
     return <- create Collection()
   }
 
-  pub fun depositTokensToAccount(funds: @FungibleToken.Vault, to: Address, publicPath: PublicPath) {
-    let vault = getAccount(to).getCapability(publicPath).borrow<&{FungibleToken.Receiver}>() 
-              ?? panic("Account does not have a proper Vault set up.")
-    vault.deposit(from: <- funds)
-  }
-
-  pub fun assertNonConflictingCycles(earlierCycle: FundingCycleDetails, laterCycle: FundingCycleDetails): Bool {
+  pub fun assertNonConflictingCycles(earlierCycle: FundingCycleDetails, laterCycle: FundingCycleDetails) {
     let earlierCycleStartsEarlier = earlierCycle.timeframe.startTime < laterCycle.timeframe.startTime
     let earlierCycleEndsBeforeLaterStarts = earlierCycle.timeframe.endTime == nil || (earlierCycle.timeframe.endTime! < laterCycle.timeframe.startTime)
-    return earlierCycleStartsEarlier && earlierCycleEndsBeforeLaterStarts
+    assert(earlierCycleStartsEarlier && earlierCycleEndsBeforeLaterStarts, message: "Conflicting cycles!")
   }
 
   init() {

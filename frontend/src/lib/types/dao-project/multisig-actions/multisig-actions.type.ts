@@ -2,4 +2,6 @@ export type MultisigActions =
 	| 'Withdraw'
 	| 'AddSigner'
 	| 'RemoveSigner'
-	| 'UpdateThreshold';
+	| 'UpdateThreshold'
+	| 'Mint'
+	| 'MintToTreasury';

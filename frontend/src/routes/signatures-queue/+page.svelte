@@ -39,12 +39,12 @@
 			{#if $notifications}
 				{#await getDaosData() then daosData}
 					{#each Object.entries($notifications) as [key, value]}
-						{#each value.actions as action}
+						{#each value as action}
 							<PendingActionsListElement
 								{action}
-								threshold={value.threshold}
+								threshold={action.threshold}
 								daoId={key}
-								isSigner={value.isSigner}
+								isSigner={action.signers.includes($user.addr)}
 								daoLogo={daosData[key].logo}
 								projectOwner={daosData[key].owner}
 							/>

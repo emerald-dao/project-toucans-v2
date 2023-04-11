@@ -52,7 +52,7 @@ export interface DaoBlockchainData {
 	minting: boolean;
 	treasuryBalances: {
 		FLOW?: string;
-		FUSD?: string;
+		USDC?: string;
 		[key: string]: string | undefined;
 	};
 	paymentCurrency: ECurrencies;
@@ -72,6 +72,8 @@ export interface ActionData {
 	id: string;
 	intent: string;
 	title: MultisigActions;
+	threshold: string,
+	signers: string[],
 	votes: {
 		[voter: string]: boolean;
 	};

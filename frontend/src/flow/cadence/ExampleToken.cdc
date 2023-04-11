@@ -8,13 +8,15 @@ pub contract ExampleToken: FungibleToken {
 
     // The amount of tokens in existance
     pub var totalSupply: UFix64
-    access(self) let balances: {Address: UFix64}
+    // nil if there is none
+    pub var maxSupply: UFix64?
 
     // Paths
     pub let VaultStoragePath: StoragePath
     pub let ReceiverPublicPath: PublicPath
     pub let VaultPublicPath: PublicPath
     pub let MinterStoragePath: StoragePath
+    pub let AdministratorStoragePath: StoragePath
 
     // Events
     pub event TokensInitialized(initialSupply: UFix64)
@@ -28,19 +30,17 @@ pub contract ExampleToken: FungibleToken {
         pub var balance: UFix64
 
         pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
-            if let owner: Address = self.owner?.address {
-                ExampleToken.balances[owner] = (ExampleToken.balances[owner] ?? amount) - amount
-            }
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
+
+            if let owner: Address = self.owner?.address {
+                ExampleToken.setBalance(address: owner, balance: self.balance)
+            }
             return <-create Vault(balance: amount)
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @Vault
-            if let owner: Address = self.owner?.address {
-                ExampleToken.balances[owner] = (ExampleToken.balances[owner] ?? 0.0) + vault.balance
-            }
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             
@@ -48,6 +48,10 @@ pub contract ExampleToken: FungibleToken {
             // decrease the totalSupply in the `destroy` function.
             vault.balance = 0.0
             destroy vault
+
+            if let owner: Address = self.owner?.address {
+                ExampleToken.setBalance(address: owner, balance: self.balance)
+            }
         }
 
         pub fun getViews(): [Type]{
@@ -113,16 +117,57 @@ pub contract ExampleToken: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-    pub fun getBalances(): {Address: UFix64} {
-        return self.balances
-    }
-
     pub resource Minter: Toucans.Minter {
         pub fun mint(amount: UFix64): @Vault {
+            post {
+                ExampleToken.maxSupply == nil || ExampleToken.totalSupply <= ExampleToken.maxSupply!: 
+                    "Exceeded the max supply of tokens allowd."
+            }
             ExampleToken.totalSupply = ExampleToken.totalSupply + amount
             emit TokensMinted(amount: amount)
             return <- create Vault(balance: amount)
         }
+    }
+
+    // We follow this pattern of storage
+    // so the (potentially) huge dictionary 
+    // isn't loaded when the contract is imported
+    pub resource Administrator {
+        // This is an experimental index and should
+        // not be used for anything official
+        // or monetary related
+        access(self) let balances: {Address: UFix64}
+
+        access(contract) fun setBalance(address: Address, balance: UFix64) {
+            self.balances[address] = balance
+        }
+
+        pub fun getBalance(address: Address): UFix64 {
+            return self.balances[address] ?? 0.0
+        }
+
+        pub fun getBalances(): {Address: UFix64} {
+            return self.balances
+        }
+
+        init() {
+            self.balances = {}
+        }
+    }
+
+    access(contract) fun setBalance(address: Address, balance: UFix64) {
+        let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
+        admin.setBalance(address: address, balance: balance)
+    }
+
+    pub fun getBalance(address: Address): UFix64 {
+        let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
+        return admin.getBalance(address: address)
+    }
+
+    pub fun getBalances(): {Address: UFix64} {
+        let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
+        return admin.getBalances()
     }
 
     init(
@@ -132,18 +177,20 @@ pub contract ExampleToken: FungibleToken {
       _threshold: UInt64,
       _minting: Bool,
       _initialSupply: UFix64,
+      _maxSupply: UFix64?,
       _extra: {String: AnyStruct}
     ) {
 
       // Contract Variables
       self.totalSupply = 0.0
-      self.balances = {}
+      self.maxSupply = _maxSupply
 
       // Paths
       self.VaultStoragePath = /storage/ExampleTokenVault
       self.ReceiverPublicPath = /public/ExampleTokenReceiver
       self.VaultPublicPath = /public/ExampleTokenMetadata
       self.MinterStoragePath = /storage/ExampleTokenMinter
+      self.AdministratorStoragePath = /storage/ExampleTokenAdmin
  
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)
@@ -177,7 +224,7 @@ pub contract ExampleToken: FungibleToken {
         extra: _extra
       )
 
-      // INSERT MINTING HERE
+      self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)

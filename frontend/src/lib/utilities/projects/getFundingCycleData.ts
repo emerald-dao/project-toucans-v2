@@ -4,12 +4,12 @@ import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 export const getFundingCycleData = (
 	fundingCycles: FundingCycle[],
 	events: DaoEvent[],
-	index: number
+	index: string
 ) => {
-	const fundingCycle = fundingCycles[index];
+	const fundingCycle = fundingCycles.find(cycle => cycle.details.cycleId == index) as FundingCycle;
 	const purchaseHistory = events.filter((event) => {
 		if (event.type === 'Purchase') {
-			event.data.currentCycle === fundingCycle.details.cycleNum;
+			event.data.currentCycle === fundingCycle.details.cycleId;
 		}
 	});
 	return { ...fundingCycle, purchaseHistory };

@@ -14,35 +14,38 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			.replace('"../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
 			.replace('"../utility/MetadataViews.cdc"', addresses.MetadataViews)
 			.replace('"../utility/FlowToken.cdc"', addresses.FlowToken)
-			.replace('"../utility/FUSD.cdc"', addresses.FUSD)
+			.replace('"../utility/FiatToken.cdc"', addresses.FiatToken)
 			.replace('"../utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"../utility/FLOAT.cdc"', addresses.FLOAT)
 			.replace('"../Toucans.cdc"', addresses.Toucans)
-			.replace('"../ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"../ToucansActions.cdc"', addresses.Toucans)
 			.replace('"../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../ToucansTokens.cdc"', addresses.Toucans)
+			.replace('"../utility/NFTCatalog.cdc"', addresses.NFTCatalog)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
 			.replace('"../../utility/MetadataViews.cdc"', addresses.MetadataViews)
 			.replace('"../../utility/FlowToken.cdc"', addresses.FlowToken)
-			.replace('"../../utility/FUSD.cdc"', addresses.FUSD)
+			.replace('"../../utility/FiatToken.cdc"', addresses.FiatToken)
 			.replace('"../../utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"../../utility/FLOAT.cdc"', addresses.FLOAT)
 			.replace('"../../Toucans.cdc"', addresses.Toucans)
-			.replace('"../../ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"../../ToucansActions.cdc"', addresses.Toucans)
 			.replace('"../../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../../ToucansTokens.cdc"', addresses.Toucans)
+			.replace('"../../utility/NFTCatalog.cdc"', addresses.NFTCatalog)
+			.replace('"../../utility/FiatToken.cdc"', addresses.FiatToken)
 			// For Contract
 			.replace('"./utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
 			.replace('"./utility/MetadataViews.cdc"', addresses.MetadataViews)
 			.replace('"./utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"./utility/FungibleTokenMetadataViews.cdc"', addresses.FungibleTokenMetadataViews)
 			.replace('"./utility/FlowToken.cdc"', addresses.FlowToken)
-			.replace('"./utility/FUSD.cdc"', addresses.FUSD)
+			.replace('"./utility/FiatToken.cdc"', addresses.FiatToken)
 			.replace('"./Toucans.cdc"', addresses.Toucans)
 			.replace('"./ToucansMultiSign.cdc"', addresses.Toucans)
-			.replace('"./ToucansTreasuryActions.cdc"', addresses.Toucans)
+			.replace('"./ToucansActions.cdc"', addresses.Toucans)
 			.replace('"./ToucansTokens.cdc"', addresses.Toucans)
 			// For All
 			.replaceAll('ExampleToken', contractName)
@@ -58,6 +61,7 @@ export const executeTransaction: (
 	try {
 		// We start the transaction
 		const transactionId = await transaction();
+		console.log('Transaction Id', transactionId);
 
 		// We connect our TransactionStore to the transaction to get the status
 		fcl.tx(transactionId).subscribe(async (res: TransactionStatusObject) => {
@@ -174,3 +178,18 @@ export const formatFix = (value) => {
 	}
 	return i;
 };
+
+export const splitList = (list: string[], chunkSize: number) => {
+  const groups = []
+  let currentGroup = []
+  for (let i = 0; i < list.length; i++) {
+      const collectionID = list[i]
+      if (currentGroup.length >= chunkSize) {
+        groups.push([...currentGroup])
+        currentGroup = []
+      }
+      currentGroup.push(collectionID)
+  }
+  groups.push([...currentGroup])
+  return groups
+}

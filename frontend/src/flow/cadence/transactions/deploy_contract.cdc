@@ -1,5 +1,5 @@
 import FungibleToken from "../utility/FungibleToken.cdc"
-import FUSD from "../utility/FUSD.cdc"
+import FiatToken from "../utility/FiatToken.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTokens from "../ToucansTokens.cdc"
@@ -18,17 +18,18 @@ transaction(
   // DAO TREASURY
   signers: [Address],
   minting: Bool,
-  initialSupply: UFix64
+  initialSupply: UFix64,
+  maxSupply: UFix64?,
 ) {
 
   prepare(deployer: AuthAccount) {
     /**************************************************************************************/
-    /********************************** Setup FUSD if not *********************************/
+    /********************************** Setup USDC if not *********************************/
     /**************************************************************************************/
-    if deployer.borrow<&FUSD.Vault>(from: /storage/fusdVault) == nil {
-      deployer.save(<- FUSD.createEmptyVault(), to: /storage/fusdVault)
-      deployer.link<&FUSD.Vault{FungibleToken.Receiver}>(/public/fusdReceiver, target: /storage/fusdVault)
-      deployer.link<&FUSD.Vault{FungibleToken.Balance}>(/public/fusdBalance, target: /storage/fusdVault)
+    if deployer.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
+      deployer.save(<- FiatToken.createEmptyVault(), to: /storage/USDCVault)
+      deployer.link<&FiatToken.Vault{FungibleToken.Receiver}>(/public/USDCVaultReceiver, target: /storage/USDCVault)
+      deployer.link<&FiatToken.Vault{FungibleToken.Balance}>(/public/USDCVaultBalance, target: /storage/USDCVault)
     }
 
     // Blank empty for now
@@ -51,6 +52,7 @@ transaction(
       _threshold: threshold,
       _minting: minting,
       _initialSupply: initialSupply,
+      _maxSupply: maxSupply,
       _extra: extra
     )
   }

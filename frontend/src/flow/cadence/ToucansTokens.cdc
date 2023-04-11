@@ -1,5 +1,5 @@
 import FlowToken from "./utility/FlowToken.cdc"
-import FUSD from "./utility/FUSD.cdc"
+import FiatToken from "./utility/FiatToken.cdc"
 import FungibleToken from "./utility/FungibleToken.cdc"
 
 pub contract ToucansTokens {
@@ -55,7 +55,7 @@ pub contract ToucansTokens {
   init() {
     self.tokens = {
       Type<@FlowToken.Vault>(): TokenInfo("FlowToken", self.stringToAddress(stringAddress: FlowToken.getType().identifier.slice(from: 2, upTo: 18)), "FLOW", /public/flowTokenReceiver, /public/flowTokenBalance, /storage/flowTokenVault),
-      Type<@FUSD.Vault>(): TokenInfo("FUSD", self.stringToAddress(stringAddress: FUSD.getType().identifier.slice(from: 2, upTo: 18)), "FUSD", /public/fusdReceiver, /public/fusdBalance, /storage/fusdVault)
+      Type<@FiatToken.Vault>(): TokenInfo("FiatToken", self.stringToAddress(stringAddress: FiatToken.getType().identifier.slice(from: 2, upTo: 18)), "USDC", /public/USDCVaultReceiver, /public/USDCVaultBalance, /storage/USDCVault)
     }
     self.account.save(<- create Admin(), to: /storage/ToucansTokensAdmin)
   }

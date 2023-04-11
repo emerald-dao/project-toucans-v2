@@ -90,10 +90,10 @@
 			/>
 		{:else if event.type === 'NewFundingCycle'}
 			<SeeRoundDetailsModal
-				round={daoData.onChainData.fundingCycles[Number(event.data.cycleNum)]}
+				round={daoData.onChainData.fundingCycles[Number(event.data.newCycleId)]}
 				projectToken={daoData.generalInfo.token_symbol}
 				paymentToken={daoData.onChainData.paymentCurrency}
-				roundNumber={Number(event.data.cycleNum)}
+				roundNumber={Number(event.data.newCycleId)}
 				projectId={daoData.generalInfo.project_id}
 				activeRound={daoData.onChainData.currentFundingCycle
 					? Number(daoData.onChainData.currentFundingCycle)

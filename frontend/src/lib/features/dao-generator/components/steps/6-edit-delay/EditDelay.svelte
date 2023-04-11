@@ -3,29 +3,7 @@
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 	import Icon from '@iconify/svelte';
 	import StepButtons from '../../atoms/StepButtons.svelte';
-
-	const editDelayOptions = [
-		{
-			id: 'three-days',
-			title: '3 days',
-			value: '3.00'
-		},
-		{
-			id: 'one-day',
-			title: '1 day',
-			value: '1.00'
-		},
-		{
-			id: 'seven-days',
-			title: '7 days',
-			value: '7.00'
-		},
-		{
-			id: 'no-delay',
-			title: 'No delay',
-			value: '0.00'
-		}
-	];
+	import { editDelayOptions } from './editDelayOptions';
 
 	$: activeOption = editDelayOptions.find(
 		(option) => option.value === $daoGeneratorData.tokenomics.editDelay
@@ -40,7 +18,7 @@
 			<span>
 				{`at any time `}
 			</span>
-			{`befor it starts.`}
+			{`before it starts.`}
 		{:else}
 			{`When launching a funding round, you can edit its configuration at least`}
 			<span>
@@ -48,7 +26,7 @@
 			</span>
 			{`days before the round starts.`}
 		{/if}
-		{`This is to prevent any last-minute changes that could affect the outcome of the round.`}
+		{`This is to prevent any last-minute changes that could affect the outcome of the round. The higher the delay, the greater trust your community will have in you.`}
 	</p>
 	{#each editDelayOptions as option}
 		<input

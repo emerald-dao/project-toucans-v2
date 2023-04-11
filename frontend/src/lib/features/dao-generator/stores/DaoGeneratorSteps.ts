@@ -46,7 +46,7 @@ export const daoGeneratorSteps = createSteps([
 	},
 	{
 		name: 'Edit Delay',
-		slug: 'edita-delay',
+		slug: 'edit-delay',
 		component: EditDelay,
 		action: null,
 		form: false,
