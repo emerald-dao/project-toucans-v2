@@ -8,7 +8,7 @@
 	export let label: string | undefined = undefined;
 	export let currency: 'USDC' | 'FLOW' | string;
 	export let name = 'amount';
-	export let hasBorder: boolean = true;
+	export let hasBorder = true;
 	export let fontSize: string | undefined = undefined;
 	export let fontColor: string | undefined = undefined;
 	export let errors: string[] = [];
@@ -43,7 +43,7 @@
 	});
 </script>
 
-<InputWrapper {name} {isValid} {errors} {label} iconText={`$${currency}`}>
+<InputWrapper {name} {isValid} {errors} {label} {hasBorder} iconText={`$${currency}`}>
 	<div>
 		<input
 			type="text"
@@ -53,13 +53,6 @@
 			bind:this={amountInput}
 			on:input={handleChange}
 			style={`font-size: ${fontSize}; color: ${fontColor}`}
-			class:no-border={!hasBorder}
 		/>
 	</div>
 </InputWrapper>
-
-<style type="scss">
-	.no-border {
-		border: none;
-	}
-</style>
