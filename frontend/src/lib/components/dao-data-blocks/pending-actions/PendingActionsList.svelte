@@ -13,9 +13,9 @@
 			projectOwner={daoData.generalInfo.owner}
 			daoId={daoData.generalInfo.project_id}
 			{action}
-			threshold={daoData.onChainData.threshold}
+			threshold={action.threshold}
 			{showDetail}
-			isSigner={daoData.onChainData.signers.includes($user.addr)}
+			isSigner={action.signers.includes($user.addr)}
 			showDao={false}
 		/>
 	{/each}

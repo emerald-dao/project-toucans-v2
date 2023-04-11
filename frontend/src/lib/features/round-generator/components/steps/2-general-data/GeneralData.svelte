@@ -39,7 +39,7 @@
 					name="fundingGoal"
 					iconUrl={$roundGeneratorData.currency === ECurrencies.FLOW
 						? '/flow-logo.png'
-						: '/fusd-logo.png'}
+						: '/usdc-logo.png'}
 					errors={res.getErrors('fundingGoal')}
 					isValid={res.isValid('fundingGoal')}
 					disabled={$roundGeneratorData.infiniteFundingGoal}

@@ -34,6 +34,16 @@ const contractData = {
 		testnet: '0xe223d8a629e49c68',
 		mainnet: '0x3c5959b568896393'
 	},
+	FiatToken: {
+		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '0xa983fecbed621163',
+		mainnet: '0xb19436aae4d94622'
+	},
+	NFTCatalog: {
+		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '0x324c34e1c517e4db',
+		mainnet: '0x49a7cda3a1eecc29'
+	},
 	ECTreasury: {
 		testnet: '0x6c0d53c676256e8c',
 		mainnet: '0x5643fd47a29770e7'
@@ -76,5 +86,7 @@ export const addresses: {
 	FLOAT: contractData.FLOAT[network],
 	FIND: contractData.FIND[network],
 	FN: contractData.FN[network],
-	Toucans: contractData.Toucans[network]
+	Toucans: contractData.Toucans[network],
+	FiatToken: contractData.FiatToken[network],
+	NFTCatalog: contractData.NFTCatalog[network]
 };

@@ -12,7 +12,7 @@ export const setNotifications = async (userAddress: string) => {
 export const getNotificationsNumber = (notifications: ProjectNotifications | null) => {
 	let number = 0;
 	for (const project in notifications) {
-		number += notifications[project].actions.length;
+		number += notifications[project].length;
 	}
 	return number;
 };

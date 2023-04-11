@@ -1,6 +1,5 @@
 import Toucans from "../Toucans.cdc"
-import ToucansMultiSign from "../ToucansMultiSign.cdc"
-import ToucansTreasuryActions from "../ToucansTreasuryActions.cdc"
+import ToucansActions from "../ToucansActions.cdc"
 
 transaction(
   projectOwner: Address, 
@@ -27,9 +26,8 @@ transaction(
     let action = manager.borrowAction(actionUUID: actionUUID)
     action.accept(acctAddress: self.SignerAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
 
-    if manager.getActionState(actionUUID: actionUUID) == ToucansMultiSign.ActionState.DECLINED || 
-       (manager.getActionState(actionUUID: actionUUID) == ToucansMultiSign.ActionState.ACCEPTED && !ToucansTreasuryActions.cantExecuteAutomatically().contains(action.getAction().getType())) {
-        self.Project.finalizeAction(actionUUID: actionUUID, {})
+    if manager.readyToFinalize(actionUUID: actionUUID) {
+      self.Project.finalizeAction(actionUUID: actionUUID)
     }
   }
 }

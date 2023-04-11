@@ -3,7 +3,7 @@ import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { addresses, user } from '$stores/flow/FlowStore';
-import { executeTransaction, formatFix, replaceWithProperValues } from './utils';
+import { executeTransaction, formatFix, replaceWithProperValues, splitList } from './utils';
 
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
@@ -13,22 +13,24 @@ import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
-import mintTokensTx from './cadence/transactions/mint_tokens.cdc?raw';
-import finalizeAddSignerActionTx from './cadence/transactions/finalize_add_signer_action.cdc?raw';
 
 // Treasury Actions
-import proposePaymentTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_payment_token_withdraw.cdc?raw';
-import proposeFUSDWithdrawTx from './cadence/transactions/treasury-actions/propose_fusd_withdraw.cdc?raw';
-import proposeFlowTokenWithdrawTx from './cadence/transactions/treasury-actions/propose_flow_token_withdraw.cdc?raw';
+import paymentTokenWithdrawTx from './cadence/transactions/treasury-actions/payment_token_withdraw.cdc?raw';
+import USDCWithdrawTx from './cadence/transactions/treasury-actions/usdc_withdraw.cdc?raw';
+import FLOWWithdrawTx from './cadence/transactions/treasury-actions/flow_token_withdraw.cdc?raw';
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
+import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
+import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
-import getPendingActionsInDAOScript from './cadence/scripts/get_pending_actions_in_dao.cdc?raw';
-import getPendingActionsInManyScript from './cadence/scripts/get_pending_actions_in_many.cdc?raw';
+import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
+// NFTCatalog
+import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
+import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
 
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
@@ -85,12 +87,6 @@ const deployContract = async (data: DaoGeneratorData) => {
 	const paymentCurrency = data.tokenomics.paymentCurrency;
 	const paymentCurrencyInfo = currencies[paymentCurrency];
 
-	contractCode = contractCode.replace(
-		'// INSERT MINTING HERE',
-		data.tokenomics.mintTokens
-			? `self.account.save(<- create Minter(), to: self.MinterStoragePath)`
-			: ''
-	);
 	const hexCode = Buffer.from(replaceWithProperValues(contractCode, contractName)).toString('hex');
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployExampleTokenTx),
@@ -106,7 +102,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
 			arg([], t.Array(t.Address)),
 			arg(data.tokenomics.mintTokens, t.Bool),
-			arg(formatFix(data.tokenomics.initialSupply), t.UFix64)
+			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
+			arg(data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null, t.Optional(t.UFix64))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -129,8 +126,8 @@ const fundProject = async (
 	expectedAmount: string
 ) => {
 	let txCode = fundProjectTx;
-	if (currency === ECurrencies.FUSD) {
-		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD');
+	if (currency === ECurrencies.USDC) {
+		txCode = txCode.replaceAll('flowTokenVault', 'USDCVault').replaceAll('FlowToken', 'FiatToken');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -168,8 +165,8 @@ const donate = async (
 	currency: ECurrencies
 ) => {
 	let txCode = donateTx;
-	if (currency === ECurrencies.FUSD) {
-		txCode = txCode.replaceAll('flowTokenVault', 'fusdVault').replaceAll('FlowToken', 'FUSD');
+	if (currency === ECurrencies.USDC) {
+		txCode = txCode.replaceAll('flowTokenVault', 'USDCVault').replaceAll('FlowToken', 'FiatToken');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -217,7 +214,9 @@ const newRound = async () => {
 			arg(startTime, t.UFix64),
 			arg(endTime, t.Optional(t.UFix64)),
 			arg(distributionAddresses, t.Array(t.Address)),
-			arg(distributionPercentages, t.Array(t.UFix64))
+			arg(distributionPercentages, t.Array(t.UFix64)),
+			arg(null, t.Optional(t.Array(t.Address))),
+			arg(null, t.Optional(t.String))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -228,7 +227,7 @@ const newRound = async () => {
 
 export const newRoundExecution = () => executeTransaction(newRound);
 
-// TODO: IMPLEMENT FOR FLOW TOKEN AND FUSD
+// TODO: IMPLEMENT FOR FLOW TOKEN AND USDC
 const proposeWithdraw = async (
 	projectOwner: string,
 	projectId: string,
@@ -236,7 +235,7 @@ const proposeWithdraw = async (
 	amount: string
 ) => {
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(proposePaymentTokenWithdrawTx),
+		cadence: replaceWithProperValues(paymentTokenWithdrawTx),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
@@ -264,7 +263,7 @@ const proposePaymentWithdraw = async (
 	amount: string,
 	currency: ECurrencies
 ) => {
-	const txCode = currency === ECurrencies.FLOW ? proposeFlowTokenWithdrawTx : proposeFUSDWithdrawTx;
+	const txCode = currency === ECurrencies.FLOW ? FLOWWithdrawTx : USDCWithdrawTx;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode),
 		args: (arg, t) => [
@@ -466,6 +465,29 @@ export const mintTokensExecution = (
 ) =>
 	executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
 
+const mintTokensToTreasury = async (
+	projectId: string,
+	amount: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(mintTokensToTreasuryTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+	
+export const mintTokensToTreasuryExecution = (
+	projectId: string,
+	amount: string
+) =>
+	executeTransaction(() => mintTokensToTreasury(projectId, amount));
+
 //    _____           _       _
 //   / ____|         (_)     | |
 //  | (___   ___ _ __ _ _ __ | |_ ___
@@ -506,28 +528,14 @@ export const getTokenBalance = async (projectId: string, contractAddress: string
 	}
 };
 
-export const getPendingActionInDAO = async (owner: string, projectId: string) => {
-	console.log(projectId);
-	try {
-		const response = await fcl.query({
-			cadence: replaceWithProperValues(getPendingActionsInDAOScript),
-			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
-		});
-		return response;
-	} catch (e) {
-		console.log('Error in getPendingActionInDAO');
-		console.log(e);
-	}
-};
-
-export const getPendingActionsInMany = async (
+export const getPendingActions = async (
 	userAddress: string,
 	projectOwners: string[],
 	projectIds: string[]
 ) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getPendingActionsInManyScript),
+			cadence: replaceWithProperValues(getPendingActionsScript),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
 				arg(projectOwners, t.Array(t.Address)),
@@ -564,6 +572,45 @@ export const hasVaultSetup = async (projectOwner: string, projectId: string, use
 		return response;
 	} catch (e) {
 		console.log('Error in hasVaultSetup');
+		console.log(e);
+	}
+};
+
+const getCatalogByCollectionIDs = async (group: string[]) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogListScript),
+			args: (arg, t) => [
+				arg(group, t.Array(t.String))
+			]
+		});
+
+		return response;
+	} catch (e) {
+		console.log('Error in getCatalogByCollectionIDs');
+		console.log(e);
+	}
+};
+
+export const getNFTCatalog = async () => {
+	try {
+		const catalogKeys = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogKeysScript),
+			args: (arg, t) => []
+		});
+		const groups = splitList(catalogKeys, 50);
+		const promises = groups.map((group) => {
+			return getCatalogByCollectionIDs(group)
+		})
+		const itemGroups = await Promise.all(promises)
+
+		const items = itemGroups.reduce((acc, current) => {
+			return Object.assign(acc, current)
+		}, {}) 
+		console.log(items);
+		return items;
+	} catch (e) {
+		console.log('Error in getNFTCatalog');
 		console.log(e);
 	}
 };
