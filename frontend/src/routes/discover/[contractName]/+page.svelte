@@ -10,6 +10,8 @@
 
 	export let data: DAOProject;
 
+	console.log(data);
+
 	let daoDataStore: Writable<DAOProject> = writable(data, (set) => {
 		const subscription = supabase
 			.channel('events')

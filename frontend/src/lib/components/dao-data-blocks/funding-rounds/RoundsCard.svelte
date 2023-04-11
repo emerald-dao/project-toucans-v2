@@ -19,7 +19,7 @@
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
 
-	$: goalReached = goal !== 'infinite' ? goal < funding : false;
+	$: goalReached = goal !== 'infinite' ? (goal as number) < funding : false;
 	$: overflow = goal !== 'infinite' ? funding - (goal as number) : 0;
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);

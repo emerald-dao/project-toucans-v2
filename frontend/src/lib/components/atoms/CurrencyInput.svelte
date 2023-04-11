@@ -44,18 +44,16 @@
 </script>
 
 <InputWrapper {name} {isValid} {errors} {label} iconText={`$${currency}`}>
-	<div>
-		<input
-			type="text"
-			{name}
-			placeholder="0.00"
-			bind:value={amountValue}
-			bind:this={amountInput}
-			on:input={handleChange}
-			style={`font-size: ${fontSize}; color: ${fontColor}`}
-			class:no-border={!hasBorder}
-		/>
-	</div>
+	<input
+		type="text"
+		{name}
+		placeholder="0.00"
+		bind:value={amountValue}
+		bind:this={amountInput}
+		on:input={handleChange}
+		style={`font-size: ${fontSize}; color: ${fontColor}`}
+		class:no-border={!hasBorder}
+	/>
 </InputWrapper>
 
 <style type="scss">

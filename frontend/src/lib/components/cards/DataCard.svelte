@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Currency } from '@emerald-dao/component-library';
+	import { Currency, TooltipIcon } from '@emerald-dao/component-library';
 	// import { formatFix } from '$flow/utils';
 	import Icon from '@iconify/svelte';
 
@@ -15,6 +15,7 @@
 	export let paddingBlock = 'var(--space-5)';
 	export let color: 'heading' | 'text' | 'primary' | 'secondary' | 'tertiary' = 'heading';
 	export let fontSize = 'var(--font-size-2)';
+	export let tooltip: string | null = null;
 </script>
 
 <div
@@ -22,11 +23,14 @@
 	class:card-primary={hasBackground}
 	style={`width: ${width}; height: ${height}; padding: ${paddingBlock} ${paddingInline}; font-size: ${fontSize}`}
 >
-	<div class="row-2">
+	<div class="row-1 align-center">
 		{#if icon}
 			<Icon {icon} />
 		{/if}
 		<span class="xsmall">{title}</span>
+		{#if tooltip != null}
+			<TooltipIcon {tooltip} width={0.6} />
+		{/if}
 	</div>
 	{#if data !== null}
 		{#if isCurrency}
