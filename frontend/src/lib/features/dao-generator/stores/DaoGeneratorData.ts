@@ -11,7 +11,8 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		twitter: '',
 		discord: '',
 		contractName: '',
-		logo: undefined
+		logo: undefined,
+		bannerImage: undefined
 	},
 	tokenomics: {
 		paymentCurrency: ECurrencies.FLOW,

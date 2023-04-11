@@ -20,6 +20,7 @@ export interface DaoDatabaseData {
 	description: string;
 	discord: string | null;
 	logo: string;
+	banner_image: string;
 	name: string;
 	owner: string;
 	project_id: string;

@@ -1,19 +1,15 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Button, Label, TooltipIcon } from '@emerald-dao/component-library';
+	import { Label, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
 
 	export let daoData: DAOProject;
-
-	const initDonation = () => {
-		alert('todo');
-	};
 </script>
 
 <div class="card-primary column">
-	<img src="/toucans-illustration.png" alt="Background illustration" class="banner-image" />
+	<img src={daoData.generalInfo.banner_image} alt="Background illustration" class="banner-image" />
 	<div class="content-wrapper column-14">
 		<div class="column-4">
 			<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />

@@ -5,7 +5,8 @@ export const postProject = async (
 	user: CurrentUserObject,
 	data: DaoGeneratorData,
 	projectId: string,
-	logoUrl: string
+	logoUrl: string,
+	bannerUrl: string
 ) => {
 	const res = await fetch('/api/add-project', {
 		method: 'POST',
@@ -13,6 +14,7 @@ export const postProject = async (
 			user,
 			...data,
 			logo: logoUrl,
+			bannerImage: bannerUrl,
 			projectId
 		}),
 		headers: {

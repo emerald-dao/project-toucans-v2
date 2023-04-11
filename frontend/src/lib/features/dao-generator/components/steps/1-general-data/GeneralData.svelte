@@ -83,9 +83,11 @@
 		.replace(/[^A-Z]/g, '');
 
 	$: validForm =
-		res.isValid() && $daoGeneratorData.daoDetails.logo
-			? $daoGeneratorData.daoDetails.logo.length > 0
-			: false;
+		res.isValid() &&
+		$daoGeneratorData.daoDetails.logo != undefined &&
+		$daoGeneratorData.daoDetails.logo.length > 0 &&
+		$daoGeneratorData.daoDetails.bannerImage != undefined &&
+		$daoGeneratorData.daoDetails.bannerImage.length > 0;
 </script>
 
 <form
@@ -156,6 +158,15 @@
 			accept={['image/png', 'image/jpeg', 'image/jpg']}
 			maxAmountOfFiles={1}
 			bind:bindValue={$daoGeneratorData.daoDetails.logo}
+		/>
+	</div>
+	<div class="drop-zone-wrapper">
+		<label for="banner">Banner image *</label>
+		<DropZone
+			name="banner"
+			accept={['image/png', 'image/jpeg', 'image/jpg']}
+			maxAmountOfFiles={1}
+			bind:bindValue={$daoGeneratorData.daoDetails.bannerImage}
 		/>
 	</div>
 	<StepButtons active={validForm} />
