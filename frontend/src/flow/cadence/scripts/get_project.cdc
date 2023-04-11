@@ -35,7 +35,7 @@ pub struct Info {
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
     self.tokenType = info.projectTokenInfo.tokenType
-    self.currentFundingCycle = info.getCurrentFundingCycleNum()
+    self.currentFundingCycle = info.getCurrentFundingCycleId()
     self.totalFunding = info.totalFunding
     self.editDelay = info.editDelay
     self.extra = info.getExtra()

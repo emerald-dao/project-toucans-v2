@@ -9,7 +9,7 @@ export interface FundingCycle {
 }
 
 export interface FundingCycleDetails {
-	cycleNum: string;
+	cycleId: string;
 	fundingTarget?: string;
 	issuanceRate: string;
 	reserveRate: string;
