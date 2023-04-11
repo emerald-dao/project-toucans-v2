@@ -79,7 +79,7 @@ export const DummyDao: DAOProject = {
 			timestamp: 1630454400,
 			currentCycle: '1',
 			type: 'NewFundingCycle',
-			cycleNum: '1',
+			newCycleId: '1',
 			fundingTarget: '1000',
 			issuanceRate: '1000',
 			reserveRate: '1000',
@@ -107,3 +107,4 @@ export const AnotherDummyDao = {
 		projectId: '2'
 	}))
 };
+ 

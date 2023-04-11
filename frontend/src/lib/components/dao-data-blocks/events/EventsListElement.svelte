@@ -106,11 +106,12 @@
 					round={getFundingCycleData(
 						daoData.onChainData.fundingCycles,
 						daoData.events,
-						Number(event.data.cycleNum)
+						Number(event.data.newCycleId)
 					)}
 					hasBorder={false}
 					title="Funding round data"
 					projectToken={daoData.generalInfo.token_symbol}
+					paymentToken={daoData.onChainData.paymentCurrency}
 				/>
 			</Modal>
 		{/if}

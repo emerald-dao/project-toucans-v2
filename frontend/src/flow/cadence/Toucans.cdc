@@ -27,7 +27,7 @@ pub contract Toucans {
     projectId: String,
     by: Address, 
     currentCycle: UInt64?,
-    cycleNum: UInt64,
+    newCycleId: UInt64,
     fundingTarget: UFix64?,
     issuanceRate: UFix64,
     reserveRate: UFix64,
@@ -103,7 +103,7 @@ pub contract Toucans {
   }
 
   pub struct FundingCycleDetails {
-    pub let cycleNum: UInt64
+    pub let cycleId: UInt64
     // nil if the funding target is infinity
     pub let fundingTarget: UFix64?
     pub let issuanceRate: UFix64
@@ -115,11 +115,11 @@ pub contract Toucans {
     pub let catalogCollectionIdentifier: String?
     pub let extra: {String: AnyStruct}
 
-    init(cycleNum: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, _ extra: {String: AnyStruct}) {
+    init(cycleId: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, _ extra: {String: AnyStruct}) {
       pre {
         reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
-      self.cycleNum = cycleNum
+      self.cycleId = cycleId
       self.issuanceRate = issuanceRate
       self.fundingTarget = fundingTarget
       self.reserveRate = reserveRate
@@ -195,7 +195,7 @@ pub contract Toucans {
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64?
     pub fun getCurrentFundingCycle(): FundingCycle?
-    pub fun getCurrentFundingCycleNum(): UInt64?
+    pub fun getCurrentFundingCycleId(): UInt64?
     pub fun getFundingCycles(): [FundingCycle]
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
@@ -214,7 +214,12 @@ pub contract Toucans {
     // You cannot edit or start a new cycle within this time frame
     pub let editDelay: UFix64
     pub let minting: Bool
+    pub var nextCycleId: UInt64
 
+    // Kept in order of start date
+    // i.e. every element in the array
+    // must have a start time greater
+    // than the one before it
     access(self) let fundingCycles: [FundingCycle]
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let multiSignManager: @Manager
@@ -323,17 +328,19 @@ pub contract Toucans {
     //  |_|   \__,_|_| |_|\__,_|_|  \__,_|_|___/\___|
                                                          
 
+    // Allows you to add a new funding round to the end of the array.
+    // This does not allow you to insert a funding round into the middle
+    // somewhere. Maybe we will allow this later.
     // NOTES:
-    // If fundingTarget is nil, that means this is an on-going funding round,
+    // If `fundingTarget` is nil, that means this is an on-going funding round,
     // and there is no limit. 
     pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
       }
-      let cycleNum: UInt64 = UInt64(self.fundingCycles.length)
 
       let newFundingCycle: FundingCycle = FundingCycle(details: FundingCycleDetails(
-        cycleNum: cycleNum,
+        cycleId: self.nextCycleId,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
@@ -344,29 +351,47 @@ pub contract Toucans {
         extra
       ))
 
-      if cycleNum > 0 {
-        // Make sure it doesn't conflict with a cycle before it
-        let previousCycle: FundingCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
+      var i: Int = self.fundingCycles.length - 1
+      var insertAt: Int = 0
+      while i >= 0 {
+        let cycle: FundingCycle = self.fundingCycles[i]
+        if timeframe.startTime >= cycle.details.timeframe.startTime {
+          insertAt = i + 1
+          break
+        }
+        i = i - 1
+      }
+
+      self.fundingCycles.insert(at: insertAt, newFundingCycle)
+
+      // Make sure it doesn't conflict with a cycle before it
+      if insertAt > 0 {
+        let previousCycle: FundingCycle = self.getFundingCycle(cycleIndex: UInt64(insertAt - 1))
         Toucans.assertNonConflictingCycles(earlierCycle: previousCycle.details, laterCycle: newFundingCycle.details)
       }
-      
-      self.fundingCycles.append(newFundingCycle)
+
+      // Make sure it doesn't conflict with a cycle after it
+      if insertAt < self.fundingCycles.length - 1 {
+        let subsequentCycle: FundingCycle = self.getFundingCycle(cycleIndex: UInt64(insertAt + 1))
+        Toucans.assertNonConflictingCycles(earlierCycle: newFundingCycle.details, laterCycle: subsequentCycle.details)
+      }
 
       emit NewFundingCycle(
         projectId: self.projectId,
         by: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
-        cycleNum: cycleNum,
+        currentCycle: self.getCurrentFundingCycleId(),
+        newCycleId: self.nextCycleId,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
         reserveRate: reserveRate,
         timeframe: timeframe
       )
+      self.nextCycleId = self.nextCycleId + 1
     }
 
     // Allows you to edit a cycle that has not happened yet
-    pub fun editUpcomingCycle(cycleNum: UInt64, details: FundingCycleDetails) {
-      let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleNum: cycleNum)
+    pub fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
+      let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleIndex: cycleIndex)
       // This ensures the cycle is in the future
       assert(
         getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeframe.startTime,
@@ -374,15 +399,15 @@ pub contract Toucans {
       )
 
       // Check the cycle above it, if it exists
-      if Int(cycleNum) < self.fundingCycles.length - 1 {
-        let aboveCycle = self.getFundingCycle(cycleNum: cycleNum + 1)
-        assert(Toucans.assertNonConflictingCycles(earlierCycle: details, laterCycle: aboveCycle.details), message: "Conflicts with the cycle above it.")
+      if Int(cycleIndex) < self.fundingCycles.length - 1 {
+        let aboveCycle = self.getFundingCycle(cycleIndex: cycleIndex + 1)
+        Toucans.assertNonConflictingCycles(earlierCycle: details, laterCycle: aboveCycle.details)
       }
 
       // Check the cycle below it, if it exists
-      if cycleNum > 0 {
-        let belowCycle = self.getFundingCycle(cycleNum: cycleNum - 1)
-        assert(Toucans.assertNonConflictingCycles(earlierCycle: belowCycle.details, laterCycle: details), message: "Conflicts with the cycle above it.")
+      if cycleIndex > 0 {
+        let belowCycle = self.getFundingCycle(cycleIndex: cycleIndex - 1)
+        Toucans.assertNonConflictingCycles(earlierCycle: belowCycle.details, laterCycle: details)
       }
 
       fundingCycle.details = details
@@ -457,7 +482,7 @@ pub contract Toucans {
       emit Purchase(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: fundingCycleRef.details.cycleNum,
+        currentCycle: fundingCycleRef.details.cycleId,
         tokenSymbol: self.paymentTokenInfo.symbol,
         amount: paymentTokensSent,
         by: payer,
@@ -510,7 +535,7 @@ pub contract Toucans {
       emit Withdraw(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
+        currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: tokenInfo.symbol,
         amount: amount,
         by: vault.owner!.address
@@ -524,7 +549,7 @@ pub contract Toucans {
       emit Donate(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
+        currentCycle: self.getCurrentFundingCycleId(),
         amount: vault.balance,
         tokenSymbol: tokenInfo.symbol,
         by: payer,
@@ -559,7 +584,7 @@ pub contract Toucans {
       emit Distribute(
         projectId: self.projectId,
         by: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleNum(),
+        currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: self.projectTokenInfo.symbol,
         to: recipientVault.owner!.address,
         amount: amount
@@ -617,17 +642,15 @@ pub contract Toucans {
       return self.treasury[vaultType]?.balance
     }
 
-    // Returns nil if there is no current round
-    pub fun getCurrentFundingCycle(): FundingCycle? {
-      let currentTime: UFix64 = getCurrentBlock().timestamp
+    pub fun getCurrentFundingCycleWithTime(timestamp: UFix64): FundingCycle? {
       var i: Int = self.fundingCycles.length - 1
 
       while i >= 0 {
         let cycle: FundingCycle = self.fundingCycles[i]
         // If at any time we're greater than the cycle we're inspecting's start
         // time, we will return something.
-        if currentTime >= cycle.details.timeframe.startTime {
-          if (cycle.details.timeframe.endTime == nil || currentTime <= cycle.details.timeframe.endTime!){
+        if timestamp >= cycle.details.timeframe.startTime {
+          if (cycle.details.timeframe.endTime == nil || timestamp <= cycle.details.timeframe.endTime!){
             // In this case, we're in the middle of the latest one
             return cycle
           } else {
@@ -640,9 +663,14 @@ pub contract Toucans {
       return nil
     }
 
-    pub fun getCurrentFundingCycleNum(): UInt64? {
+    // Returns nil if there is no current round
+    pub fun getCurrentFundingCycle(): FundingCycle? {
+      return self.getCurrentFundingCycleWithTime(timestamp: getCurrentBlock().timestamp)
+    }
+
+    pub fun getCurrentFundingCycleId(): UInt64? {
       let currentCycle = self.getCurrentFundingCycle()
-      return currentCycle?.details?.cycleNum
+      return currentCycle?.details?.cycleId
     }
 
     // Returns nil if there is no current round
@@ -650,8 +678,8 @@ pub contract Toucans {
       return self.getCurrentFundingCycle()?.details?.issuanceRate
     }
 
-    pub fun getFundingCycle(cycleNum: UInt64): FundingCycle {
-      return self.fundingCycles[cycleNum]
+    pub fun getFundingCycle(cycleIndex: UInt64): FundingCycle {
+      return self.fundingCycles[cycleIndex]
     }
 
     pub fun getFundingCycles(): [FundingCycle] {
@@ -679,13 +707,13 @@ pub contract Toucans {
     //  |____/ \___/|_|  |_|  \___/ \_/\_/  
                                                                 
 
-    access(self) fun borrowFundingCycleRef(cycleNum: UInt64): &FundingCycle {
-      return &self.fundingCycles[cycleNum] as &FundingCycle
+    access(self) fun borrowFundingCycleRef(cycleIndex: UInt64): &FundingCycle {
+      return &self.fundingCycles[cycleIndex] as &FundingCycle
     }
 
     access(self) fun borrowCurrentFundingCycleRef(): &FundingCycle? {
       if let currentCycle: FundingCycle = self.getCurrentFundingCycle() {
-        return self.borrowFundingCycleRef(cycleNum: currentCycle.details.cycleNum)
+        return self.borrowFundingCycleRef(cycleIndex: currentCycle.details.cycleId)
       }
       return nil
     }
@@ -709,6 +737,7 @@ pub contract Toucans {
         ToucansTokens.getTokenInfo(tokenType: paymentTokenInfo.tokenType) != nil: "Unsupported token type for payment."
       }
       self.projectId = projectTokenInfo.contractName
+      self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
       self.fundingCycles = []
@@ -760,8 +789,6 @@ pub contract Toucans {
       pre {
         signers.contains(self.owner!.address): "Project owner must be one of the initial signers."
       }
-      let cycleNum: UInt64 = 0
-
       let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, initialSupply: initialSupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
@@ -1008,10 +1035,10 @@ pub contract Toucans {
     return <- create Collection()
   }
 
-  pub fun assertNonConflictingCycles(earlierCycle: FundingCycleDetails, laterCycle: FundingCycleDetails): Bool {
+  pub fun assertNonConflictingCycles(earlierCycle: FundingCycleDetails, laterCycle: FundingCycleDetails) {
     let earlierCycleStartsEarlier = earlierCycle.timeframe.startTime < laterCycle.timeframe.startTime
     let earlierCycleEndsBeforeLaterStarts = earlierCycle.timeframe.endTime == nil || (earlierCycle.timeframe.endTime! < laterCycle.timeframe.startTime)
-    return earlierCycleStartsEarlier && earlierCycleEndsBeforeLaterStarts
+    assert(earlierCycleStartsEarlier && earlierCycleEndsBeforeLaterStarts, message: "Conflicting cycles!")
   }
 
   init() {

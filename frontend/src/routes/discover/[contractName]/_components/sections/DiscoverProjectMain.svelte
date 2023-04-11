@@ -14,7 +14,7 @@
 			? getFundingCycleData(
 					daoData.onChainData.fundingCycles,
 					daoData.events,
-					Number(daoData.onChainData.currentFundingCycle)
+					daoData.onChainData.currentFundingCycle
 			  )
 			: null;
 </script>
