@@ -12,9 +12,9 @@
 	export let isValid: boolean = false;
 
 	let now = new Date();
-	let minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) / 86400);
+	let minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
 
-	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) / 86400);
+	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
 
 	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
 
