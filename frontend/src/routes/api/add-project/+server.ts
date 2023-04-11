@@ -29,9 +29,14 @@ export async function POST({ request }) {
 		discord: data.daoDetails.discord,
 		logo: data.logo,
 		owner: data.user.addr,
-		type: data.tokenomics.tokenType
+		type: data.tokenomics.tokenType,
+		banner_image: data.bannerImage
 	});
-	console.log('Error adding new project', ProjectError);
+
+	if (ProjectError) {
+		console.log('Error adding new project', ProjectError);
+		return json({ ProjectError });
+	}
 
 	const { error: EventError } = await supabase.from('events').insert({
 		project_id: data.daoDetails.contractName,
@@ -41,7 +46,11 @@ export async function POST({ request }) {
 			tokenTypeIdentifier: `A.${data.user.addr.slice(2)}.${data.daoDetails.contractName}.Vault`
 		}
 	});
-	console.log('Error adding new ProjectCreated event', EventError);
+
+	if (EventError) {
+		console.log('Error adding new event', EventError);
+		return json({ EventError });
+	}
 
 	return json({ ProjectError });
 }

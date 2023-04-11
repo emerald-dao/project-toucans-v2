@@ -20,6 +20,7 @@ export interface DaoDatabaseData {
 	description: string;
 	discord: string | null;
 	logo: string;
+	banner_image: string;
 	name: string;
 	owner: string;
 	project_id: string;
@@ -39,6 +40,7 @@ export interface DaoBlockchainData {
 	};
 	fundingCycles: FundingCycle[];
 	totalSupply: string;
+	maxSupply: string | null;
 	balances: {
 		[address: string]: string;
 	};
@@ -72,8 +74,8 @@ export interface ActionData {
 	id: string;
 	intent: string;
 	title: MultisigActions;
-	threshold: string,
-	signers: string[],
+	threshold: string;
+	signers: string[];
 	votes: {
 		[voter: string]: boolean;
 	};
