@@ -28,7 +28,7 @@
 		? new Date(Number(round.details.timeframe.endTime) * 1000)
 		: null;
 
-	let roundStatus = getRoundStatus(roundNumber, activeRound, startDate);
+	$: roundStatus = getRoundStatus(roundNumber, activeRound, startDate);
 </script>
 
 <div class="main-wrapper row-space-between align-center">

@@ -11,16 +11,18 @@
 	export let roundNumber: number;
 	export let projectId: string;
 	export let activeRound: number | null;
+
+	const handleClick = () => {
+		getModal(modalName).open();
+	};
+
+	$: modalName = `funding-round-${projectId}-${Number(roundNumber) + 1}`;
 </script>
 
-<div
-	class="header-link row align-center"
-	on:click={() => getModal(`funding-stats-${roundNumber}`).open()}
-	on:keydown
->
+<div class="header-link row align-center" on:click={handleClick} on:keydown>
 	<Icon icon="tabler:eye" />
 </div>
-<Modal background="var(--clr-background-secondary)" id={`funding-stats-${roundNumber}`}>
+<Modal background="var(--clr-background-secondary)" id={modalName}>
 	<RoundsCard
 		{round}
 		hasBorder={false}
