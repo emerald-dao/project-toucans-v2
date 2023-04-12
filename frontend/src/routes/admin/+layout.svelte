@@ -10,12 +10,15 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { getProjectInfo } from '$flow/actions';
+	import DesktopOnlyPage from '$components/desktop-only-page/DesktopOnlyPage.svelte';
 
 	interface Data {
 		projects: DAOProject[];
 	}
 
 	export let data: Data;
+
+	let screenSize: number;
 
 	const activeDao = writable(0);
 
@@ -80,7 +83,11 @@
 	$: $user.addr && onChangeUser();
 </script>
 
-{#if !$user.addr}
+<svelte:window bind:innerWidth={screenSize} />
+
+{#if screenSize < 1040}
+	<DesktopOnlyPage />
+{:else if !$user.addr}
 	<ConnectPage />
 {:else if $daosDataStore.length < 1}
 	<section class="centered">
