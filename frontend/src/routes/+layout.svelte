@@ -18,7 +18,6 @@
 	import { getFindProfile } from '$flow/utils';
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
-	import { invalidateAll } from '$app/navigation';
 	import { checkUser } from '$lib/features/users/functions/checkUser';
 	import { addUser } from '$lib/features/users/functions/postUser';
 	import type { CurrentUserObject } from '@onflow/fcl';
