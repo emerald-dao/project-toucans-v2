@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { ErrorPage } from '@emerald-dao/component-library';
 </script>
 
-<h1>{$page.status}: {$page.error?.message}</h1>
+<ErrorPage />
