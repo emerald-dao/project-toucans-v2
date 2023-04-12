@@ -216,6 +216,7 @@ const newRound = async () => {
 			arg(endTime, t.Optional(t.UFix64)),
 			arg(distributionAddresses, t.Array(t.Address)),
 			arg(distributionPercentages, t.Array(t.UFix64)),
+			arg(newRoundData.allowOverflow, t.Bool),
 			arg(null, t.Optional(t.Array(t.Address))),
 			arg(null, t.Optional(t.String))
 		],
