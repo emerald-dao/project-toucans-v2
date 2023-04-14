@@ -115,6 +115,14 @@
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7"
 			}
+		},
+		"FIND": {
+			"source": "./src/flow/cadence/utility/FIND.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x35717efbbce11c74",
+				"mainnet": "0x097bafa4e0b48eef"
+			}
 		}
 	},
 	"networks": {
@@ -140,6 +148,7 @@
 				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
+				"FIND",
 				"OnChainMultiSig",
 				"NFTCatalogSnapshot",
 				"NFTCatalog",
@@ -160,4 +169,3 @@
 		}
 	}
 }
- 
