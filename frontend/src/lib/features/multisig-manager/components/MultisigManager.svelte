@@ -29,7 +29,7 @@
 		walletsRes = walletsSuite(newAddresses);
 	};
 
-	const deleteExistingAddress = (i: number) => {
+	const deleteSigner = (i: number) => {
 		alert('Submit action to delete this signer');
 	};
 
@@ -75,7 +75,7 @@
 			<SignersListElement
 				owner={i === 0}
 				{i}
-				on:delete={() => deleteExistingAddress(i)}
+				on:delete={() => deleteSigner(i)}
 				bind:address={multisigAddress}
 				bind:res={walletsRes}
 			/>
