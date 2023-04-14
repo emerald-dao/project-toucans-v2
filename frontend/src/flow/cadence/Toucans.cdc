@@ -287,39 +287,40 @@ pub contract Toucans {
       post {
         self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
       }
-      assert(
-        self.multiSignManager.readyToFinalize(actionUUID: actionUUID),
-        message: "Cannot finalize this action yet."
-      )
-      let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
-      let action: {ToucansActions.Action} = actionWrapper.action
-      switch action.getType() {
-        case Type<ToucansActions.WithdrawToken>():
-          let withdraw = action as! ToucansActions.WithdrawToken
-          self.withdrawFromTreasury(vault: withdraw.recipientVault.borrow()!, amount: withdraw.amount)
-        case Type<ToucansActions.MintTokens>():
-          let mint = action as! ToucansActions.MintTokens
-          self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
-        case Type<ToucansActions.MintTokensToTreasury>():
-          let mint = action as! ToucansActions.MintTokensToTreasury
-          let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
-          self.mint(recipientVault: ref, amount: mint.amount)
-        case Type<ToucansActions.AddOneSigner>():
-          let addSigner = action as! ToucansActions.AddOneSigner
-          self.multiSignManager.addSigner(signer: addSigner.signer)
-          emit AddSigner(projectId: self.projectId, signer: addSigner.signer)
-        case Type<ToucansActions.RemoveOneSigner>():
-          let removeSigner = action as! ToucansActions.RemoveOneSigner
-          self.multiSignManager.removeSigner(signer: removeSigner.signer)
-          emit AddSigner(projectId: self.projectId, signer: removeSigner.signer)
-        case Type<ToucansActions.UpdateTreasuryThreshold>():
-          let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
-          self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
-          emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
+      let actionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
+      assert(actionState != ActionState.PENDING, message: "Cannot finalize this action yet.")
+      
+      if actionState == ActionState.ACCEPTED {
+        let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
+        let action: {ToucansActions.Action} = actionWrapper.action
+        switch action.getType() {
+          case Type<ToucansActions.WithdrawToken>():
+            let withdraw = action as! ToucansActions.WithdrawToken
+            self.withdrawFromTreasury(vault: withdraw.recipientVault.borrow()!, amount: withdraw.amount)
+          case Type<ToucansActions.MintTokens>():
+            let mint = action as! ToucansActions.MintTokens
+            self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
+          case Type<ToucansActions.MintTokensToTreasury>():
+            let mint = action as! ToucansActions.MintTokensToTreasury
+            let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
+            self.mint(recipientVault: ref, amount: mint.amount)
+          case Type<ToucansActions.AddOneSigner>():
+            let addSigner = action as! ToucansActions.AddOneSigner
+            self.multiSignManager.addSigner(signer: addSigner.signer)
+            emit AddSigner(projectId: self.projectId, signer: addSigner.signer)
+          case Type<ToucansActions.RemoveOneSigner>():
+            let removeSigner = action as! ToucansActions.RemoveOneSigner
+            self.multiSignManager.removeSigner(signer: removeSigner.signer)
+            emit AddSigner(projectId: self.projectId, signer: removeSigner.signer)
+          case Type<ToucansActions.UpdateTreasuryThreshold>():
+            let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
+            self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
+            emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
+        }
       }
 
       // Will delete the action and make sure everything is good to go
-      self.multiSignManager.finalizeAction(actionUUID: actionUUID)
+      self.multiSignManager.destroyAction(actionUUID: actionUUID)
     }
 
 
@@ -976,7 +977,7 @@ pub contract Toucans {
     // this contract, they may want specific access control over who can
     // actually execute an action, post conditions, and/or implement requirements
     // (like the treasury must have >= 10 $FLOW before an action can be executed).
-    pub fun finalizeAction(actionUUID: UInt64) {
+    access(account) fun destroyAction(actionUUID: UInt64) {
       destroy self.actions.remove(key: actionUUID) ?? panic("This action does not exist.")
       self.assertValidTreasury()
     }

@@ -15,9 +15,7 @@ import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 
 // Treasury Actions
-import paymentTokenWithdrawTx from './cadence/transactions/treasury-actions/payment_token_withdraw.cdc?raw';
-import USDCWithdrawTx from './cadence/transactions/treasury-actions/usdc_withdraw.cdc?raw';
-import FLOWWithdrawTx from './cadence/transactions/treasury-actions/flow_token_withdraw.cdc?raw';
+import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
@@ -246,20 +244,22 @@ const togglePurchasing = async (projectId: string) => {
 
 export const togglePurchasingExecution = (projectId: string) => executeTransaction(() => togglePurchasing(projectId));
 
-// TODO: IMPLEMENT FOR FLOW TOKEN AND USDC
 const proposeWithdraw = async (
+	tokenSymbol: string,
+	recipient: string,
+	amount: string,
 	projectOwner: string,
 	projectId: string,
-	recipient: string,
-	amount: string
 ) => {
+	console.log(amount)
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(paymentTokenWithdrawTx),
+		cadence: replaceWithProperValues(withdrawTokensTx),
 		args: (arg, t) => [
-			arg(projectOwner, t.Address),
-			arg(projectId, t.String),
+			arg(tokenSymbol, t.String),
 			arg(recipient, t.Address),
-			arg(amount, t.UFix64)
+			arg(formatFix(amount), t.UFix64),
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -269,45 +269,12 @@ const proposeWithdraw = async (
 };
 
 export const proposeWithdrawExecution = (
-	projectOwner: string,
-	projectId: string,
-	recipient: string,
-	amount: string
-) => executeTransaction(() => proposeWithdraw(projectOwner, projectId, recipient, amount));
-
-const proposePaymentWithdraw = async (
-	projectOwner: string,
-	projectId: string,
+	tokenSymbol: string,
 	recipient: string,
 	amount: string,
-	currency: ECurrencies
-) => {
-	const txCode = currency === ECurrencies.FLOW ? FLOWWithdrawTx : USDCWithdrawTx;
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(txCode),
-		args: (arg, t) => [
-			arg(projectOwner, t.Address),
-			arg(projectId, t.String),
-			arg(recipient, t.Address),
-			arg(amount, t.UFix64)
-		],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const proposePaymentWithdrawExecution = (
 	projectOwner: string,
 	projectId: string,
-	recipient: string,
-	amount: string,
-	currency: ECurrencies
-) =>
-	executeTransaction(() =>
-		proposePaymentWithdraw(projectOwner, projectId, recipient, amount, currency)
-	);
+) => executeTransaction(() => proposeWithdraw(tokenSymbol, recipient, amount, projectOwner, projectId));
 
 const updateMultisig = async (
 	projectOwner: string,
