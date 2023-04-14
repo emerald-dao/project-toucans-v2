@@ -61,6 +61,7 @@
 			}
 			.card {
 				margin: var(--space-6) 0px;
+				background-color: var(--clr-background-primary);
 			}
 		}
 	}
