@@ -1,8 +1,8 @@
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
 // Make any writable store persistent.
-function persistentWritable(key, defaultValue) {
+function persistentWritable<T>(key: string, defaultValue: T): () => Writable<T> {
 	// Create a writable store.
 	const { subscribe, set, update } = writable();
 
@@ -31,7 +31,7 @@ function persistentWritable(key, defaultValue) {
 	return { subscribe, set, update };
 }
 
-function isJsonString(str) {
+function isJsonString(str: string) {
 	try {
 		JSON.parse(str);
 	} catch (e) {
