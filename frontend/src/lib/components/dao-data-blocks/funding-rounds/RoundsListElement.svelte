@@ -10,6 +10,7 @@
 	import Icon from '@iconify/svelte';
 	import { getRoundTiming } from './helpers/getRoundTiming';
 	import { getRoundStatus } from './helpers/getRoundStatus';
+	import { togglePurchasingExecution } from '$flow/actions';
 
 	export let round: FundingCycle;
 	export let roundNumber: number;
@@ -47,9 +48,7 @@
 				color="neutral"
 				type="ghost"
 				size="x-small"
-				on:click={() => {
-					alert('todo');
-				}}
+				on:click={() => togglePurchasingExecution(projectId)}
 			>
 				<Icon icon="tabler:player-pause-filled" />
 				Pause

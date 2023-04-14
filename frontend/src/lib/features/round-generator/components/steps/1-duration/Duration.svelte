@@ -39,7 +39,8 @@
 			distributionList: [[$user.addr, 100]],
 			reserveRate: undefined,
 			issuanceRate: undefined,
-			projectId
+			projectId,
+			allowOverflow: false
 		});
 	}
 

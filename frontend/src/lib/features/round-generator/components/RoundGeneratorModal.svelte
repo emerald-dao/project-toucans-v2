@@ -28,7 +28,8 @@
 		currency: ECurrencies.FLOW,
 		distributionList: [],
 		issuanceRate: undefined,
-		reserveRate: undefined
+		reserveRate: undefined,
+		allowOverflow: false
 	});
 	newRoundActiveStep.reset;
 </script>

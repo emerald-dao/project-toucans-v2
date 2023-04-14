@@ -21,6 +21,7 @@ import FLOWWithdrawTx from './cadence/transactions/treasury-actions/flow_token_w
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
+import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
@@ -196,6 +197,7 @@ export const donateExecution = (
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
+	console.log(newRoundData)
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	console.log(new Date(newRoundData.startDate));
@@ -228,6 +230,21 @@ const newRound = async () => {
 };
 
 export const newRoundExecution = () => executeTransaction(newRound);
+
+const togglePurchasing = async (projectId: string) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(togglePurchasingTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const togglePurchasingExecution = (projectId: string) => executeTransaction(() => togglePurchasing(projectId));
 
 // TODO: IMPLEMENT FOR FLOW TOKEN AND USDC
 const proposeWithdraw = async (

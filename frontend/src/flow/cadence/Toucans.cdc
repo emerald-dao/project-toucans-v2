@@ -216,6 +216,7 @@ pub contract Toucans {
     // You cannot edit or start a new cycle within this time frame
     pub let editDelay: UFix64
     pub let minting: Bool
+    pub var purchasing: Bool
     pub var nextCycleId: UInt64
 
     // Kept in order of start date
@@ -414,6 +415,11 @@ pub contract Toucans {
       }
 
       fundingCycle.details = details
+    }
+
+    pub fun togglePurchasing(): Bool {
+      self.purchasing = !self.purchasing
+      return self.purchasing
     }
 
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String) {
@@ -752,6 +758,7 @@ pub contract Toucans {
       self.projectTokenInfo = projectTokenInfo
       self.paymentTokenInfo = paymentTokenInfo
       self.minting = minting
+      self.purchasing = true
       self.additions <- {}
 
       let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialSupply)
