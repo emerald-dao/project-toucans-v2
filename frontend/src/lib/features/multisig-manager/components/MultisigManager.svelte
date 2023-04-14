@@ -1,39 +1,51 @@
 <script lang="ts">
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { SignersListElement } from '$components/dao-data-blocks';
-	import { validationSuite } from './validation';
+	import { thresholdSuite, walletsSuite } from '../validations/validation';
+	import SignersListElement from './atoms/signers-list-element/SignersListElement.svelte';
 
 	export let existingAddresses: string[];
-	export let newAddresses: string[] = [];
+	export let newAddresses: {
+		address: string;
+		id: string;
+	}[] = [];
 	export let threshold: number = 1;
 	export let allWalletsValid: boolean;
 	export let thresholdValid: boolean;
 
-	let walletsValidations: boolean[] = [];
-
 	const addMultisig = () => {
-		newAddresses = [...newAddresses, ''];
-		walletsValidations = [...walletsValidations, false];
+		newAddresses = [
+			...newAddresses,
+			{
+				address: '',
+				id: newAddresses.length.toString()
+			}
+		];
+		walletsRes = walletsSuite(newAddresses);
 	};
 
 	const deleteNewAddress = (i: number) => {
 		newAddresses = newAddresses.filter((_, index) => index !== i);
-		walletsValidations = walletsValidations.filter((_, index) => index !== i);
+		walletsRes = walletsSuite(newAddresses);
 	};
 
 	const deleteExistingAddress = (i: number) => {
 		alert('Submit action to delete this signer');
 	};
 
-	const handleChange = () => {
-		res = validationSuite(threshold, newAddresses.length + existingAddresses.length);
+	const handleThresholdChange = () => {
+		thresholdRes = thresholdSuite(threshold, newAddresses.length + existingAddresses.length);
 	};
 
-	let res = validationSuite.get();
+	const handleWalletsChange = () => {
+		walletsRes = walletsSuite(newAddresses);
+	};
 
-	$: allWalletsValid = walletsValidations.every((walletValid) => walletValid);
-	$: thresholdValid = res.isValid() || !res.hasErrors();
+	let thresholdRes = thresholdSuite.get();
+	let walletsRes = walletsSuite.get();
+
+	$: allWalletsValid = walletsRes.isValid() || !walletsRes.hasErrors();
+	$: thresholdValid = thresholdRes.isValid() || !thresholdRes.hasErrors();
 </script>
 
 <div class="main-wrapper">
@@ -42,15 +54,15 @@
 		<div class="threshold-wrapper">
 			<InputWrapper
 				name="threshold"
-				errors={res.getErrors('threshold')}
-				isValid={res.isValid('threshold')}
+				errors={thresholdRes.getErrors('threshold')}
+				isValid={thresholdRes.isValid('threshold')}
 				required={true}
 			>
 				<input
 					name="threshold"
 					type="number"
 					bind:value={threshold}
-					on:input={handleChange}
+					on:input={handleThresholdChange}
 					max={existingAddresses.length + newAddresses.length}
 					min={1}
 				/>
@@ -65,14 +77,16 @@
 				{i}
 				on:delete={() => deleteExistingAddress(i)}
 				bind:address={multisigAddress}
+				bind:res={walletsRes}
 			/>
 		{/each}
-		{#each newAddresses as address, i}
+		{#each newAddresses as field, i}
 			<SignersListElement
 				{i}
 				on:delete={() => deleteNewAddress(i)}
-				bind:address
-				bind:walletValid={walletsValidations[i]}
+				bind:address={field.address}
+				bind:res={walletsRes}
+				on:input={handleWalletsChange}
 				editable
 			/>
 		{/each}

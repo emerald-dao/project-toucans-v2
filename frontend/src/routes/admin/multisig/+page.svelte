@@ -22,7 +22,10 @@
 
 	let existingAddresses: string[];
 	let threshold: number;
-	let newAddresses: string[] = [];
+	let newAddresses: {
+		address: string;
+		id: string;
+	}[] = [];
 
 	const reloadData = () => {
 		existingAddresses = activeDaoData.onChainData.signers;
@@ -35,6 +38,7 @@
 	});
 
 	$: activeDaoData && reloadData();
+	$: allAddresses = existingAddresses.concat(newAddresses.map((address) => address.address));
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }} class="main-wrapper">
@@ -52,15 +56,14 @@
 	<Button
 		state={allWalletsValid &&
 		thresholdValid &&
-		Number(activeDaoData.onChainData.threshold) !== threshold &&
-		newAddresses.length > 0
+		(Number(activeDaoData.onChainData.threshold) !== threshold || newAddresses.length > 0)
 			? 'active'
 			: 'disabled'}
 		on:click={() =>
 			updateMultisigExecution(
 				activeDaoData.generalInfo.owner,
 				activeDaoData.generalInfo.project_id,
-				existingAddresses.concat(newAddresses),
+				allAddresses,
 				threshold
 			)}
 	>

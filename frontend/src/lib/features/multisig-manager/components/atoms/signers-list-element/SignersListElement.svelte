@@ -4,23 +4,15 @@
 	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { InputWrapper } from '@emerald-dao/component-library';
-	import { validationSuite } from './validation';
+	import type { SuiteResult } from 'vest';
 
 	export let address: string;
 	export let i: number;
 	export let owner: boolean = false;
 	export let editable = false;
-	export let walletValid = false;
+	export let res: SuiteResult;
 
 	const dispatch = createEventDispatcher();
-
-	const handleChange = () => {
-		res = validationSuite(address, i);
-	};
-
-	let res = validationSuite.get();
-
-	$: walletValid = res.isValid(`multisig-wallet-${i}`);
 </script>
 
 <div class="main-wrapper" in:fly|local={{ x: 10, duration: 400 }}>
@@ -32,8 +24,8 @@
 		{#if editable && !owner}
 			<InputWrapper
 				name={`multisig-wallet-${i}`}
-				errors={res.isValid(`multisig-wallet-${i}`) ? [] : ['']}
-				isValid={res.isValid(`multisig-wallet-${i}`)}
+				errors={res.tests[address] ? res.tests[address].errors : []}
+				isValid={res.tests[address] ? res.tests[address].valid : false}
 				required={true}
 				hasStatusMessage={false}
 			>
@@ -44,7 +36,7 @@
 					maxlength="18"
 					disabled={owner}
 					bind:value={address}
-					on:input={handleChange}
+					on:input={() => dispatch('input')}
 				/>
 			</InputWrapper>
 		{:else}
