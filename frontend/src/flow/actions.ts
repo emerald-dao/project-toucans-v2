@@ -21,6 +21,7 @@ import FLOWWithdrawTx from './cadence/transactions/treasury-actions/flow_token_w
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
+import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
@@ -103,7 +104,10 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg([], t.Array(t.Address)),
 			arg(data.tokenomics.mintTokens, t.Bool),
 			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
-			arg(data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null, t.Optional(t.UFix64))
+			arg(
+				data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null,
+				t.Optional(t.UFix64)
+			)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -193,13 +197,12 @@ export const donateExecution = (
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
+	console.log(newRoundData)
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	console.log(new Date(newRoundData.startDate));
-	const startTime = formatFix(Math.floor(new Date(newRoundData.startDate).getTime() / 1000));
-	const endTime = newRoundData.infiniteDuration
-		? null
-		: formatFix(Math.floor(new Date(newRoundData.endDate).getTime() / 1000));
+	const startTime = formatFix(newRoundData.startDate);
+	const endTime = newRoundData.infiniteDuration ? null : formatFix(newRoundData.endDate);
 	const [, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
 	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
 		formatFix(x[1] / 100)
@@ -215,6 +218,7 @@ const newRound = async () => {
 			arg(endTime, t.Optional(t.UFix64)),
 			arg(distributionAddresses, t.Array(t.Address)),
 			arg(distributionPercentages, t.Array(t.UFix64)),
+			arg(newRoundData.allowOverflow, t.Bool),
 			arg(null, t.Optional(t.Array(t.Address))),
 			arg(null, t.Optional(t.String))
 		],
@@ -226,6 +230,21 @@ const newRound = async () => {
 };
 
 export const newRoundExecution = () => executeTransaction(newRound);
+
+const togglePurchasing = async (projectId: string) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(togglePurchasingTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const togglePurchasingExecution = (projectId: string) => executeTransaction(() => togglePurchasing(projectId));
 
 // TODO: IMPLEMENT FOR FLOW TOKEN AND USDC
 const proposeWithdraw = async (
@@ -462,30 +481,20 @@ export const mintTokensExecution = (
 	projectId: string,
 	recipient: string,
 	amount: string
-) =>
-	executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
+) => executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
 
-const mintTokensToTreasury = async (
-	projectId: string,
-	amount: string
-) => {
+const mintTokensToTreasury = async (projectId: string, amount: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(mintTokensToTreasuryTx),
-		args: (arg, t) => [
-			arg(projectId, t.String),
-			arg(formatFix(amount), t.UFix64)
-		],
+		args: (arg, t) => [arg(projectId, t.String), arg(formatFix(amount), t.UFix64)],
 		proposer: fcl.authz,
 		payer: fcl.authz,
 		authorizations: [fcl.authz],
 		limit: 9999
 	});
 };
-	
-export const mintTokensToTreasuryExecution = (
-	projectId: string,
-	amount: string
-) =>
+
+export const mintTokensToTreasuryExecution = (projectId: string, amount: string) =>
 	executeTransaction(() => mintTokensToTreasury(projectId, amount));
 
 //    _____           _       _
@@ -562,13 +571,17 @@ export const getBalances = async (userAddress: string) => {
 	}
 };
 
-export const hasVaultSetup = async (projectOwner: string, projectId: string, userAddress: string) => {
+export const hasVaultSetup = async (
+	projectOwner: string,
+	projectId: string,
+	userAddress: string
+) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, projectOwner),
 			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
-		console.log(response)
+		console.log(response);
 		return response;
 	} catch (e) {
 		console.log('Error in hasVaultSetup');
@@ -580,9 +593,7 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogListScript),
-			args: (arg, t) => [
-				arg(group, t.Array(t.String))
-			]
+			args: (arg, t) => [arg(group, t.Array(t.String))]
 		});
 
 		return response;
@@ -600,13 +611,13 @@ export const getNFTCatalog = async () => {
 		});
 		const groups = splitList(catalogKeys, 50);
 		const promises = groups.map((group) => {
-			return getCatalogByCollectionIDs(group)
-		})
-		const itemGroups = await Promise.all(promises)
+			return getCatalogByCollectionIDs(group);
+		});
+		const itemGroups = await Promise.all(promises);
 
 		const items = itemGroups.reduce((acc, current) => {
-			return Object.assign(acc, current)
-		}, {}) 
+			return Object.assign(acc, current);
+		}, {});
 		console.log(items);
 		return items;
 	} catch (e) {

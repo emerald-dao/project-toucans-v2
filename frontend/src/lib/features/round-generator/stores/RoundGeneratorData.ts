@@ -12,5 +12,6 @@ export const roundGeneratorData: Writable<RoundData> = writable({
 	currency: ECurrencies.FLOW,
 	distributionList: [],
 	issuanceRate: undefined,
-	reserveRate: undefined
+	reserveRate: undefined,
+	allowOverflow: false
 });

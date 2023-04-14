@@ -1,27 +1,37 @@
 <script type="ts">
-	import { fly, fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
-	import validationSuite from './validation';
-	import { InputWrapper } from '@emerald-dao/component-library';
+	import { fade } from 'svelte/transition';
 	import { user } from '$stores/flow/FlowStore';
 	import { roundGeneratorData } from '$lib/features/round-generator/stores/RoundGeneratorData';
 	import { ECurrencies } from '$lib/types/common/enums';
-	import { toISOStringWithTimezone } from '$lib/utilities/formatDate';
+	import RoundDatesPicker from '../../atoms/RoundDatesPicker.svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { onMount } from 'svelte';
 
 	export let projectId: string | undefined;
-	export let editDelay: string;
-	export let isValid: boolean;
+	export let daoData: DAOProject;
+	export let isValid: boolean = false;
 
-	// initial time is 5 minutes from now, plus edit delay (which is in seconds)
-	let now = new Date(new Date().getTime() + 5 * 60000 + Number(editDelay));
-	let localeISO = toISOStringWithTimezone(now);
-	let nowString = localeISO.split('.')[0];
-	let oneMonthForwardString = new Date(now.getTime() + 2629743000).toISOString().split('.')[0];
+	let now = new Date();
+	let minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
+
+	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
+
+	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
+
+	onMount(() => {
+		const interval = setInterval(() => {
+			now = new Date();
+		}, 1000);
+
+		return () => {
+			clearInterval(interval);
+		};
+	});
 
 	if ($user.addr) {
 		roundGeneratorData.set({
-			startDate: nowString,
-			endDate: oneMonthForwardString,
+			startDate: '',
+			endDate: '',
 			fundingGoal: undefined,
 			currency: ECurrencies.FLOW,
 			infiniteFundingGoal: false,
@@ -29,109 +39,100 @@
 			distributionList: [[$user.addr, 100]],
 			reserveRate: undefined,
 			issuanceRate: undefined,
-			projectId
+			projectId,
+			allowOverflow: false
 		});
 	}
 
-	const handleChange = (input: Event) => {
-		const target = input.target as HTMLInputElement;
-
-		res = validationSuite($roundGeneratorData, target.name);
-	};
-
-	let res = validationSuite.get();
-
-	$: isValid = res.isValid();
-
-	onMount(() => {
-		startDateInput.min = nowString;
-	});
-
-	let startDateInput: HTMLInputElement;
-	let endDateInput: HTMLInputElement;
-
-	$: if (endDateInput) {
-		endDateInput.min = $roundGeneratorData.startDate;
-	}
-	$: if (new Date($roundGeneratorData.startDate) > new Date($roundGeneratorData.endDate)) {
-		$roundGeneratorData.endDate = new Date(
-			new Date($roundGeneratorData.startDate).setMonth(
-				new Date($roundGeneratorData.startDate).getMonth() + 1
-			)
-		)
-			.toISOString()
-			.split('T')[0];
-	}
+	$: startDateValid =
+		$roundGeneratorData.startDate.length > 0 &&
+		new Date(Number($roundGeneratorData.startDate) * 1000) > minStartTime;
+	$: endDateValid =
+		$roundGeneratorData.endDate.length > 0 &&
+		new Date(Number($roundGeneratorData.endDate) * 1000) > minStartTime;
+	$: isValid =
+		(startDateValid && endDateValid) || ($roundGeneratorData.infiniteDuration && startDateValid);
 </script>
 
 <form in:fade={{ duration: 300 }} autocomplete="off">
-	<label for="infinite-duration" class="switch">
-		<input
-			type="checkbox"
-			name="infinite-duration"
-			id="infinite-duration"
-			bind:checked={$roundGeneratorData.infiniteDuration}
-			on:change={handleChange}
-		/>
-		<span class="slider" />
-		Infinite
-	</label>
-	<div class="date-inputs-wrapper">
-		<div>
-			<InputWrapper
-				name="startDate"
-				errors={res.getErrors('startDate')}
-				isValid={res.isValid('startDate')}
-				label="Start date"
-				statusIcons={false}
-			>
+	<RoundDatesPicker
+		rounds={daoData.onChainData.fundingCycles}
+		{minStartTimePlus5Minutes}
+		bind:startDate={$roundGeneratorData.startDate}
+		bind:endDate={$roundGeneratorData.endDate}
+		bind:infiniteDuration={$roundGeneratorData.infiniteDuration}
+	/>
+	<div class="column-8 secondary-wrapper">
+		<div class="column-3">
+			<span class="heading">Other options</span>
+			<label for="infinite-duration" class="switch">
 				<input
-					type="datetime-local"
-					name="startDate"
-					id="startDate"
-					bind:this={startDateInput}
-					bind:value={$roundGeneratorData.startDate}
-					on:input={handleChange}
+					type="checkbox"
+					name="infinite-duration"
+					id="infinite-duration"
+					bind:checked={$roundGeneratorData.infiniteDuration}
 				/>
-			</InputWrapper>
+				<span class="slider" />
+				Infinite round
+			</label>
 		</div>
-		{#if !$roundGeneratorData.infiniteDuration}
-			<div transition:fly|local={{ y: 10, duration: 140 }}>
-				<InputWrapper
-					name="endDate"
-					errors={res.getErrors('endDate')}
-					isValid={res.isValid('endDate')}
-					label="End date"
-					statusIcons={false}
-					disabled={$roundGeneratorData.infiniteDuration}
-				>
-					<input
-						type="datetime-local"
-						name="endDate"
-						id="endDate"
-						bind:this={endDateInput}
-						bind:value={$roundGeneratorData.endDate}
-						on:input={handleChange}
-						disabled={$roundGeneratorData.infiniteDuration}
-					/>
-				</InputWrapper>
-			</div>
-		{/if}
+		<div class="column-3">
+			<span class="heading">Conditions</span>
+			<ul>
+				{#if Number(daoData.onChainData.editDelay) > 0}
+					<li>
+						{`Your edit delay is ${
+							Number(daoData.onChainData.editDelay) / 86400
+						}, this means your rounds must start at least ${
+							Number(daoData.onChainData.editDelay) / 86400
+						} days after today.`}
+					</li>
+				{/if}
+				<li>
+					{`Funding rounds that have ending date can't overlap.`}
+				</li>
+				<li>
+					{`If a non infinite funding round overlaps a infinite round, the non infinite round will be prioritized and the infinite round will automatically end.`}
+				</li>
+			</ul>
+		</div>
 	</div>
 </form>
 
 <style type="scss">
 	form {
 		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
+		flex-direction: row;
+		align-items: flex-start;
+		gap: var(--space-7);
+		margin-bottom: var(--space-8);
 
-		span {
-			font-size: var(--font-size-1);
-		}
+		.secondary-wrapper {
+			border-left: 1px solid var(--clr-neutral-badge);
+			padding-left: var(--space-4);
+			padding-block: var(--space-4);
 
-		.date-inputs-wrapper {
-			margin-top: var(--space-5);
+			span {
+				font-size: var(--font-size-1);
+
+				&.heading {
+					color: var(--clr-heading-main);
+				}
+			}
+
+			ul {
+				padding-left: var(--space-3);
+				margin-top: 0;
+
+				li {
+					font-size: var(--font-size-0);
+					line-height: 1.4;
+
+					&:not(:last-child) {
+						margin-bottom: var(--space-2);
+					}
+				}
+			}
 		}
 	}
 </style>

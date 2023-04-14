@@ -3,18 +3,13 @@
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import type { DaoEvent, DaoEventName } from '$lib/types/dao-project/dao-event/dao-event.type';
-	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
-	import RoundsCard from '../funding-rounds/RoundsCard.svelte';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import SeeRoundDetailsModal from '../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
 
 	export let event: DaoEvent;
 	export let i: number;
-
-	console.log(event);
-
-	let daoData: DAOProject = getContext('daoData');
+	export let daoData: DAOProject;
 
 	const EVENTS_DATA: {
 		[event in DaoEventName]: {
@@ -94,26 +89,16 @@
 				fontSize="0.85rem"
 			/>
 		{:else if event.type === 'NewFundingCycle'}
-			<div
-				class="header-link"
-				on:click={() => getModal(`funding-stats-activity-${i}`).open()}
-				on:keydown
-			>
-				<Icon icon="tabler:eye" />
-			</div>
-			<Modal background="var(--clr-background-secondary)" id={`funding-stats-activity-${i}`}>
-				<RoundsCard
-					round={getFundingCycleData(
-						daoData.onChainData.fundingCycles,
-						daoData.events,
-						Number(event.data.newCycleId)
-					)}
-					hasBorder={false}
-					title="Funding round data"
-					projectToken={daoData.generalInfo.token_symbol}
-					paymentToken={daoData.onChainData.paymentCurrency}
-				/>
-			</Modal>
+			<SeeRoundDetailsModal
+				round={daoData.onChainData.fundingCycles[Number(event.data.newCycleId)]}
+				projectToken={daoData.generalInfo.token_symbol}
+				paymentToken={daoData.onChainData.paymentCurrency}
+				roundNumber={Number(event.data.newCycleId)}
+				projectId={daoData.generalInfo.project_id}
+				activeRound={daoData.onChainData.currentFundingCycle
+					? Number(daoData.onChainData.currentFundingCycle)
+					: null}
+			/>
 		{/if}
 	</div>
 </div>

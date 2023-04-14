@@ -31,6 +31,9 @@
 				claimOverflow={daoData.userBalance != undefined &&
 					daoData.userBalance > 0 &&
 					$user.addr != undefined}
+				activeRound={daoData.onChainData.currentFundingCycle
+					? Number(daoData.onChainData.currentFundingCycle)
+					: null}
 			/>
 		{/if}
 		<ProjectCharts {daoData} />

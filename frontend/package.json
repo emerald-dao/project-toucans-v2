@@ -55,6 +55,7 @@
 		"buffer": "^6.0.3",
 		"chart.js": "^3.9.1",
 		"nft.storage": "^7.0.0",
-		"svelte-chartjs": "^3.0.1"
+		"svelte-chartjs": "^3.0.1",
+		"svelte-flatpickr": "^3.3.2"
 	}
 }

@@ -2,7 +2,10 @@ import type { BaseEvent } from './common/base-event.interface';
 
 export interface DistributeEvent extends BaseEvent {
 	type: 'Distribute';
-	amount: string;
-	to: string;
-	projectOwner: string;
+	data: {
+		to: string;
+		amount: string;
+		tokenSymbol: string;
+		currentCycle: string | null;
+	};
 }

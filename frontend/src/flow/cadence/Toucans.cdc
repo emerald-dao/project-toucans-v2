@@ -111,11 +111,12 @@ pub contract Toucans {
     pub let reserveRate: UFix64
     pub let timeframe: CycleTimeFrame
     pub let payouts: [Payout]
+    pub let allowOverflow: Bool
     pub let allowedAddresses: [Address]?
     pub let catalogCollectionIdentifier: String?
     pub let extra: {String: AnyStruct}
 
-    init(cycleId: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, _ extra: {String: AnyStruct}) {
+    init(cycleId: UInt64, fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, _ extra: {String: AnyStruct}) {
       pre {
         reserveRate <= 1.0: "You must provide a reserve rate value between 0.0 and 1.0"
       }
@@ -124,6 +125,7 @@ pub contract Toucans {
       self.fundingTarget = fundingTarget
       self.reserveRate = reserveRate
       self.timeframe = timeframe
+      self.allowOverflow = allowOverflow
       self.allowedAddresses = allowedAddresses
       self.catalogCollectionIdentifier = catalogCollectionIdentifier
       self.extra = extra
@@ -214,6 +216,7 @@ pub contract Toucans {
     // You cannot edit or start a new cycle within this time frame
     pub let editDelay: UFix64
     pub let minting: Bool
+    pub var purchasing: Bool
     pub var nextCycleId: UInt64
 
     // Kept in order of start date
@@ -334,7 +337,7 @@ pub contract Toucans {
     // NOTES:
     // If `fundingTarget` is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
+    pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
       }
@@ -346,6 +349,7 @@ pub contract Toucans {
         reserveRate: reserveRate,
         timeframe: timeframe,
         payouts: payouts,
+        allowOverflow: allowOverflow,
         allowedAddresses: allowedAddresses,
         catalogCollectionIdentifier: catalogCollectionIdentifier,
         extra
@@ -413,6 +417,11 @@ pub contract Toucans {
       fundingCycle.details = details
     }
 
+    pub fun togglePurchasing(): Bool {
+      self.purchasing = !self.purchasing
+      return self.purchasing
+    }
+
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String) {
       pre {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
@@ -468,11 +477,13 @@ pub contract Toucans {
         self.depositToTreasury(vault: <- paymentTokens)
       } else if fundingCycleRef.raisedTowardsGoal == fundingTarget! {
         // deposit everything to overflow
+        assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
         self.depositToOverflow(vault: <- paymentTokens)
       } else {
         let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
         fundingCycleRef.raise(amount: amountToTreasury)
         self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
+        assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
         self.depositToOverflow(vault: <- paymentTokens)
       }
   
@@ -747,6 +758,7 @@ pub contract Toucans {
       self.projectTokenInfo = projectTokenInfo
       self.paymentTokenInfo = paymentTokenInfo
       self.minting = minting
+      self.purchasing = true
       self.additions <- {}
 
       let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialSupply)

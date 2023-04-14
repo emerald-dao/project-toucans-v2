@@ -10,7 +10,7 @@ import type { ECurrencies } from '../common/enums';
 export interface DAOProject {
 	generalInfo: DaoDatabaseData;
 	onChainData: DaoBlockchainData;
-	events?: DaoEvent[];
+	events: DaoEvent[];
 	userBalance?: number;
 }
 

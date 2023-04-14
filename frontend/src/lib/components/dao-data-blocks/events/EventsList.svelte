@@ -15,7 +15,7 @@
 	{#if recentActivity.length > 0}
 		{#each recentActivity as event, i}
 			<div class="activity-wrapper">
-				<EventsListElement {event} {i} />
+				<EventsListElement {event} {i} {daoData} />
 			</div>
 		{/each}
 	{:else}

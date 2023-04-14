@@ -6,7 +6,7 @@ export interface DonateEvent extends BaseEvent {
 		amount: string;
 		message: string;
 		projectOwner: string;
-		tokenTypeIdentifier: string;
+		tokenSymbol: string;
 		currentCycle: string;
 		by: string;
 	};

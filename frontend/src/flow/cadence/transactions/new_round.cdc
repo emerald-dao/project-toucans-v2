@@ -9,6 +9,7 @@ transaction(
     endTime: UFix64?,
     payoutAddresses: [Address], 
     payoutAmounts: [UFix64],
+    allowOverflow: Bool,
     allowedAddresses: [Address]?,
     catalogCollectionIdentifier: String?
 ) {
@@ -38,6 +39,7 @@ transaction(
       reserveRate: reserveRate,
       timeframe: timeframe, 
       payouts: payouts, 
+      allowOverflow: allowOverflow,
       allowedAddresses: allowedAddresses, 
       catalogCollectionIdentifier: catalogCollectionIdentifier,
       extra: extra

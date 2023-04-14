@@ -32,7 +32,7 @@
 		display: grid;
 		grid-template-columns: 2fr 5fr;
 		width: 900px;
-		height: 540px;
+		min-height: 540px;
 		border: 1px solid var(--clr-neutral-badge);
 		border-radius: var(--radius-5);
 		overflow: hidden;

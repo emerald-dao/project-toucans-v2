@@ -11,4 +11,5 @@ export interface RoundData {
 	distributionList: [string, number][];
 	issuanceRate: number | undefined;
 	reserveRate: number | undefined;
+	allowOverflow: boolean;
 }

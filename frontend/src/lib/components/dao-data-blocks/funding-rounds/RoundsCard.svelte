@@ -1,5 +1,6 @@
 <script type="ts">
-	import { daysOfDifference, formatDate } from '$lib/utilities/formatDate';
+	import RoundStatusLabel from './atoms/RoundStatusLabel.svelte';
+	import { formatDate } from '$lib/utilities/formatDate';
 	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
@@ -7,6 +8,8 @@
 	import GoalReached from '../../atoms/GoalReached.svelte';
 	import OverflowCard from './atoms/OverflowCard.svelte';
 	import type { ECurrencies } from '$lib/types/common/enums';
+	import { getRoundTiming } from './helpers/getRoundTiming';
+	import { getRoundStatus } from './helpers/getRoundStatus';
 
 	export let round: FundingCycle;
 	export let title = 'Active Funding Round';
@@ -15,6 +18,7 @@
 	export let paymentToken: ECurrencies;
 	export let projectId: string;
 	export let claimOverflow = false;
+	export let activeRound: number | null;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
@@ -27,7 +31,7 @@
 		? new Date(Number(round.details.timeframe.endTime) * 1000)
 		: null;
 
-	$: active = endDate ? endDate >= new Date() : true;
+	$: roundStatus = getRoundStatus(Number(round.details.cycleId), activeRound, startDate);
 </script>
 
 <div class:card={hasBorder}>
@@ -35,20 +39,14 @@
 		<div class="row-space-between">
 			<div class="row-2 align-center">
 				<h4 class="title w-regular">{title}</h4>
+				<RoundStatusLabel status={roundStatus} />
 				{#if goalReached}
 					<GoalReached />
 				{/if}
 			</div>
 			<span class="time-left xsmall">
 				<Icon icon="tabler:clock" />
-				{#if active && endDate != null}
-					{`${daysOfDifference(startDate, endDate)}`}
-					days left
-				{:else if endDate === null}
-					{`Infinite duration`}
-				{:else}
-					Finished
-				{/if}
+				{getRoundTiming(startDate, endDate, roundStatus === 'active')}
 			</span>
 		</div>
 		{#if overflow > 0}
