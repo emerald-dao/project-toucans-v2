@@ -11,6 +11,7 @@
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { getProjectInfo } from '$flow/actions';
 	import DesktopOnlyPage from '$components/desktop-only-page/DesktopOnlyPage.svelte';
+	import persistentWritable from '$lib/utilities/persistentWritable';
 
 	interface Data {
 		projects: DAOProject[];
@@ -20,7 +21,7 @@
 
 	let screenSize: number;
 
-	const activeDao = writable(0);
+	const activeDao = persistentWritable('adminActiveDao', 0);
 
 	const daosDataStore: Writable<DAOProject[]> = writable(data.projects, (set) => {
 		const getProjectsIds = () => {
@@ -68,7 +69,7 @@
 	};
 
 	$: setContext<{
-		activeDao: Writable<number>;
+		activeDao: () => Writable<number>;
 		userDaos: Writable<DAOProject[]>;
 	}>('admin-data', {
 		userDaos: daosDataStore,
