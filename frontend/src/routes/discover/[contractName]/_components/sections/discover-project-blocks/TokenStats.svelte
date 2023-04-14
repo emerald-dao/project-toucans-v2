@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { include } from 'vest';
 	import DataCard from '$components/cards/DataCard.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { user } from '$stores/flow/FlowStore';
@@ -8,25 +9,29 @@
 
 <div class="main-wrapper">
 	{#if $user.addr}
-		<div class="your-balance">
-			<DataCard
-				title="Your Balance"
-				data={daoData.userBalance}
-				isCurrency
-				currencyName={daoData.generalInfo.token_symbol}
-				fontSize="var(--font-size-5)"
-			/>
-		</div>
+		<DataCard
+			title="Your Balance"
+			data={daoData.userBalance}
+			isCurrency
+			currencyName={daoData.generalInfo.token_symbol}
+			fontSize="var(--font-size-5)"
+		/>
 	{/if}
-	<div class="circulating">
+	<div class="secondary-wrapper">
+		{#if daoData.onChainData.maxSupply}
+			<DataCard
+				title="Max supply"
+				data={Number(daoData.onChainData.maxSupply)}
+				isCurrency
+				tooltip="Malicious adminstrator can edit this value"
+			/>
+		{/if}
 		<DataCard
 			title="Circulating Supply"
 			data={Number(daoData.onChainData.totalSupply)}
 			isCurrency
 			currencyName={daoData.generalInfo.token_symbol}
 		/>
-	</div>
-	<div class="funding">
 		<DataCard title="Total Funding" data={Number(daoData.onChainData.totalFunding)} isCurrency />
 	</div>
 </div>
@@ -35,25 +40,15 @@
 	.main-wrapper {
 		display: flex;
 		flex-direction: column;
-		column-gap: var(--space-5);
+		gap: var(--space-5);
 
-		@include mq(small) {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			grid-template-rows: repeat(2, auto);
-			grid-template-areas: 'your-balance your-balance' 'circulating funding';
+		.secondary-wrapper {
+			display: flex;
+			gap: var(--space-5);
+			flex-direction: column;
 
-			.your-balance {
-				grid-area: your-balance;
-				margin-bottom: var(--space-5);
-			}
-
-			.circulating {
-				grid-area: circulating;
-			}
-
-			.funding {
-				grid-area: funding;
+			@include mq('small') {
+				flex-direction: row;
 			}
 		}
 	}

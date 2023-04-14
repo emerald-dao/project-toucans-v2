@@ -35,6 +35,7 @@
 				errors={res.isValid(`multisig-wallet-${i}`) ? [] : ['']}
 				isValid={res.isValid(`multisig-wallet-${i}`)}
 				required={true}
+				hasStatusMessage={false}
 			>
 				<input
 					name={`multisig-wallet-${i}`}

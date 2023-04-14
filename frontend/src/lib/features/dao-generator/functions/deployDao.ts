@@ -12,6 +12,7 @@ import { addNotification } from '$lib/features/notifications/functions/postNotif
 import { ECurrencies } from '../../../types/common/enums';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import { restartAllSuites } from './restartAllSuites';
+import type { ProjectCreatedEvent } from '$lib/types/dao-project/dao-event/events/project-created.interface';
 
 const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
@@ -32,19 +33,26 @@ export const deployDao = async () => {
 
 		restartAllSuites();
 
-		const uploadLogoToIPFS = async () => {
-			if (projectData.daoDetails.logo) {
-				const cid = await client.storeBlob(projectData.daoDetails.logo[0]);
-				console.log('CID', cid);
+		const uploadToIPFS = async (file: File) => {
+			try {
+				const cid = await client.storeBlob(file);
 				return `https://nftstorage.link/ipfs/${cid}`;
-			} else {
-				return '';
+			} catch (error) {
+				console.log(error);
+				throw new Error('Error uploading image to IPFS');
 			}
 		};
 
-		const logo = await uploadLogoToIPFS();
+		const logoIpfsUrl = await uploadToIPFS((projectData.daoDetails.logo as File[])[0]);
+		const bannerImage = await uploadToIPFS((projectData.daoDetails.bannerImage as File[])[0]);
 
-		await postProject(get(user) as CurrentUserObject, projectData, eventData.projectId, logo);
+		await postProject(
+			get(user) as CurrentUserObject,
+			projectData,
+			eventData.projectId,
+			logoIpfsUrl,
+			bannerImage
+		);
 		await addNotification(eventData.projectId, get(user).addr as string);
 		await goto(`/discover/${projectData.daoDetails.contractName}`);
 
@@ -58,14 +66,16 @@ export const deployDao = async () => {
 				twitter: '',
 				discord: 'https://discord.gg/',
 				contractName: '',
-				logo: undefined
+				logo: undefined,
+				bannerImage: undefined
 			},
 			tokenomics: {
 				paymentCurrency: ECurrencies.FLOW,
-				initialSupply: undefined,
+				initialSupply: 0,
 				editDelay: '0.0',
 				mintTokens: false,
-				walletAddresses: []
+				walletAddresses: [],
+				hasMaxSupply: false
 			},
 			multisig: {
 				owner: '',

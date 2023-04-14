@@ -10,6 +10,8 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { getProjectInfo } from '$flow/actions';
+	import DesktopOnlyPage from '$components/desktop-only-page/DesktopOnlyPage.svelte';
+	import persistentWritable from '$lib/utilities/persistentWritable';
 
 	interface Data {
 		projects: DAOProject[];
@@ -17,7 +19,9 @@
 
 	export let data: Data;
 
-	const activeDao = writable(0);
+	let screenSize: number;
+
+	const activeDao = persistentWritable('adminActiveDao', 0);
 
 	const daosDataStore: Writable<DAOProject[]> = writable(data.projects, (set) => {
 		const getProjectsIds = () => {
@@ -65,7 +69,7 @@
 	};
 
 	$: setContext<{
-		activeDao: Writable<number>;
+		activeDao: () => Writable<number>;
 		userDaos: Writable<DAOProject[]>;
 	}>('admin-data', {
 		userDaos: daosDataStore,
@@ -80,7 +84,11 @@
 	$: $user.addr && onChangeUser();
 </script>
 
-{#if !$user.addr}
+<svelte:window bind:innerWidth={screenSize} />
+
+{#if screenSize < 1040}
+	<DesktopOnlyPage />
+{:else if !$user.addr}
 	<ConnectPage />
 {:else if $daosDataStore.length < 1}
 	<section class="centered">
