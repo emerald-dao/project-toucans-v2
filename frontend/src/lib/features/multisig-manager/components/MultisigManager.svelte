@@ -13,7 +13,7 @@
 	export let allWalletsValid: boolean;
 	export let thresholdValid: boolean;
 
-	const addMultisig = () => {
+	const addNewAddress = () => {
 		newAddresses = [
 			...newAddresses,
 			{
@@ -29,7 +29,7 @@
 		walletsRes = walletsSuite(newAddresses);
 	};
 
-	const deleteSigner = (i: number) => {
+	const onDeleteSigner = (i: number) => {
 		alert('Submit action to delete this signer');
 	};
 
@@ -75,7 +75,7 @@
 			<SignersListElement
 				owner={i === 0}
 				{i}
-				on:delete={() => deleteSigner(i)}
+				on:delete={() => onDeleteSigner(i)}
 				bind:address={multisigAddress}
 				bind:res={walletsRes}
 			/>
@@ -91,7 +91,7 @@
 			/>
 		{/each}
 		<div class="add-wallet-wrapper">
-			<button on:click={addMultisig} class="header-link">
+			<button on:click={addNewAddress} class="header-link">
 				<Icon icon="tabler:plus" />
 				Add signer
 			</button>
