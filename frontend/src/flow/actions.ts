@@ -100,7 +100,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
-			arg([], t.Array(t.Address)),
+			arg(data.multisig.addresses, t.Array(t.Address)),
+			arg(data.multisig.threshold, t.UInt64),
 			arg(data.tokenomics.mintTokens, t.Bool),
 			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
 			arg(data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null, t.Optional(t.UFix64))
