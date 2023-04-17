@@ -16,9 +16,12 @@ transaction(
   ptPublicPath: PublicPath,
   ptStoragePath: StoragePath,
   // DAO TREASURY
-  signers: [Address],
+  initialSigners: [Address],
+  initialThreshold: UInt64,
+  // Minting
   minting: Bool,
-  initialSupply: UFix64,
+  // Supply
+  initialTreasurySupply: UFix64,
   maxSupply: UFix64?,
 ) {
 
@@ -35,23 +38,20 @@ transaction(
     // Blank empty for now
     let extra: {String: AnyStruct} = {}
 
-    // Make sure the initial signers includes the deployer
-    var initialSigners: [Address] = signers
-    if !initialSigners.contains(deployer.address) {
-      initialSigners.append(deployer.address)
-    }
-
-    let threshold = UInt64(initialSigners.length)
+    assert(
+      Int(initialThreshold) <= initialSigners.length, 
+      message: "The threshold cannot be bigger than the amount of signers."
+    )
 
     deployer.contracts.add(
       name: contractName,
       code: contractCode.decodeHex(),
       _paymentTokenInfo: ToucansTokens.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath),
       _editDelay: editDelay,
-      _signers: initialSigners,
-      _threshold: threshold,
+      _initialSigners: initialSigners,
+      _initialThreshold: initialThreshold,
       _minting: minting,
-      _initialSupply: initialSupply,
+      _initialTreasurySupply: initialTreasurySupply,
       _maxSupply: maxSupply,
       _extra: extra
     )

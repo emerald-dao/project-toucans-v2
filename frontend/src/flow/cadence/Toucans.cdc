@@ -739,10 +739,10 @@ pub contract Toucans {
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
-      signers: [Address],
-      threshold: UInt64,
+      initialSigners: [Address],
+      initialThreshold: UInt64,
       minting: Bool,
-      initialSupply: UFix64,
+      initialTreasurySupply: UFix64,
       extra: {String: AnyStruct}
     ) {
       pre {
@@ -762,13 +762,13 @@ pub contract Toucans {
       self.purchasing = true
       self.additions <- {}
 
-      let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialSupply)
+      let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialTreasurySupply)
       assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
       let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
       let emptyPaymentVault <- paymentContract.createEmptyVault()
       self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       self.overflow <- paymentContract.createEmptyVault()
-      self.multiSignManager <- create Manager(_initialSigners: signers, _initialThreshold: threshold)
+      self.multiSignManager <- create Manager(_initialSigners: initialSigners, _initialThreshold: initialThreshold)
     }
 
     destroy() {
@@ -793,16 +793,16 @@ pub contract Toucans {
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
-      signers: [Address],
-      threshold: UInt64,
+      initialSigners: [Address],
+      initialThreshold: UInt64,
       minting: Bool,
-      initialSupply: UFix64,
+      initialTreasurySupply: UFix64,
       extra: {String: AnyStruct}
     ) {
       pre {
-        signers.contains(self.owner!.address): "Project owner must be one of the initial signers."
+        initialSigners.contains(self.owner!.address): "Project owner must be one of the initial signers."
       }
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, signers: signers, threshold: threshold, minting: minting, initialSupply: initialSupply, extra: extra)
+      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, initialSigners: initialSigners, initialThreshold: initialThreshold, minting: minting, initialTreasurySupply: initialTreasurySupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
 

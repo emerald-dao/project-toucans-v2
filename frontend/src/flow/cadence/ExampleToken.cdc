@@ -9,7 +9,7 @@ pub contract ExampleToken: FungibleToken {
     // The amount of tokens in existance
     pub var totalSupply: UFix64
     // nil if there is none
-    pub var maxSupply: UFix64?
+    pub let maxSupply: UFix64?
 
     // Paths
     pub let VaultStoragePath: StoragePath
@@ -173,10 +173,10 @@ pub contract ExampleToken: FungibleToken {
     init(
       _paymentTokenInfo: ToucansTokens.TokenInfo,
       _editDelay: UFix64,
-      _signers: [Address],
-      _threshold: UInt64,
+      _initialSigners: [Address],
+      _initialThreshold: UInt64,
       _minting: Bool,
-      _initialSupply: UFix64,
+      _initialTreasurySupply: UFix64,
       _maxSupply: UFix64?,
       _extra: {String: AnyStruct}
     ) {
@@ -217,10 +217,10 @@ pub contract ExampleToken: FungibleToken {
         paymentTokenInfo: _paymentTokenInfo, 
         minter: <- create Minter(), 
         editDelay: _editDelay, 
-        signers: _signers,
-        threshold: _threshold,
+        initialSigners: _initialSigners,
+        initialThreshold: _initialThreshold,
         minting: _minting,
-        initialSupply: _initialSupply,
+        initialTreasurySupply: _initialTreasurySupply,
         extra: _extra
       )
 
