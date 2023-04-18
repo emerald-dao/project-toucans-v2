@@ -5,8 +5,21 @@
 	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/PendingActionsListElement.svelte';
 	import { notifications } from '$lib/features/notifications/stores/NotificationsStore';
 	import { supabase } from '$lib/supabaseClient';
-	import { onMount } from 'svelte';
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
+	import Icon from '@iconify/svelte';
+	import { Button } from '@emerald-dao/component-library';
+
+	let allNotifications: { project: string; notification: ActionData }[] = [];
+	let currentPage = 1;
+	const pageSize = 10;
+
+	const nextPage = () => {
+		currentPage += 1;
+	};
+
+	const prevPage = () => {
+		currentPage -= 1;
+	};
 
 	const getDaosData = async () => {
 		if ($notifications) {
@@ -28,14 +41,17 @@
 		}
 	};
 
-	let allNotifications: { project: string; notification: ActionData }[] = [];
-
 	$: if ($notifications) {
 		allNotifications = Object.entries($notifications).flatMap(
 			([project, notifications]: [string, ActionData[]]) =>
 				notifications.map((notification: ActionData) => ({ project, notification }))
 		);
 	}
+
+	$: pageStart = (currentPage - 1) * pageSize;
+	$: pageEnd = pageStart + pageSize;
+	$: pagesNumbers = Array.from(Array(Math.ceil(allNotifications.length / pageSize)).keys());
+	$: currentPageNotifications = allNotifications.slice(pageStart, pageEnd);
 </script>
 
 {#if !$user.addr}
@@ -49,7 +65,7 @@
 		<div>
 			{#if $notifications}
 				{#await getDaosData() then daosData}
-					{#each allNotifications as { project, notification }}
+					{#each currentPageNotifications as { project, notification }}
 						<PendingActionsListElement
 							action={notification}
 							threshold={notification.threshold}
@@ -66,6 +82,26 @@
 				<p class="small"><em>No pending actions</em></p>
 			{/if}
 		</div>
+		{#if pagesNumbers.length > 1}
+			<div class="pagination row-4">
+				<Button
+					on:click={prevPage}
+					state={currentPage === 1 ? 'disabled' : 'active'}
+					type="transparent"
+					color="neutral"
+				>
+					<Icon icon="tabler:arrow-left" />
+				</Button>
+				<Button
+					on:click={nextPage}
+					state={pageEnd >= allNotifications.length ? 'disabled' : 'active'}
+					type="transparent"
+					color="neutral"
+				>
+					<Icon icon="tabler:arrow-right" />
+				</Button>
+			</div>
+		{/if}
 	</section>
 {/if}
 
