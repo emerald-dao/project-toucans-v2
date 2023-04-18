@@ -3,6 +3,8 @@
 	import Icon from '@iconify/svelte';
 	import { thresholdSuite, walletsSuite } from '../validations/validation';
 	import SignersListElement from './atoms/signers-list-element/SignersListElement.svelte';
+	import type { SuiteRunResult } from 'vest';
+	import { v4 as uuidv4 } from 'uuid';
 
 	export let existingAddresses: string[];
 	export let newAddresses: {
@@ -14,32 +16,48 @@
 	export let thresholdValid: boolean;
 
 	const addNewAddress = () => {
+		const walletId = uuidv4();
+
 		newAddresses = [
 			...newAddresses,
 			{
 				address: '',
-				id: newAddresses.length.toString()
+				id: walletId
 			}
 		];
-		walletsRes = walletsSuite(newAddresses);
+		walletsRes = walletsSuite(newAddresses, walletId, existingAddresses);
 	};
 
-	const deleteNewAddress = (i: number) => {
-		newAddresses = newAddresses.filter((_, index) => index !== i);
-		walletsRes = walletsSuite(newAddresses);
+	const deleteNewAddress = (id: string) => {
+		newAddresses = newAddresses.filter((addr) => addr.id !== id);
+		walletsRes = walletsSuite(newAddresses, id, existingAddresses);
 	};
 
-	const onDeleteSigner = (i: number) => {
-		alert('Submit action to delete this signer');
+	const onDeleteSigner = (id: string) => {
+		alert(`Submit action to delete this signer ${id}`);
 	};
 
 	const handleThresholdChange = () => {
 		thresholdRes = thresholdSuite(threshold, newAddresses.length + existingAddresses.length);
 	};
 
-	const handleWalletsChange = () => {
-		walletsRes = walletsSuite(newAddresses);
+	const handleWalletsChange = (input: Event, id: string) => {
+		const target = input.target as HTMLInputElement;
+
+		if (target.name === id) {
+			walletValidationPending = true;
+		}
+
+		walletsRes = walletsSuite(newAddresses, target.name, existingAddresses);
+
+		(walletsRes as SuiteRunResult).done((result) => {
+			walletsRes = result;
+			walletValidationPending = false;
+		});
 	};
+
+	let walletValidationPending: boolean;
+	let walletValidationMessage = ['Checking if addres is available for being a signer...'];
 
 	let thresholdRes = thresholdSuite.get();
 	let walletsRes = walletsSuite.get();
@@ -74,19 +92,23 @@
 		{#each existingAddresses as multisigAddress, i}
 			<SignersListElement
 				owner={i === 0}
+				id={i.toString()}
 				{i}
-				on:delete={() => onDeleteSigner(i)}
+				on:delete={() => onDeleteSigner(i.toString())}
 				bind:address={multisigAddress}
 				bind:res={walletsRes}
 			/>
 		{/each}
 		{#each newAddresses as field, i}
 			<SignersListElement
-				{i}
-				on:delete={() => deleteNewAddress(i)}
+				id={field.id}
+				i={i + existingAddresses.length}
+				on:delete={() => deleteNewAddress(field.id)}
 				bind:address={field.address}
 				bind:res={walletsRes}
-				on:input={handleWalletsChange}
+				on:input={(e) => handleWalletsChange(e.detail, field.id)}
+				pending={walletValidationPending}
+				pendingMessage={walletValidationMessage}
 				editable
 			/>
 		{/each}

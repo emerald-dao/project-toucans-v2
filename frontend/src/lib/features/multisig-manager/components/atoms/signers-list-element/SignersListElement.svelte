@@ -8,9 +8,12 @@
 
 	export let address: string;
 	export let i: number;
+	export let id: string | undefined = undefined;
 	export let owner: boolean = false;
 	export let editable = false;
-	export let res: SuiteResult;
+	export let res: SuiteResult | undefined = undefined;
+	export let pending: boolean | undefined = undefined;
+	export let pendingMessage: string[] | undefined = undefined;
 
 	const dispatch = createEventDispatcher();
 </script>
@@ -21,22 +24,25 @@
 			<img src="/avatar-2.png" alt="" />
 			<span class="number">{i + 1}</span>
 		</div>
-		{#if editable && !owner}
+		{#if editable && !owner && id && res}
 			<InputWrapper
-				name={`multisig-wallet-${i}`}
-				errors={res.tests[address] ? res.tests[address].errors : []}
-				isValid={res.tests[address] ? res.tests[address].valid : false}
+				name={id}
+				errors={res.tests[id] ? res.tests[id].errors : []}
+				isValid={res.tests[id] ? res.tests[id].valid : false}
 				required={true}
 				hasStatusMessage={false}
+				{pending}
+				{pendingMessage}
 			>
 				<input
-					name={`multisig-wallet-${i}`}
+					name={id}
+					{id}
 					type="text"
 					placeholder="0x1234567890abcdef"
 					maxlength="18"
 					disabled={owner}
 					bind:value={address}
-					on:input={() => dispatch('input')}
+					on:input={(e) => dispatch('input', e)}
 				/>
 			</InputWrapper>
 		{:else}
@@ -46,7 +52,7 @@
 	{#if owner}
 		<Label size="x-small" hasBorder={false}>Owner</Label>
 	{:else if editable}
-		<div class="trash-wrapper" on:click={() => dispatch('delete', i)} on:keydown>
+		<div class="trash-wrapper" on:click={() => dispatch('delete', id)} on:keydown>
 			<Icon icon="tabler:trash" class="delete" />
 		</div>
 	{/if}

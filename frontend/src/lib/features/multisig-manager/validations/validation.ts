@@ -1,4 +1,10 @@
-import { create, each, enforce, test } from 'vest';
+import hasFlowVault from '../../../../../src/flow/cadence/scripts/has_flow_vault.cdc?raw';
+import { replaceWithProperValues } from '$flow/utils';
+import { isValidFlowWallet } from '$lib/utilities/validations/walletAddressValidation';
+import { create, each, enforce, only, eager, test } from 'vest';
+import * as fcl from '@onflow/fcl';
+
+enforce.extend({ isValidFlowWallet });
 
 export const thresholdSuite = create((data = '', amountOfSignatures) => {
 	test(`threshold`, 'Threshold is needed', () => {
@@ -19,30 +25,69 @@ export const walletsSuite = create(
 		data: {
 			address: string;
 			id: string;
-		}[] = []
+		}[] = [],
+		currentField: string,
+		existingSignersAddresses: string[]
 	) => {
-		each(data, (field) => {
-			console.log(field);
+		only(currentField);
+		eager();
 
+		each(data, (field) => {
 			test(
-				field.address,
-				'Wallet address is needed',
+				field.id,
+				'Wallet address is not valid',
 				() => {
-					enforce(field.address).isNotEmpty();
+					enforce(field.address).isValidFlowWallet();
 				},
 				field.id
 			);
 		});
 
+		// Don't allow repited addresses
+		const newAddressesArray = data.map((obj) => obj.address);
+		const newAddress = data.find((obj) => obj.id === currentField)?.address as string;
+		const newAddressIndex = newAddressesArray.indexOf(newAddress);
+
+		newAddressesArray.splice(newAddressIndex, 1);
+
+		const allAddresses = newAddressesArray.concat(existingSignersAddresses);
+
 		each(data, (field) => {
 			test(
-				field.address,
-				'Wallet address should be exactly 18 chars long',
+				field.id,
+				'Duplicated wallet address',
 				() => {
-					enforce(field.address).lengthEquals(18);
+					enforce(field.address).notInside(allAddresses);
 				},
 				field.id
+			);
+		});
+
+		// Check in the blockchain if the address has a Flow vault set up
+		each(data, (field) => {
+			test.memo(
+				field.id,
+				"Address doesn't have a vault set up.",
+				async () => await checkAddress(field.address),
+				[field.address]
 			);
 		});
 	}
 );
+
+const checkAddress = async (address: string) => {
+	try {
+		const walletHasVault = await fcl.query({
+			cadence: replaceWithProperValues(hasFlowVault),
+			args: (arg, t) => [arg(address, t.Address)]
+		});
+
+		if (walletHasVault) {
+			return Promise.resolve();
+		}
+
+		return Promise.reject('Wallet does not have a vault set up.');
+	} catch (error) {
+		return Promise.reject('Invalid wallet address');
+	}
+};
