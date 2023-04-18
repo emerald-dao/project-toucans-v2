@@ -5,6 +5,8 @@
 	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/PendingActionsListElement.svelte';
 	import { notifications } from '$lib/features/notifications/stores/NotificationsStore';
 	import { supabase } from '$lib/supabaseClient';
+	import { onMount } from 'svelte';
+	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
 
 	const getDaosData = async () => {
 		if ($notifications) {
@@ -25,6 +27,17 @@
 			return {};
 		}
 	};
+
+	let allNotifications: { project: string; notification: ActionData }[] = [];
+
+	onMount(() => {
+		if ($notifications) {
+			allNotifications = Object.entries($notifications).flatMap(
+				([project, notifications]: [string, ActionData[]]) =>
+					notifications.map((notification: ActionData) => ({ project, notification }))
+			);
+		}
+	});
 </script>
 
 {#if !$user.addr}
@@ -38,21 +51,21 @@
 		<div>
 			{#if $notifications}
 				{#await getDaosData() then daosData}
-					{#each Object.entries($notifications) as [key, value]}
-						{#each value as action}
-							<PendingActionsListElement
-								{action}
-								threshold={action.threshold}
-								daoId={key}
-								isSigner={action.signers.includes($user.addr)}
-								daoLogo={daosData[key].logo}
-								projectOwner={daosData[key].owner}
-							/>
-						{/each}
+					{#each allNotifications as { project, notification }}
+						<PendingActionsListElement
+							action={notification}
+							threshold={notification.threshold}
+							daoId={project}
+							isSigner={notification.signers.includes($user.addr)}
+							daoLogo={daosData[project].logo}
+							projectOwner={daosData[project].owner}
+						/>
+					{:else}
+						<p class="small"><em>No pending actions</em></p>
 					{/each}
 				{/await}
 			{:else}
-				<p class="small">No pending actions</p>
+				<p class="small"><em>No pending actions</em></p>
 			{/if}
 		</div>
 	</section>
