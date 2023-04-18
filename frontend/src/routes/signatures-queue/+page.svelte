@@ -30,14 +30,12 @@
 
 	let allNotifications: { project: string; notification: ActionData }[] = [];
 
-	onMount(() => {
-		if ($notifications) {
-			allNotifications = Object.entries($notifications).flatMap(
-				([project, notifications]: [string, ActionData[]]) =>
-					notifications.map((notification: ActionData) => ({ project, notification }))
-			);
-		}
-	});
+	$: if ($notifications) {
+		allNotifications = Object.entries($notifications).flatMap(
+			([project, notifications]: [string, ActionData[]]) =>
+				notifications.map((notification: ActionData) => ({ project, notification }))
+		);
+	}
 </script>
 
 {#if !$user.addr}
