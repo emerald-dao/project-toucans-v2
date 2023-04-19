@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { InputWrapper } from '@emerald-dao/component-library';
+	import { InputWrapper, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { SignersListElement } from '$components/dao-data-blocks';
 	import { validationSuite } from './validation';
+	import GLOSSARY from '$lib/config/glossary';
 
 	export let existingAddresses: string[];
 	export let newAddresses: string[] = [];
@@ -38,7 +39,10 @@
 
 <div class="main-wrapper">
 	<div class="column-1">
-		<span class="large">Threshold</span>
+		<div class="row-2 align-center">
+			<span class="large">Threshold</span>
+			<TooltipIcon tooltip={GLOSSARY.threshold} width={0.75} />
+		</div>
 		<div class="threshold-wrapper">
 			<InputWrapper
 				name="threshold"
@@ -58,7 +62,10 @@
 		</div>
 	</div>
 	<div class="column-1">
-		<span class="large">Signers</span>
+		<div class="row-2 align-center">
+			<span class="large">Signers</span>
+			<TooltipIcon tooltip={GLOSSARY.signer} width={0.75} />
+		</div>
 		{#each existingAddresses as multisigAddress, i}
 			<SignersListElement
 				owner={i === 0}

@@ -12,6 +12,7 @@
 	export let fontSize: string | undefined = undefined;
 	export let fontColor: string | undefined = undefined;
 	export let errors: string[] = [];
+	export let tooltip: string | undefined = undefined;
 
 	const dispatch = createEventDispatcher();
 
@@ -43,7 +44,7 @@
 	});
 </script>
 
-<InputWrapper {name} {isValid} {errors} {label} {hasBorder} iconText={`$${currency}`}>
+<InputWrapper {name} {isValid} {errors} {label} {hasBorder} iconText={`$${currency}`} {tooltip}>
 	<div>
 		<input
 			type="text"

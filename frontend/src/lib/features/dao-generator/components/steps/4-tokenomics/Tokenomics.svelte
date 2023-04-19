@@ -6,6 +6,8 @@
 	import validationSuite from './validation';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
+	import { TooltipIcon } from '@emerald-dao/component-library';
+	import GLOSSARY from '$lib/config/glossary';
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
@@ -18,7 +20,10 @@
 
 <form in:fly={{ y: 30, duration: 400 }} class="column-2" autocomplete="off">
 	<div class="payment-currency column-2">
-		<label for="currencies">Payment currency</label>
+		<div class="row-2 align-center">
+			<label for="currencies">Payment currency</label>
+			<TooltipIcon tooltip={GLOSSARY.paymentCurrency} width={0.75} />
+		</div>
 		<CurrencySelect
 			currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
 			bind:value={$daoGeneratorData.tokenomics.paymentCurrency}
@@ -30,6 +35,7 @@
 		class:margin-bottom={!$daoGeneratorData.tokenomics.hasMaxSupply}
 	>
 		Max supply
+		<TooltipIcon tooltip={GLOSSARY.maxSupply} width={0.75} />
 		<input
 			type="checkbox"
 			name="max-supply"
@@ -56,11 +62,14 @@
 		currency={$daoGeneratorData.daoDetails.tokenName}
 		errors={res.getErrors('initialSupply')}
 		isValid={res.isValid('initialSupply')}
+		tooltip={GLOSSARY.initialSupply}
 		on:input={(input) => handleChange(input.detail)}
 		bind:value={$daoGeneratorData.tokenomics.initialSupply}
 	/>
 	<label for="mint-tokens" class="switch">
 		Mint tokens
+		<TooltipIcon tooltip={GLOSSARY.minting} width={0.75} />
+
 		<input
 			type="checkbox"
 			name="mint-tokens"
