@@ -4,29 +4,13 @@
 	import Icon from '@iconify/svelte';
 	import StepButtons from '../../atoms/StepButtons.svelte';
 	import { editDelayOptions } from './editDelayOptions';
-
-	$: activeOption = editDelayOptions.find(
-		(option) => option.value === $daoGeneratorData.tokenomics.editDelay
-	);
+	import GLOSSARY from '$lib/config/glossary';
 </script>
 
 <form in:fly={{ y: 30, duration: 400 }} class="column-5">
 	<h2 class="h4">Edit Delay</h2>
 	<p class="small">
-		{#if $daoGeneratorData.tokenomics.editDelay === '0.00'}
-			{`You can edit the configuration of your funding round `}
-			<span>
-				{`at any time `}
-			</span>
-			{`before it starts.`}
-		{:else}
-			{`When launching a funding round, you can edit its configuration at least`}
-			<span>
-				{activeOption?.title}
-			</span>
-			{`days before the round starts.`}
-		{/if}
-		{`This is to prevent any last-minute changes that could affect the outcome of the round. The higher the delay, the greater trust your community will have in you.`}
+		{GLOSSARY.editDelay}
 	</p>
 	{#each editDelayOptions as option}
 		<input
@@ -57,10 +41,6 @@
 
 		p {
 			margin-bottom: var(--space-5);
-
-			span {
-				color: var(--clr-tertiary-main);
-			}
 		}
 
 		input {

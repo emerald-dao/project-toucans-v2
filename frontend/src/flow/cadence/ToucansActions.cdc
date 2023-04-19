@@ -1,4 +1,5 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
+import FIND from "./utility/FIND.cdc"
 
 pub contract ToucansActions {
 
@@ -23,7 +24,7 @@ pub contract ToucansActions {
     pub let tokenSymbol: String
 
     pub fun getIntent(): String {
-      return "Withdraw ".concat(self.amount.toString()).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(self.recipientVault.borrow()!.owner!.address.toString())
+      return "Withdraw ".concat(self.amount.toString()).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(ToucansActions.getFind(self.recipientVault.borrow()!.owner!.address))
     }
 
     pub fun getTitle(): String {
@@ -45,7 +46,7 @@ pub contract ToucansActions {
     pub let tokenSymbol: String
 
     pub fun getIntent(): String {
-      return "Mint ".concat(self.amount.toString()).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(self.recipientVault.borrow()!.owner!.address.toString())
+      return "Mint ".concat(self.amount.toString()).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(ToucansActions.getFind(self.recipientVault.borrow()!.owner!.address))
     }
 
     pub fun getTitle(): String {
@@ -84,7 +85,7 @@ pub contract ToucansActions {
     pub let signer: Address
 
     pub fun getIntent(): String {
-      return "Add ".concat(self.signer.toString()).concat(" as a signer to the Treasury.")
+      return "Add ".concat(ToucansActions.getFind(self.signer)).concat(" as a signer to the Treasury.")
     }
 
     pub fun getTitle(): String {
@@ -104,7 +105,7 @@ pub contract ToucansActions {
     pub let signer: Address
 
     pub fun getIntent(): String {
-      return "Remove ".concat(self.signer.toString()).concat(" as a signer to the Treasury.")
+      return "Remove ".concat(ToucansActions.getFind(self.signer)).concat(" as a signer to the Treasury.")
     }
 
     pub fun getTitle(): String {
@@ -131,6 +132,13 @@ pub contract ToucansActions {
     init(_ threshold: UInt64) {
       self.threshold = threshold
     }
+  }
+
+  pub fun getFind(_ address: Address): String {
+    if let name = FIND.reverseLookup(address) {
+      return name.concat(".find")
+    }
+    return address.toString()
   }
 }
  

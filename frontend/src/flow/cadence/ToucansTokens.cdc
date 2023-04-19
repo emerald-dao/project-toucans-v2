@@ -41,6 +41,15 @@ pub contract ToucansTokens {
     return self.tokens[tokenType]
   }
 
+  pub fun getTokenInfoFromSymbol(symbol: String): TokenInfo? {
+    for info in self.tokens.values {
+      if info.symbol == symbol {
+        return info
+      }
+    }
+    return nil
+  }
+
   pub fun stringToAddress(stringAddress: String): Address {
     var r: UInt64 = 0
     var bytes: [UInt8] = stringAddress.decodeHex()

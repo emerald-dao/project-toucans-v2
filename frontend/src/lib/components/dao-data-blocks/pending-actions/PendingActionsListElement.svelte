@@ -4,7 +4,7 @@
 	import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
 	import Icon from '@iconify/svelte';
 	import { user } from '$stores/flow/FlowStore';
-	import { acceptActionExecution } from '$flow/actions';
+	import { acceptActionExecution, declineActionExecution } from '$flow/actions';
 	import { Label } from '@emerald-dao/component-library';
 
 	export let action: ActionData;
@@ -94,7 +94,11 @@
 					</div>
 				{/if}
 				{#if !signed || ($user.addr && action.votes[$user.addr] === true)}
-					<div class="action-wrapper trash">
+					<div
+						class="action-wrapper trash"
+						on:click={() => declineActionExecution(projectOwner, daoId, action.intent, action.id)}
+						on:keydown
+					>
 						<Icon icon="tabler:x" />
 					</div>
 				{/if}

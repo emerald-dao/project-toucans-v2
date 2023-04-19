@@ -23,7 +23,7 @@
 				title="Max supply"
 				data={Number(daoData.onChainData.maxSupply)}
 				isCurrency
-				tooltip="Malicious adminstrator can edit this value"
+				tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
 			/>
 		{/if}
 		<DataCard

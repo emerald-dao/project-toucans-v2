@@ -23,7 +23,9 @@ export const getNotifications: (userAddress: string) => Promise<ProjectNotificat
 	if (data) {
 		for (const notification of data) {
 			const projectId = notification.project_id;
-			const projectOwner = notification.projects.owner;
+
+			const projectOwner = notification.projects?.owner;
+
 			if (!projectIds.includes(projectId)) {
 				projectIds.push(projectId);
 				projectOwners.push(projectOwner);
@@ -31,9 +33,11 @@ export const getNotifications: (userAddress: string) => Promise<ProjectNotificat
 		}
 	}
 
+	if (projectIds.length === 0) {
+		return [];
+	}
+
 	const notifications = await getPendingActions(userAddress, projectOwners, projectIds);
-	console.log(notifications);
-	console.log(Object.entries(notifications))
 
 	return notifications;
 };
