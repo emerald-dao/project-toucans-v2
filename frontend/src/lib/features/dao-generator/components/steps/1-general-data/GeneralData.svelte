@@ -139,7 +139,6 @@
 		pendingMessage={tokenNamePendingMessage}
 		errors={res.getErrors('tokenName')}
 		isValid={res.isValid('tokenName')}
-		tooltip="Add any helper text here"
 		required={true}
 	>
 		<input
