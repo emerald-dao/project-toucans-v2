@@ -6,6 +6,7 @@
 	import type { SuiteRunResult } from 'vest';
 	import { v4 as uuidv4 } from 'uuid';
 	import GLOSSARY from '$lib/config/glossary';
+	import { updateMultisigExecution } from '$flow/actions';
 
 	export let existingAddresses: string[];
 	export let newAddresses: {
@@ -15,6 +16,8 @@
 	export let threshold: number = 1;
 	export let allWalletsValid: boolean;
 	export let thresholdValid: boolean;
+	export let owner: string;
+	export let projectId: string;
 
 	const addNewAddress = () => {
 		const walletId = uuidv4();
@@ -34,8 +37,8 @@
 		walletsRes = walletsSuite(newAddresses, id, existingAddresses);
 	};
 
-	const onDeleteSigner = (id: string) => {
-		alert(`Submit action to delete this signer ${id}`);
+	const onDeleteSigner = async (newAddresses: string[]) => {
+		await updateMultisigExecution(owner, projectId, newAddresses, threshold);
 	};
 
 	const handleThresholdChange = () => {
@@ -98,10 +101,10 @@
 		</div>
 		{#each existingAddresses as multisigAddress, i}
 			<SignersListElement
-				owner={i === 0}
+				owner={multisigAddress === owner}
 				id={i.toString()}
 				{i}
-				on:delete={() => onDeleteSigner(i.toString())}
+				on:delete={() => onDeleteSigner(existingAddresses.filter(addr => addr !== multisigAddress))}
 				bind:address={multisigAddress}
 				bind:res={walletsRes}
 			/>

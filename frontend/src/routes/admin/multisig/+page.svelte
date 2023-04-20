@@ -52,6 +52,8 @@
 		bind:allWalletsValid
 		bind:thresholdValid
 		bind:threshold
+		owner={activeDaoData.generalInfo.owner}
+		projectId={activeDaoData.generalInfo.project_id}
 	/>
 	<Button
 		state={allWalletsValid &&

@@ -388,40 +388,6 @@ export const declineActionExecution = (
 	actionUUID: string
 ) => executeTransaction(() => declineAction(projectOwner, projectId, actionMessage, actionUUID));
 
-const finalizeAddSigner = async (
-	projectOwner: string,
-	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) => {
-	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
-
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(declineActionTx),
-		args: (arg, t) => [
-			arg(projectOwner, t.Address),
-			arg(projectId, t.String),
-			arg(actionUUID, t.UInt64),
-			arg(MSG, t.String),
-			arg(keyIds, t.Array(t.Int)),
-			arg(signatures, t.Array(t.String)),
-			arg(signatureBlock, t.UInt64)
-		],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const finalizeAddSignerExecution = (
-	projectOwner: string,
-	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) =>
-	executeTransaction(() => finalizeAddSigner(projectOwner, projectId, actionMessage, actionUUID));
-
 const mintTokens = async (
 	projectOwner: string,
 	projectId: string,

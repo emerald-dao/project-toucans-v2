@@ -269,16 +269,27 @@ pub contract Toucans {
     }
 
     pub fun proposeAddSigner(signer: Address) {
+      pre {
+        !self.multiSignManager.getSigners().contains(signer): "This wallet is already a signer."
+      }
       let action = ToucansActions.AddOneSigner(signer)
       self.multiSignManager.createMultiSign(action: action)
     }
 
     pub fun proposeRemoveSigner(signer: Address) {
+      pre {
+        self.multiSignManager.getSigners().length > 1: "Cannot remove a signer if it will bring the signers to 0."
+        self.multiSignManager.getSigners().contains(signer): "This wallet is not already a signer."
+      }
       let action = ToucansActions.RemoveOneSigner(signer)
       self.multiSignManager.createMultiSign(action: action)
     }
 
     pub fun proposeUpdateThreshold(threshold: UInt64) {
+      pre {
+        self.multiSignManager.getSigners().length >= Int(threshold): "Threshold cannot be above number of signers."
+        threshold > 0: "Threshold must be greater than 0."
+      }
       let action = ToucansActions.UpdateTreasuryThreshold(threshold)
       self.multiSignManager.createMultiSign(action: action)
     }
@@ -941,18 +952,23 @@ pub contract Toucans {
   
   pub resource Manager: ManagerPublic {
     pub var threshold: UInt64
-    access(self) let signers: {Address: Bool}
+    access(self) let signers: [Address]
     // Maps the `uuid` of the MultiSignAction
     // to the resource itself
     access(self) let actions: @{UInt64: MultiSignAction}
 
     pub fun createMultiSign(action: {ToucansActions.Action}) {
       var threshold: UInt64 = self.threshold
-      var signers: [Address] = self.signers.keys
+      var signers: [Address] = self.signers
       if action.getType() == Type<ToucansActions.AddOneSigner>() {
         let addSignerAction = action as! ToucansActions.AddOneSigner
         threshold = threshold + 1
         signers.append(addSignerAction.signer)
+      }
+      if action.getType() == Type<ToucansActions.RemoveOneSigner>() {
+        let removeSignerAction = action as! ToucansActions.RemoveOneSigner
+        threshold = threshold - 1
+        signers.remove(at: signers.firstIndex(of: removeSignerAction.signer)!)
       }
       let newAction <- create MultiSignAction(_threshold: threshold, _signers: signers, _action: action)
       self.actions[newAction.uuid] <-! newAction
@@ -979,12 +995,18 @@ pub contract Toucans {
 
     // These will be multisign actions themselves
     access(account) fun addSigner(signer: Address) {
-      self.signers.insert(key: signer, true)
+      pre {
+        !self.signers.contains(signer): "This wallet is already a signer."
+      }
+      self.signers.append(signer)
       self.assertValidTreasury()
     }
 
     access(account) fun removeSigner(signer: Address) {
-      self.signers.remove(key: signer)
+      pre {
+        self.signers.contains(signer): "This wallet is not already a signer."
+      }
+      self.signers.remove(at: self.signers.firstIndex(of: signer)!)
 
       if Int(self.threshold) > self.signers.length {
         // Automatically reduce the threshold to prevent it from
@@ -1009,7 +1031,7 @@ pub contract Toucans {
     }
 
     pub fun getSigners(): [Address] {
-      return self.signers.keys
+      return self.signers
     }
 
     pub fun assertValidTreasury() {
@@ -1019,14 +1041,9 @@ pub contract Toucans {
     }
 
     init(_initialSigners: [Address], _initialThreshold: UInt64) {
-      self.signers = {}
+      self.signers = _initialSigners
       self.actions <- {}
       self.threshold = _initialThreshold
-
-      for signer in _initialSigners {
-        self.signers.insert(key: signer, true)
-      }
-
       self.assertValidTreasury()
     }
 

@@ -51,7 +51,7 @@
 	</div>
 	{#if owner}
 		<Label size="x-small" hasBorder={false}>Owner</Label>
-	{:else if editable}
+	{:else}
 		<div class="trash-wrapper" on:click={() => dispatch('delete', id)} on:keydown>
 			<Icon icon="tabler:trash" class="delete" />
 		</div>
