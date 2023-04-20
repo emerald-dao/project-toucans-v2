@@ -1,7 +1,7 @@
 <script lang="ts">
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
-	const circlesAmount = 13;
+	const circlesAmount = 10;
 	const baseCircleSize = 10;
 	const circlesSizeIncrement = 10;
 	const opacityIncrement = 0.1;
@@ -76,7 +76,6 @@
 
 <style lang="scss">
 	.main-wrapper {
-		display: flex;
 		flex: 1;
 		position: relative;
 
@@ -96,7 +95,7 @@
 		}
 
 		.circle {
-			border: 2.5px dashed var(--clr-neutral-badge);
+			border: 3px dashed var(--clr-neutral-badge);
 			display: flex;
 
 			img,

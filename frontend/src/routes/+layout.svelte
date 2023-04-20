@@ -45,8 +45,6 @@
 
 	$: notificationsNumber = getNotificationsNumber($notifications);
 	$: if (notificationsNumber > 0) avatarDropdownNav[1].notifications = notificationsNumber;
-
-	console.log($page);
 </script>
 
 <TransactionModal
@@ -87,6 +85,5 @@
 	main {
 		display: flex;
 		flex-direction: column;
-		overflow-x: hidden;
 	}
 </style>

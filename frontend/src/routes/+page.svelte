@@ -6,9 +6,18 @@
 	import { StatsSection, PoweredByECDAO } from '@emerald-dao/component-library';
 </script>
 
-<Hero />
-<ToucansFeatures />
-<LeadingProjects />
+<!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
+<div class="no-overflow-x">
+	<Hero />
+	<ToucansFeatures />
+	<LeadingProjects />
+</div>
 <CreateYourToken />
 <StatsSection bordersColor="var(--clr-border-primary)" />
 <PoweredByECDAO />
+
+<style lang="scss">
+	.no-overflow-x {
+		overflow-x: hidden;
+	}
+</style>
