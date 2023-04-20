@@ -793,16 +793,11 @@ pub contract Toucans {
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
       editDelay: UFix64,
-      initialSigners: [Address],
-      initialThreshold: UInt64,
       minting: Bool,
       initialTreasurySupply: UFix64,
       extra: {String: AnyStruct}
     ) {
-      pre {
-        initialSigners.contains(self.owner!.address): "Project owner must be one of the initial signers."
-      }
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, initialSigners: initialSigners, initialThreshold: initialThreshold, minting: minting, initialTreasurySupply: initialTreasurySupply, extra: extra)
+      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, initialSigners: [self.owner!.address], initialThreshold: 1, minting: minting, initialTreasurySupply: initialTreasurySupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
 
