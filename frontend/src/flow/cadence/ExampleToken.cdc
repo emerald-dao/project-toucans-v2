@@ -173,8 +173,6 @@ pub contract ExampleToken: FungibleToken {
     init(
       _paymentTokenInfo: ToucansTokens.TokenInfo,
       _editDelay: UFix64,
-      _initialSigners: [Address],
-      _initialThreshold: UInt64,
       _minting: Bool,
       _initialTreasurySupply: UFix64,
       _maxSupply: UFix64?,
@@ -216,9 +214,7 @@ pub contract ExampleToken: FungibleToken {
         projectTokenInfo: ToucansTokens.TokenInfo("ExampleToken", self.account.address, "INSERT SYMBOL", self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 
         minter: <- create Minter(), 
-        editDelay: _editDelay, 
-        initialSigners: _initialSigners,
-        initialThreshold: _initialThreshold,
+        editDelay: _editDelay,
         minting: _minting,
         initialTreasurySupply: _initialTreasurySupply,
         extra: _extra

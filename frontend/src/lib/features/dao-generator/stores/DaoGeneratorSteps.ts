@@ -7,8 +7,7 @@ import {
 	Socials,
 	Tokenomics,
 	ReviewAndDeploy,
-	EditDelay,
-	Multisig
+	EditDelay
 } from '../components/steps';
 
 export const daoGeneratorSteps = createSteps([
@@ -50,14 +49,6 @@ export const daoGeneratorSteps = createSteps([
 		component: EditDelay,
 		action: null,
 		form: false,
-		state: 'inactive'
-	},
-	{
-		name: 'Multisig',
-		slug: 'multisig',
-		component: Multisig,
-		action: null,
-		form: true,
 		state: 'inactive'
 	},
 	{

@@ -4,7 +4,7 @@
 	import { fly } from 'svelte/transition';
 	import { generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { RecapCard, StepButtons, RecapElement } from '../../index';
-	import { editDelayOptions } from '../6-edit-delay/editDelayOptions';
+	import { editDelayOptions } from '../5-edit-delay/editDelayOptions';
 
 	onMount(() => {
 		if ($daoGeneratorData.daoDetails.logo) {
@@ -45,7 +45,12 @@
 		{#if $daoGeneratorData.daoDetails.discord && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
 			<RecapElement title="Discord" data={$daoGeneratorData.daoDetails.discord} />
 		{/if}
-		<RecapElement title="Edit delay" data={editDelayOptions.filter(delay => delay.value === $daoGeneratorData.tokenomics.editDelay)[0].title} />
+		<RecapElement
+			title="Edit delay"
+			data={editDelayOptions.filter(
+				(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
+			)[0].title}
+		/>
 		<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
 	</RecapCard>
 </div>

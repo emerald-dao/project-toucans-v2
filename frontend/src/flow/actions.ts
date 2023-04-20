@@ -99,8 +99,6 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
 			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
 			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
-			arg(data.multisig.addresses, t.Array(t.Address)),
-			arg(data.multisig.threshold, t.UInt64),
 			arg(data.tokenomics.mintTokens, t.Bool),
 			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
 			arg(
@@ -389,40 +387,6 @@ export const declineActionExecution = (
 	actionMessage: string,
 	actionUUID: string
 ) => executeTransaction(() => declineAction(projectOwner, projectId, actionMessage, actionUUID));
-
-const finalizeAddSigner = async (
-	projectOwner: string,
-	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) => {
-	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
-
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(declineActionTx),
-		args: (arg, t) => [
-			arg(projectOwner, t.Address),
-			arg(projectId, t.String),
-			arg(actionUUID, t.UInt64),
-			arg(MSG, t.String),
-			arg(keyIds, t.Array(t.Int)),
-			arg(signatures, t.Array(t.String)),
-			arg(signatureBlock, t.UInt64)
-		],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const finalizeAddSignerExecution = (
-	projectOwner: string,
-	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) =>
-	executeTransaction(() => finalizeAddSigner(projectOwner, projectId, actionMessage, actionUUID));
 
 const mintTokens = async (
 	projectOwner: string,

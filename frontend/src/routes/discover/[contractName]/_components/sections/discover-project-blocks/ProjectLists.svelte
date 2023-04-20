@@ -1,12 +1,8 @@
 <script lang="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
-	import {
-		MainFundersList,
-		EventsList,
-		RoundsList,
-		SignersListElement
-	} from '$components/dao-data-blocks';
+	import { MainFundersList, EventsList, RoundsList } from '$components/dao-data-blocks';
+	import SignersListElement from '$lib/features/multisig-manager/components/atoms/signers-list-element/SignersListElement.svelte';
 
 	export let daoData: DAOProject;
 
