@@ -36,7 +36,7 @@ pub contract ExampleToken: FungibleToken {
             if let owner: Address = self.owner?.address {
                 ExampleToken.setBalance(address: owner, balance: self.balance)
             }
-            return <-create Vault(balance: amount)
+            return <- create Vault(balance: amount)
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {

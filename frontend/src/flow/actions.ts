@@ -13,6 +13,7 @@ import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
+import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -157,6 +158,37 @@ export const fundProjectExecution = (
 	executeTransaction(() =>
 		fundProject(projectOwner, projectId, amount, message, currency, expectedAmount)
 	);
+
+const claimOverflow = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	currency: ECurrencies
+) => {
+	let txCode = claimOverflowTx;
+	if (currency === ECurrencies.USDC) {
+		txCode = txCode.replaceAll('flowTokenReceiver', 'USDCVaultReceiver').replaceAll('FlowToken', 'FiatToken');
+	}
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const claimOverflowExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	currency: ECurrencies
+) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency));
 
 const donate = async (
 	projectOwner: string,

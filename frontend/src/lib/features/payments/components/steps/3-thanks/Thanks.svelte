@@ -29,7 +29,7 @@
 				</span>
 				and got
 				<span class="strong">
-					{`$${$paymentData.tokenName} ${$paymentData.amount * $paymentData.issuanceRate}.`}
+					{`$${$paymentData.tokenName} ${$paymentData.amount * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)}.`}
 				</span>
 			{/if}
 		</p>

@@ -5,6 +5,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
+	import { holderClaimData } from '$lib/features/overfund/stores/HolderClaimData';
 
 	export let isValid = false;
 
@@ -18,17 +19,21 @@
 
 	const daoData: DAOProject = getContext('daoData');
 
+	$holderClaimData.projectId = daoData.generalInfo.project_id;
+	$holderClaimData.projectOwner = daoData.generalInfo.owner;
+	$holderClaimData.currency = daoData.onChainData.paymentCurrency;
+
 	let res = validationSuite.get();
 	let claimAmount = 0;
 
 	$: holdingPercentage = Number(daoData.userBalance) / Number(daoData.onChainData.totalSupply);
 	$: maxClaimAmount = holdingPercentage * Number(daoData.onChainData.overflowBalance);
-	$: exchangeAmount = (claimAmount / maxClaimAmount) * Number(daoData.userBalance);
+	$: $holderClaimData.amount = (claimAmount / maxClaimAmount) * Number(daoData.userBalance);
 </script>
 
 <div class="column-4">
 	<div class="row-1">
-		<span> You can claim a up to </span>
+		<span> You can claim up to </span>
 		<Currency
 			amount={Math.floor(maxClaimAmount)}
 			currency={daoData.onChainData.paymentCurrency}
@@ -62,7 +67,7 @@
 		<div class="column-1">
 			<span class="small">You will give</span>
 			<Currency
-				amount={exchangeAmount}
+				amount={$holderClaimData.amount}
 				currency={daoData.generalInfo.token_symbol}
 				color="heading"
 			/>
