@@ -1,40 +1,73 @@
 <script lang="ts">
 	import { InputWrapper, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { SignersListElement } from '$components/dao-data-blocks';
-	import { validationSuite } from './validation';
+	import { thresholdSuite, walletsSuite } from '../validations/validation';
+	import SignersListElement from './atoms/signers-list-element/SignersListElement.svelte';
+	import type { SuiteRunResult } from 'vest';
+	import { v4 as uuidv4 } from 'uuid';
 	import GLOSSARY from '$lib/config/glossary';
+	import { updateMultisigExecution } from '$flow/actions';
 
 	export let existingAddresses: string[];
-	export let newAddresses: string[] = [];
+	export let newAddresses: {
+		address: string;
+		id: string;
+	}[] = [];
 	export let threshold: number = 1;
 	export let allWalletsValid: boolean;
 	export let thresholdValid: boolean;
+	export let owner: string;
+	export let projectId: string;
 
-	let walletsValidations: boolean[] = [];
+	const addNewAddress = () => {
+		const walletId = uuidv4();
 
-	const addMultisig = () => {
-		newAddresses = [...newAddresses, ''];
-		walletsValidations = [...walletsValidations, false];
+		newAddresses = [
+			...newAddresses,
+			{
+				address: '',
+				id: walletId
+			}
+		];
+		walletsRes = walletsSuite(newAddresses, walletId, existingAddresses);
 	};
 
-	const deleteNewAddress = (i: number) => {
-		newAddresses = newAddresses.filter((_, index) => index !== i);
-		walletsValidations = walletsValidations.filter((_, index) => index !== i);
+	const deleteNewAddress = (id: string) => {
+		newAddresses = newAddresses.filter((addr) => addr.id !== id);
+		walletsRes = walletsSuite(newAddresses, id, existingAddresses);
 	};
 
-	const deleteExistingAddress = (i: number) => {
-		alert('Submit action to delete this signer');
+	const onDeleteSigner = async (newAddresses: string[]) => {
+		await updateMultisigExecution(owner, projectId, newAddresses, threshold);
 	};
 
-	const handleChange = () => {
-		res = validationSuite(threshold, newAddresses.length + existingAddresses.length);
+	const handleThresholdChange = () => {
+		thresholdRes = thresholdSuite(threshold, newAddresses.length + existingAddresses.length);
 	};
 
-	let res = validationSuite.get();
+	const handleWalletsChange = (input: Event, id: string) => {
+		const target = input.target as HTMLInputElement;
 
-	$: allWalletsValid = walletsValidations.every((walletValid) => walletValid);
-	$: thresholdValid = res.isValid() || !res.hasErrors();
+		if (target.name === id) {
+			walletValidationPending = true;
+		}
+
+		walletsRes = walletsSuite(newAddresses, target.name, existingAddresses);
+
+		(walletsRes as SuiteRunResult).done((result) => {
+			walletsRes = result;
+			walletValidationPending = false;
+		});
+	};
+
+	let walletValidationPending: boolean;
+	let walletValidationMessage = ['Checking if addres is available for being a signer...'];
+
+	let thresholdRes = thresholdSuite.get();
+	let walletsRes = walletsSuite.get();
+
+	$: allWalletsValid = walletsRes.isValid() || !walletsRes.hasErrors();
+	$: thresholdValid = thresholdRes.isValid() || !thresholdRes.hasErrors();
 </script>
 
 <div class="main-wrapper">
@@ -46,15 +79,15 @@
 		<div class="threshold-wrapper">
 			<InputWrapper
 				name="threshold"
-				errors={res.getErrors('threshold')}
-				isValid={res.isValid('threshold')}
+				errors={thresholdRes.getErrors('threshold')}
+				isValid={thresholdRes.isValid('threshold')}
 				required={true}
 			>
 				<input
 					name="threshold"
 					type="number"
 					bind:value={threshold}
-					on:input={handleChange}
+					on:input={handleThresholdChange}
 					max={existingAddresses.length + newAddresses.length}
 					min={1}
 				/>
@@ -68,23 +101,29 @@
 		</div>
 		{#each existingAddresses as multisigAddress, i}
 			<SignersListElement
-				owner={i === 0}
+				owner={multisigAddress === owner}
+				id={i.toString()}
 				{i}
-				on:delete={() => deleteExistingAddress(i)}
+				on:delete={() => onDeleteSigner(existingAddresses.filter(addr => addr !== multisigAddress))}
 				bind:address={multisigAddress}
+				bind:res={walletsRes}
 			/>
 		{/each}
-		{#each newAddresses as address, i}
+		{#each newAddresses as field, i}
 			<SignersListElement
-				{i}
-				on:delete={() => deleteNewAddress(i)}
-				bind:address
-				bind:walletValid={walletsValidations[i]}
+				id={field.id}
+				i={i + existingAddresses.length}
+				on:delete={() => deleteNewAddress(field.id)}
+				bind:address={field.address}
+				bind:res={walletsRes}
+				on:input={(e) => handleWalletsChange(e.detail, field.id)}
+				pending={walletValidationPending}
+				pendingMessage={walletValidationMessage}
 				editable
 			/>
 		{/each}
 		<div class="add-wallet-wrapper">
-			<button on:click={addMultisig} class="header-link">
+			<button on:click={addNewAddress} class="header-link">
 				<Icon icon="tabler:plus" />
 				Add signer
 			</button>

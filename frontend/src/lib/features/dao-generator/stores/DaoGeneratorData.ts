@@ -22,11 +22,6 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		editDelay: '259200.00',
 		mintTokens: false,
 		walletAddresses: []
-	},
-	multisig: {
-		owner: '',
-		addresses: [],
-		threshold: 1
 	}
 };
 
