@@ -3,6 +3,7 @@
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
 	import { MainFundersList, EventsList, RoundsList } from '$components/dao-data-blocks';
 	import SignersListElement from '$lib/features/multisig-manager/components/atoms/signers-list-element/SignersListElement.svelte';
+	import PendingActionsList from '$components/dao-data-blocks/pending-actions/PendingActionsList.svelte';
 
 	export let daoData: DAOProject;
 
@@ -23,6 +24,9 @@
 			{#if daoData.onChainData.fundingCycles.length > 0}
 				<Tab>Rounds</Tab>
 			{/if}
+			{#if daoData.onChainData.actions.length > 0}
+				<Tab>Pending Actions</Tab>
+			{/if}
 		</TabList>
 		<TabPanel>
 			<EventsList {daoData} />
@@ -40,6 +44,11 @@
 		{#if daoData.onChainData.fundingCycles.length > 0}
 			<TabPanel>
 				<RoundsList {daoData} />
+			</TabPanel>
+		{/if}
+		{#if daoData.onChainData.actions.length > 0}
+			<TabPanel>
+				<PendingActionsList {daoData} showDetail={false} />
 			</TabPanel>
 		{/if}
 	</Tabs>
