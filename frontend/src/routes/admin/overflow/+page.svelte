@@ -1,13 +1,14 @@
 <script lang="ts">
-	import CurrencyInput from '$lib/components/atoms/CurrencyInput.svelte';
 	import { fly } from 'svelte/transition';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import CheckElement from './_components/CheckElement.svelte';
 	import { Button, Currency } from '@emerald-dao/component-library';
+	import CurrencyInput from '$lib/components/atoms/CurrencyInput.svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import CheckElement from './_components/CheckElement.svelte';
 	import { transferOverflowSuite } from './_validations/validation';
 
+	// DAO Context
 	const adminData: {
 		activeDao: Writable<number>;
 		userDaos: Writable<DAOProject[]>;
@@ -16,9 +17,21 @@
 	const activeDaoStore = adminData.activeDao;
 	const userDaosStore = adminData.userDaos;
 
-	let transferAmount = 0;
+	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
-	const handleChange = () => {
+	$: activeRound = activeDaoData.onChainData.currentFundingCycle
+		? activeDaoData.onChainData.fundingCycles[Number(activeDaoData.onChainData.currentFundingCycle)]
+		: null;
+
+	// Transfer overflow
+	let transferAmount = 0;
+	const onTransferOverflowTokens = () => {
+		alert('todo');
+	};
+
+	// Input validation
+	let res = transferOverflowSuite.get();
+	const handleInputChange = () => {
 		res = transferOverflowSuite(
 			transferAmount,
 			amountToGoal,
@@ -26,14 +39,7 @@
 		);
 	};
 
-	let res = transferOverflowSuite.get();
-
-	$: activeDaoData = $userDaosStore[$activeDaoStore];
-
-	$: activeRound = activeDaoData.onChainData.currentFundingCycle
-		? activeDaoData.onChainData.fundingCycles[Number(activeDaoData.onChainData.currentFundingCycle)]
-		: null;
-
+	// Overflow data
 	$: activeRoundGoal = activeRound?.details.fundingTarget
 		? Number(activeRound.details.fundingTarget)
 		: 'infinite';
@@ -101,9 +107,13 @@
 					isValid={res.isValid()}
 					errors={res.getErrors('transferOverflowAmount')}
 					bind:value={transferAmount}
-					on:input={handleChange}
+					on:input={handleInputChange}
 				/>
-				<Button width="extended" state={res.isValid() ? 'active' : 'disabled'}>Transfer</Button>
+				<Button
+					width="extended"
+					state={res.isValid() ? 'active' : 'disabled'}
+					on:click={onTransferOverflowTokens}>Transfer</Button
+				>
 			</div>
 		{/if}
 	</div>
