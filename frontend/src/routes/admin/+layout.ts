@@ -25,14 +25,15 @@ export const load: LayoutLoad = async ({ depends }) => {
 			projects: await Promise.all(
 				(data as DaoDatabaseData[]).map(async (project: DaoDatabaseData) => {
 					const events = await fetchProjectEvents(project.project_id);
+					const onChainData = await getProjectInfo(
+						project.contract_address,
+						project.owner,
+						project.project_id
+					);
 
 					return {
 						generalInfo: project,
-						onChainData: await getProjectInfo(
-							project.contract_address,
-							project.owner,
-							project.project_id
-						),
+						onChainData,
 						events: events.reverse()
 					};
 				})
