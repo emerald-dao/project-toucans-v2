@@ -41,7 +41,7 @@
 
 			.title-wrapper {
 				background-color: transparent;
-				border-bottom: 1px solid var(--clr-border-primary);
+				border-bottom: 0.5px solid var(--clr-border-primary);
 			}
 		}
 
