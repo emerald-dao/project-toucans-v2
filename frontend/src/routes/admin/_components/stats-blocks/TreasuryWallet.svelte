@@ -1,7 +1,7 @@
 <script lang="ts">
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Button, Currency, Label } from '@emerald-dao/component-library';
+	import { Currency } from '@emerald-dao/component-library';
 
 	export let daoData: DAOProject;
 	export let color: 'primary' | 'neutral' = 'primary';
