@@ -167,7 +167,9 @@ const claimOverflow = async (
 ) => {
 	let txCode = claimOverflowTx;
 	if (currency === ECurrencies.USDC) {
-		txCode = txCode.replaceAll('flowTokenReceiver', 'USDCVaultReceiver').replaceAll('FlowToken', 'FiatToken');
+		txCode = txCode
+			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
+			.replaceAll('FlowToken', 'FiatToken');
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -226,7 +228,7 @@ export const donateExecution = (
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
-	console.log(newRoundData)
+	console.log(newRoundData);
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	console.log(new Date(newRoundData.startDate));
@@ -263,9 +265,7 @@ export const newRoundExecution = () => executeTransaction(newRound);
 const togglePurchasing = async (projectId: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(togglePurchasingTx),
-		args: (arg, t) => [
-			arg(projectId, t.String),
-		],
+		args: (arg, t) => [arg(projectId, t.String)],
 		proposer: fcl.authz,
 		payer: fcl.authz,
 		authorizations: [fcl.authz],
@@ -273,16 +273,17 @@ const togglePurchasing = async (projectId: string) => {
 	});
 };
 
-export const togglePurchasingExecution = (projectId: string) => executeTransaction(() => togglePurchasing(projectId));
+export const togglePurchasingExecution = (projectId: string) =>
+	executeTransaction(() => togglePurchasing(projectId));
 
 const proposeWithdraw = async (
 	tokenSymbol: string,
 	recipient: string,
 	amount: string,
 	projectOwner: string,
-	projectId: string,
+	projectId: string
 ) => {
-	console.log(amount)
+	console.log(amount);
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(withdrawTokensTx),
 		args: (arg, t) => [
@@ -304,8 +305,11 @@ export const proposeWithdrawExecution = (
 	recipient: string,
 	amount: string,
 	projectOwner: string,
-	projectId: string,
-) => executeTransaction(() => proposeWithdraw(tokenSymbol, recipient, amount, projectOwner, projectId));
+	projectId: string
+) =>
+	executeTransaction(() =>
+		proposeWithdraw(tokenSymbol, recipient, amount, projectOwner, projectId)
+	);
 
 const updateMultisig = async (
 	projectOwner: string,

@@ -17,6 +17,9 @@
 	const activeDaoStore = adminData.activeDao;
 	const userDaosStore = adminData.userDaos;
 
+	console.log($activeDaoStore);
+	console.log($userDaosStore);
+
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
 	const copyToClipboard = () => {
@@ -113,6 +116,16 @@
 					<Icon icon="tabler:signature" />
 				</div>
 				Multisig
+			</a>
+			<a
+				href="/admin/overflow"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('overflow')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:moneybag" />
+				</div>
+				Overflow
 			</a>
 		</div>
 	</div>

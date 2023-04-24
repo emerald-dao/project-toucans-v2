@@ -1,7 +1,7 @@
 <script type="ts">
 	import { Button } from '@emerald-dao/component-library';
 	import { AdminNav } from './_components';
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { user } from '$stores/flow/FlowStore';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
@@ -26,8 +26,6 @@
 	const daosDataStore: Writable<DAOProject[]> = writable(data.projects, (set) => {
 		const getProjectsIds = () => {
 			const ids = data.projects.map((project) => project.generalInfo.project_id);
-
-			console.log('ids', ids.join(','));
 
 			return ids.join(',');
 		};
@@ -69,7 +67,7 @@
 	};
 
 	$: setContext<{
-		activeDao: () => Writable<number>;
+		activeDao: Writable<number>;
 		userDaos: Writable<DAOProject[]>;
 	}>('admin-data', {
 		userDaos: daosDataStore,
