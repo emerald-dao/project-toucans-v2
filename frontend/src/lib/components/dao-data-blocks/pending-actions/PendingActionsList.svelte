@@ -7,16 +7,14 @@
 	export let showDetail = true;
 </script>
 
-{#if $user.addr}
-	{#each daoData.onChainData.actions as action}
-		<PendingActionsListElement
-			projectOwner={daoData.generalInfo.owner}
-			daoId={daoData.generalInfo.project_id}
-			{action}
-			threshold={action.threshold}
-			{showDetail}
-			isSigner={action.signers.includes($user.addr)}
-			showDao={false}
-		/>
-	{/each}
-{/if}
+{#each daoData.onChainData.actions as action}
+	<PendingActionsListElement
+		projectOwner={daoData.generalInfo.owner}
+		daoId={daoData.generalInfo.project_id}
+		{action}
+		threshold={action.threshold}
+		{showDetail}
+		isSigner={$user.addr ? action.signers.includes($user.addr) : false}
+		showDao={false}
+	/>
+{/each}
