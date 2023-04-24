@@ -4,39 +4,61 @@
 	import { Button, Currency, Label } from '@emerald-dao/component-library';
 
 	export let daoData: DAOProject;
+	export let color: 'primary' | 'neutral' = 'primary';
 </script>
 
-<a href="/admin/withdraw" class="main-wrapper column-5">
-	<div class="row-2 align-center">
+<div class={`main-wrapper ${color}`}>
+	<div class="title-wrapper row-2 align-center">
 		<IconCircle icon="tabler:wallet" color="primary" />
-		<h4>Treasury Funds</h4>
+		<h4>Treasury Wallet</h4>
 	</div>
-	{#each Object.entries(daoData.onChainData.treasuryBalances) as [token, balance]}
-		<Currency
-			amount={Number(balance)}
-			currency={token}
-			color="heading"
-			fontSize="var(--font-size-5)"
-		/>
-	{/each}
-</a>
+	<div class="currencies-wrapper column-3">
+		{#each Object.entries(daoData.onChainData.treasuryBalances) as [token, balance]}
+			<Currency
+				amount={Number(balance)}
+				currency={token}
+				color="heading"
+				fontSize="var(--font-size-4)"
+			/>
+		{/each}
+	</div>
+</div>
 
 <style lang="scss">
 	.main-wrapper {
-		padding: var(--space-7);
-		background-color: var(--clr-primary-badge);
-		border-radius: var(--radius-5);
 		text-decoration: none;
 		color: var(--clr-font-text);
-		transition: 0.4s;
+		border-radius: var(--radius-4);
+		overflow: hidden;
 
-		h4 {
-			font-size: var(--font-size-2);
-			color: var(--clr-font-text);
+		&.primary {
+			background-color: var(--clr-primary-badge);
 		}
 
-		&:hover {
-			background-color: var(--clr-primary-800);
+		&.neutral {
+			background-color: transparent;
+			border: 1px solid var(--clr-border-primary);
+
+			.title-wrapper {
+				background-color: transparent;
+				border-bottom: 1px solid var(--clr-border-primary);
+			}
+		}
+
+		.title-wrapper {
+			border-bottom: 2px solid var(--clr-background-primary);
+			background-color: var(--clr-primary-badge);
+			transition: 0.4s;
+
+			h4 {
+				font-size: var(--font-size-2);
+			}
+		}
+
+		.title-wrapper,
+		.currencies-wrapper {
+			padding-inline: var(--space-9);
+			padding-block: var(--space-5);
 		}
 	}
 </style>

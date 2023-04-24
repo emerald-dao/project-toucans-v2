@@ -4,84 +4,92 @@
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
+	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
 
 	export let daoData: DAOProject;
 </script>
 
-<div class="card-primary column">
-	<img src={daoData.generalInfo.banner_image} alt="Background illustration" class="banner-image" />
-	<div class="content-wrapper column-14">
-		<div class="column-4">
-			<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
-			<div class="commands-wrapper row-2 align-center">
-				{#if daoData.onChainData.minting}
-					<Label size="xx-small" color="neutral" hasBorder={false}>
-						Minting enabled
-						<TooltipIcon
-							width={0.6}
-							tooltip={`Project signers can mint $${daoData.generalInfo.token_symbol}`}
-							backgroundColor="var(--clr-neutral-badge)"
-							borderColor="var(--clr-neutral-badge)"
-						/>
-					</Label>
-				{/if}
-				<SubscribeButton
-					projectId={daoData.generalInfo.project_id}
-					projectOwner={daoData.generalInfo.owner}
-				/>
-			</div>
-			<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
-			{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
-				<div class="row-3 align-end">
-					<Label size="small" color="tertiary" hasBorder={false}
-						>{`$${daoData.generalInfo.token_symbol}`}</Label
-					>
-					<div class="row-2 align-end">
-						{#if daoData.generalInfo.twitter}
-							<a
-								href={`https://twitter.com/${daoData.generalInfo.twitter}`}
-								rel="noreferrer"
-								class="header-link"
-								target="_blank"
-							>
-								<Icon icon="tabler:brand-twitter" width="16" />
-							</a>
-						{/if}
-						{#if daoData.generalInfo.discord}
-							<a
-								href={`https://discord.gg/invite/${daoData.generalInfo.discord}`}
-								rel="noreferrer"
-								class="header-link"
-								target="_blank"
-							>
-								<Icon icon="tabler:brand-discord" width="16" />
-							</a>
-						{/if}
-						{#if daoData.generalInfo.website}
-							<a
-								href={`https://${daoData.generalInfo.website}`}
-								rel="noreferrer"
-								class="header-link"
-								target="_blank"
-							>
-								<Icon icon="tabler:world" width="16" />
-							</a>
-						{/if}
-					</div>
+<aside class="column-7">
+	<div class="card-primary column">
+		<img
+			src={daoData.generalInfo.banner_image}
+			alt="Background illustration"
+			class="banner-image"
+		/>
+		<div class="content-wrapper column-14">
+			<div class="column-4">
+				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
+				<div class="commands-wrapper row-2 align-center">
+					{#if daoData.onChainData.minting}
+						<Label size="xx-small" color="neutral" hasBorder={false}>
+							Minting enabled
+							<TooltipIcon
+								width={0.6}
+								tooltip={`Project signers can mint $${daoData.generalInfo.token_symbol}`}
+								backgroundColor="var(--clr-neutral-badge)"
+								borderColor="var(--clr-neutral-badge)"
+							/>
+						</Label>
+					{/if}
+					<SubscribeButton
+						projectId={daoData.generalInfo.project_id}
+						projectOwner={daoData.generalInfo.owner}
+					/>
 				</div>
-			{/if}
-			<p class="small">{daoData.generalInfo.description}</p>
-		</div>
-		{#if daoData.onChainData.currentFundingCycle}
-			<div class="row-4">
-				<PaymentModal {daoData} paymentType="fund" />
-				<PaymentModal {daoData} paymentType="donate" />
+				<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
+				{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
+					<div class="row-3 align-end">
+						<Label size="small" color="tertiary" hasBorder={false}
+							>{`$${daoData.generalInfo.token_symbol}`}</Label
+						>
+						<div class="row-2 align-end">
+							{#if daoData.generalInfo.twitter}
+								<a
+									href={`https://twitter.com/${daoData.generalInfo.twitter}`}
+									rel="noreferrer"
+									class="header-link"
+									target="_blank"
+								>
+									<Icon icon="tabler:brand-twitter" width="16" />
+								</a>
+							{/if}
+							{#if daoData.generalInfo.discord}
+								<a
+									href={`https://discord.gg/invite/${daoData.generalInfo.discord}`}
+									rel="noreferrer"
+									class="header-link"
+									target="_blank"
+								>
+									<Icon icon="tabler:brand-discord" width="16" />
+								</a>
+							{/if}
+							{#if daoData.generalInfo.website}
+								<a
+									href={`https://${daoData.generalInfo.website}`}
+									rel="noreferrer"
+									class="header-link"
+									target="_blank"
+								>
+									<Icon icon="tabler:world" width="16" />
+								</a>
+							{/if}
+						</div>
+					</div>
+				{/if}
+				<p class="small">{daoData.generalInfo.description}</p>
 			</div>
-		{:else}
-			<PaymentModal {daoData} paymentType="donate" />
-		{/if}
+			{#if daoData.onChainData.currentFundingCycle}
+				<div class="row-4">
+					<PaymentModal {daoData} paymentType="fund" />
+					<PaymentModal {daoData} paymentType="donate" />
+				</div>
+			{:else}
+				<PaymentModal {daoData} paymentType="donate" />
+			{/if}
+		</div>
 	</div>
-</div>
+	<TreasuryWallet {daoData} color="neutral" />
+</aside>
 
 <style type="scss">
 	.card-primary {

@@ -32,7 +32,9 @@
 		</div>
 		<div class="column-space-between second-column">
 			<div class="column-6">
-				<TreasuryWallet daoData={activeDaoData} />
+				<a href="/admin/withdraw">
+					<TreasuryWallet daoData={activeDaoData} />
+				</a>
 				<SecondaryTabs daoData={activeDaoData} />
 			</div>
 			<Signers daoData={activeDaoData} />
@@ -53,6 +55,10 @@
 			.second-column {
 				display: flex;
 				height: 100%;
+
+				a {
+					text-decoration: none;
+				}
 			}
 		}
 	}
