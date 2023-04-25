@@ -17,6 +17,22 @@ const validationSuite = create((data = {}, daoProjects, currentField?) => {
 		enforce(data.name).longerThan(4);
 	});
 
+	test('name', 'Name must be shorter than 30 chars', () => {
+		enforce(data.name).shorterThan(30);
+	});
+
+	test('contractName', 'Your DAO needs a contract name!', () => {
+		enforce(data.contractName).isNotBlank();
+	});
+
+	test('contractName', 'Contract name must be at least 4 chars', () => {
+		enforce(data.contractName).longerThan(4);
+	});
+
+	test('contractName', 'Contract name must be shorter than 30 chars', () => {
+		enforce(data.contractName).shorterThan(30);
+	});
+
 	skipWhen(validationSuite.get().hasErrors('name'), () => {
 		test.memo(
 			'name',

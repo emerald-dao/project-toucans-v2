@@ -32,7 +32,19 @@
 		const target = input.target as HTMLInputElement;
 
 		if (target.name === 'name') {
+			$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
+				.replace(/[^\w\s]|\s/gi, '')
+				.toLowerCase();
+
 			namePending = true;
+			contractNamePending = true;
+		}
+
+		if (target.name === 'contractName') {
+			$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.contractName
+				.replace(/[^\w\s]|\s/gi, '')
+				.toLowerCase();
+
 			contractNamePending = true;
 		}
 
@@ -69,14 +81,7 @@
 	});
 
 	$: if ($daoGeneratorData.daoDetails.name) {
-		$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
-			.replace(/[^\w\s]|\s/gi, '')
-			.toLowerCase();
 	}
-
-	// $: $daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
-	// 	.replace(/[^\w\s]|\s/gi, '')
-	// 	.toLowerCase();
 
 	$: $daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName
 		.toUpperCase()
@@ -128,7 +133,9 @@
 			type="text"
 			name="contractName"
 			placeholder="emeralddao"
+			maxlength="30"
 			bind:value={$daoGeneratorData.daoDetails.contractName}
+			on:input={handleChange}
 		/>
 	</InputWrapper>
 	<InputWrapper
