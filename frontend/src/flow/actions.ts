@@ -14,6 +14,7 @@ import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
+import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -191,6 +192,31 @@ export const claimOverflowExecution = (
 	amount: string,
 	currency: ECurrencies
 ) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency));
+
+const transferOverflow = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(transferOverflowTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const transferOverflowExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string
+) => executeTransaction(() => transferOverflow(projectOwner, projectId, amount));
 
 const donate = async (
 	projectOwner: string,

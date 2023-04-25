@@ -7,6 +7,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import CheckElement from './_components/CheckElement.svelte';
 	import { transferOverflowSuite } from './_validations/validation';
+	import { transferOverflowExecution } from '$flow/actions';
 
 	// DAO Context
 	const adminData: {
@@ -24,9 +25,9 @@
 		: null;
 
 	// Transfer overflow
-	let transferAmount = 0;
-	const onTransferOverflowTokens = () => {
-		alert('todo');
+	let transferAmount: number = 0;
+	const onTransferOverflowTokens = async () => {
+		await transferOverflowExecution(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id, transferAmount.toString())
 	};
 
 	// Input validation
@@ -43,8 +44,8 @@
 	$: activeRoundGoal = activeRound?.details.fundingTarget
 		? Number(activeRound.details.fundingTarget)
 		: 'infinite';
-	$: activeRoundFunding = activeRound?.paymentTokensSent
-		? Number(activeRound.paymentTokensSent)
+	$: activeRoundFunding = activeRound?.raisedTowardsGoal
+		? Number(activeRound.raisedTowardsGoal)
 		: 0;
 	$: amountToGoal =
 		activeRoundGoal != 'infinite' ? (activeRoundGoal as number) - activeRoundFunding : 0;

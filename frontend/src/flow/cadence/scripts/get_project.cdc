@@ -31,6 +31,7 @@ pub struct Info {
   pub let minting: Bool
   pub let paymentCurrency: String
   pub let maxSupply: UFix64?
+  pub let purchasing: Bool
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -53,6 +54,7 @@ pub struct Info {
     }
     self.paymentCurrency = info.paymentTokenInfo.symbol
     self.maxSupply = ExampleToken.maxSupply
+    self.purchasing = true // info.purchasing
 
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()
