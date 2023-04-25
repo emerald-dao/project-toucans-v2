@@ -40,6 +40,7 @@ export interface DaoBlockchainData {
 	};
 	fundingCycles: FundingCycle[];
 	totalSupply: string;
+	purchasing: boolean;
 	maxSupply: string | null;
 	balances: {
 		[address: string]: string;
