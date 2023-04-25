@@ -54,7 +54,7 @@ export const deployDao = async () => {
 			bannerImage
 		);
 		await addNotification(eventData.projectId, get(user).addr as string);
-		await goto(`/discover/${projectData.daoDetails.contractName}`);
+		await goto(`/p/${projectData.daoDetails.contractName}`);
 
 		generatorActiveStep.reset();
 		daoGeneratorData.set({

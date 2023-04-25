@@ -17,15 +17,12 @@
 	const activeDaoStore = adminData.activeDao;
 	const userDaosStore = adminData.userDaos;
 
-	console.log($activeDaoStore);
-	console.log($userDaosStore);
-
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
 	const copyToClipboard = () => {
 		const app = new CopyToClipboard({
 			target: document.getElementById('clipboard') as Element,
-			props: { name: `https://${dappInfo.url}/discover/${activeDaoData.generalInfo.project_id}` }
+			props: { name: `${$page.url.origin}/p/${activeDaoData.generalInfo.project_id}` }
 		});
 		app.$destroy();
 	};

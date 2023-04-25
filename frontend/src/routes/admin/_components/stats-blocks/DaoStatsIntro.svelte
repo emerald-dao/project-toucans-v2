@@ -13,7 +13,7 @@
 		<div class="row-2 name-wrapper">
 			<h2>{daoData.generalInfo.name}</h2>
 			<a
-				href={`/discover/${daoData.generalInfo.project_id}`}
+				href={`/p/${daoData.generalInfo.project_id}`}
 				target="_blank"
 				class="header-link"
 				rel="noreferrer"

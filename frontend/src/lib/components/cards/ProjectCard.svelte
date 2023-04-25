@@ -4,7 +4,7 @@
 	export let story = true;
 </script>
 
-<a href={`/discover/${name}`} class="card-primary" class:with-story={story}>
+<a href={`/p/${name}`} class="card-primary" class:with-story={story}>
 	<div class="column-5">
 		<div class="row-3 align-center">
 			<img src="/ec-logo.png" alt="DAO logo" />
