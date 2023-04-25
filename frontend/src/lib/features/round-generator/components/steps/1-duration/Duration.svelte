@@ -16,7 +16,7 @@
 
 	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
 
-	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
+	const minStartTimePlus5Minutes = new Date(minStartTime.getTime());
 
 	onMount(() => {
 		const interval = setInterval(() => {

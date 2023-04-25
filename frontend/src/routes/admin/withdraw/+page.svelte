@@ -4,7 +4,6 @@
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import DistributeTokens from '$lib/features/distribute-tokens/components/DistributeTokens.svelte';
-	import TreasuryWallet from '../_components/stats-blocks/TreasuryWallet.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;

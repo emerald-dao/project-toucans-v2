@@ -21,9 +21,9 @@
 	export let activeRound: number | null;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
-	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
+	$: funding = round.raisedTowardsGoal ? Number(round.raisedTowardsGoal) : 0;
 
-	$: goalReached = goal !== 'infinite' ? (goal as number) < funding : false;
+	$: goalReached = goal !== 'infinite' ? (goal as number) <= funding : false;
 	$: overflow = goal !== 'infinite' ? funding - (goal as number) : 0;
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
@@ -54,7 +54,7 @@
 		{/if}
 		{#if goal !== 'infinite'}
 			<ProgressBar
-				value={Number(round.paymentTokensSent)}
+				value={Number(round.raisedTowardsGoal)}
 				max={Number(round.details.fundingTarget)}
 				size="large"
 				showPercentage={true}

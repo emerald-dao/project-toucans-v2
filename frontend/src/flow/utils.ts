@@ -155,7 +155,6 @@ export const getFindProfile = async (address: string) => {
 			args: (arg, t) => [arg(address, t.Address)]
 		});
 	} catch (e) {
-		console.log(e);
 		return null;
 	}
 };
@@ -176,9 +175,9 @@ export const verifyAccountOwnership = async (userObject) => {
 export const formatFix = (value) => {
 	const i = Number.parseFloat(value);
 	if (i % 1 == 0) {
-		return i.toFixed(1);
+		return i.toFixed(4);
 	}
-	return i;
+	return i.toFixed(4);
 };
 
 export const splitList = (list: string[], chunkSize: number) => {

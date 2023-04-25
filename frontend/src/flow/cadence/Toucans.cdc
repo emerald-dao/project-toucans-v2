@@ -182,6 +182,7 @@ pub contract Toucans {
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     pub var totalFunding: UFix64
     pub let editDelay: UFix64
+    pub var purchasing: Bool
     pub let minting: Bool
 
     // Setters
@@ -437,6 +438,7 @@ pub contract Toucans {
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String) {
       pre {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
+        self.purchasing: "Purchasing is turned off at the moment."
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
       
@@ -624,9 +626,9 @@ pub contract Toucans {
                                                                         
 
     // can only be called if amount does not put us over the funding target
-    pub fun convertOverflow(amount: UFix64) {
+    pub fun transferOverflowToCurrentRound(amount: UFix64) {
       let cycle = self.borrowCurrentFundingCycleRef() ?? panic("There must be an active funding cycle in order to do this.")
-      let overflow <- self.treasury[self.paymentTokenInfo.tokenType]?.withdraw!(amount: amount)
+      let overflow <- self.overflow.withdraw(amount: amount)
       // will fail if this puts the cycle over the funding target
       cycle.raise(amount: amount)
       self.depositToTreasury(vault: <- overflow)
@@ -641,9 +643,9 @@ pub contract Toucans {
       let percent: UFix64 = balance / totalSupply
       assert(percent >= 0.0 && percent <= 1.0, message: "Percent must be a percent value.")
 
-      let treasuryBalanceForType = self.getVaultBalanceInTreasury(vaultType: receiver.getType())!
-
-      self.withdrawFromTreasury(vault: receiver, amount: treasuryBalanceForType * percent)
+      let overflowBalance = self.getOverflowBalance()
+      
+      receiver.deposit(from: <- self.overflow.withdraw(amount: overflowBalance * percent))
       self.depositToTreasury(vault: <- tokenVault)
     }
 

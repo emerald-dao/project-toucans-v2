@@ -13,6 +13,8 @@ import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
+import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
+import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -158,6 +160,64 @@ export const fundProjectExecution = (
 		fundProject(projectOwner, projectId, amount, message, currency, expectedAmount)
 	);
 
+const claimOverflow = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	currency: ECurrencies
+) => {
+	let txCode = claimOverflowTx;
+	if (currency === ECurrencies.USDC) {
+		txCode = txCode
+			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
+			.replaceAll('FlowToken', 'FiatToken');
+	}
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const claimOverflowExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	currency: ECurrencies
+) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency));
+
+const transferOverflow = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(transferOverflowTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const transferOverflowExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string
+) => executeTransaction(() => transferOverflow(projectOwner, projectId, amount));
+
 const donate = async (
 	projectOwner: string,
 	projectId: string,
@@ -194,7 +254,7 @@ export const donateExecution = (
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
-	console.log(newRoundData)
+	console.log(newRoundData);
 	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	console.log(new Date(newRoundData.startDate));
@@ -231,9 +291,7 @@ export const newRoundExecution = () => executeTransaction(newRound);
 const togglePurchasing = async (projectId: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(togglePurchasingTx),
-		args: (arg, t) => [
-			arg(projectId, t.String),
-		],
+		args: (arg, t) => [arg(projectId, t.String)],
 		proposer: fcl.authz,
 		payer: fcl.authz,
 		authorizations: [fcl.authz],
@@ -241,16 +299,17 @@ const togglePurchasing = async (projectId: string) => {
 	});
 };
 
-export const togglePurchasingExecution = (projectId: string) => executeTransaction(() => togglePurchasing(projectId));
+export const togglePurchasingExecution = (projectId: string) =>
+	executeTransaction(() => togglePurchasing(projectId));
 
 const proposeWithdraw = async (
 	tokenSymbol: string,
 	recipient: string,
 	amount: string,
 	projectOwner: string,
-	projectId: string,
+	projectId: string
 ) => {
-	console.log(amount)
+	console.log(amount);
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(withdrawTokensTx),
 		args: (arg, t) => [
@@ -272,8 +331,11 @@ export const proposeWithdrawExecution = (
 	recipient: string,
 	amount: string,
 	projectOwner: string,
-	projectId: string,
-) => executeTransaction(() => proposeWithdraw(tokenSymbol, recipient, amount, projectOwner, projectId));
+	projectId: string
+) =>
+	executeTransaction(() =>
+		proposeWithdraw(tokenSymbol, recipient, amount, projectOwner, projectId)
+	);
 
 const updateMultisig = async (
 	projectOwner: string,

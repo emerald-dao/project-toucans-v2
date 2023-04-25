@@ -20,9 +20,9 @@
 	export let activeRound: number | null;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
-	$: funding = round.paymentTokensSent ? Number(round.paymentTokensSent) : 0;
+	$: funding = round.raisedTowardsGoal ? Number(round.raisedTowardsGoal) : 0;
 
-	$: goalReached = goal != 'infinite' ? (goal as number) < funding : false;
+	$: goalReached = goal != 'infinite' ? (goal as number) <= funding : false;
 
 	$: startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
 	$: endDate = round.details.timeframe.endTime
