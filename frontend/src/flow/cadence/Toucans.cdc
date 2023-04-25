@@ -129,21 +129,19 @@ pub contract Toucans {
       self.allowedAddresses = allowedAddresses
       self.catalogCollectionIdentifier = catalogCollectionIdentifier
       self.extra = extra
-
-      // 5% goes to EC Treasury
-      self.payouts = payouts.concat([Payout(Toucans.account.address, 0.05)])
+      self.payouts = payouts
 
       var percentCount: UFix64 = 0.0
       for payout in self.payouts {
         percentCount = percentCount + payout.percent
       }
-      assert(percentCount <= 1.0, message: "Percents cannot be more than 100%.")
+      assert(percentCount <= 0.95, message: "Payouts cannot be more than 95% because Emerald City takes 5% of all funds raised.")
     }
   }
 
   pub struct FundingCycle {
     pub(set) var details: FundingCycleDetails
-    pub var projectTokensPurchased: UFix64
+    pub var projectTokensAcquired: UFix64
     // The total amount of payment tokens sent through
     pub var paymentTokensSent: UFix64
     // The amount towards the goal (is capped at `details.fundingTarget`)
@@ -151,10 +149,10 @@ pub contract Toucans {
     pub let funders: {Address: UFix64}
 
     // called when a purchase happens
-    pub fun handlePaymentReceipt(projectTokensPurchased: UFix64, paymentTokensSent: UFix64, payer: Address) {
-      self.projectTokensPurchased = self.projectTokensPurchased + projectTokensPurchased
-      self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
-      self.paymentTokensSent = self.paymentTokensSent + paymentTokensSent
+    pub fun handlePaymentReceipt(projectTokensAcquired: UFix64, cost: UFix64, payer: Address) {
+      self.projectTokensAcquired = self.projectTokensAcquired + cost
+      self.funders[payer] = (self.funders[payer] ?? 0.0) + cost
+      self.paymentTokensSent = self.paymentTokensSent + cost
     }
 
     // called when overflow is converted
@@ -169,7 +167,7 @@ pub contract Toucans {
 
     init(details: FundingCycleDetails) {
       self.details = details
-      self.projectTokensPurchased = 0.0
+      self.projectTokensAcquired = 0.0
       self.raisedTowardsGoal = 0.0
       self.funders = {}
       self.paymentTokensSent = 0.0
@@ -441,8 +439,14 @@ pub contract Toucans {
         self.purchasing: "Purchasing is turned off at the moment."
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
+
+      // tax for emerald city (5%)
+      let emeraldCityTreasury = getAccount(Toucans.account.address).getCapability(self.paymentTokenInfo.receiverPath)
+                                          .borrow<&{FungibleToken.Receiver}>()
+                                          ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
+      emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
       
-      let paymentTokensSent: UFix64 = paymentTokens.balance
+      let cost: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
 
       // If there is a limit on allowed addresses, check that here.
@@ -453,6 +457,7 @@ pub contract Toucans {
         )
       }
 
+      // If the payer must have a certain NFT, check that here.
       if let catalogCollectionIdentifier: String = fundingCycleRef.details.catalogCollectionIdentifier {
         assert(
           ToucansUtils.ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: catalogCollectionIdentifier, user: payer),
@@ -461,55 +466,64 @@ pub contract Toucans {
       }
 
       let issuanceRate: UFix64 = self.getCurrentIssuanceRate()!
-      let amount: UFix64 = issuanceRate * paymentTokensSent
-      let mintedTokens <- self.minter.mint(amount: amount)
+      let amountToMint: UFix64 = issuanceRate * cost
+      let mintedTokens: @FungibleToken.Vault <- self.minter.mint(amount: amountToMint)
       assert(mintedTokens.getType() == self.projectTokenInfo.tokenType, message: "Someone is messing with the minter. It's not minting the original type.")
-      assert(amount == mintedTokens.balance, message: "Not enough tokens were minted.")
+      assert(amountToMint == mintedTokens.balance, message: "Not enough tokens were minted.")
 
-      // Tax the purchased tokens with reserve rate
-      let tax: @FungibleToken.Vault <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.details.reserveRate)
-      fundingCycleRef.handlePaymentReceipt(projectTokensPurchased: mintedTokens.balance, paymentTokensSent: paymentTokensSent, payer: payer)
+      // RESERVE RATE: Withhold some of the purchased tokens
+      let reserved: @FungibleToken.Vault <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.details.reserveRate)
+      // Amount acquired by user is the amount minted - the reserve tax
+      fundingCycleRef.handlePaymentReceipt(projectTokensAcquired: mintedTokens.balance, cost: cost, payer: payer)
+
       // Deposit new tokens to payer
       projectTokenReceiver.deposit(from: <- mintedTokens)
       // Deposit tax to project treasury
-      self.depositToTreasury(vault: <- tax)
-
-      // Calculate payouts
-      for payout in fundingCycleRef.details.payouts {
-        ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentTokensSent * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
-      }
+      self.depositToTreasury(vault: <- reserved)
 
       // 3 cases:
       // 1. Funding target is nil OR amount sent won't exceed the target (deposit everything to treasury)
       // 2. Funding goal is already reached (deposit everything to overflow)
       // 3. Amount sent will make us reach the goal (split between overflow and treasury)
       let fundingTarget: UFix64? = fundingCycleRef.details.fundingTarget
-      let amountLeftToTreasury: UFix64 = paymentTokens.balance
-      if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + amountLeftToTreasury <= fundingTarget!) {
+      if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + cost <= fundingTarget!) {
         // Deposit everything to treasury because there's no such thing as overflow
-        fundingCycleRef.raise(amount: paymentTokens.balance)
+        fundingCycleRef.raise(amount: cost)
+        // Calculate payouts
+        for payout in fundingCycleRef.details.payouts {
+          ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: cost * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+        }
         self.depositToTreasury(vault: <- paymentTokens)
       } else if fundingCycleRef.raisedTowardsGoal == fundingTarget! {
         // deposit everything to overflow
         assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
         self.depositToOverflow(vault: <- paymentTokens)
       } else {
+        // this is the amount that will put the current round at its goal
         let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
+        // mark that we've raised that amount
         fundingCycleRef.raise(amount: amountToTreasury)
+        // calculate payouts 
+        for payout in fundingCycleRef.details.payouts {
+          ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountToTreasury * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+        }
+        // put the rest in treasury
         self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
+
+        // Give the rest to overflow
         assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
         self.depositToOverflow(vault: <- paymentTokens)
       }
   
       // Tokens were purchased, so increment amount raised
-      self.totalFunding = self.totalFunding + paymentTokensSent
-      self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentTokensSent
+      self.totalFunding = self.totalFunding + cost
+      self.funders[payer] = (self.funders[payer] ?? 0.0) + cost
       emit Purchase(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: fundingCycleRef.details.cycleId,
         tokenSymbol: self.paymentTokenInfo.symbol,
-        amount: paymentTokensSent,
+        amount: cost,
         by: payer,
         message: message
       )

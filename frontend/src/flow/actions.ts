@@ -254,14 +254,11 @@ export const donateExecution = (
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
-	console.log(newRoundData);
-	console.log(newRoundData);
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
-	console.log(new Date(newRoundData.startDate));
 	const startTime = formatFix(newRoundData.startDate);
 	const endTime = newRoundData.infiniteDuration ? null : formatFix(newRoundData.endDate);
-	const [, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
-	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
+	const [,, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
+	const [,, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
 		formatFix(x[1] / 100)
 	);
 	return await fcl.mutate({

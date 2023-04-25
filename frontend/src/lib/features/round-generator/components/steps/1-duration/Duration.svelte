@@ -16,7 +16,7 @@
 
 	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
 
-	const minStartTimePlus5Minutes = new Date(minStartTime.getTime());
+	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
 
 	onMount(() => {
 		const interval = setInterval(() => {
@@ -36,7 +36,7 @@
 			currency: ECurrencies.FLOW,
 			infiniteFundingGoal: false,
 			infiniteDuration: false,
-			distributionList: [[$user.addr, 100]],
+			distributionList: [["Treasury", 95], ["Emerald City", 5]],
 			reserveRate: undefined,
 			issuanceRate: undefined,
 			projectId,
