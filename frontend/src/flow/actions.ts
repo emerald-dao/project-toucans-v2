@@ -270,7 +270,7 @@ const newRound = async () => {
 			arg(distributionPercentages, t.Array(t.UFix64)),
 			arg(newRoundData.allowOverflow, t.Bool),
 			arg(null, t.Optional(t.Array(t.Address))),
-			arg(null, t.Optional(t.String))
+			arg(newRoundData.requiredNft, t.Optional(t.String))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

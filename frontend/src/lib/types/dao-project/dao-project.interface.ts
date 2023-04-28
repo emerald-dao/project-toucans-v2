@@ -42,6 +42,11 @@ export interface DaoBlockchainData {
 	totalSupply: string;
 	purchasing: boolean;
 	maxSupply: string | null;
+	requiredNft: {
+		image: string;
+		name: string;
+		link: string;
+	} | null;
 	balances: {
 		[address: string]: string;
 	};
