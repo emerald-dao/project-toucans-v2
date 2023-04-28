@@ -17,7 +17,19 @@
 	<div class="round-modal-wrapper" class:grid={steps.length > 2}>
 		<StepsOverview {steps} {heading} {icon} {description} hideLastStep={true} />
 		<div class="main-wrapper column-space-between">
-			<slot />
+			<div class="column-6">
+				{#if steps[$activeStepStore].name || steps[$activeStepStore].description}
+					<div class="title-wrapper column-1">
+						{#if steps[$activeStepStore].name}
+							<h4>{steps[$activeStepStore].name}</h4>
+						{/if}
+						{#if steps[$activeStepStore].description}
+							<p class="xsmall">{steps[$activeStepStore].description}</p>
+						{/if}
+					</div>
+				{/if}
+				<slot />
+			</div>
 			{#each steps as step, i}
 				{#if $activeStepStore === i}
 					<StepButtons {step} {activeStepStore} />
@@ -39,8 +51,17 @@
 		background-color: var(--clr-background-secondary);
 
 		.main-wrapper {
-			padding: var(--space-11);
+			padding: var(--space-9);
 			width: 100%;
+
+			.title-wrapper {
+				border-bottom: 1px var(--clr-neutral-badge) solid;
+				padding-bottom: var(--space-3);
+
+				h4 {
+					font-size: var(--font-size-3);
+				}
+			}
 		}
 	}
 </style>

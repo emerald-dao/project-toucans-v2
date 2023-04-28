@@ -193,11 +193,7 @@ export const claimOverflowExecution = (
 	currency: ECurrencies
 ) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency));
 
-const transferOverflow = async (
-	projectOwner: string,
-	projectId: string,
-	amount: string
-) => {
+const transferOverflow = async (projectOwner: string, projectId: string, amount: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(transferOverflowTx),
 		args: (arg, t) => [
@@ -257,8 +253,8 @@ const newRound = async () => {
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	const startTime = formatFix(newRoundData.startDate);
 	const endTime = newRoundData.infiniteDuration ? null : formatFix(newRoundData.endDate);
-	const [,, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
-	const [,, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
+	const [, , ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
+	const [, , ...distributionPercentages] = newRoundData.distributionList.map((x) =>
 		formatFix(x[1] / 100)
 	);
 	return await fcl.mutate({
@@ -594,7 +590,13 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 	}
 };
 
-export const getNFTCatalog = async () => {
+export const getNFTCatalog: () => Promise<{
+	[key: string]: {
+		identifier: string;
+		name: string;
+		image: string;
+	};
+}> = async () => {
 	try {
 		const catalogKeys = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogKeysScript),
@@ -609,10 +611,10 @@ export const getNFTCatalog = async () => {
 		const items = itemGroups.reduce((acc, current) => {
 			return Object.assign(acc, current);
 		}, {});
-		console.log(items);
+
 		return items;
 	} catch (e) {
-		console.log('Error in getNFTCatalog');
-		console.log(e);
+		console.log('Error in getNFTCatalog', e);
+		throw new Error('Error in getNFTCatalog');
 	}
 };
