@@ -12,4 +12,5 @@ export interface RoundData {
 	issuanceRate: number | undefined;
 	reserveRate: number | undefined;
 	allowOverflow: boolean;
+	requiredNft: string | null;
 }

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { getNFTCatalog } from '$flow/actions';
+	import { roundGeneratorData } from '$lib/features/round-generator/stores/RoundGeneratorData';
 	import Icon from '@iconify/svelte';
-
-	let selectedNft: string | null = null;
 </script>
 
 {#await getNFTCatalog()}
@@ -10,7 +9,7 @@
 {:then nfts}
 	<div class="column-1">
 		<label for="selected-nft">Select NFT required to fund</label>
-		<select bind:value={selectedNft} name="selected-nft">
+		<select bind:value={$roundGeneratorData.requiredNft} name="selected-nft">
 			<option value={null}> No NFT required </option>
 			{#each Object.entries(nfts) as [name, data]}
 				<option value={data.identifier}>
