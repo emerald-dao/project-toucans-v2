@@ -475,10 +475,9 @@ pub contract Toucans {
       // Deposit tax to project treasury
       self.depositToTreasury(vault: <- reserved)
 
-      // 3 cases:
+      // 2 cases:
       // 1. Funding target is nil OR amount sent won't exceed the target (deposit everything to treasury)
-      // 2. Funding goal is already reached (deposit everything to overflow)
-      // 3. Amount sent will make us reach the goal (split between overflow and treasury)
+      // 2. Amount sent will make us reach the goal or it has already been reached (split between overflow and treasury)
       let fundingTarget: UFix64? = fundingCycleRef.details.fundingTarget
       if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + cost <= fundingTarget!) {
         // Calculate payouts
@@ -486,19 +485,17 @@ pub contract Toucans {
           ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: cost * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
         }
         self.depositToTreasury(vault: <- paymentTokens)
-      } else if fundingCycleRef.raisedTowardsGoal == fundingTarget! {
-        // deposit everything to overflow
-        assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
-        self.depositToOverflow(vault: <- paymentTokens)
       } else {
-        // this is the amount that will put the current round at its goal
-        let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
-        // calculate payouts 
-        for payout in fundingCycleRef.details.payouts {
-          ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountToTreasury * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+        if fundingCycleRef.raisedTowardsGoal < fundingTarget! {
+          // this is the amount that will put the current round at its goal
+          let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
+          // calculate payouts 
+          for payout in fundingCycleRef.details.payouts {
+            ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountToTreasury * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+          }
+          // put the rest in treasury
+          self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
         }
-        // put the rest in treasury
-        self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
 
         // Give the rest to overflow
         assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
