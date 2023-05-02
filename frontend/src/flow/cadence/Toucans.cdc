@@ -676,8 +676,8 @@ pub contract Toucans {
       return self.treasury[vaultType]?.balance
     }
 
-    pub fun getCurrentFundingCycleIndex(): UInt64? {
-      var i: UInt64 = UInt64(self.fundingCycles.length) - 1
+    pub fun getCurrentFundingCycleIndex(): Int? {
+      var i: Int = self.fundingCycles.length - 1
       let timestamp: UFix64 = getCurrentBlock().timestamp
 
       while i >= 0 {
@@ -700,7 +700,7 @@ pub contract Toucans {
 
     // Returns nil if there is no current round
     pub fun getCurrentFundingCycle(): FundingCycle? {
-      let index: UInt64? = self.getCurrentFundingCycleIndex()
+      let index: Int? = self.getCurrentFundingCycleIndex()
       if index == nil {
         return nil
       }
@@ -751,7 +751,7 @@ pub contract Toucans {
     }
 
     access(self) fun borrowCurrentFundingCycleRef(): &FundingCycle? {
-      let index: UInt64? = self.getCurrentFundingCycleIndex()
+      let index: Int? = self.getCurrentFundingCycleIndex()
       if index == nil {
         return nil
       }
