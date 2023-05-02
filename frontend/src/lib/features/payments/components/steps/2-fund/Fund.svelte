@@ -77,13 +77,13 @@
 					<span class="small">You will receive</span>
 					<Currency
 						currency={$paymentData.tokenName}
-						amount={($paymentData.amount ? $paymentData.amount : 0) *
+						amount={($paymentData.amount ? ($paymentData.amount * 0.95) : 0) *
 							$paymentData.issuanceRate *
 							(1 - $paymentData.reserveRate)}
 						color="heading"
 					/>
 					<span class="issuance xsmall"
-						>{`${100 - $paymentData.reserveRate * 100}% of the minted tokens`}</span
+						>{`${100 - $paymentData.reserveRate * 100}% of the minted tokens after tax`}</span
 					>
 				</div>
 				{#if $paymentData.reserveRate > 0}
@@ -91,13 +91,13 @@
 						<span class="small">DAO treasury will receive</span>
 						<Currency
 							currency={$paymentData.tokenName}
-							amount={($paymentData.amount ? $paymentData.amount : 0) *
+							amount={($paymentData.amount ? ($paymentData.amount * 0.95) : 0) *
 								$paymentData.issuanceRate *
 								$paymentData.reserveRate}
 							color="heading"
 						/>
 						<span class="issuance xsmall"
-							>{`${$paymentData.reserveRate * 100}% of the minted tokens`}</span
+							>{`${$paymentData.reserveRate * 100}% of the minted tokens after tax`}</span
 						>
 					</div>
 				{/if}

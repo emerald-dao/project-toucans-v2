@@ -8,6 +8,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
+	import { ownsNFTFromCatalog } from '$flow/actions';
 
 	export let daoData: DAOProject;
 	export let paymentType: 'fund' | 'donate';
@@ -51,12 +52,22 @@
 			);
 		}
 	};
+
+	const active = async () => {
+		if (paymentType === 'donate' || !daoData.onChainData.requiredNft) {
+			return true
+		}
+
+		return await ownsNFTFromCatalog($user.addr as string, daoData.onChainData.requiredNft.identifier);
+	}
 </script>
 
-<Button size="large" width="full-width" on:click={PAYMENT_DATA[paymentType].action}>
-	<Icon icon={PAYMENT_DATA[paymentType].icon} />
-	{PAYMENT_DATA[paymentType].title}
-</Button>
+{#await active() then active}
+	<Button size="large" width="full-width" on:click={PAYMENT_DATA[paymentType].action} state={active ? 'active' : 'disabled'}>
+		<Icon icon={PAYMENT_DATA[paymentType].icon} />
+		{PAYMENT_DATA[paymentType].title}
+	</Button>
+{/await}
 <StepsProcessModal
 	steps={$paymentSteps}
 	activeStepStore={paymentActiveStep}

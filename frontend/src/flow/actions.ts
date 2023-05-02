@@ -32,6 +32,7 @@ import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
+import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
@@ -193,11 +194,7 @@ export const claimOverflowExecution = (
 	currency: ECurrencies
 ) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency));
 
-const transferOverflow = async (
-	projectOwner: string,
-	projectId: string,
-	amount: string
-) => {
+const transferOverflow = async (projectOwner: string, projectId: string, amount: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(transferOverflowTx),
 		args: (arg, t) => [
@@ -257,8 +254,8 @@ const newRound = async () => {
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	const startTime = formatFix(newRoundData.startDate);
 	const endTime = newRoundData.infiniteDuration ? null : formatFix(newRoundData.endDate);
-	const [,, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
-	const [,, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
+	const [, , ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
+	const [, , ...distributionPercentages] = newRoundData.distributionList.map((x) =>
 		formatFix(x[1] / 100)
 	);
 	return await fcl.mutate({
@@ -274,7 +271,7 @@ const newRound = async () => {
 			arg(distributionPercentages, t.Array(t.UFix64)),
 			arg(newRoundData.allowOverflow, t.Bool),
 			arg(null, t.Optional(t.Array(t.Address))),
-			arg(null, t.Optional(t.String))
+			arg(newRoundData.requiredNft, t.Optional(t.String))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -594,7 +591,13 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 	}
 };
 
-export const getNFTCatalog = async () => {
+export const getNFTCatalog: () => Promise<{
+	[key: string]: {
+		identifier: string;
+		name: string;
+		image: string;
+	};
+}> = async () => {
 	try {
 		const catalogKeys = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogKeysScript),
@@ -609,10 +612,25 @@ export const getNFTCatalog = async () => {
 		const items = itemGroups.reduce((acc, current) => {
 			return Object.assign(acc, current);
 		}, {});
-		console.log(items);
+
 		return items;
 	} catch (e) {
-		console.log('Error in getNFTCatalog');
-		console.log(e);
+		console.log('Error in getNFTCatalog', e);
+		throw new Error('Error in getNFTCatalog');
+	}
+};
+
+export const ownsNFTFromCatalog = async (userAddress: string, collectionIdentifier: string) => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(ownsNFTFromCatalogScript),
+			args: (arg, t) => [
+				arg(userAddress, t.Address),
+				arg(collectionIdentifier, t.String)
+			]
+		});
+	} catch (e) {
+		console.log('Error in ownsNFTFromCatalog', e);
+		throw new Error('Error in ownsNFTFromCatalog');
 	}
 };

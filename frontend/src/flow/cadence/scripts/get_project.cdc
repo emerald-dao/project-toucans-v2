@@ -3,6 +3,7 @@ import Toucans from "../Toucans.cdc"
 import ToucansActions from "../ToucansActions.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import FiatToken from "../utility/FiatToken.cdc"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
 
 pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -32,6 +33,7 @@ pub struct Info {
   pub let paymentCurrency: String
   pub let maxSupply: UFix64?
   pub let purchasing: Bool
+  pub let requiredNft: NFTData?
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -65,6 +67,32 @@ pub struct Info {
       let actionDetails = action.action
       self.actions.append(Action(actionId, actionDetails.getIntent(), actionDetails.getTitle(), action.getVotes(), action.getSigners(), action.threshold))
     }
+
+    // required nft if active cycle
+    if let currentCycle = info.getCurrentFundingCycle() {
+      if let collectionIdentifier = currentCycle.details.catalogCollectionIdentifier {
+        self.requiredNft = NFTData(collectionIdentifier: collectionIdentifier)
+      } else {
+        self.requiredNft = nil
+      }
+    } else {
+      self.requiredNft = nil
+    }
+  }
+}
+
+pub struct NFTData {
+  pub let identifier: String
+  pub let name: String
+  pub let image: String
+  pub let link: String 
+
+  init(collectionIdentifier: String) {
+    let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier)!
+    self.identifier = collectionIdentifier
+    self.name = data.collectionDisplay.name
+    self.image = data.collectionDisplay.squareImage.file.uri()
+    self.link = data.collectionDisplay.externalURL.url
   }
 }
 

@@ -14,7 +14,7 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 		return paymentResult;
 	} else {
 
-		const expectedAmount = (paymentData.amount as number) *
+		const expectedAmount = (paymentData.amount as number) * (0.95) *
 			(paymentData as FundData).issuanceRate *
 			(1 - (paymentData as FundData).reserveRate);
 		const paymentResult = await fundProjectExecution(
@@ -23,7 +23,7 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 			(paymentData.amount as number).toString(),
 			paymentData.specialMessage,
 			paymentData.currency,
-			expectedAmount
+			expectedAmount.toString()
 		);
 
 		return paymentResult;

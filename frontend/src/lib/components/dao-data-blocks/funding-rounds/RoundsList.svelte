@@ -5,6 +5,8 @@
 	export let daoData: DAOProject;
 	export let finishedFilter = true;
 
+	console.log(daoData);
+
 	let showFinished = false;
 </script>
 
