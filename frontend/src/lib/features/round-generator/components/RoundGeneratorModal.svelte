@@ -29,7 +29,7 @@
 		distributionList: [],
 		issuanceRate: undefined,
 		reserveRate: undefined,
-		allowOverflow: false,
+		allowOverflow: true,
 		requiredNft: null
 	});
 	newRoundActiveStep.reset;

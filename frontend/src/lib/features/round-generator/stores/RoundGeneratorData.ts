@@ -13,6 +13,6 @@ export const roundGeneratorData: Writable<RoundData> = writable({
 	distributionList: [],
 	issuanceRate: undefined,
 	reserveRate: undefined,
-	allowOverflow: false,
+	allowOverflow: true,
 	requiredNft: null
 });

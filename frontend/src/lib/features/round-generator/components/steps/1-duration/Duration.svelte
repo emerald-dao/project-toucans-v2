@@ -40,7 +40,7 @@
 			reserveRate: undefined,
 			issuanceRate: undefined,
 			projectId,
-			allowOverflow: false,
+			allowOverflow: true,
 			requiredNft: null
 		});
 	}

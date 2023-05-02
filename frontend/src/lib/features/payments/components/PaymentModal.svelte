@@ -14,6 +14,7 @@
 	export let paymentType: 'fund' | 'donate';
 
 	const id = `${paymentType}-${daoData.generalInfo.project_id}`;
+	let title = '';
 
 	const PAYMENT_DATA = {
 		fund: {
@@ -54,19 +55,25 @@
 	};
 
 	const active = async () => {
-		if (paymentType === 'donate' || !daoData.onChainData.requiredNft) {
+		if (paymentType === 'donate' || !daoData.onChainData.requiredNft || !$user.loggedIn) {
 			return true
 		}
 		if (!daoData.onChainData.purchasing) {
+			title = "The project owner has turned funding off."
 			return false;
 		}
 
-		return await ownsNFTFromCatalog($user.addr as string, daoData.onChainData.requiredNft.identifier);
+		const owns = await ownsNFTFromCatalog($user.addr as string, daoData.onChainData.requiredNft.identifier);
+		if (!owns) {
+			title = "You do not own the required NFT to fund.";
+			return false;
+		}
+		return true;
 	}
 </script>
 
 {#await active() then active}
-	<Button size="large" width="full-width" on:click={PAYMENT_DATA[paymentType].action} state={active ? 'active' : 'disabled'}>
+	<Button size="large" width="full-width" on:click={PAYMENT_DATA[paymentType].action} state={active ? 'active' : 'disabled'} {title}>
 		<Icon icon={PAYMENT_DATA[paymentType].icon} />
 		{PAYMENT_DATA[paymentType].title}
 	</Button>

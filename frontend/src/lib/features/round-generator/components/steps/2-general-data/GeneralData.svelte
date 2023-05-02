@@ -84,20 +84,22 @@
 			/>
 		</div>
 	</div>
-	<label for="allow-overflow" class="switch">
-		<input
-			type="checkbox"
-			name="allow-overflow"
-			id="allow-overflow"
-			bind:checked={$roundGeneratorData.allowOverflow}
-			on:change={handleChange}
-		/>
-		<span class="slider" />
-		Allow overflow
-		<TooltipIcon
-			tooltip="If checked, the round will continue to accept contributions even if the funding goal is reached."
-		/>
-	</label>
+	{#if !$roundGeneratorData.infiniteFundingGoal}
+		<label for="allow-overflow" class="switch">
+			<input
+				type="checkbox"
+				name="allow-overflow"
+				id="allow-overflow"
+				bind:checked={$roundGeneratorData.allowOverflow}
+				on:change={handleChange}
+			/>
+			<span class="slider" />
+			Allow overflow
+			<TooltipIcon
+				tooltip="If checked, the round will continue to accept contributions even if the funding goal is reached."
+			/>
+		</label>
+	{/if}
 </form>
 
 <style type="scss">
