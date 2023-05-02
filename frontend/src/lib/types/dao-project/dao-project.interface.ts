@@ -84,6 +84,7 @@ export interface ActionData {
 }
 
 export interface RequiredNft {
+	identifier: string;
 	image: string;
 	name: string;
 	link: string;

@@ -16,7 +16,7 @@
 
 	$: minStartTime = new Date(now.getTime() + Number(daoData.onChainData.editDelay) * 1000);
 
-	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 5 * 60000);
+	const minStartTimePlus5Minutes = new Date(minStartTime.getTime() + 2 * 60000);
 
 	onMount(() => {
 		const interval = setInterval(() => {
@@ -40,7 +40,8 @@
 			reserveRate: undefined,
 			issuanceRate: undefined,
 			projectId,
-			allowOverflow: false
+			allowOverflow: false,
+			requiredNft: null
 		});
 	}
 

@@ -82,12 +82,14 @@ pub struct Info {
 }
 
 pub struct NFTData {
+  pub let identifier: String
   pub let name: String
   pub let image: String
   pub let link: String 
 
   init(collectionIdentifier: String) {
     let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier)!
+    self.identifier = collectionIdentifier
     self.name = data.collectionDisplay.name
     self.image = data.collectionDisplay.squareImage.file.uri()
     self.link = data.collectionDisplay.externalURL.url

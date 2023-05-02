@@ -32,6 +32,7 @@ import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
+import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
@@ -616,5 +617,20 @@ export const getNFTCatalog: () => Promise<{
 	} catch (e) {
 		console.log('Error in getNFTCatalog', e);
 		throw new Error('Error in getNFTCatalog');
+	}
+};
+
+export const ownsNFTFromCatalog = async (userAddress: string, collectionIdentifier: string) => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(ownsNFTFromCatalogScript),
+			args: (arg, t) => [
+				arg(userAddress, t.Address),
+				arg(collectionIdentifier, t.String)
+			]
+		});
+	} catch (e) {
+		console.log('Error in ownsNFTFromCatalog', e);
+		throw new Error('Error in ownsNFTFromCatalog');
 	}
 };

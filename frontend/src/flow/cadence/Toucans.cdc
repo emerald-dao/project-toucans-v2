@@ -142,26 +142,25 @@ pub contract Toucans {
   pub struct FundingCycle {
     pub(set) var details: FundingCycleDetails
     pub var projectTokensAcquired: UFix64
-    // The total amount of payment tokens sent through
-    pub var paymentTokensSent: UFix64
-    // The amount towards the goal (is capped at `details.fundingTarget`)
+    // This is the amount of payment received during the round.
+    // This does NOT include Overflow that was trasnfered into this
+    // round.
+    pub var raisedDuringRound: UFix64
+    // Same as raisedDuringRound but
+    // also includes overflow transferred in
     pub var raisedTowardsGoal: UFix64
     pub let funders: {Address: UFix64}
-
+ 
     // called when a purchase happens
-    pub fun handlePaymentReceipt(projectTokensAcquired: UFix64, cost: UFix64, payer: Address) {
-      self.projectTokensAcquired = self.projectTokensAcquired + cost
+    access(contract) fun handlePaymentReceipt(projectTokensAcquired: UFix64, cost: UFix64, payer: Address) {
+      self.projectTokensAcquired = self.projectTokensAcquired + projectTokensAcquired
       self.funders[payer] = (self.funders[payer] ?? 0.0) + cost
-      self.paymentTokensSent = self.paymentTokensSent + cost
+      self.raisedDuringRound = self.raisedDuringRound + cost
+      self.raisedTowardsGoal = self.raisedTowardsGoal + cost
     }
 
-    // called when overflow is converted
-    pub fun raise(amount: UFix64) {
-      post {
-        self.details.fundingTarget == nil || (self.raisedTowardsGoal <= self.details.fundingTarget!):
-          "Cannot raise more than the funding target."
-      }
-
+    // for overflow purposes
+    access(contract) fun raise(amount: UFix64) {
       self.raisedTowardsGoal = self.raisedTowardsGoal + amount
     }
 
@@ -170,7 +169,7 @@ pub contract Toucans {
       self.projectTokensAcquired = 0.0
       self.raisedTowardsGoal = 0.0
       self.funders = {}
-      self.paymentTokensSent = 0.0
+      self.raisedDuringRound = 0.0
     }
   }
 
@@ -473,11 +472,6 @@ pub contract Toucans {
 
       // RESERVE RATE: Withhold some of the purchased tokens
       let reserved: @FungibleToken.Vault <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.details.reserveRate)
-      // Amount acquired by user is the amount minted - the reserve tax
-      fundingCycleRef.handlePaymentReceipt(projectTokensAcquired: mintedTokens.balance, cost: cost, payer: payer)
-
-      // Deposit new tokens to payer
-      projectTokenReceiver.deposit(from: <- mintedTokens)
       // Deposit tax to project treasury
       self.depositToTreasury(vault: <- reserved)
 
@@ -487,8 +481,6 @@ pub contract Toucans {
       // 3. Amount sent will make us reach the goal (split between overflow and treasury)
       let fundingTarget: UFix64? = fundingCycleRef.details.fundingTarget
       if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + cost <= fundingTarget!) {
-        // Deposit everything to treasury because there's no such thing as overflow
-        fundingCycleRef.raise(amount: cost)
         // Calculate payouts
         for payout in fundingCycleRef.details.payouts {
           ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: cost * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
@@ -501,8 +493,6 @@ pub contract Toucans {
       } else {
         // this is the amount that will put the current round at its goal
         let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
-        // mark that we've raised that amount
-        fundingCycleRef.raise(amount: amountToTreasury)
         // calculate payouts 
         for payout in fundingCycleRef.details.payouts {
           ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountToTreasury * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
@@ -518,6 +508,10 @@ pub contract Toucans {
       // Tokens were purchased, so increment amount raised
       self.totalFunding = self.totalFunding + cost
       self.funders[payer] = (self.funders[payer] ?? 0.0) + cost
+      // Amount acquired by user is the amount minted - the reserve tax
+      fundingCycleRef.handlePaymentReceipt(projectTokensAcquired: mintedTokens.balance, cost: cost, payer: payer)
+      // Deposit new tokens to payer
+      projectTokenReceiver.deposit(from: <- mintedTokens)
       emit Purchase(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
@@ -646,6 +640,11 @@ pub contract Toucans {
       // will fail if this puts the cycle over the funding target
       cycle.raise(amount: amount)
       self.depositToTreasury(vault: <- overflow)
+
+      assert(
+        cycle.details.fundingTarget == nil || (cycle.raisedTowardsGoal <= cycle.details.fundingTarget!),
+        message: "Transferred Overflow cannot put the current funding round over its goal."
+      )
     }
 
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver}) {
