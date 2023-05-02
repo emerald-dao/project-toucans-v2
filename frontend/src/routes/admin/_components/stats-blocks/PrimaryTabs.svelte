@@ -23,14 +23,12 @@
 			<TabPanel>
 				<div class="round-card-wrapper card">
 					<RoundsCard
-						round={daoData.onChainData.fundingCycles[
-							Number(daoData.onChainData.currentFundingCycle)
-						]}
+						round={daoData.onChainData.currentFundingCycle}
 						projectToken={daoData.generalInfo.token_symbol}
 						paymentToken={daoData.onChainData.paymentCurrency}
 						projectId={daoData.generalInfo.project_id}
 						hasBorder={false}
-						activeRound={Number(daoData.onChainData.currentFundingCycle)}
+						activeRound={Number(daoData.onChainData.currentFundingCycle.details.cycleId)}
 					/>
 				</div>
 			</TabPanel>

@@ -43,11 +43,11 @@
 
 		if ($paymentData.type === 'fund') {
 			$paymentData.issuanceRate = Number(
-				daoData.onChainData.fundingCycles[Number(daoData.onChainData.currentFundingCycle)].details
+				daoData.onChainData.currentFundingCycle!.details
 					.issuanceRate
 			);
 			$paymentData.reserveRate = Number(
-				daoData.onChainData.fundingCycles[Number(daoData.onChainData.currentFundingCycle)].details
+				daoData.onChainData.currentFundingCycle!.details
 					.reserveRate
 			);
 		}

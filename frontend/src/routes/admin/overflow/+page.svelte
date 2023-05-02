@@ -20,9 +20,7 @@
 
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
-	$: activeRound = activeDaoData.onChainData.currentFundingCycle
-		? activeDaoData.onChainData.fundingCycles[Number(activeDaoData.onChainData.currentFundingCycle)]
-		: null;
+	$: activeRound = activeDaoData.onChainData.currentFundingCycle;
 
 	// Transfer overflow
 	let transferAmount: number = 0;

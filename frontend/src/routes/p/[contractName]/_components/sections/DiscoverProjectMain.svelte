@@ -14,7 +14,7 @@
 			? getFundingCycleData(
 					daoData.onChainData.fundingCycles,
 					daoData.events,
-					daoData.onChainData.currentFundingCycle
+					daoData.onChainData.currentFundingCycle.details.cycleId
 			  )
 			: null;
 </script>
@@ -32,7 +32,7 @@
 					daoData.userBalance > 0 &&
 					$user.addr != undefined}
 				activeRound={daoData.onChainData.currentFundingCycle
-					? Number(daoData.onChainData.currentFundingCycle)
+					? Number(daoData.onChainData.currentFundingCycle.details.cycleId)
 					: null}
 			/>
 		{/if}

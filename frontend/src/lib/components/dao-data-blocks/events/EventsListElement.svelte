@@ -96,7 +96,7 @@
 				roundNumber={Number(event.data.newCycleId)}
 				projectId={daoData.generalInfo.project_id}
 				activeRound={daoData.onChainData.currentFundingCycle
-					? Number(daoData.onChainData.currentFundingCycle)
+					? Number(daoData.onChainData.currentFundingCycle.details.cycleId)
 					: null}
 			/>
 		{/if}

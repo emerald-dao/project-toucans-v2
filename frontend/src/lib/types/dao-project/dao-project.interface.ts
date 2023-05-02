@@ -32,7 +32,7 @@ export interface DaoDatabaseData {
 export interface DaoBlockchainData {
 	projectId: string;
 	tokenType: TokenInfo;
-	currentFundingCycle: string;
+	currentFundingCycle: FundingCycle | null;
 	totalFunding: string;
 	editDelay: string;
 	extra: {
