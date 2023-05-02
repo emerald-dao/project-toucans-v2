@@ -5,11 +5,11 @@
 	export let nft: RequiredNft;
 </script>
 
-<div class="column-2">
-	<div class="row-2 align-center">
-		<span class="xsmall"> Required NFT </span>
+<div class="column">
+	<div class="row-1 align-center">
+		<span> Required NFT </span>
 		<TooltipIcon
-			width={0.6}
+			width={0.5}
 			tooltip={`You must hold a ${nft.name} NFT to fund this round`}
 			backgroundColor="var(--clr-neutral-badge)"
 			borderColor="var(--clr-neutral-badge)"
@@ -26,5 +26,9 @@
 		width: 1.8rem;
 		height: 1.8rem;
 		margin-right: 0.5rem;
+	}
+
+	span {
+		font-size: 0.65rem;
 	}
 </style>
