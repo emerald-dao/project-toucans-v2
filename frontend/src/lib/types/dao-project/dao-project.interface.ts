@@ -42,11 +42,7 @@ export interface DaoBlockchainData {
 	totalSupply: string;
 	purchasing: boolean;
 	maxSupply: string | null;
-	requiredNft: {
-		image: string;
-		name: string;
-		link: string;
-	} | null;
+	requiredNft: RequiredNft | null;
 	balances: {
 		[address: string]: string;
 	};
@@ -85,4 +81,10 @@ export interface ActionData {
 	votes: {
 		[voter: string]: boolean;
 	};
+}
+
+export interface RequiredNft {
+	image: string;
+	name: string;
+	link: string;
 }

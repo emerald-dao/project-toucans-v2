@@ -5,6 +5,7 @@
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
 	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
+	import RequiredNft from './atoms/RequiredNft.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -16,7 +17,7 @@
 			alt="Background illustration"
 			class="banner-image"
 		/>
-		<div class="content-wrapper column-14">
+		<div class="content-wrapper column">
 			<div class="column-4">
 				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
 				<div class="commands-wrapper row-2 align-center">
@@ -76,16 +77,19 @@
 						</div>
 					</div>
 				{/if}
-				<p class="small">{daoData.generalInfo.description}</p>
+				<p class="small description">{daoData.generalInfo.description}</p>
 			</div>
-			{#if daoData.onChainData.currentFundingCycle}
+			<div class="column-5">
 				<div class="row-4">
-					<PaymentModal {daoData} paymentType="fund" />
+					{#if daoData.onChainData.currentFundingCycle}
+						<PaymentModal {daoData} paymentType="fund" />
+					{/if}
 					<PaymentModal {daoData} paymentType="donate" />
 				</div>
-			{:else}
-				<PaymentModal {daoData} paymentType="donate" />
-			{/if}
+				{#if daoData.onChainData.requiredNft != null}
+					<RequiredNft nft={daoData.onChainData.requiredNft} />
+				{/if}
+			</div>
 		</div>
 	</div>
 	<TreasuryWallet {daoData} color="neutral" />
@@ -129,6 +133,10 @@
 
 			.header-link {
 				font-size: var(--font-size-3);
+			}
+
+			p.description {
+				margin-bottom: var(--space-11);
 			}
 		}
 	}
