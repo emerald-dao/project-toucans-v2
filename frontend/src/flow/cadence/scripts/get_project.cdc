@@ -56,7 +56,7 @@ pub struct Info {
     }
     self.paymentCurrency = info.paymentTokenInfo.symbol
     self.maxSupply = ExampleToken.maxSupply
-    self.purchasing = true // info.purchasing
+    self.purchasing = info.purchasing
 
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()

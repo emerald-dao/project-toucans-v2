@@ -1,7 +1,6 @@
 import Toucans from "../Toucans.cdc"
 
-transaction(
-    projectId: String,) {
+transaction(projectId: String) {
 
   let Project: &Toucans.Project
 

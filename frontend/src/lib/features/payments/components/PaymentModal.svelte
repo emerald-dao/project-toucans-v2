@@ -57,6 +57,9 @@
 		if (paymentType === 'donate' || !daoData.onChainData.requiredNft) {
 			return true
 		}
+		if (!daoData.onChainData.purchasing) {
+			return false;
+		}
 
 		return await ownsNFTFromCatalog($user.addr as string, daoData.onChainData.requiredNft.identifier);
 	}

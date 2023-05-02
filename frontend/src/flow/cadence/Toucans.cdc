@@ -427,9 +427,8 @@ pub contract Toucans {
       fundingCycle.details = details
     }
 
-    pub fun togglePurchasing(): Bool {
+    pub fun togglePurchasing() {
       self.purchasing = !self.purchasing
-      return self.purchasing
     }
 
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String) {
@@ -677,8 +676,9 @@ pub contract Toucans {
       return self.treasury[vaultType]?.balance
     }
 
-    pub fun getCurrentFundingCycleWithTime(timestamp: UFix64): FundingCycle? {
-      var i: Int = self.fundingCycles.length - 1
+    pub fun getCurrentFundingCycleIndex(): UInt64? {
+      var i: UInt64 = UInt64(self.fundingCycles.length) - 1
+      let timestamp: UFix64 = getCurrentBlock().timestamp
 
       while i >= 0 {
         let cycle: FundingCycle = self.fundingCycles[i]
@@ -687,7 +687,7 @@ pub contract Toucans {
         if timestamp >= cycle.details.timeframe.startTime {
           if (cycle.details.timeframe.endTime == nil || timestamp <= cycle.details.timeframe.endTime!){
             // In this case, we're in the middle of the latest one
-            return cycle
+            return i
           } else {
             // In this case, we're past the latest one
             return nil
@@ -700,7 +700,11 @@ pub contract Toucans {
 
     // Returns nil if there is no current round
     pub fun getCurrentFundingCycle(): FundingCycle? {
-      return self.getCurrentFundingCycleWithTime(timestamp: getCurrentBlock().timestamp)
+      let index: UInt64? = self.getCurrentFundingCycleIndex()
+      if index == nil {
+        return nil
+      }
+      return self.fundingCycles[index!]
     }
 
     pub fun getCurrentFundingCycleId(): UInt64? {
@@ -747,10 +751,11 @@ pub contract Toucans {
     }
 
     access(self) fun borrowCurrentFundingCycleRef(): &FundingCycle? {
-      if let currentCycle: FundingCycle = self.getCurrentFundingCycle() {
-        return self.borrowFundingCycleRef(cycleIndex: currentCycle.details.cycleId)
+      let index: UInt64? = self.getCurrentFundingCycleIndex()
+      if index == nil {
+        return nil
       }
-      return nil
+      return &self.fundingCycles[index!] as &FundingCycle?
     }
 
     pub fun borrowManagerPublic(): &Manager{ManagerPublic} {
