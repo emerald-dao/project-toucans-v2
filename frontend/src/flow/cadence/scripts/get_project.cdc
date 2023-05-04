@@ -1,6 +1,5 @@
 import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
-import ToucansActions from "../ToucansActions.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import FiatToken from "../utility/FiatToken.cdc"
 import NFTCatalog from "../utility/NFTCatalog.cdc"
@@ -28,7 +27,6 @@ pub struct Info {
   pub let funders: {Address: UFix64}
   pub let signers: [Address]
   pub let threshold: UInt64
-  pub let actions: [Action]
   pub let minting: Bool
   pub let paymentCurrency: String
   pub let maxSupply: UFix64?
@@ -61,12 +59,6 @@ pub struct Info {
     let manager = info.borrowManagerPublic()
     self.signers = manager.getSigners()
     self.threshold = manager.threshold
-    self.actions = []
-    for actionId in manager.getIDs() {
-      let action = manager.borrowAction(actionUUID: actionId)
-      let actionDetails = action.action
-      self.actions.append(Action(actionId, actionDetails.getIntent(), actionDetails.getTitle(), action.getVotes(), action.getSigners(), action.threshold))
-    }
 
     // required nft if active cycle
     if let currentCycle = info.getCurrentFundingCycle() {
@@ -93,23 +85,5 @@ pub struct NFTData {
     self.name = data.collectionDisplay.name
     self.image = data.collectionDisplay.squareImage.file.uri()
     self.link = data.collectionDisplay.externalURL.url
-  }
-}
-
-pub struct Action {
-  pub let id: UInt64
-  pub let intent: String
-  pub let title: String
-  pub let votes: {Address: Bool}
-  pub let signers: [Address]
-  pub let threshold: UInt64
-
-  init(_ id: UInt64, _ i: String, _ t: String, _ s: {Address: Bool}, _ si: [Address], _ th: UInt64) {
-    self.id = id
-    self.intent = i
-    self.title = t
-    self.votes = s
-    self.signers = si
-    self.threshold = th
   }
 }

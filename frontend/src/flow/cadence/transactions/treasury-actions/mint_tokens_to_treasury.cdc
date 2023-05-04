@@ -1,5 +1,5 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import Toucans from "../Toucans.cdc"
+import FungibleToken from "../../utility/FungibleToken.cdc"
+import Toucans from "../../Toucans.cdc"
 
 transaction(projectId: String, amount: UFix64) {
 

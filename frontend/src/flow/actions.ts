@@ -25,6 +25,7 @@ import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
+import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
@@ -504,9 +505,26 @@ export const getProjectInfo: (
 			cadence: replaceWithProperValues(getProjectScript, projectId, contractAddress),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
+		response.actions = await getProjectActions(owner, projectId);;
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectInfo');
+		console.log(e);
+	}
+};
+
+export const getProjectActions: (
+	owner: string,
+	projectId: string
+) => Promise<DaoBlockchainData> = async (owner, projectId) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectActionsScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectActions');
 		console.log(e);
 	}
 };
