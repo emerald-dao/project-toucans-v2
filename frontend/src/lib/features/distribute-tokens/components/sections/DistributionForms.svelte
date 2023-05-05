@@ -116,6 +116,9 @@
 			</form>
 		</TabPanel>
 		<TabPanel>
+			<p class="xsmall margin-top">
+				For an example CSV file, download <a href="/example-toucans-upload.csv">this</a>.
+			</p>
 			<div class="wrapper">
 				<DropZone
 					name="distribution-csv"
@@ -137,6 +140,9 @@
 </div>
 
 <style lang="scss">
+	.margin-top {
+		margin-top: 15px;
+	}
 	.wrapper,
 	form {
 		margin-block: var(--space-4);
