@@ -45,7 +45,14 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
-		res = validationSuite(formDist, target.name, availableBalance, projectOwner, projectId);
+		res = validationSuite(
+			formDist,
+			target.name,
+			availableBalance,
+			projectOwner,
+			projectId,
+			currencyToDistribute
+		);
 
 		if (target.name === 'address') {
 			addressPending = true;

@@ -63,13 +63,31 @@ pub contract Toucans {
     amount: UFix64,
     by: Address
   )
-  pub event Distribute(
+  pub event BatchWithdraw(
+    projectId: String,
+    projectOwner: Address, 
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    amounts: {Address: UFix64},
+    amount: UFix64,
+    failed: [Address]
+  )
+  pub event Mint(
     projectId: String,
     by: Address, 
     currentCycle: UInt64?,
     tokenSymbol: String,
     to: Address,
     amount: UFix64
+  )
+  pub event BatchMint(
+    projectId: String,
+    by: Address, 
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    amounts: {Address: UFix64},
+    amount: UFix64,
+    failed: [Address]
   )
   pub event AddSigner(projectId: String, signer: Address)
   pub event RemoveSigner(projectId: String, signer: Address)
@@ -248,6 +266,13 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
+                ?? panic("Unsupported token type for withdrawing.")
+      let action = ToucansActions.BatchWithdrawToken(vaultType, recipientVaults, amounts, tokenSymbol: tokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
       pre {
         recipientVault.borrow()!.getType() == self.projectTokenInfo.tokenType: 
@@ -255,6 +280,14 @@ pub contract Toucans {
         self.minting: "Minting is turned off."
       }
       let action = ToucansActions.MintTokens(recipientVault, amount, tokenSymbol: self.projectTokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
+      pre {
+        self.minting: "Minting is turned off."
+      }
+      let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, tokenSymbol: self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -305,10 +338,17 @@ pub contract Toucans {
         switch action.getType() {
           case Type<ToucansActions.WithdrawToken>():
             let withdraw = action as! ToucansActions.WithdrawToken
-            self.withdrawFromTreasury(vault: withdraw.recipientVault.borrow()!, amount: withdraw.amount)
+            let recipientVault = withdraw.recipientVault.borrow()!
+            self.withdrawFromTreasury(vault: recipientVault, amount: withdraw.amount)
+          case Type<ToucansActions.BatchWithdrawToken>():
+            let withdraw = action as! ToucansActions.BatchWithdrawToken
+            self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts)
           case Type<ToucansActions.MintTokens>():
             let mint = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
+          case Type<ToucansActions.BatchMintTokens>():
+            let mint = action as! ToucansActions.BatchMintTokens
+            self.batchMint(vaults: mint.recipientVaults, amounts: mint.amounts)
           case Type<ToucansActions.MintTokensToTreasury>():
             let mint = action as! ToucansActions.MintTokensToTreasury
             let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
@@ -559,7 +599,7 @@ pub contract Toucans {
     }
 
     access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
-      let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType()) 
+      let tokenInfo: ToucansTokens.TokenInfo = self.getTokenInfo(inputVaultType: vault.getType()) 
                 ?? panic("Unsupported token type for withdrawing.")
       emit Withdraw(
         projectId: self.projectId,
@@ -570,6 +610,33 @@ pub contract Toucans {
         by: vault.owner!.address
       )
       vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
+    }
+
+    access(account) fun batchWithdrawFromTreasury(vaultType: Type, vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
+      let failed: [Address] = []
+      var totalAmount: UFix64 = 0.0
+      for wallet in amounts.keys {
+        let amount = amounts[wallet]!
+        totalAmount = totalAmount + amount
+        if let recipientVault: &{FungibleToken.Receiver} = vaults[wallet]!.borrow() {
+          if recipientVault.getType() == vaultType {
+            recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
+            continue
+          }
+        }
+        failed.append(wallet)
+      }
+      let tokenInfo: ToucansTokens.TokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
+          ?? panic("Unsupported token type for withdrawing.")
+      emit BatchWithdraw(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleId(),
+        tokenSymbol: tokenInfo.symbol,
+        amounts: amounts,
+        amount: totalAmount,
+        failed: failed
+      )
     }
 
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
@@ -610,13 +677,41 @@ pub contract Toucans {
       let tokens <- self.minter.mint(amount: amount)
       recipientVault.deposit(from: <- tokens)
 
-      emit Distribute(
+      emit Mint(
         projectId: self.projectId,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: self.projectTokenInfo.symbol,
         to: recipientVault.owner!.address,
         amount: amount
+      )
+    }
+
+    access(account) fun batchMint(vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
+      pre {
+        self.minting: "Minting is off. You cannot do this."
+      }
+
+      let failed: [Address] = []
+      var totalAmount: UFix64 = 0.0
+      for wallet in amounts.keys {
+        let amount = amounts[wallet]!
+        totalAmount = totalAmount + amount
+        if let recipientVault: &{FungibleToken.Receiver} = vaults[wallet]!.borrow() {
+           let tokens <- self.minter.mint(amount: amount)
+           recipientVault.deposit(from: <- tokens)
+           continue
+        }
+        failed.append(wallet)
+      }
+      emit BatchMint(
+        projectId: self.projectId,
+        by: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleId(),
+        tokenSymbol: self.projectTokenInfo.symbol,
+        amounts: amounts,
+        amount: totalAmount,
+        failed: failed
       )
     }
 

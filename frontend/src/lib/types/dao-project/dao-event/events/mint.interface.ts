@@ -1,9 +1,9 @@
 import type { BaseEvent } from './common/base-event.interface';
 
-export interface WithdrawEvent extends BaseEvent {
-	type: 'Withdraw';
+export interface MintEvent extends BaseEvent {
+	type: 'Mint';
 	data: {
-		by: string;
+		to: string;
 		amount: string;
 		tokenSymbol: string;
 		currentCycle: string | null;

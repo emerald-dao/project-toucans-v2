@@ -1,9 +1,8 @@
 import type { BaseEvent } from './common/base-event.interface';
 
-export interface WithdrawEvent extends BaseEvent {
-	type: 'Withdraw';
+export interface BatchMintEvent extends BaseEvent {
+	type: 'BatchMint';
 	data: {
-		by: string;
 		amount: string;
 		tokenSymbol: string;
 		currentCycle: string | null;

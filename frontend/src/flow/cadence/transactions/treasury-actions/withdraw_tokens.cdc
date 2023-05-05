@@ -1,9 +1,6 @@
-import ToucansActions from "../../ToucansActions.cdc"
 import Toucans from "../../Toucans.cdc"
 import ToucansTokens from "../../ToucansTokens.cdc"
 import FungibleToken from "../../utility/FungibleToken.cdc"
-import FlowToken from "../../utility/FlowToken.cdc"
-import FiatToken from "../../utility/FiatToken.cdc"
 
 // An example of proposing an action.
 //

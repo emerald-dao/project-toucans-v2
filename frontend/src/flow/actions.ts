@@ -18,8 +18,10 @@ import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
+import batchWithdrawTokensTx from './cadence/transactions/treasury-actions/batch_withdraw_tokens.cdc?raw';
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
+import batchMintTokensTx from './cadence/transactions/treasury-actions/batch_mint_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
 import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
 
@@ -43,6 +45,7 @@ import { ECurrencies } from '$lib/types/common/enums';
 import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-generator-data.interface';
 import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
+import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -332,6 +335,41 @@ export const proposeWithdrawExecution = (
 		proposeWithdraw(tokenSymbol, recipient, amount, projectOwner, projectId)
 	);
 
+const proposeBatchWithdraw = async (
+	tokenSymbol: string,
+	amounts: Distribution[],
+	projectOwner: string,
+	projectId: string
+) => {
+	const amountsArg: any = amounts.map(distribution => {
+		return { key: distribution.account, value: formatFix(distribution.tokens) }
+	});
+
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(batchWithdrawTokensTx),
+		args: (arg, t) => [
+			arg(tokenSymbol, t.String),
+			arg(amountsArg, t.Dictionary({ key: t.Address, value: t.UFix64 })),
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const proposeBatchWithdrawExecution = (
+	tokenSymbol: string,
+	amounts: Distribution[],
+	projectOwner: string,
+	projectId: string
+) =>
+	executeTransaction(() =>
+		proposeBatchWithdraw(tokenSymbol, amounts, projectOwner, projectId)
+	);
+
 const updateMultisig = async (
 	projectOwner: string,
 	projectId: string,
@@ -472,6 +510,33 @@ export const mintTokensExecution = (
 	amount: string
 ) => executeTransaction(() => mintTokens(projectOwner, projectId, recipient, amount));
 
+const batchMintTokens = async (
+	projectOwner: string,
+	projectId: string,
+	amounts: Distribution[]
+) => {
+	const amountsArg: any = amounts.map(distribution => {
+		return { key: distribution.account, value: formatFix(distribution.tokens) }
+	});
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(batchMintTokensTx, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(amountsArg, t.Dictionary({ key: t.Address, value: t.UFix64 }))
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const batchMintTokensExecution = (
+	projectOwner: string,
+	projectId: string,
+	amounts: Distribution[]
+) => executeTransaction(() => batchMintTokens(projectOwner, projectId, amounts));
+
 const mintTokensToTreasury = async (projectId: string, amount: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(mintTokensToTreasuryTx),
@@ -580,12 +645,16 @@ export const getBalances = async (userAddress: string) => {
 export const hasVaultSetup = async (
 	projectOwner: string,
 	projectId: string,
-	userAddress: string
+	userAddress: string,
+	tokenSymbol: ECurrencies | string
 ) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, projectOwner),
-			args: (arg, t) => [arg(userAddress, t.Address)]
+			args: (arg, t) => [
+				arg(userAddress, t.Address),
+				arg(tokenSymbol, t.String)
+			]
 		});
 		console.log(response);
 		return response;

@@ -43,9 +43,19 @@
 			text: 'Withdraw',
 			color: 'alert'
 		},
-		Distribute: {
+		BatchWithdraw: {
+			icon: 'tabler:circle-arrow-up-right',
+			text: 'Withdraw',
+			color: 'alert'
+		},
+		Mint: {
 			icon: 'tabler:arrows-move',
-			text: 'Distribute',
+			text: 'Mint',
+			color: 'alert'
+		},
+		BatchMint: {
+			icon: 'tabler:arrows-move',
+			text: 'Mint',
 			color: 'alert'
 		},
 		UpdateThreshold: {
@@ -79,9 +89,12 @@
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
 		{/if}
-		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'Distribute'}
+		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint'}
 			<Currency
-				amount={event.type === 'Withdraw' || event.type === 'Distribute'
+				amount={event.type === 'Withdraw' ||
+				event.type === 'BatchWithdraw' ||
+				event.type === 'Mint' ||
+				event.type === 'BatchMint'
 					? -Number(event.data.amount)
 					: Number(event.data.amount)}
 				currency={event.data.tokenSymbol}

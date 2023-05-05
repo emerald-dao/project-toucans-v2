@@ -45,7 +45,7 @@ export const DummyDao: DAOProject = {
 			tokenType: 'FA2',
 			timestamp: 1630454400,
 			currentCycle: '1',
-			type: 'Distribute',
+			type: 'Mint',
 			amount: '1000',
 			to: '0x1234567890',
 			projectOwner: '0x1234567890'
@@ -107,4 +107,3 @@ export const AnotherDummyDao = {
 		projectId: '2'
 	}))
 };
- 

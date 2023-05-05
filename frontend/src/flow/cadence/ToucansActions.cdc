@@ -22,12 +22,10 @@ pub contract ToucansActions {
     pub let recipientVault: Capability<&{FungibleToken.Receiver}>
     pub let amount: UFix64
     pub let tokenSymbol: String
+    pub let readableAmount: String
 
     pub fun getIntent(): String {
-      let amountToString: String = self.amount.toString()
-      let indexOfDot: Int = ToucansUtils.index(amountToString, ".", 1)!
-      let readableAmount: String = amountToString.slice(from: 0, upTo: indexOfDot + 3)
-      return "Withdraw ".concat(readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(ToucansUtils.getFind(self.recipientVault.borrow()!.owner!.address))
+      return "Withdraw ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(ToucansUtils.getFind(self.recipientVault.borrow()!.owner!.address))
     }
 
     pub fun getTitle(): String {
@@ -39,6 +37,36 @@ pub contract ToucansActions {
       assert(self.recipientVault.check(), message: "Invalid recipient capability.")
       self.amount = amount
       self.tokenSymbol = tokenSymbol
+      self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
+    }
+  }
+
+  pub struct BatchWithdrawToken: Action {
+    pub let vaultType: Type
+    pub let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}
+    pub let amounts: {Address: UFix64}
+    pub let tokenSymbol: String
+    pub let totalReadableAmount: String
+
+    pub fun getIntent(): String {
+      return "Withdraw a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(self.amounts.keys.length.toString()).concat(" total wallets.")
+    }
+
+    pub fun getTitle(): String {
+      return "Withdraw"
+    }
+
+    init(_ vaultType: Type, _ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, tokenSymbol: String) {
+      self.vaultType = vaultType
+      self.recipientVaults = recipientVaults
+      self.amounts = amounts
+      self.tokenSymbol = tokenSymbol
+
+      var totalAmount: UFix64 = 0.0
+      for amount in amounts.values {
+        totalAmount = totalAmount + amount
+      }
+      self.totalReadableAmount = ToucansUtils.fixToReadableString(num: totalAmount)
     }
   }
 
@@ -47,12 +75,10 @@ pub contract ToucansActions {
     pub let recipientVault: Capability<&{FungibleToken.Receiver}>
     pub let amount: UFix64
     pub let tokenSymbol: String
+    pub let readableAmount: String
 
     pub fun getIntent(): String {
-      let amountToString: String = self.amount.toString()
-      let indexOfDot: Int = ToucansUtils.index(amountToString, ".", 1)!
-      let readableAmount: String = amountToString.slice(from: 0, upTo: indexOfDot + 3)
-      return "Mint ".concat(readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(ToucansUtils.getFind(self.recipientVault.borrow()!.owner!.address))
+      return "Mint ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(ToucansUtils.getFind(self.recipientVault.borrow()!.owner!.address))
     }
 
     pub fun getTitle(): String {
@@ -64,6 +90,34 @@ pub contract ToucansActions {
       assert(self.recipientVault.check(), message: "Invalid recipient capability.")
       self.amount = amount
       self.tokenSymbol = tokenSymbol
+      self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
+    }
+  }
+
+  pub struct BatchMintTokens: Action {
+    pub let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}
+    pub let amounts: {Address: UFix64}
+    pub let tokenSymbol: String
+    pub let totalReadableAmount: String
+
+    pub fun getIntent(): String {
+      return "Mint a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(self.amounts.keys.length.toString()).concat(" total wallets.")
+    }
+
+    pub fun getTitle(): String {
+      return "Mint"
+    }
+
+    init(_ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, tokenSymbol: String) {
+      self.recipientVaults = recipientVaults
+      self.amounts = amounts
+      self.tokenSymbol = tokenSymbol
+
+      var totalAmount: UFix64 = 0.0
+      for amount in amounts.values {
+        totalAmount = totalAmount + amount
+      }
+      self.totalReadableAmount = ToucansUtils.fixToReadableString(num: totalAmount)
     }
   }
 
@@ -71,12 +125,10 @@ pub contract ToucansActions {
   pub struct MintTokensToTreasury: Action {
     pub let amount: UFix64
     pub let tokenSymbol: String
+    pub let readableAmount: String
 
     pub fun getIntent(): String {
-      let amountToString: String = self.amount.toString()
-      let indexOfDot: Int = ToucansUtils.index(amountToString, ".", 1)!
-      let readableAmount: String = amountToString.slice(from: 0, upTo: indexOfDot + 3)
-      return "Mint ".concat(readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to the treasury.")
+      return "Mint ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to the treasury.")
     }
 
     pub fun getTitle(): String {
@@ -86,6 +138,7 @@ pub contract ToucansActions {
     init(_ amount: UFix64, tokenSymbol: String) {
       self.amount = amount
       self.tokenSymbol = tokenSymbol
+      self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
     }
   }
 

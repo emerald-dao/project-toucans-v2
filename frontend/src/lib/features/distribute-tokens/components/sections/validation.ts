@@ -1,7 +1,8 @@
 import { hasVaultSetup } from '$flow/actions';
+import { ECurrencies } from '$lib/types/common/enums';
 import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
 
-const validationSuite = create((data = {}, currentField, availableBalance: number | undefined, projectOwner: string, projectId: string) => {
+const validationSuite = create((data = {}, currentField, availableBalance: number | undefined, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string) => {
 	only(currentField);
 
 	test('address', 'Address should have 18 chars', () => {
@@ -13,7 +14,7 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 			'address',
 			"Address doesn't have a vault set up.",
 			async () => {
-				return (await checkAddress(data.account, projectOwner, projectId)) as string;
+				return (await checkAddress(data.account, projectOwner, projectId, currencyToDistribute)) as string;
 			},
 			[data.account]
 		);
@@ -30,10 +31,10 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 	});
 });
 
-const checkAddress = async (address: string, projectOwner: string, projectId: string) => {
+const checkAddress = async (address: string, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string) => {
 	return new Promise((resolve, reject) => {
 		setTimeout(async () => {
-			const success = await hasVaultSetup(projectOwner, projectId, address)
+			const success = await hasVaultSetup(projectOwner, projectId, address, currencyToDistribute)
 			if (success) {
 				resolve(true);
 			} else {

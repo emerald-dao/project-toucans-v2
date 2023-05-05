@@ -24,9 +24,14 @@ fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
   appendAction(projectId, rest, 'Purchase');
 });
 
-fcl.events(`${eventIdentifierPrefix}Distribute`).subscribe((event) => {
+fcl.events(`${eventIdentifierPrefix}Mint`).subscribe((event) => {
   const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Distribute');
+  appendAction(projectId, rest, 'Mint');
+});
+
+fcl.events(`${eventIdentifierPrefix}BatchMint`).subscribe((event) => {
+  const { projectId, amounts, ...rest } = event;
+  appendAction(projectId, rest, 'BatchMint');
 });
 
 fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
@@ -37,6 +42,11 @@ fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
 fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
   const { projectId, ...rest } = event;
   appendAction(projectId, rest, 'Withdraw');
+});
+
+fcl.events(`${eventIdentifierPrefix}BatchWithdraw`).subscribe((event) => {
+  const { projectId, amounts, ...rest } = event;
+  appendAction(projectId, rest, 'BatchWithdraw');
 });
 
 fcl.events(`${eventIdentifierPrefix}UpdateThreshold`).subscribe((event) => {

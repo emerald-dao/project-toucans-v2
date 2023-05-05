@@ -170,4 +170,10 @@ pub contract ToucansUtils {
     }
     return address.toString()
   }
+
+  pub fun fixToReadableString(num: UFix64): String {
+    let numToString: String = num.toString()
+    let indexOfDot: Int = ToucansUtils.index(numToString, ".", 1)!
+    return numToString.slice(from: 0, upTo: indexOfDot + 3)
+  }
 }
