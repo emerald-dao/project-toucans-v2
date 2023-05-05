@@ -27,8 +27,8 @@
 	let distStaging: Distribution[] = [];
 
 	let formDist: Distribution = {
-		account: '',
-		tokens: 0
+		address: '',
+		amount: 0
 	};
 	let csvDist: Distribution[] = [];
 
@@ -110,7 +110,7 @@
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
 				<Button width="full-width" on:click={distributeTokens}>
-					{distributionType === 'withdraw' ? 'Withdraw' : 'Distribute'}
+					{distributionType === 'withdraw' ? 'Withdraw' : 'Mint'}
 				</Button>
 			</div>
 		{/if}

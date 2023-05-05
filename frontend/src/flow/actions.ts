@@ -342,7 +342,7 @@ const proposeBatchWithdraw = async (
 	projectId: string
 ) => {
 	const amountsArg: any = amounts.map(distribution => {
-		return { key: distribution.account, value: formatFix(distribution.tokens) }
+		return { key: distribution.address, value: formatFix(distribution.amount) }
 	});
 
 	return await fcl.mutate({
@@ -516,7 +516,7 @@ const batchMintTokens = async (
 	amounts: Distribution[]
 ) => {
 	const amountsArg: any = amounts.map(distribution => {
-		return { key: distribution.account, value: formatFix(distribution.tokens) }
+		return { key: distribution.address, value: formatFix(distribution.amount) }
 	});
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(batchMintTokensTx, projectId, projectOwner),

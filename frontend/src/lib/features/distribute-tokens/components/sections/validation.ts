@@ -1,12 +1,13 @@
 import { hasVaultSetup } from '$flow/actions';
-import { ECurrencies } from '$lib/types/common/enums';
+import type { ECurrencies } from '$lib/types/common/enums';
+import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
 
-const validationSuite = create((data = {}, currentField, availableBalance: number | undefined, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string) => {
+const validationSuite = create((data: Distribution, currentField, availableBalance: number | undefined, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string) => {
 	only(currentField);
 
 	test('address', 'Address should have 18 chars', () => {
-		enforce(data.account).lengthEquals(18);
+		enforce(data.address).lengthEquals(18);
 	});
 
 	skipWhen(validationSuite.get().hasErrors('address'), () => {
@@ -14,19 +15,19 @@ const validationSuite = create((data = {}, currentField, availableBalance: numbe
 			'address',
 			"Address doesn't have a vault set up.",
 			async () => {
-				return (await checkAddress(data.account, projectOwner, projectId, currencyToDistribute)) as string;
+				return (await checkAddress(data.address, projectOwner, projectId, currencyToDistribute)) as string;
 			},
-			[data.account]
+			[data.address]
 		);
 	});
 
 	test('amount', 'Amount should me greater than 0', () => {
-		enforce(data.tokens).greaterThan(0);
+		enforce(data.amount).greaterThan(0);
 	});
 
 	omitWhen(availableBalance === undefined, () => {
 		test('amount', 'Amount should be less than your available balance', () => {
-			enforce(data.tokens).lessThan(availableBalance);
+			enforce(data.amount).lessThan(availableBalance);
 		});
 	});
 });

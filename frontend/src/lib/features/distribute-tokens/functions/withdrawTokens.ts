@@ -6,7 +6,7 @@ import type { Distribution } from '$lib/types/dao-project/funding-rounds/distrib
 export const withdrawTokens = async (daoData: DAOProject, distStaging: Distribution[], currency: ECurrencies) => {
 
 	if (distStaging.length == 1) {
-		return await proposeWithdrawExecution(currency, distStaging[0].account, distStaging[0].tokens.toString(), daoData.generalInfo.owner, daoData.generalInfo.project_id);
+		return await proposeWithdrawExecution(currency, distStaging[0].address, distStaging[0].amount.toString(), daoData.generalInfo.owner, daoData.generalInfo.project_id);
 	}
 
 	return await proposeBatchWithdrawExecution(currency, distStaging, daoData.generalInfo.owner, daoData.generalInfo.project_id);

@@ -92,7 +92,7 @@
 						name="address"
 						type="text"
 						maxlength="18"
-						bind:value={formDist.account}
+						bind:value={formDist.address}
 						on:input={handleChange}
 					/>
 				</InputWrapper>
@@ -103,7 +103,7 @@
 					errors={res.getErrors('amount')}
 					isValid={res.isValid('amount')}
 				>
-					<input name="amount" type="text" bind:value={formDist.tokens} on:input={handleChange} />
+					<input name="amount" type="text" bind:value={formDist.amount} on:input={handleChange} />
 				</InputWrapper>
 				<Button
 					form="dist-form"

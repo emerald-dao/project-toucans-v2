@@ -16,8 +16,8 @@
 	{#if distStaging.length > 0}
 		{#each distStaging as dist, i}
 			<DistStagingElement
-				forAccount={dist.account}
-				amount={dist.tokens}
+				forAccount={dist.address}
+				amount={dist.amount}
 				{tokenName}
 				on:deleteDist={() => deleteFromStaging(i)}
 			/>
@@ -25,11 +25,8 @@
 	{:else}
 		<div class="request-wrapper">
 			<span class="small" in:fly|local={{ y: 10, duration: 500, delay: 1000 }}>
-				1. Use the input fields on the left to add wallet addresses to distribute DAO Treasury funds
+				Use the input fields on the left to add wallet addresses to distribute DAO Treasury funds
 				to.
-			</span>
-			<span class="small" in:fly|local={{ y: 10, duration: 500, delay: 1000 }}>
-				2. When you are ready, click “Distribute” to send the funds.
 			</span>
 		</div>
 	{/if}
