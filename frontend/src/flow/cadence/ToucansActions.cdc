@@ -53,7 +53,7 @@ pub contract ToucansActions {
     }
 
     pub fun getTitle(): String {
-      return "Withdraw"
+      return "BatchWithdraw"
     }
 
     init(_ vaultType: Type, _ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, tokenSymbol: String) {
@@ -105,7 +105,7 @@ pub contract ToucansActions {
     }
 
     pub fun getTitle(): String {
-      return "Mint"
+      return "BatchMint"
     }
 
     init(_ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, tokenSymbol: String) {

@@ -4,8 +4,8 @@
 	import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
 	import Icon from '@iconify/svelte';
 	import { user } from '$stores/flow/FlowStore';
-	import { acceptActionExecution, declineActionExecution } from '$flow/actions';
-	import { Label } from '@emerald-dao/component-library';
+	import { acceptActionExecution, declineActionExecution, getBatchAmounts } from '$flow/actions';
+	import { Label, Modal, getModal } from '@emerald-dao/component-library';
 
 	export let action: ActionData;
 	export let threshold: string;
@@ -24,10 +24,12 @@
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'tabler:outbound',
+		BatchWithdraw: 'tabler:outbound',
 		RemoveSigner: 'tabler:pencil-off',
 		AddSigner: 'tabler:pencil-plus',
 		UpdateThreshold: 'tabler:alert-triangle',
 		Mint: 'tabler:coin',
+		BatchMint: 'tabler:coin',
 		MintToTreasury: 'tabler:pig-money'
 	};
 
@@ -35,12 +37,19 @@
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'Withdraw',
+		BatchWithdraw: 'Batch Withdraw',
 		RemoveSigner: 'Remove Signer',
 		AddSigner: 'Add Signer',
 		UpdateThreshold: 'Update Threshold',
 		Mint: 'Mint',
+		BatchMint: 'Batch Mint',
 		MintToTreasury: 'Mint to Treasury'
 	};
+
+	async function fetchBatchAmounts() {
+		const response = await getBatchAmounts(projectOwner, daoId, action.id);
+		return Object.keys(response).map((address) => address + ': ' + response[address] + '\n');
+	}
 </script>
 
 <div class="main-wrapper">
@@ -65,7 +74,23 @@
 			<span class="action-message xsmall">{action.intent}</span>
 		{/if}
 	</div>
+
 	<div class="row-4 align-center">
+		{#if action.title === 'BatchWithdraw' || action.title === 'BatchMint'}
+			<div
+				class="header-link"
+				on:click={() => getModal(`batch-withdraw-${action.id}`).open()}
+				on:keydown
+			>
+				<Icon icon="tabler:message" />
+			</div>
+			{#await fetchBatchAmounts() then amounts}
+				<Modal background="var(--clr-background-secondary)" id={`batch-withdraw-${action.id}`}>
+					<span class="special-message-heading">Distribution</span>
+					<p class="special-message">{amounts}</p>
+				</Modal>
+			{/await}
+		{/if}
 		<div class="threshold-wrapper">
 			<span class="xsmall">Signatures</span>
 			<span class="threshold">{yesCount}/{threshold}</span>

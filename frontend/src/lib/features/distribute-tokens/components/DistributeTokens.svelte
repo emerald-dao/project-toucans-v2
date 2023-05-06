@@ -38,6 +38,10 @@
 		} else {
 			distStaging = [...distStaging, ...csvDist];
 		}
+		formDist = {
+			address: '',
+			amount: 0
+		};
 	};
 
 	const distributeTokens = () => {

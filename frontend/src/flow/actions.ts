@@ -32,6 +32,7 @@ import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
+import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
@@ -649,6 +650,7 @@ export const hasVaultSetup = async (
 	tokenSymbol: ECurrencies | string
 ) => {
 	try {
+		console.log(tokenSymbol)
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, projectOwner),
 			args: (arg, t) => [
@@ -719,5 +721,25 @@ export const ownsNFTFromCatalog = async (userAddress: string, collectionIdentifi
 	} catch (e) {
 		console.log('Error in ownsNFTFromCatalog', e);
 		throw new Error('Error in ownsNFTFromCatalog');
+	}
+};
+
+export const getBatchAmounts = async (
+	projectOwner: string,
+	projectId: string,
+	actionId: string
+) => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(getBatchAmountsScript),
+			args: (arg, t) => [
+				arg(projectOwner, t.Address),
+				arg(projectId, t.String),
+				arg(actionId, t.UInt64)
+			]
+		});
+	} catch (e) {
+		console.log('Error in getBatchAmounts', e);
+		throw new Error('Error in getBatchAmounts');
 	}
 };

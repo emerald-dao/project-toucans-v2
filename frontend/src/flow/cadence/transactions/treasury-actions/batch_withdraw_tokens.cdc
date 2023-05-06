@@ -26,9 +26,8 @@ transaction(
     var tokenInfo = ToucansTokens.getTokenInfoFromSymbol(symbol: tokenSymbol)
     if tokenInfo == nil && tokenSymbol == self.Project.projectTokenInfo.symbol {
       tokenInfo = self.Project.projectTokenInfo
-    } else {
-      panic("Didn't find token info.")
     }
+    assert(tokenInfo != nil, message: "Didn't find token info.")
 
     let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>} = {}
     for wallet in amounts.keys {
