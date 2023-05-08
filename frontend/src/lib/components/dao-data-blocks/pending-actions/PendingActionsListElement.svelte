@@ -81,9 +81,9 @@
 			>
 				<Icon icon="tabler:message" />
 			</div>
-			{#await getBatchAmounts(projectOwner, daoId, action.id) then amounts}
+			{#await getBatchAmounts(projectOwner, daoId, action.id) then { amounts, currency }}
 				<Modal background="var(--clr-background-secondary)" id={`batch-withdraw-${action.id}`}>
-					<BatchMintingList {amounts} />
+					<BatchMintingList {amounts} {currency} />
 				</Modal>
 			{/await}
 		{/if}
