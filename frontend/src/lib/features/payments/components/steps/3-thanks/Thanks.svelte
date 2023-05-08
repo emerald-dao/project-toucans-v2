@@ -16,7 +16,7 @@
 			{#if $paymentData.type === 'donation'}
 				{`You donated`}
 				<span class="strong">
-					{`$${$paymentData.currency} ${$paymentData.amount}`}
+					{`${$paymentData.amount} $${$paymentData.currency}`}
 				</span>
 				to
 				<span class="strong">
@@ -25,11 +25,13 @@
 			{:else if $paymentData.type === 'fund' && $paymentData.amount != undefined}
 				{`You funded ${$paymentData.daoName} with`}
 				<span class="strong">
-					{`$${$paymentData.currency} ${$paymentData.amount}`}
+					{`${$paymentData.amount} $${$paymentData.currency}`}
 				</span>
 				and got
 				<span class="strong">
-					{`$${$paymentData.tokenName} ${$paymentData.amount * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)}.`}
+					{`${$paymentData.amount * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)} $${
+						$paymentData.tokenName
+					}.`}
 				</span>
 			{/if}
 		</p>

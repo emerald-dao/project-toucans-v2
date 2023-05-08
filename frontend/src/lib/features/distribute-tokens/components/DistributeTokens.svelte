@@ -110,7 +110,7 @@
 		{/if}
 	</div>
 	<div class="dist-wrapper sub-wrapper card">
-		<DistributionStaging bind:distStaging tokenName={daoData.generalInfo.token_symbol} />
+		<DistributionStaging bind:distStaging tokenName={currencyToDistribute} />
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
 				<Button width="full-width" on:click={distributeTokens}>

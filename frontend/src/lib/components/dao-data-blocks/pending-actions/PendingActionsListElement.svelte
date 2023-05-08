@@ -6,6 +6,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import { acceptActionExecution, declineActionExecution, getBatchAmounts } from '$flow/actions';
 	import { Label, Modal, getModal } from '@emerald-dao/component-library';
+	import BatchMintingList from './atoms/BatchMintingList.svelte';
 
 	export let action: ActionData;
 	export let threshold: string;
@@ -16,6 +17,8 @@
 	export let showDetail = true;
 	export let isSigner: boolean;
 	export let showDao = true;
+
+	console.log(action);
 
 	$: signed = Object.keys(action.votes).includes($user.addr as string);
 	$: yesCount = Object.values(action.votes).filter((v) => v === true).length;
@@ -45,11 +48,6 @@
 		BatchMint: 'Batch Mint',
 		MintToTreasury: 'Mint to Treasury'
 	};
-
-	async function fetchBatchAmounts() {
-		const response = await getBatchAmounts(projectOwner, daoId, action.id);
-		return Object.keys(response).map((address) => address + ': ' + response[address] + '\n');
-	}
 </script>
 
 <div class="main-wrapper">
@@ -74,7 +72,6 @@
 			<span class="action-message xsmall">{action.intent}</span>
 		{/if}
 	</div>
-
 	<div class="row-4 align-center">
 		{#if action.title === 'BatchWithdraw' || action.title === 'BatchMint'}
 			<div
@@ -84,10 +81,9 @@
 			>
 				<Icon icon="tabler:message" />
 			</div>
-			{#await fetchBatchAmounts() then amounts}
+			{#await getBatchAmounts(projectOwner, daoId, action.id) then { amounts, currency }}
 				<Modal background="var(--clr-background-secondary)" id={`batch-withdraw-${action.id}`}>
-					<span class="special-message-heading">Distribution</span>
-					<p class="special-message">{amounts}</p>
+					<BatchMintingList {amounts} {currency} />
 				</Modal>
 			{/await}
 		{/if}

@@ -260,16 +260,17 @@ pub contract Toucans {
 
 
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
-      let tokenInfo = self.getTokenInfo(inputVaultType: recipientVault.borrow()!.getType()) 
+      let vaultType: Type = recipientVault.borrow()!.getType()
+      let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
                 ?? panic("Unsupported token type for withdrawing.")
-      let action = ToucansActions.WithdrawToken(recipientVault, amount, tokenInfo.symbol)
+      let action = ToucansActions.WithdrawToken(vaultType, recipientVault, amount, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
     pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
                 ?? panic("Unsupported token type for withdrawing.")
-      let action = ToucansActions.BatchWithdrawToken(vaultType, recipientVaults, amounts, tokenSymbol: tokenInfo.symbol)
+      let action = ToucansActions.BatchWithdrawToken(vaultType, recipientVaults, amounts, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -279,7 +280,7 @@ pub contract Toucans {
           "This vault cannot receive the projects token."
         self.minting: "Minting is turned off."
       }
-      let action = ToucansActions.MintTokens(recipientVault, amount, tokenSymbol: self.projectTokenInfo.symbol)
+      let action = ToucansActions.MintTokens(recipientVault, amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -287,7 +288,7 @@ pub contract Toucans {
       pre {
         self.minting: "Minting is turned off."
       }
-      let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, tokenSymbol: self.projectTokenInfo.symbol)
+      let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -295,7 +296,7 @@ pub contract Toucans {
       pre {
         self.minting: "Minting is turned off."
       }
-      let action = ToucansActions.MintTokensToTreasury(amount, tokenSymbol: self.projectTokenInfo.symbol)
+      let action = ToucansActions.MintTokensToTreasury(amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -339,10 +340,10 @@ pub contract Toucans {
           case Type<ToucansActions.WithdrawToken>():
             let withdraw = action as! ToucansActions.WithdrawToken
             let recipientVault = withdraw.recipientVault.borrow()!
-            self.withdrawFromTreasury(vault: recipientVault, amount: withdraw.amount)
+            self.withdrawFromTreasury(vaultType: withdraw.vaultType, vault: recipientVault, amount: withdraw.amount, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.BatchWithdrawToken>():
             let withdraw = action as! ToucansActions.BatchWithdrawToken
-            self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts)
+            self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.MintTokens>():
             let mint = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
@@ -598,41 +599,35 @@ pub contract Toucans {
       return nil
     }
 
-    access(account) fun withdrawFromTreasury(vault: &{FungibleToken.Receiver}, amount: UFix64) {
-      let tokenInfo: ToucansTokens.TokenInfo = self.getTokenInfo(inputVaultType: vault.getType()) 
-                ?? panic("Unsupported token type for withdrawing.")
+    access(self) fun withdrawFromTreasury(vaultType: Type, vault: &{FungibleToken.Receiver}, amount: UFix64, tokenSymbol: String) {
       emit Withdraw(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleId(),
-        tokenSymbol: tokenInfo.symbol,
+        tokenSymbol: tokenSymbol,
         amount: amount,
         by: vault.owner!.address
       )
-      vault.deposit(from: <- self.treasury[vault.getType()]?.withdraw!(amount: amount))
+      vault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
     }
 
-    access(account) fun batchWithdrawFromTreasury(vaultType: Type, vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
+    access(self) fun batchWithdrawFromTreasury(vaultType: Type, vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}, tokenSymbol: String) {
       let failed: [Address] = []
       var totalAmount: UFix64 = 0.0
       for wallet in amounts.keys {
         let amount = amounts[wallet]!
         totalAmount = totalAmount + amount
         if let recipientVault: &{FungibleToken.Receiver} = vaults[wallet]!.borrow() {
-          if recipientVault.getType() == vaultType {
-            recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
-            continue
-          }
+          recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
+          continue
         }
         failed.append(wallet)
       }
-      let tokenInfo: ToucansTokens.TokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
-          ?? panic("Unsupported token type for withdrawing.")
       emit BatchWithdraw(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleId(),
-        tokenSymbol: tokenInfo.symbol,
+        tokenSymbol: tokenSymbol,
         amounts: amounts,
         amount: totalAmount,
         failed: failed
@@ -895,6 +890,9 @@ pub contract Toucans {
     }
 
     destroy() {
+      pre {
+        false: "Disabled for now."
+      }
       destroy self.treasury
       destroy self.minter
       destroy self.overflow
