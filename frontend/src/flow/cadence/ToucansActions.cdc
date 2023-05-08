@@ -19,6 +19,7 @@ pub contract ToucansActions {
 
   // Transfers `amount` tokens from the treasury to `recipientVault`
   pub struct WithdrawToken: Action {
+    pub let vaultType: Type
     pub let recipientVault: Capability<&{FungibleToken.Receiver}>
     pub let amount: UFix64
     pub let tokenSymbol: String
@@ -32,9 +33,12 @@ pub contract ToucansActions {
       return "Withdraw"
     }
 
-    init(_ recipientVault: Capability<&{FungibleToken.Receiver}>, _ amount: UFix64, tokenSymbol: String) {
+    init(_ vaultType: Type, _ recipientVault: Capability<&{FungibleToken.Receiver}>, _ amount: UFix64, _ tokenSymbol: String) {
+      pre {
+        recipientVault.check(): "Invalid recipient capability."
+      }
+      self.vaultType = vaultType
       self.recipientVault = recipientVault
-      assert(self.recipientVault.check(), message: "Invalid recipient capability.")
       self.amount = amount
       self.tokenSymbol = tokenSymbol
       self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
@@ -56,7 +60,7 @@ pub contract ToucansActions {
       return "BatchWithdraw"
     }
 
-    init(_ vaultType: Type, _ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, tokenSymbol: String) {
+    init(_ vaultType: Type, _ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, _ tokenSymbol: String) {
       self.vaultType = vaultType
       self.recipientVaults = recipientVaults
       self.amounts = amounts
@@ -85,7 +89,7 @@ pub contract ToucansActions {
       return "Mint"
     }
 
-    init(_ recipientVault: Capability<&{FungibleToken.Receiver}>, _ amount: UFix64, tokenSymbol: String) {
+    init(_ recipientVault: Capability<&{FungibleToken.Receiver}>, _ amount: UFix64, _ tokenSymbol: String) {
       self.recipientVault = recipientVault
       assert(self.recipientVault.check(), message: "Invalid recipient capability.")
       self.amount = amount
@@ -108,7 +112,7 @@ pub contract ToucansActions {
       return "BatchMint"
     }
 
-    init(_ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, tokenSymbol: String) {
+    init(_ recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, _ amounts: {Address: UFix64}, _ tokenSymbol: String) {
       self.recipientVaults = recipientVaults
       self.amounts = amounts
       self.tokenSymbol = tokenSymbol
@@ -135,7 +139,7 @@ pub contract ToucansActions {
       return "MintToTreasury"
     }
 
-    init(_ amount: UFix64, tokenSymbol: String) {
+    init(_ amount: UFix64, _ tokenSymbol: String) {
       self.amount = amount
       self.tokenSymbol = tokenSymbol
       self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
