@@ -270,7 +270,7 @@ pub contract Toucans {
     pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
                 ?? panic("Unsupported token type for withdrawing.")
-      let action = ToucansActions.BatchWithdrawToken(vaultType, recipientVaults, amounts, tokenSymbol: tokenInfo.symbol)
+      let action = ToucansActions.BatchWithdrawToken(vaultType, recipientVaults, amounts, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -280,7 +280,7 @@ pub contract Toucans {
           "This vault cannot receive the projects token."
         self.minting: "Minting is turned off."
       }
-      let action = ToucansActions.MintTokens(recipientVault, amount, tokenSymbol: self.projectTokenInfo.symbol)
+      let action = ToucansActions.MintTokens(recipientVault, amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -288,7 +288,7 @@ pub contract Toucans {
       pre {
         self.minting: "Minting is turned off."
       }
-      let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, tokenSymbol: self.projectTokenInfo.symbol)
+      let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -296,7 +296,7 @@ pub contract Toucans {
       pre {
         self.minting: "Minting is turned off."
       }
-      let action = ToucansActions.MintTokensToTreasury(amount, tokenSymbol: self.projectTokenInfo.symbol)
+      let action = ToucansActions.MintTokensToTreasury(amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
