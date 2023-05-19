@@ -116,25 +116,32 @@
 			</form>
 		</TabPanel>
 		<TabPanel>
-			<p class="xsmall margin-top">
-				For an example CSV file, download <a href="/example-toucans-upload.csv">this</a>.
-			</p>
-			<div class="wrapper">
-				<DropZone
-					name="distribution-csv"
-					accept={['text/csv']}
-					bind:bindValue={csvFile}
-					maxAmountOfFiles={1}
-				/>
-			</div>
-			<Button
-				form="dist-form"
-				type="ghost"
-				color="neutral"
-				width="full-width"
-				state={csvDist.length > 0 ? 'active' : 'disabled'}
-				>Add <Icon icon="tabler:arrow-narrow-right" /></Button
+			<form
+				id="dist-form"
+				on:submit|preventDefault={() => addToStaging(res.isValid())}
+				autocomplete="off"
+				class="wrapper"
 			>
+				<p class="xsmall margin-top">
+					For an example CSV file, download <a href="/example-toucans-upload.csv">this</a>.
+				</p>
+				<div class="wrapper">
+					<DropZone
+						name="distribution-csv"
+						accept={['text/csv']}
+						bind:bindValue={csvFile}
+						maxAmountOfFiles={1}
+					/>
+				</div>
+				<Button
+					form="dist-form"
+					type="ghost"
+					color="neutral"
+					width="full-width"
+					state={csvDist.length > 0 ? 'active' : 'disabled'}
+					>Add <Icon icon="tabler:arrow-narrow-right" /></Button
+				>
+			</form>
 		</TabPanel>
 	</Tabs>
 </div>
