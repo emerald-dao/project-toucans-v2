@@ -12,7 +12,7 @@
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
 
-		res = validationSuite(claimAmount, target.name, maxClaimAmount);
+		res = validationSuite($holderClaimData.claimAmount, target.name, maxClaimAmount);
 
 		isValid = res.isValid();
 	};
@@ -22,13 +22,14 @@
 	$holderClaimData.projectId = daoData.generalInfo.project_id;
 	$holderClaimData.projectOwner = daoData.generalInfo.owner;
 	$holderClaimData.currency = daoData.onChainData.paymentCurrency;
+	$holderClaimData.claimAmount = 0;
 
 	let res = validationSuite.get();
-	let claimAmount = 0;
 
 	$: holdingPercentage = Number(daoData.userBalance) / Number(daoData.onChainData.totalSupply);
 	$: maxClaimAmount = holdingPercentage * Number(daoData.onChainData.overflowBalance);
-	$: $holderClaimData.amount = (claimAmount / maxClaimAmount) * Number(daoData.userBalance);
+	$: $holderClaimData.amount =
+		($holderClaimData.claimAmount / maxClaimAmount) * Number(daoData.userBalance);
 </script>
 
 <div class="column-4">
@@ -48,20 +49,20 @@
 		fontSize="var(--font-size-7)"
 		hasBorder={false}
 		on:input={(input) => handleChange(input.detail)}
-		bind:value={claimAmount}
+		bind:value={$holderClaimData.claimAmount}
 	/>
 	<div class="card-primary row-12 align-center justify-center">
 		<div class="column-1 align-end">
 			<span class="small">You will receive</span>
 			<Currency
-				amount={claimAmount}
+				amount={$holderClaimData.claimAmount}
 				currency={daoData.onChainData.paymentCurrency}
 				color="heading"
 			/>
 		</div>
 		<IconCircle
 			icon="tabler:arrows-exchange"
-			color={claimAmount === 0 ? 'neutral' : isValid ? 'primary' : 'alert'}
+			color={$holderClaimData.claimAmount === 0 ? 'neutral' : isValid ? 'primary' : 'alert'}
 			width="1.6rem"
 		/>
 		<div class="column-1">
