@@ -10,16 +10,8 @@
 	const iconsAndPictures: IconsAndPictures[] = [
 		{
 			type: 'image',
-			imageUrl: '/toucans-logo.svg',
-			circleNumber: 1,
-			alt: 'Toucans logo',
-			position: 'right',
-			speed: 'normal'
-		},
-		{
-			type: 'image',
 			imageUrl: '/ec-logo.png',
-			circleNumber: 2,
+			circleNumber: 1,
 			alt: 'Emerald logo',
 			position: 'left',
 			speed: 'fast'
@@ -27,7 +19,7 @@
 		{
 			type: 'image',
 			imageUrl: 'flovatar-logo.jpg',
-			circleNumber: 3,
+			circleNumber: 2,
 			alt: 'Flovatar logo',
 			position: 'right',
 			speed: 'fast'
@@ -35,9 +27,17 @@
 		{
 			type: 'image',
 			imageUrl: 'flunks-logo.jpg',
-			circleNumber: 4,
+			circleNumber: 3,
 			alt: 'Flunks logo',
 			position: 'left',
+			speed: 'normal'
+		},
+		{
+			type: 'image',
+			imageUrl: 'flowverse-logo.jpg',
+			circleNumber: 4,
+			alt: 'Flowverse logo',
+			position: 'right',
 			speed: 'normal'
 		}
 	];
@@ -90,12 +90,7 @@
 			</div>
 		{/each}
 	{/each}
-	<img
-		class="flow-logo"
-		src="/flow-logo.png"
-		alt="Flow logo"
-		style={`width: ${imagesAndIconsWidth}rem`}
-	/>
+	<img src="/toucans-logo.svg" alt="Toucans logo" style={`width: ${imagesAndIconsWidth}rem`} />
 </div>
 
 <style lang="scss">
