@@ -10,7 +10,7 @@
 				<h1 class="w-medium">Create a token.<br /> Launch a DAO</h1>
 				<p class="large">
 					Toucans is the first fungible token creation and management platform on the Flow
-					blockchain that makes it easy for internet communities unlock the power of human-centric
+					blockchain that makes it easy for digital communities to unlock the power of human-centric
 					coordination.
 				</p>
 			</div>

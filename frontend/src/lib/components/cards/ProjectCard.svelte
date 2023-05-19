@@ -1,27 +1,25 @@
-<script>
+<script type="ts">
 	import { Label } from '@emerald-dao/component-library';
-	export let name = 'Emerald DAO';
-	export let story = true;
+	export let name: string;
+	export let projectId: string;
+	export let image: string = '/ec-logo.png';
+	export let labels: string[] = [];
+	export let description: string;
+	export let story: boolean = false;
 </script>
 
-<a href={`/p/${name}`} class="card-primary" class:with-story={story}>
+<a href={`/p/${projectId}`} class="card-primary" class:with-story={story}>
 	<div class="column-5">
 		<div class="row-3 align-center">
-			<img src="/ec-logo.png" alt="DAO logo" />
-			<h3>DAO Title</h3>
+			<img src={image} alt="DAO logo" />
+			<h3>{name}</h3>
 		</div>
 		<div class="row-3">
-			<Label color="neutral" size="small">Building</Label>
-			<Label color="neutral" size="small">Education</Label>
-			<Label color="neutral" size="small">Community</Label>
+			{#each labels as label}
+				<Label color="neutral" size="small">{label}</Label>
+			{/each}
 		</div>
-		<p>
-			Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate incididunt
-			laboris. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate
-			incididunt laboris. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation
-			voluptate incididunt laboris. Sit commodo dolor nostrud in reprehenderit mollit ut
-			exercitation voluptate incididunt laboris.
-		</p>
+		<p>{description}</p>
 	</div>
 	{#if story}
 		<div class="story-wrapper">
@@ -47,6 +45,7 @@
 		text-decoration: none;
 		padding: var(--space-10);
 		gap: var(--space-8);
+		flex-grow: 1;
 
 		img {
 			max-width: 50px;

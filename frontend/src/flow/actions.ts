@@ -87,7 +87,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 	console.log(data);
 	let contractCode = rawExampleTokenCode
 		.replaceAll('INSERT NAME', data.daoDetails.name)
-		.replaceAll('INSERT DESCRIPTION', data.daoDetails.description)
+		.replaceAll('INSERT DESCRIPTION', data.daoDetails.description.replace(/(\r\n|\n|\r)/gm, ""))
 		.replaceAll('INSERT SYMBOL', data.daoDetails.tokenName)
 		.replaceAll('INSERT URL', data.daoDetails.website);
 	const contractName = data.daoDetails.contractName;

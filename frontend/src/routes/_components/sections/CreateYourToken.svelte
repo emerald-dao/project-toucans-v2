@@ -13,33 +13,24 @@
 	let stepsData: stepData[] = [
 		{
 			number: 1,
-			title: 'Select your DAO details',
-			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+			title: 'Input DAO Details',
+			description: 'Input a name, description, logos, and all your socials.',
 			element: undefined,
 			intersecting: false
 		},
 		{
 			number: 2,
-			title: 'Select your DAO details',
+			title: 'Configure Tokenomics',
 			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+				'Select what type of token you will raise in, a max supply, turn minting on/off, and configure an edit delay.',
 			element: undefined,
 			intersecting: false
 		},
 		{
 			number: 3,
-			title: 'Select your DAO details',
+			title: 'Launch Your DAO',
 			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
-			element: undefined,
-			intersecting: false
-		},
-		{
-			number: 4,
-			title: 'Select your DAO details',
-			description:
-				'Whether you want to create a token to raise funds in a treasury, or simply as utility rewards for your community, Toucans makes it easy for you to build organizations together,online.',
+				'In under 5 minutes you can launch your own DAO on the Flow blockchain with a multi-sig treasury.',
 			element: undefined,
 			intersecting: false
 		}
