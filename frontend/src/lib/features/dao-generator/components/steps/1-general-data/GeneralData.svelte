@@ -32,18 +32,20 @@
 		const target = input.target as HTMLInputElement;
 
 		if (target.name === 'name') {
-			$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name
-				.replace(/[^\w\s]|\s/gi, '')
-				.toLowerCase();
+			$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.name.replace(
+				/[^\w\s]|\s/gi,
+				''
+			);
 
 			namePending = true;
 			contractNamePending = true;
 		}
 
 		if (target.name === 'contractName') {
-			$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.contractName
-				.replace(/[^\w\s]|\s/gi, '')
-				.toLowerCase();
+			$daoGeneratorData.daoDetails.contractName = $daoGeneratorData.daoDetails.contractName.replace(
+				/[^\w\s]|\s/gi,
+				''
+			);
 
 			contractNamePending = true;
 		}
