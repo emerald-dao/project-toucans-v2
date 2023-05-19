@@ -3,7 +3,7 @@ import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { addresses, user } from '$stores/flow/FlowStore';
-import { executeTransaction, formatFix, replaceWithProperValues, splitList } from './utils';
+import { executeTransaction, formatFix, replaceWithProperValues, splitList, switchToToken } from './utils';
 
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
@@ -136,7 +136,7 @@ const fundProject = async (
 ) => {
 	let txCode = fundProjectTx;
 	if (currency === ECurrencies.USDC) {
-		txCode = txCode.replaceAll('flowTokenVault', 'USDCVault').replaceAll('FlowToken', 'FiatToken');
+		txCode = switchToToken(txCode, ECurrencies.USDC);
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
@@ -170,20 +170,20 @@ const claimOverflow = async (
 	projectOwner: string,
 	projectId: string,
 	amount: string,
-	currency: ECurrencies
+	currency: ECurrencies,
+	expectedAmount: string
 ) => {
 	let txCode = claimOverflowTx;
 	if (currency === ECurrencies.USDC) {
-		txCode = txCode
-			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
-			.replaceAll('FlowToken', 'FiatToken');
+		txCode = switchToToken(txCode, ECurrencies.USDC);
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
-			arg(formatFix(amount), t.UFix64)
+			arg(formatFix(amount), t.UFix64),
+			arg(formatFix(expectedAmount), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -196,8 +196,9 @@ export const claimOverflowExecution = (
 	projectOwner: string,
 	projectId: string,
 	amount: string,
-	currency: ECurrencies
-) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency));
+	currency: ECurrencies,
+	expectedAmount: string
+) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency, expectedAmount));
 
 const transferOverflow = async (projectOwner: string, projectId: string, amount: string) => {
 	return await fcl.mutate({
@@ -229,7 +230,7 @@ const donate = async (
 ) => {
 	let txCode = donateTx;
 	if (currency === ECurrencies.USDC) {
-		txCode = txCode.replaceAll('flowTokenVault', 'USDCVault').replaceAll('FlowToken', 'FiatToken');
+		txCode = switchToToken(txCode, ECurrencies.USDC);
 	}
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(txCode, projectId, projectOwner),

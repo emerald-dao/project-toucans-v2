@@ -4,9 +4,9 @@ import { addresses } from '$stores/flow/FlowStore';
 import { network } from './config';
 import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$lib/stores/custom/steps/step.interface';
-import { get } from 'svelte/store';
+import { ECurrencies } from '$lib/types/common/enums';
 
-export function replaceWithProperValues(script, contractName = '', contractAddress = '') {
+export function replaceWithProperValues(script: string, contractName = '', contractAddress = '') {
 	return (
 		script
 			// For Tx/Scripts
@@ -52,6 +52,18 @@ export function replaceWithProperValues(script, contractName = '', contractAddre
 			// For All
 			.replaceAll('ExampleToken', contractName)
 	);
+}
+
+export function switchToToken(script: string, currency: ECurrencies) {
+	if (currency === ECurrencies.USDC) {
+		return (
+			script
+				.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
+				.replaceAll('flowTokenVault', 'USDCVault')
+				.replaceAll('FlowToken', 'FiatToken')
+		);
+	}
+	return script;
 }
 
 export const executeTransaction: (
@@ -181,16 +193,16 @@ export const formatFix = (value) => {
 };
 
 export const splitList = (list: string[], chunkSize: number) => {
-  const groups = []
-  let currentGroup = []
-  for (let i = 0; i < list.length; i++) {
-      const collectionID = list[i]
-      if (currentGroup.length >= chunkSize) {
-        groups.push([...currentGroup])
-        currentGroup = []
-      }
-      currentGroup.push(collectionID)
-  }
-  groups.push([...currentGroup])
-  return groups
+	const groups = []
+	let currentGroup = []
+	for (let i = 0; i < list.length; i++) {
+		const collectionID = list[i]
+		if (currentGroup.length >= chunkSize) {
+			groups.push([...currentGroup])
+			currentGroup = []
+		}
+		currentGroup.push(collectionID)
+	}
+	groups.push([...currentGroup])
+	return groups
 }
