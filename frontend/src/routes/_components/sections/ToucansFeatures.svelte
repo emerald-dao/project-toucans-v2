@@ -1,19 +1,22 @@
 <script type="ts">
+	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import Icon from '@iconify/svelte';
+
 	let toucansFeatures = [
 		{
-			title: 'Grant',
-			description: 'Support a cause. Collectively decide which people & projects to fund',
-			icon: '/flow-logo.png'
+			title: 'Raise',
+			description: 'Raise funds for your project. Kickstart your project quickly.',
+			icon: 'cash'
 		},
 		{
-			title: 'Investment',
-			description: 'Start and Investment Club. Pool funds and vote on decisions',
-			icon: '/flow-logo.png'
+			title: 'Rewards',
+			description: 'Launch a gamified token. Mint tokens to community members as rewards.',
+			icon: 'brand-apple-arcade'
 		},
 		{
 			title: 'Collaboration',
-			description: 'Fund your project and work towards a common collective goal',
-			icon: '/flow-logo.png'
+			description: 'Support a cause. Work towards a common goal.',
+			icon: 'friends'
 		}
 	];
 </script>
@@ -21,13 +24,13 @@
 <section class="container">
 	<div class="title-wrapper">
 		<span class="tagline">Why Start a DAO?</span>
-		<h2 class="w-medium">Tokens for any Community</h2>
+		<h2 class="w-medium">Tokens for any community.</h2>
 	</div>
 	<div class="cards-wrapper">
 		{#each toucansFeatures as feature}
 			<div class="card">
 				<div class="column-2 align-center">
-					<img src="/frame-125.png" alt="frame" />
+					<IconCircle icon={`tabler:${feature.icon}`} color="primary" width="1.2rem" />
 					<h3>{feature.title}</h3>
 					<p>{feature.description}</p>
 				</div>

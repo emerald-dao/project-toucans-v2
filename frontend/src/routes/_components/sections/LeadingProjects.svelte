@@ -4,36 +4,20 @@
 
 	let testDaos = [
 		{
-			logoUrl: '/leading-projects-logo.png',
+			logoUrl: '/ec-logo.png',
 			name: 'Emerald City DAO',
 			totalInvested: 1500,
-			currency: 'USDC',
+			currency: 'EMLD',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
 		},
 		{
 			logoUrl: '/leading-projects-logo.png',
-			name: 'Emerald City DAO',
+			name: 'Ballerz FC',
 			totalInvested: 1500,
-			currency: 'USDC',
+			currency: 'BFC',
 			numberOfPayments: 12,
 			variationPercentage: 8.2
-		},
-		{
-			logoUrl: '/leading-projects-logo.png',
-			name: 'Emerald City DAO',
-			totalInvested: 1500,
-			currency: 'USDC',
-			numberOfPayments: 12,
-			variationPercentage: 8.2
-		},
-		{
-			logoUrl: '/leading-projects-logo.png',
-			name: 'Emerald City DAO',
-			totalInvested: 1500,
-			currency: 'USDC',
-			numberOfPayments: 12,
-			variationPercentage: -0.5
 		}
 	];
 </script>

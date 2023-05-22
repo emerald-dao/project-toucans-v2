@@ -4,6 +4,12 @@
 	import ToucansFeatures from './_components/sections/ToucansFeatures.svelte';
 	import LeadingProjects from './_components/sections/LeadingProjects.svelte';
 	import { StatsSection, PoweredByECDAO } from '@emerald-dao/component-library';
+
+	const statsData = {
+		data1: { title: '', stat: '' },
+		data2: { title: '', stat: '' },
+		data3: { title: '', stat: '' }
+	};
 </script>
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
@@ -13,7 +19,7 @@
 	<LeadingProjects />
 </div>
 <CreateYourToken />
-<StatsSection bordersColor="var(--clr-border-primary)" />
+<!-- <StatsSection bordersColor="var(--clr-border-primary)" data={statsData} /> -->
 <PoweredByECDAO />
 
 <style lang="scss">
