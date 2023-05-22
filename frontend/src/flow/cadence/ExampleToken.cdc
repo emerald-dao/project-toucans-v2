@@ -40,7 +40,7 @@ pub contract ExampleToken: FungibleToken {
         }
 
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @Vault
+            let vault: @Vault <- from as! @Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             
@@ -114,7 +114,7 @@ pub contract ExampleToken: FungibleToken {
     }
 
     pub fun createEmptyVault(): @Vault {
-        return <-create Vault(balance: 0.0)
+        return <- create Vault(balance: 0.0)
     }
 
     pub resource Minter: Toucans.Minter {
@@ -192,7 +192,7 @@ pub contract ExampleToken: FungibleToken {
  
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)
-      self.account.save(<-vault, to: self.VaultStoragePath)
+      self.account.save(<- vault, to: self.VaultStoragePath)
 
       self.account.link<&Vault{FungibleToken.Receiver}>(
           self.ReceiverPublicPath,
