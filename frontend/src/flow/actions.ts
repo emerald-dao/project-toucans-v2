@@ -15,6 +15,7 @@ import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
 import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
+import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -555,6 +556,20 @@ const mintTokensToTreasury = async (projectId: string, amount: string) => {
 export const mintTokensToTreasuryExecution = (projectId: string, amount: string) =>
 	executeTransaction(() => mintTokensToTreasury(projectId, amount));
 
+const setUpVault = async (projectId: string, contractAddress: string) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(setUpVaultTx, projectId, contractAddress),
+		args: (arg, t) => [],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const setUpVaultExecution = (projectId: string, contractAddress: string) =>
+	executeTransaction(() => setUpVault(projectId, contractAddress));
+
 //    _____           _       _
 //   / ____|         (_)     | |
 //  | (___   ___ _ __ _ _ __ | |_ ___
@@ -647,7 +662,7 @@ export const getBalances = async (userAddress: string) => {
 };
 
 export const hasVaultSetup = async (
-	projectOwner: string,
+	contractAddress: string,
 	projectId: string,
 	userAddress: string,
 	tokenSymbol: ECurrencies | string
@@ -655,7 +670,7 @@ export const hasVaultSetup = async (
 	try {
 		console.log(tokenSymbol)
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, projectOwner),
+			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, contractAddress),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
 				arg(tokenSymbol, t.String)

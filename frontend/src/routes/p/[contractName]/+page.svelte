@@ -5,7 +5,7 @@
 	import { writable, type Writable } from 'svelte/store';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { supabase } from '$lib/supabaseClient';
-	import { getProjectInfo, getTokenBalance } from '$flow/actions';
+	import { getProjectInfo, getTokenBalance, hasVaultSetup } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
 
 	export let data: DAOProject;
@@ -57,6 +57,12 @@
 				data.generalInfo.project_id,
 				data.generalInfo.contract_address,
 				$user.addr
+			);
+			$daoDataStore.vaultSetup = await hasVaultSetup(
+				data.generalInfo.contract_address,
+				data.generalInfo.project_id,
+				$user.addr,
+				data.generalInfo.token_symbol
 			);
 		}
 	};

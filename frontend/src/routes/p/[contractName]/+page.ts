@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { getTokenBalance, getProjectInfo } from '$flow/actions';
+import { getTokenBalance, getProjectInfo, hasVaultSetup } from '$flow/actions';
 import '$flow/config.ts';
 import { get } from 'svelte/store';
 import { user } from '$stores/flow/FlowStore';
@@ -24,6 +24,7 @@ export const load: PageLoad = async ({ params, depends }) => {
 		events: (await fetchProjectEvents(generalInfo.project_id)).reverse(),
 		userBalance: userAddress
 			? await getTokenBalance(generalInfo.project_id, generalInfo.contract_address, userAddress)
-			: null
+			: null,
+		vaultSetup: userAddress ? await hasVaultSetup(generalInfo.contract_address, generalInfo.project_id, userAddress, generalInfo.token_symbol) : true
 	};
 };

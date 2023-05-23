@@ -12,6 +12,7 @@ export interface DAOProject {
 	onChainData: DaoBlockchainData;
 	events: DaoEvent[];
 	userBalance?: number;
+	vaultSetup: boolean;
 }
 
 export interface DaoDatabaseData {

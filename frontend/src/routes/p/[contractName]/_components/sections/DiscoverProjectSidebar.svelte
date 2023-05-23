@@ -1,13 +1,19 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Label, TooltipIcon } from '@emerald-dao/component-library';
+	import { Button, Label, TooltipIcon } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
 	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
 	import RequiredNft from './atoms/RequiredNft.svelte';
+	import { setUpVaultExecution } from '$flow/actions';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let daoData: DAOProject;
+	async function setUpVault() {
+		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
+		daoData.vaultSetup = true;
+	}
 </script>
 
 <aside class="column-7">
@@ -80,6 +86,19 @@
 				<p class="small description">{daoData.generalInfo.description}</p>
 			</div>
 			<div class="column-5">
+				{#if !daoData.vaultSetup && $user.loggedIn}
+					<Button
+						size="large"
+						width="full-width"
+						on:click={setUpVault}
+						title={'Enable Vault'}
+						type="ghost"
+						color="neutral"
+					>
+						<Icon icon="tabler:circle-arrow-up" />
+						Set Up Vault
+					</Button>
+				{/if}
 				<div class="row-4">
 					{#if daoData.onChainData.currentFundingCycle}
 						<PaymentModal {daoData} paymentType="fund" />
