@@ -1,4 +1,5 @@
 import { create, enforce, test, skipWhen, only, include, optional } from 'vest';
+import { reservedContractNames, reservedNames } from './reservedNames';
 
 const validationSuite = create((data = {}, daoProjects, currentField?) => {
 	if (currentField) {
@@ -165,21 +166,25 @@ const validationSuite = create((data = {}, daoProjects, currentField?) => {
 
 const checkDaoName = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
+		if (reservedNames.some((obj) => value.toUpperCase().includes(obj.toUpperCase()))) {
+			reject();
+		}
 		if (daoProjects.some((obj) => obj.name.toUpperCase() === value.toUpperCase())) {
 			reject();
-		} else {
-			resolve(true);
 		}
+		resolve(true);
 	});
 };
 
 const checkDaoContract = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
+		if (reservedContractNames.some((obj) => value.toUpperCase().includes(obj.toUpperCase()))) {
+			reject();
+		}
 		if (daoProjects.some((obj) => obj.project_id.toUpperCase() === value.toUpperCase())) {
 			reject();
-		} else {
-			resolve(true);
 		}
+		resolve(true);
 	});
 };
 
