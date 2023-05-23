@@ -12,7 +12,7 @@
 			variationPercentage: 8.2
 		},
 		{
-			logoUrl: '/leading-projects-logo.png',
+			logoUrl: '/ballerz-fz-logo.jpg',
 			name: 'Ballerz FC',
 			totalInvested: 1500,
 			currency: 'BFC',

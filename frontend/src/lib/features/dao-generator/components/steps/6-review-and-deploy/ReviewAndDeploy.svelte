@@ -22,6 +22,7 @@
 	};
 
 	let logoElement: HTMLImageElement;
+	let confirmCost: boolean = false;
 </script>
 
 <div class="column-6" in:fly={{ y: 30, duration: 400 }}>
@@ -56,8 +57,13 @@
 		/>
 		<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
 	</RecapCard>
+	<label for="confirm-cost" class="switch">
+		<input type="checkbox" name="confirm-cost" id="confirm-cost" bind:checked={confirmCost} />
+		<span class="slider" />
+		I confirm this will cost 100 $FLOW token.
+	</label>
 </div>
-<StepButtons />
+<StepButtons active={confirmCost} />
 
 <style type="scss">
 	img {
