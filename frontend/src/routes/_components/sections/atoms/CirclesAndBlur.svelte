@@ -1,10 +1,10 @@
 <script lang="ts">
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
-	const circlesAmount = 10;
+	const circlesAmount = 7;
 	const baseCircleSize = 10;
-	const circlesSizeIncrement = 10;
-	const opacityIncrement = 0.1;
+	const circlesSizeIncrement = 8;
+	const opacityIncrement = 0.15;
 	const imagesAndIconsWidth = 3;
 
 	const iconsAndPictures: IconsAndPictures[] = [
@@ -82,7 +82,7 @@
 							src={element.imageUrl}
 							style={`width: ${imagesAndIconsWidth}rem; ${element.position}: -${
 								imagesAndIconsWidth / 2
-							}rem`}
+							}rem;`}
 							alt={element.alt}
 						/>
 					{/if}
