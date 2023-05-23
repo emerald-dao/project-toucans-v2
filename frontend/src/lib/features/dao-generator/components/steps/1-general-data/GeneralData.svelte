@@ -105,7 +105,7 @@
 >
 	<InputWrapper
 		name="name"
-		label="DAO name"
+		label="DAO Name"
 		pending={namePending}
 		pendingMessage={namePendingMessage}
 		errors={res.getErrors('name')}
@@ -124,7 +124,7 @@
 	</InputWrapper>
 	<InputWrapper
 		name="contractName"
-		label="Contract name"
+		label="Contract Name"
 		pending={contractNamePending}
 		pendingMessage={contractNamePendingMessage}
 		errors={res.getErrors('contractName')}
@@ -134,7 +134,7 @@
 		<input
 			type="text"
 			name="contractName"
-			placeholder="emeralddao"
+			placeholder="EmeraldToken"
 			maxlength="30"
 			bind:value={$daoGeneratorData.daoDetails.contractName}
 			on:input={handleChange}
@@ -169,7 +169,7 @@
 		/>
 	</div>
 	<div class="drop-zone-wrapper">
-		<label for="banner">Banner image *</label>
+		<label for="banner">Banner Image *</label>
 		<DropZone
 			name="banner"
 			accept={['image/png', 'image/jpeg', 'image/jpg']}
