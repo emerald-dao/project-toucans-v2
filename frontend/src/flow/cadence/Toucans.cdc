@@ -25,7 +25,7 @@ pub contract Toucans {
 
   pub event NewFundingCycle(
     projectId: String,
-    by: Address, 
+    projectOwner: Address,
     newCycleId: UInt64,
     fundingTarget: UFix64?,
     issuanceRate: UFix64,
@@ -60,7 +60,7 @@ pub contract Toucans {
     currentCycle: UInt64?,
     tokenSymbol: String,
     amount: UFix64,
-    by: Address
+    to: Address
   )
   pub event BatchWithdraw(
     projectId: String,
@@ -317,7 +317,6 @@ pub contract Toucans {
       pre {
         self.multiSignManager.getSigners().length > 1: "Cannot remove a signer if it will bring the signers to 0."
         self.multiSignManager.getSigners().contains(signer): "This wallet is not already a signer."
-        signer != self.owner!.address: "Don't allow the project owner to get removed as a signer."
       }
       let action = ToucansActions.RemoveOneSigner(signer)
       self.multiSignManager.createMultiSign(action: action)
@@ -333,9 +332,6 @@ pub contract Toucans {
     }
 
     pub fun finalizeAction(actionUUID: UInt64) {
-      post {
-        self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
-      }
       let actionState: ActionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
       assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
       
@@ -439,7 +435,7 @@ pub contract Toucans {
 
       emit NewFundingCycle(
         projectId: self.projectId,
-        by: self.owner!.address, 
+        projectOwner: self.owner!.address, 
         newCycleId: self.nextCycleId,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
@@ -614,7 +610,7 @@ pub contract Toucans {
         currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: tokenSymbol,
         amount: amount,
-        by: vault.owner!.address
+        to: vault.owner!.address
       )
       vault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
     }
