@@ -163,7 +163,7 @@ pub contract Toucans {
     // reserved to treasury)
     pub var projectTokensAcquired: UFix64
     // This is the amount of payment received during the round.
-    // This does NOT include Overflow that was transfered into this
+    // This does NOT include Overflow that was transferred into this
     // round.
     pub var raisedDuringRound: UFix64
     // Same as raisedDuringRound but
@@ -750,7 +750,7 @@ pub contract Toucans {
       let percent: UFix64 = balance / totalSupply
       assert(percent >= 0.0 && percent <= 1.0, message: "Percent must be a percent value.")
 
-      let overflowBalance = self.getOverflowBalance()
+      let overflowBalance: UFix64 = self.getOverflowBalance()
       
       receiver.deposit(from: <- self.overflow.withdraw(amount: overflowBalance * percent))
       self.depositToTreasury(vault: <- tokenVault)

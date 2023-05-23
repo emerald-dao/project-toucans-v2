@@ -23,6 +23,7 @@ transaction(
     self.Receiver = signer.borrow<&{FungibleToken.Receiver, FungibleToken.Balance}>(from: /storage/flowTokenVault)
                       ?? panic("User does not have receiver set up.")
   }
+  
   execute {
     let currentBalance: UFix64 = self.Receiver.balance
     self.Project.claimOverflow(tokenVault: <- self.ExampleTokenVault.withdraw(amount: amount), receiver: self.Receiver)
