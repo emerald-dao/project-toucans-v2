@@ -85,9 +85,15 @@
 				<Icon icon="tabler:message" />
 			</div>
 			<Modal background="var(--clr-background-secondary)" id={`message-${i}`}>
-				<span class="special-message-heading">Special Message</span>
+				<span class="special-message-heading">Added Message</span>
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
+		{/if}
+		{#if event.type === 'Purchase' || event.type === 'Donate'}
+			<span class="xsmall">{event.data.by}</span>
+		{/if}
+		{#if event.type === 'Withdraw' || event.type === 'Mint'}
+			<span class="xsmall">{event.data.to}</span>
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint'}
 			<Currency
@@ -154,5 +160,9 @@
 	.special-message {
 		max-width: 40ch;
 		margin-top: var(--space-2);
+	}
+
+	.row-3 {
+		align-items: center;
 	}
 </style>
