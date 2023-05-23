@@ -3,8 +3,14 @@
 	import DataCard from '$components/cards/DataCard.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { user } from '$stores/flow/FlowStore';
+	import { Button } from '@emerald-dao/component-library';
+	import { setUpVaultExecution } from '$flow/actions';
 
 	export let daoData: DAOProject;
+	async function setUpVault() {
+		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
+		daoData.vaultSetup = true;
+	}
 </script>
 
 <div class="main-wrapper">
@@ -15,7 +21,19 @@
 			isCurrency
 			currencyName={daoData.generalInfo.token_symbol}
 			fontSize="var(--font-size-5)"
-		/>
+		>
+			{#if !daoData.vaultSetup}
+				<Button
+					size="x-small"
+					type="ghost"
+					color="neutral"
+					on:click={setUpVault}
+					title="Setup a vault so you can receive tokens"
+				>
+					Set Up Vault
+				</Button>
+			{/if}
+		</DataCard>
 	{/if}
 	<div class="secondary-wrapper">
 		{#if daoData.onChainData.maxSupply}

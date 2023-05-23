@@ -52,6 +52,7 @@
 	};
 
 	const reloadUserBalance = async () => {
+		$daoDataStore.vaultSetup = true;
 		if ($user.addr) {
 			$daoDataStore.userBalance = await getTokenBalance(
 				data.generalInfo.project_id,
