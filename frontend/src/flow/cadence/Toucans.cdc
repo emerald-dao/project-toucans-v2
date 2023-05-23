@@ -152,7 +152,7 @@ pub contract Toucans {
       for payout in self.payouts {
         percentCount = percentCount + payout.percent
       }
-      assert(percentCount <= 0.95, message: "Payouts cannot be more than 95% because Emerald City takes 5% of all funds raised.")
+      assert(percentCount <= 1.0, message: "Payouts cannot total to more than 100%.")
     }
   }
 

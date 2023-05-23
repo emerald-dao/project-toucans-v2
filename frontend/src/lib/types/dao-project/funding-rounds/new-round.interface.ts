@@ -10,7 +10,7 @@ export interface RoundData {
 	infiniteFundingGoal: boolean;
 	distributionList: [string, number][];
 	issuanceRate: number | undefined;
-	reserveRate: number | undefined;
+	reserveRate: number;
 	allowOverflow: boolean;
 	requiredNft: string | null;
 }

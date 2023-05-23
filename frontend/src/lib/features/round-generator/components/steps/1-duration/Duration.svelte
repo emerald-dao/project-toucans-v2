@@ -36,7 +36,7 @@
 			currency: ECurrencies.FLOW,
 			infiniteFundingGoal: false,
 			infiniteDuration: false,
-			distributionList: [["Treasury", 95], ["Emerald City", 5]],
+			distributionList: [['Treasury', 100]],
 			reserveRate: undefined,
 			issuanceRate: undefined,
 			projectId,

@@ -262,8 +262,8 @@ const newRound = async () => {
 	const fundingGoal = newRoundData.infiniteFundingGoal ? null : formatFix(newRoundData.fundingGoal);
 	const startTime = formatFix(newRoundData.startDate);
 	const endTime = newRoundData.infiniteDuration ? null : formatFix(newRoundData.endDate);
-	const [, , ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
-	const [, , ...distributionPercentages] = newRoundData.distributionList.map((x) =>
+	const [, ...distributionAddresses] = newRoundData.distributionList.map((x) => x[0]);
+	const [, ...distributionPercentages] = newRoundData.distributionList.map((x) =>
 		formatFix(x[1] / 100)
 	);
 	return await fcl.mutate({
