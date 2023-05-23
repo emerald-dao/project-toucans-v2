@@ -7,11 +7,10 @@ export const paymentData = writable<FundData | DonationData>({
 	daoName: '',
 	daoAddress: '',
 	projectId: '',
-	projectOwner: '',
 	tokenName: '',
 	payerAddress: '',
 	contractName: '',
 	currency: ECurrencies.FLOW,
-	amount: undefined,
+	amount: 0,
 	specialMessage: ''
 });

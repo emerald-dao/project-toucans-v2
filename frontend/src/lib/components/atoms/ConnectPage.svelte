@@ -14,16 +14,18 @@
 	</div>
 	<div>
 		<p class="h5">
-			<strong>Flow Blockchain</strong> is designed to be fast, secure, scalable and developer friendly.
+			<strong>Flow blockchain</strong> is designed to be fast, secure, scalable and developer friendly.
 		</p>
 		<p class="h5">
 			It offers first-in-class technology to onboard main-stream users to blockchain technology.
 		</p>
 		<p class="h5">
-			Join us on <a href="https://discord.com/invite/emeraldcity" target="_blank" rel="noreferrer"
-				>discord</a
+			We believe in this goal. Join us on <a
+				href="https://discord.com/invite/emeraldcity"
+				target="_blank"
+				rel="noreferrer">discord</a
 			>
-			to build together the future <strong>#onFlow</strong>.
+			to build the future <strong>#onFlow</strong> together.
 		</p>
 	</div>
 </section>

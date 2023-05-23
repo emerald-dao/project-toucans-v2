@@ -22,16 +22,16 @@
 				<span class="strong">
 					{`${$paymentData.daoName}.`}
 				</span>
-			{:else if $paymentData.type === 'fund' && $paymentData.amount != undefined}
+			{:else if $paymentData.type === 'fund'}
 				{`You funded ${$paymentData.daoName} with`}
 				<span class="strong">
 					{`${$paymentData.amount} $${$paymentData.currency}`}
 				</span>
 				and got
 				<span class="strong">
-					{`${$paymentData.amount * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)} $${
-						$paymentData.tokenName
-					}.`}
+					{`${
+						$paymentData.amount * 0.95 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
+					} $${$paymentData.tokenName}.`}
 				</span>
 			{/if}
 		</p>
@@ -41,29 +41,36 @@
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=I%20just%20donated%20${$paymentData.daoName}%20DAO%20with%20$${$paymentData.currency}%20${$paymentData.amount}`}
+					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${$paymentData.amount}%20$${$paymentData.currency}%20to%20${$paymentData.daoName}%20on%20Toucans!`}
 					target="_blank"
 					type="ghost"
 					color="neutral"
 					size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
 				>
-			{:else if $paymentData.type === 'fund' && $paymentData.amount != undefined}
+			{:else if $paymentData.type === 'fund'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=I%20just%20funded%20${
+					href={`https://twitter.com/intent/tweet?text=Just%20funded%20${
 						$paymentData.daoName
-					}%20DAO%20with%20$${$paymentData.currency}%20${$paymentData.amount}%20and%20got%20$${
-						$paymentData.tokenName
-					}%20${$paymentData.amount * $paymentData.issuanceRate}
-				`}
+					}%20with%20${$paymentData.amount}%20$${
+						$paymentData.currency
+					}%20on%20Toucans%20and%20got%20${
+						$paymentData.amount * 0.95 * $paymentData.issuanceRate * $paymentData.reserveRate
+					}%20$${$paymentData.tokenName}: https://toucans.city/p/${daoData.generalInfo.project_id}`}
 					target="_blank"
 					type="ghost"
 					color="neutral"
 					size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
 				>
 			{/if}
-			<Button href="https://discord.com/" target="_blank" color="neutral" type="ghost" size="small"
-				><Icon icon="tabler:brand-discord" />Discord</Button
-			>
+			{#if daoData.generalInfo.discord}
+				<Button
+					href="https://discord.com/invite/{daoData.generalInfo.discord}"
+					target="_blank"
+					color="neutral"
+					type="ghost"
+					size="small"><Icon icon="tabler:brand-discord" />Discord</Button
+				>
+			{/if}
 		</div>
 	</div>
 </div>

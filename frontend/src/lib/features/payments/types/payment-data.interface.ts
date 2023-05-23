@@ -19,6 +19,6 @@ export interface PaymentData {
 	payerAddress: string;
 	contractName: string;
 	currency: ECurrencies;
-	amount: number | undefined;
+	amount: number;
 	specialMessage: string;
 }

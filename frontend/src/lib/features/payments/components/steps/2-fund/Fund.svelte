@@ -77,7 +77,8 @@
 					<span class="small">You will receive</span>
 					<Currency
 						currency={$paymentData.tokenName}
-						amount={($paymentData.amount ? ($paymentData.amount * 0.95) : 0) *
+						amount={$paymentData.amount *
+							0.95 *
 							$paymentData.issuanceRate *
 							(1 - $paymentData.reserveRate)}
 						color="heading"
@@ -91,7 +92,8 @@
 						<span class="small">DAO treasury will receive</span>
 						<Currency
 							currency={$paymentData.tokenName}
-							amount={($paymentData.amount ? ($paymentData.amount * 0.95) : 0) *
+							amount={$paymentData.amount *
+								0.95 *
 								$paymentData.issuanceRate *
 								$paymentData.reserveRate}
 							color="heading"

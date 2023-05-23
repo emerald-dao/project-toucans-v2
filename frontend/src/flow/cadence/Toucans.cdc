@@ -26,7 +26,6 @@ pub contract Toucans {
   pub event NewFundingCycle(
     projectId: String,
     by: Address, 
-    currentCycle: UInt64?,
     newCycleId: UInt64,
     fundingTarget: UFix64?,
     issuanceRate: UFix64,
@@ -159,9 +158,12 @@ pub contract Toucans {
 
   pub struct FundingCycle {
     pub(set) var details: FundingCycleDetails
+    // the amount of tokens that users acquired during
+    // this round (does not count the amount that got
+    // reserved to treasury)
     pub var projectTokensAcquired: UFix64
     // This is the amount of payment received during the round.
-    // This does NOT include Overflow that was trasnfered into this
+    // This does NOT include Overflow that was transfered into this
     // round.
     pub var raisedDuringRound: UFix64
     // Same as raisedDuringRound but
@@ -204,6 +206,9 @@ pub contract Toucans {
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeAddSigner(signer: Address)
+    pub fun proposeRemoveSigner(signer: Address)
+    pub fun proposeUpdateThreshold(threshold: UInt64)
     // If the action is ready to execute, then allow anyone to do it.
     pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
@@ -312,6 +317,7 @@ pub contract Toucans {
       pre {
         self.multiSignManager.getSigners().length > 1: "Cannot remove a signer if it will bring the signers to 0."
         self.multiSignManager.getSigners().contains(signer): "This wallet is not already a signer."
+        signer != self.owner!.address: "Don't allow the project owner to get removed as a signer."
       }
       let action = ToucansActions.RemoveOneSigner(signer)
       self.multiSignManager.createMultiSign(action: action)
@@ -330,8 +336,8 @@ pub contract Toucans {
       post {
         self.multiSignManager.getSigners().contains(self.owner!.address): "Don't allow the project owner to get removed as a signer."
       }
-      let actionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
-      assert(actionState != ActionState.PENDING, message: "Cannot finalize this action yet.")
+      let actionState: ActionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
+      assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
       
       if actionState == ActionState.ACCEPTED {
         let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
@@ -339,7 +345,7 @@ pub contract Toucans {
         switch action.getType() {
           case Type<ToucansActions.WithdrawToken>():
             let withdraw = action as! ToucansActions.WithdrawToken
-            let recipientVault = withdraw.recipientVault.borrow()!
+            let recipientVault: &{FungibleToken.Receiver} = withdraw.recipientVault.borrow()!
             self.withdrawFromTreasury(vaultType: withdraw.vaultType, vault: recipientVault, amount: withdraw.amount, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.BatchWithdrawToken>():
             let withdraw = action as! ToucansActions.BatchWithdrawToken
@@ -361,7 +367,7 @@ pub contract Toucans {
           case Type<ToucansActions.RemoveOneSigner>():
             let removeSigner = action as! ToucansActions.RemoveOneSigner
             self.multiSignManager.removeSigner(signer: removeSigner.signer)
-            emit AddSigner(projectId: self.projectId, signer: removeSigner.signer)
+            emit RemoveSigner(projectId: self.projectId, signer: removeSigner.signer)
           case Type<ToucansActions.UpdateTreasuryThreshold>():
             let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
             self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
@@ -424,7 +430,7 @@ pub contract Toucans {
         let previousCycle: FundingCycle = self.getFundingCycle(cycleIndex: UInt64(insertAt - 1))
         Toucans.assertNonConflictingCycles(earlierCycle: previousCycle.details, laterCycle: newFundingCycle.details)
       }
-
+ 
       // Make sure it doesn't conflict with a cycle after it
       if insertAt < self.fundingCycles.length - 1 {
         let subsequentCycle: FundingCycle = self.getFundingCycle(cycleIndex: UInt64(insertAt + 1))
@@ -434,7 +440,6 @@ pub contract Toucans {
       emit NewFundingCycle(
         projectId: self.projectId,
         by: self.owner!.address, 
-        currentCycle: self.getCurrentFundingCycleId(),
         newCycleId: self.nextCycleId,
         fundingTarget: fundingTarget,
         issuanceRate: issuanceRate,
@@ -485,11 +490,11 @@ pub contract Toucans {
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
       
-      let cost: UFix64 = paymentTokens.balance
+      let paymentAfterTax: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
 
       // If there is a limit on allowed addresses, check that here.
-      if let allowedAddresses = fundingCycleRef.details.allowedAddresses {
+      if let allowedAddresses: [Address] = fundingCycleRef.details.allowedAddresses {
         assert(
           allowedAddresses.contains(payer),
           message: "This account is not allowed to participate in this round."
@@ -503,9 +508,9 @@ pub contract Toucans {
           message: "User does not own a requried NFT for participating in the round."
         )
       }
-
+ 
       let issuanceRate: UFix64 = self.getCurrentIssuanceRate()!
-      let amountToMint: UFix64 = issuanceRate * cost
+      let amountToMint: UFix64 = issuanceRate * paymentAfterTax
       let mintedTokens: @FungibleToken.Vault <- self.minter.mint(amount: amountToMint)
       assert(mintedTokens.getType() == self.projectTokenInfo.tokenType, message: "Someone is messing with the minter. It's not minting the original type.")
       assert(amountToMint == mintedTokens.balance, message: "Not enough tokens were minted.")
@@ -517,36 +522,39 @@ pub contract Toucans {
 
       // 2 cases:
       // 1. Funding target is nil OR amount sent won't exceed the target (deposit everything to treasury)
-      // 2. Amount sent will make us reach the goal or it has already been reached (split between overflow and treasury)
+      // 2. Amount sent will make us overflow the goal or it has already been reached (split between overflow and treasury)
       let fundingTarget: UFix64? = fundingCycleRef.details.fundingTarget
-      if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + cost <= fundingTarget!) {
+      if fundingTarget == nil || (fundingCycleRef.raisedTowardsGoal + paymentAfterTax <= fundingTarget!) {
         // Calculate payouts
         for payout in fundingCycleRef.details.payouts {
-          ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: cost * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
-        }
+          ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: paymentAfterTax * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+        } 
         self.depositToTreasury(vault: <- paymentTokens)
       } else {
+        // "Fail fast"
+        assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
         if fundingCycleRef.raisedTowardsGoal < fundingTarget! {
           // this is the amount that will put the current round at its goal
-          let amountToTreasury: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
+          var amountToGoal: UFix64 = fundingTarget! - fundingCycleRef.raisedTowardsGoal
           // calculate payouts 
           for payout in fundingCycleRef.details.payouts {
-            ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountToTreasury * payout.percent), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
-          }
+            let amountToPayout: UFix64 = amountToGoal * payout.percent
+            ToucansUtils.depositTokensToAccount(funds: <- paymentTokens.withdraw(amount: amountToPayout), to: payout.address, publicPath: self.paymentTokenInfo.receiverPath)
+            amountToGoal = amountToGoal - amountToPayout
+          } 
           // put the rest in treasury
-          self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToTreasury))
+          self.depositToTreasury(vault: <- paymentTokens.withdraw(amount: amountToGoal))
         }
 
         // Give the rest to overflow
-        assert(fundingCycleRef.details.allowOverflow, message: "Overflow is not allowed. Cannot purchase.")
         self.depositToOverflow(vault: <- paymentTokens)
       }
   
       // Tokens were purchased, so increment amount raised
-      self.totalFunding = self.totalFunding + cost
-      self.funders[payer] = (self.funders[payer] ?? 0.0) + cost
+      self.totalFunding = self.totalFunding + paymentAfterTax
+      self.funders[payer] = (self.funders[payer] ?? 0.0) + paymentAfterTax
       // Amount acquired by user is the amount minted - the reserve tax
-      fundingCycleRef.handlePaymentReceipt(projectTokensAcquired: mintedTokens.balance, cost: cost, payer: payer)
+      fundingCycleRef.handlePaymentReceipt(projectTokensAcquired: mintedTokens.balance, cost: paymentAfterTax, payer: payer)
       // Deposit new tokens to payer
       projectTokenReceiver.deposit(from: <- mintedTokens)
       emit Purchase(
@@ -554,7 +562,7 @@ pub contract Toucans {
         projectOwner: self.owner!.address, 
         currentCycle: fundingCycleRef.details.cycleId,
         tokenSymbol: self.paymentTokenInfo.symbol,
-        amount: cost,
+        amount: paymentAfterTax,
         by: payer,
         message: message
       )
@@ -615,13 +623,13 @@ pub contract Toucans {
       let failed: [Address] = []
       var totalAmount: UFix64 = 0.0
       for wallet in amounts.keys {
-        let amount = amounts[wallet]!
+        let amount: UFix64 = amounts[wallet]!
         totalAmount = totalAmount + amount
         if let recipientVault: &{FungibleToken.Receiver} = vaults[wallet]!.borrow() {
           recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
-          continue
+        } else {
+          failed.append(wallet)
         }
-        failed.append(wallet)
       }
       emit BatchWithdraw(
         projectId: self.projectId,
@@ -1034,10 +1042,10 @@ pub contract Toucans {
         }
 
         if self.getAccepted() >= self.threshold {
-            return ActionState.ACCEPTED
+          return ActionState.ACCEPTED
         }
         if self.getDeclined() > UInt64(self.getSigners().length) - self.threshold {
-            return ActionState.DECLINED
+          return ActionState.DECLINED
         }
 
         return ActionState.PENDING
@@ -1067,7 +1075,7 @@ pub contract Toucans {
     // to the resource itself
     access(self) let actions: @{UInt64: MultiSignAction}
 
-    pub fun createMultiSign(action: {ToucansActions.Action}) {
+    access(account) fun createMultiSign(action: {ToucansActions.Action}) {
       var threshold: UInt64 = self.threshold
       var signers: [Address] = self.signers
       if action.getType() == Type<ToucansActions.AddOneSigner>() {

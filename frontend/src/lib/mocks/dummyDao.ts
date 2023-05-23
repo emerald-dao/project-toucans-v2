@@ -77,7 +77,6 @@ export const DummyDao: DAOProject = {
 			by: '0x1234567890',
 			tokenType: 'FA2',
 			timestamp: 1630454400,
-			currentCycle: '1',
 			type: 'NewFundingCycle',
 			newCycleId: '1',
 			fundingTarget: '1000',

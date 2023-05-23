@@ -62,6 +62,7 @@
 			errors={res.getErrors('issuanceRate')}
 			isValid={res.isValid('issuanceRate')}
 			label="Issuance Rate"
+			tooltip={`Amount of ${tokenSymbol} per 1 ${$roundGeneratorData.currency}`}
 		>
 			<input
 				type="text"

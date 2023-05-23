@@ -5,7 +5,6 @@ export interface FundingCycleEvent extends BaseEvent {
 	data: {
 		by: string;
 		newCycleId: string;
-		currentCycle: string;
 		fundingTarget: string;
 		issuanceRate: string;
 		reserveRate: string;

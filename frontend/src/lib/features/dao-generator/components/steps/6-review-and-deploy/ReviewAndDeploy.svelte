@@ -37,13 +37,16 @@
 		</div>
 		<RecapElement title="Description" data={$daoGeneratorData.daoDetails.description} />
 		{#if $daoGeneratorData.daoDetails.website}
-			<RecapElement title="Website" data={$daoGeneratorData.daoDetails.website} />
+			<RecapElement title="Website" data={'https://' + $daoGeneratorData.daoDetails.website} />
 		{/if}
 		{#if $daoGeneratorData.daoDetails.twitter}
-			<RecapElement title="Twitter" data={$daoGeneratorData.daoDetails.twitter} />
+			<RecapElement title="Twitter" data={'@' + $daoGeneratorData.daoDetails.twitter} />
 		{/if}
 		{#if $daoGeneratorData.daoDetails.discord && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
-			<RecapElement title="Discord" data={$daoGeneratorData.daoDetails.discord} />
+			<RecapElement
+				title="Discord"
+				data={'https://discord.gg/invite/' + $daoGeneratorData.daoDetails.discord}
+			/>
 		{/if}
 		<RecapElement
 			title="Edit delay"

@@ -1,4 +1,23 @@
-<section class="container-small">
+<script lang="ts">
+	import GLOSSARY from '$lib/config/glossary';
+
+	function formatTerm(inputString: string): string {
+		const words = inputString.split(/(?=[A-Z])/);
+
+		words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+
+		for (let i = 1; i < words.length; i++) {
+			words[i] = words[i].charAt(0).toLowerCase() + words[i].slice(1);
+		}
+
+		const outputString = words.join(' ');
+
+		return outputString;
+	}
+</script>
+
+<!-- Risks -->
+<section class="container-small risks">
 	<h1>Risks</h1>
 	<p>
 		When a user creates a DAO on the Toucans platform, the fungible token smart contract that is
@@ -39,10 +58,49 @@
 	</p>
 </section>
 
+<!-- Glossary -->
+<section class="container-small glossary">
+	<h1>Glossary</h1>
+	{#each Object.entries(GLOSSARY) as [term, definition]}
+		<h2>{formatTerm(term)}</h2>
+		<p>{definition}</p>
+	{/each}
+</section>
+
+<!-- How it Works -->
+<section class="container-small how-it-works">
+	<h1>How it Works</h1>
+	<p>This section will describe the various aspects of the Toucans platform.</p>
+	<h3>Multi-Sig Treasury</h3>
+	<img src="/multi-sig-hiw.PNG" alt="multi sig how it works" />
+	<h3>Funding Rounds</h3>
+	<img src="/funding-rounds-hiw.PNG" alt="funding round how it works" />
+	<h3>Purchasing During a Funding Rounds</h3>
+	<img src="/purchase-hiw.PNG" alt="purchase during a funding round how it works" />
+</section>
+
 <style lang="scss">
 	section {
 		max-width: 65ch;
+	}
 
+	section.glossary {
+		h1 {
+			margin-bottom: var(--space-12);
+		}
+
+		h2 {
+			font-size: var(--font-size-4);
+			margin-bottom: var(--space-2);
+		}
+
+		p {
+			margin-bottom: var(--space-12);
+		}
+	}
+
+	section.risks,
+	section.how-it-works {
 		h2 {
 			font-size: var(--font-size-6);
 			margin-block: var(--space-10) var(--space-2);

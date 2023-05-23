@@ -11,8 +11,8 @@ export const navElements = [
 		prefetch: true
 	},
 	{
-		name: 'Risks',
-		url: '/risks',
+		name: 'Docs',
+		url: '/docs',
 		prefetch: true
 	}
 ];

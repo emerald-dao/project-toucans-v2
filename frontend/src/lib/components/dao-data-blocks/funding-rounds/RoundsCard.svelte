@@ -1,7 +1,13 @@
 <script type="ts">
 	import RoundStatusLabel from './atoms/RoundStatusLabel.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
-	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
+	import {
+		Currency,
+		Modal,
+		ProgressBar,
+		TooltipIcon,
+		getModal
+	} from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import FundingNumbers from './atoms/FundingNumbers.svelte';
@@ -10,6 +16,7 @@
 	import type { ECurrencies } from '$lib/types/common/enums';
 	import { getRoundTiming } from './helpers/getRoundTiming';
 	import { getRoundStatus } from './helpers/getRoundStatus';
+	import PayoutsList from './atoms/PayoutsList.svelte';
 
 	export let round: FundingCycle;
 	export let title = 'Active Funding Round';
@@ -19,14 +26,14 @@
 	export let projectId: string;
 	export let claimOverflow = false;
 	export let activeRound: number | null;
-	console.log(round)
+	console.log(round);
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.raisedTowardsGoal ? Number(round.raisedTowardsGoal) : 0;
 
 	$: goalReached = goal !== 'infinite' ? (goal as number) <= funding : false;
 	$: overflow = goal !== 'infinite' ? funding - (goal as number) : 0;
-	console.log(overflow)
+	console.log(overflow);
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
 	const endDate = round.details.timeframe.endTime
@@ -63,7 +70,17 @@
 				min={0}
 			>
 				<div slot="label">
-					<FundingNumbers {goal} {funding} {paymentToken} fontSize="1.2rem" />
+					<div class="flex">
+						<FundingNumbers {goal} {funding} {paymentToken} fontSize="1.2rem" />
+						{#if round.details.payouts.length > 0}
+							<div class="header-link" on:click={() => getModal(`payouts-list`).open()} on:keydown>
+								<Icon icon="tabler:message" />
+							</div>
+						{/if}
+					</div>
+					<Modal background="var(--clr-background-secondary)" id={`payouts-list`}>
+						<PayoutsList amounts={round.details.payouts} />
+					</Modal>
 				</div>
 			</ProgressBar>
 		{:else}
@@ -102,6 +119,11 @@
 </div>
 
 <style type="scss">
+	.flex {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
 	.card {
 		background-color: var(--clr-background-secondary);
 	}
