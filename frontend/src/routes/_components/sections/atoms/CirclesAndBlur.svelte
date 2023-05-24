@@ -1,17 +1,17 @@
 <script lang="ts">
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
-	const circlesAmount = 7;
-	const baseCircleSize = 10;
-	const circlesSizeIncrement = 8;
-	const opacityIncrement = 0.15;
+	const circlesAmount = 5;
+	const baseCircleSize = 13;
+	const circlesSizeIncrement = 9;
+	const opacityIncrement = 0.22;
 	const imagesAndIconsWidth = 3;
 
 	const iconsAndPictures: IconsAndPictures[] = [
 		{
 			type: 'image',
 			imageUrl: '/ec-logo.png',
-			circleNumber: 1,
+			circleNumber: 0,
 			alt: 'Emerald logo',
 			position: 'left',
 			speed: 'fast'
@@ -19,7 +19,7 @@
 		{
 			type: 'image',
 			imageUrl: 'flovatar-logo.jpg',
-			circleNumber: 2,
+			circleNumber: 1,
 			alt: 'Flovatar logo',
 			position: 'right',
 			speed: 'fast'
@@ -27,7 +27,7 @@
 		{
 			type: 'image',
 			imageUrl: 'flunks-logo.jpg',
-			circleNumber: 3,
+			circleNumber: 2,
 			alt: 'Flunks logo',
 			position: 'left',
 			speed: 'normal'
@@ -35,7 +35,7 @@
 		{
 			type: 'image',
 			imageUrl: 'flowverse-logo.jpg',
-			circleNumber: 4,
+			circleNumber: 2,
 			alt: 'Flowverse logo',
 			position: 'right',
 			speed: 'normal'
@@ -61,8 +61,11 @@
 				class="circle"
 				class:rotate={element.speed === 'normal'}
 				class:rotate-fast={element.speed === 'fast'}
-				style={`width: ${baseCircleSize + i * circlesSizeIncrement}rem; opacity: ${
-					1 - i * opacityIncrement
+				style={`width: ${
+					baseCircleSize + i * circlesSizeIncrement
+				}rem; border-width: 3px; border-style: dashed; border-color: color-mix(in srgb, var(--clr-neutral-badge), transparent ${
+					i * opacityIncrement * 100
+				}%);
 				};`}
 			>
 				{#if element.circleNumber === i}
@@ -114,7 +117,6 @@
 		}
 
 		.circle {
-			border: 3px dashed var(--clr-neutral-badge);
 			display: flex;
 
 			img,
@@ -122,14 +124,6 @@
 				position: absolute;
 				top: 50%;
 			}
-
-			// .rotation-inverse {
-			// 	animation: rotation-inverse 15s linear infinite;
-			// }
-
-			// &.rotation {
-			// 	animation: rotation 15s linear infinite;
-			// }
 		}
 
 		img {
