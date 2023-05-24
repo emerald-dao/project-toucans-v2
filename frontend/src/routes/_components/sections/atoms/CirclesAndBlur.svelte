@@ -98,6 +98,10 @@
 
 <style lang="scss">
 	.main-wrapper {
+		display: none;
+		@include mq(medium) {
+			display: flex;
+		}
 		flex: 1;
 		position: relative;
 
