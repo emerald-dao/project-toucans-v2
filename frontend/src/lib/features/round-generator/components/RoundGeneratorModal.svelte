@@ -25,10 +25,10 @@
 		endDate: '',
 		projectId: '',
 		fundingGoal: undefined,
-		currency: ECurrencies.FLOW,
+		currency: daoData.onChainData.paymentCurrency,
 		distributionList: [],
 		issuanceRate: undefined,
-		reserveRate: undefined,
+		reserveRate: 0,
 		allowOverflow: true,
 		requiredNft: null
 	});

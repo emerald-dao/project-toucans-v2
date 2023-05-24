@@ -54,6 +54,7 @@ pub contract ToucansTokens {
     return nil
   }
 
+  // stringAddress DOES NOT include the `0x`
   pub fun stringToAddress(stringAddress: String): Address {
     var r: UInt64 = 0
     var bytes: [UInt8] = stringAddress.decodeHex()

@@ -38,9 +38,10 @@
 	<div class="secondary-wrapper">
 		{#if daoData.onChainData.maxSupply}
 			<DataCard
-				title="Max supply"
+				title="Max Supply"
 				data={Number(daoData.onChainData.maxSupply)}
 				isCurrency
+				currencyName={daoData.generalInfo.token_symbol}
 				tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
 			/>
 		{/if}
@@ -50,7 +51,12 @@
 			isCurrency
 			currencyName={daoData.generalInfo.token_symbol}
 		/>
-		<DataCard title="Total Funding" data={Number(daoData.onChainData.totalFunding)} isCurrency />
+		<DataCard
+			title="Total Funding"
+			data={Number(daoData.onChainData.totalFunding)}
+			currencyName={daoData.onChainData.paymentCurrency}
+			isCurrency
+		/>
 	</div>
 </div>
 

@@ -21,7 +21,7 @@
 
 <form autocomplete="off" in:fade={{ duration: 300 }}>
 	<div class="form-section-wrapper funding-goal">
-		<label for="funding-goal">Funding goal</label>
+		<label for="funding-goal">Funding Goal</label>
 		<label for="infinite-goal" class="switch">
 			<input
 				type="checkbox"
@@ -45,7 +45,7 @@
 					disabled={$roundGeneratorData.infiniteFundingGoal}
 				>
 					<input
-						type="text"
+						type="number"
 						name="fundingGoal"
 						placeholder="1000"
 						bind:value={$roundGeneratorData.fundingGoal}
@@ -65,7 +65,7 @@
 			tooltip={`Amount of ${tokenSymbol} per 1 ${$roundGeneratorData.currency}`}
 		>
 			<input
-				type="text"
+				type="number"
 				name="issuanceRate"
 				min="0"
 				placeholder={`e.g. 1 ${tokenSymbol} - 1 ${$roundGeneratorData.currency}`}
@@ -75,7 +75,7 @@
 		</InputWrapper>
 		<div class="range-wrapper">
 			<div class="row-2">
-				<label for="reserveRate">Reserve rate </label>
+				<label for="reserveRate">Reserve Rate</label>
 			</div>
 			<Range
 				bind:value={$roundGeneratorData.reserveRate}

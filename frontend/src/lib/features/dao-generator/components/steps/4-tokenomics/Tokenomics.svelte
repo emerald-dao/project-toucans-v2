@@ -58,7 +58,7 @@
 	{/if}
 	<CurrencyInput
 		name="initialSupply"
-		label="Initial supply"
+		label="Initial Supply"
 		currency={$daoGeneratorData.daoDetails.tokenName}
 		errors={res.getErrors('initialSupply')}
 		isValid={res.isValid('initialSupply')}

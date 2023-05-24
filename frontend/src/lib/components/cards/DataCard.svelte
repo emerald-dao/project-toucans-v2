@@ -5,7 +5,7 @@
 
 	export let title: string;
 	export let data: string | number | null = null;
-	export let isCurrency = false;
+	export let isCurrency: boolean = false;
 	export let currencyName: string = 'FLOW';
 	export let icon: string | null = null;
 	export let hasBackground: boolean = false;
