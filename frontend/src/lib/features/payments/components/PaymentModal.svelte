@@ -39,41 +39,48 @@
 		$paymentData.daoAddress = daoData.generalInfo.owner;
 		$paymentData.payerAddress = $user.addr as string;
 		$paymentData.projectId = daoData.generalInfo.project_id;
-		$paymentData.currency = ECurrencies.FLOW;
+		$paymentData.currency = daoData.onChainData.paymentCurrency;
 		$paymentData.tokenName = daoData.generalInfo.token_symbol;
 
 		if ($paymentData.type === 'fund') {
 			$paymentData.issuanceRate = Number(
-				daoData.onChainData.currentFundingCycle!.details
-					.issuanceRate
+				daoData.onChainData.currentFundingCycle!.details.issuanceRate
 			);
 			$paymentData.reserveRate = Number(
-				daoData.onChainData.currentFundingCycle!.details
-					.reserveRate
+				daoData.onChainData.currentFundingCycle!.details.reserveRate
 			);
 		}
 	};
 
 	const active = async () => {
 		if (paymentType === 'donate' || !daoData.onChainData.requiredNft || !$user.loggedIn) {
-			return true
+			return true;
 		}
 		if (!daoData.onChainData.purchasing) {
-			title = "The project owner has turned funding off."
+			title = 'The project owner has turned funding off.';
 			return false;
 		}
 
-		const owns = await ownsNFTFromCatalog($user.addr as string, daoData.onChainData.requiredNft.identifier);
+		const owns = await ownsNFTFromCatalog(
+			$user.addr as string,
+			daoData.onChainData.requiredNft.identifier
+		);
 		if (!owns) {
-			title = "You do not own the required NFT to fund.";
+			title = 'You do not own the required NFT to fund.';
 			return false;
 		}
 		return true;
-	}
+	};
 </script>
 
 {#await active() then active}
-	<Button size="large" width="full-width" on:click={PAYMENT_DATA[paymentType].action} state={active ? 'active' : 'disabled'} {title}>
+	<Button
+		size="large"
+		width="full-width"
+		on:click={PAYMENT_DATA[paymentType].action}
+		state={active ? 'active' : 'disabled'}
+		{title}
+	>
 		<Icon icon={PAYMENT_DATA[paymentType].icon} />
 		{PAYMENT_DATA[paymentType].title}
 	</Button>

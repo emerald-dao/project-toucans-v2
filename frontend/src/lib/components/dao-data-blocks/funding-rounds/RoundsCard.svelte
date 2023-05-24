@@ -100,7 +100,7 @@
 					<p class="xsmall">Reserve</p>
 					<TooltipIcon width={0.7} tooltip="description" />
 				</div>
-				<span class="xsmall">{Number(round.details.reserveRate)}</span>
+				<span class="xsmall">{Number(round.details.reserveRate) * 100 + '%'}</span>
 			</div>
 			<div class="chart-data-card">
 				<div class="row-1">
