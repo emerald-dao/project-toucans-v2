@@ -4,24 +4,36 @@
 
 	export let data;
 	const projects: DaoDatabaseData[] = data.projects as DaoDatabaseData[];
+	const DOMInfo = {
+		projectId: 'TestingDAO',
+		story: 'This DAO...',
+		labels: ['Building', 'Education', 'Community']
+	};
+	const DOM: DaoDatabaseData = projects.find(
+		(project) => project.project_id === DOMInfo.projectId
+	) as DaoDatabaseData;
 </script>
 
 <section class="container-small">
 	<div class="column-12 align-center">
 		<h3>DAO of the Month</h3>
 		<ProjectCard
-			name={'Emerald City'}
-			projectId={'EmeraldCity'}
-			description={'A DAO for the people!'}
-			story={true}
-			labels={['Building', 'Education', 'Community']}
+			name={DOM.name}
+			projectId={DOM.project_id}
+			description={DOM.project_id}
+			story={DOMInfo.story}
+			labels={DOMInfo.labels}
+			twitter={DOM.twitter}
+			discord={DOM.discord}
+			website={DOM.website}
+			tokenSymbol={DOM.token_symbol}
 		/>
 	</div>
 </section>
 
 <section class="container-medium">
 	<div class="column-12">
-		<h3>Trending Projects</h3>
+		<h3>Explore Projects</h3>
 		<div class="wrap">
 			{#each projects as project}
 				<ProjectCard
@@ -29,6 +41,10 @@
 					image={project.logo}
 					projectId={project.project_id}
 					description={project.description}
+					twitter={project.twitter}
+					discord={project.discord}
+					website={project.website}
+					tokenSymbol={project.token_symbol}
 				/>
 			{/each}
 		</div>

@@ -1,11 +1,16 @@
 <script type="ts">
 	import { Label } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
 	export let name: string;
 	export let projectId: string;
 	export let image: string = '/ec-logo.png';
 	export let labels: string[] = [];
 	export let description: string;
-	export let story: boolean = false;
+	export let story: string = '';
+	export let twitter: string | null;
+	export let discord: string | null;
+	export let tokenSymbol: string;
+	export let website: string | null;
 </script>
 
 <a href={`/p/${projectId}`} class="card-primary" class:with-story={story}>
@@ -14,6 +19,38 @@
 			<img src={image} alt="DAO logo" />
 			<h3>{name}</h3>
 		</div>
+		{#if twitter || discord || website}
+			<div class="row-3 align-end">
+				<Label size="small" color="tertiary" hasBorder={false}>{`$${tokenSymbol}`}</Label>
+				<div class="row-2 align-end">
+					{#if twitter}
+						<a
+							href={`https://twitter.com/${twitter}`}
+							rel="noreferrer"
+							class="header-link"
+							target="_blank"
+						>
+							<Icon icon="tabler:brand-twitter" width="16" />
+						</a>
+					{/if}
+					{#if discord}
+						<a
+							href={`https://discord.gg/invite/${discord}`}
+							rel="noreferrer"
+							class="header-link"
+							target="_blank"
+						>
+							<Icon icon="tabler:brand-discord" width="16" />
+						</a>
+					{/if}
+					{#if website}
+						<a href={`https://${website}`} rel="noreferrer" class="header-link" target="_blank">
+							<Icon icon="tabler:world" width="16" />
+						</a>
+					{/if}
+				</div>
+			</div>
+		{/if}
 		<div class="row-3">
 			{#each labels as label}
 				<Label color="neutral" size="small">{label}</Label>
@@ -26,11 +63,7 @@
 			<div class="column-4">
 				<h4>Story</h4>
 				<p class="small">
-					Sit commodo dolor nostrud in reprehenderit mollit ut exercitation voluptate incididunt
-					laboris. Reprehenderit consectetur veniam cupidatat nulla ad velit. Irure commodo pariatur
-					dolor ut aute sunt qui. Sit commodo dolor nostrud in reprehenderit mollit ut exercitation
-					voluptate incididunt laboris. Reprehenderit consectetur veniam cupidatat nulla ad velit.
-					Irure commodo pariatur dolor ut aute sunt qui.
+					{story}
 				</p>
 			</div>
 		</div>
