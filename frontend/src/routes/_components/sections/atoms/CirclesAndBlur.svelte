@@ -22,12 +22,12 @@
 			circleNumber: 1,
 			alt: 'Flovatar logo',
 			position: 'right',
-			speed: 'fast'
+			speed: 'normal'
 		},
 		{
 			type: 'image',
 			imageUrl: 'flunks-logo.jpg',
-			circleNumber: 2,
+			circleNumber: 1,
 			alt: 'Flunks logo',
 			position: 'left',
 			speed: 'normal'
@@ -38,7 +38,7 @@
 			circleNumber: 2,
 			alt: 'Flowverse logo',
 			position: 'right',
-			speed: 'normal'
+			speed: 'fast'
 		}
 	];
 
@@ -142,11 +142,11 @@
 	}
 
 	.rotate-fast {
-		animation: rotation 7.5s linear infinite;
+		animation: rotation 10s linear infinite;
 	}
 
 	.rotation-inverse-fast {
-		animation: rotation-inverse 7.5s linear infinite;
+		animation: rotation-inverse 10s linear infinite;
 	}
 
 	@keyframes rotation {

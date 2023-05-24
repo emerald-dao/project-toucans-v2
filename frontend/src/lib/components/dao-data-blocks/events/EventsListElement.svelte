@@ -6,6 +6,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import SeeRoundDetailsModal from '../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
+	import WalletLabel from '$components/atoms/WalletLabel.svelte';
 
 	export let event: DaoEvent;
 	export let i: number;
@@ -90,10 +91,10 @@
 			</Modal>
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate'}
-			<span class="xsmall">{event.data.by}</span>
+			<WalletLabel address={event.data.by} />
 		{/if}
 		{#if event.type === 'Withdraw' || event.type === 'Mint'}
-			<span class="xsmall">{event.data.to}</span>
+			<WalletLabel address={event.data.to} />
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint'}
 			<Currency
