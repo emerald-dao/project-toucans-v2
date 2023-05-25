@@ -5,7 +5,8 @@
 	let toucansFeatures = [
 		{
 			title: 'Raise',
-			description: 'Raise funds for your project. Kickstart your project quickly.',
+			description:
+				'Kickstart your project by easily raising funds. Automatically issue your own token to funders.',
 			icon: 'cash'
 		},
 		{

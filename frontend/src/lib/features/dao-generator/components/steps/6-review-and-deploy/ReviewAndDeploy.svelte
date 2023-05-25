@@ -34,7 +34,7 @@
 				<img bind:this={logoElement} class="logo" alt="Dao logo" />
 			{/if}
 			<div class="column">
-				<RecapElement title="Dao Name" data={$daoGeneratorData.daoDetails.name} />
+				<RecapElement title="DAO Name" data={$daoGeneratorData.daoDetails.name} />
 				<RecapElement title="Token Name" data={$daoGeneratorData.daoDetails.tokenName} />
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 			/>
 		{/if}
 		<RecapElement
-			title="Edit delay"
+			title="Edit Delay"
 			data={editDelayOptions.filter(
 				(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
 			)[0].title}
