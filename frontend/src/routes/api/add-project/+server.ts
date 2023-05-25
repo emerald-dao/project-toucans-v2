@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { env as PrivateEnv } from '$env/dynamic/private';
 import { env as PublicEnv } from '$env/dynamic/public';
 import { verifyAccountOwnership } from '$flow/utils.js';
+import { network } from '$flow/config';
 
 const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
 
@@ -30,7 +31,8 @@ export async function POST({ request }) {
 		logo: data.logo,
 		owner: data.user.addr,
 		type: data.tokenomics.tokenType,
-		banner_image: data.bannerImage
+		banner_image: data.bannerImage,
+		network
 	});
 
 	if (ProjectError) {

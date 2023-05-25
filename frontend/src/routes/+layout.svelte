@@ -1,5 +1,5 @@
 <script type="ts">
-	import { network } from '$flow/config.ts';
+	import { network } from '$flow/config';
 	import '../app.postcss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
 	import '@emerald-dao/design-system/build/variables-light.css';
@@ -64,13 +64,18 @@
 	{network}
 	transactionInProgress={$transactionStore.progress}
 	logoText="Toucans"
-	logoUrl="/ec-logo.png"
+	logoUrl="/toucans-logo.png"
 	{notificationsNumber}
 	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
 />
 <main>
 	<slot />
 </main>
+
+<svelte:head>
+	<title>Toucans</title>
+</svelte:head>
+
 {#if $page.url.pathname === '/' || $page.url.pathname === '/discover'}
 	<Footer
 		{navElements}

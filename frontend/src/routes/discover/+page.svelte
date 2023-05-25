@@ -14,22 +14,24 @@
 	) as DaoDatabaseData;
 </script>
 
-<section class="container-small">
-	<div class="column-12 align-center">
-		<h3>DAO of the Month</h3>
-		<ProjectCard
-			name={DOM.name}
-			projectId={DOM.project_id}
-			description={DOM.project_id}
-			story={DOMInfo.story}
-			labels={DOMInfo.labels}
-			twitter={DOM.twitter}
-			discord={DOM.discord}
-			website={DOM.website}
-			tokenSymbol={DOM.token_symbol}
-		/>
-	</div>
-</section>
+{#if DOM}
+	<section class="container-small">
+		<div class="column-12 align-center">
+			<h3>DAO of the Month</h3>
+			<ProjectCard
+				name={DOM.name}
+				projectId={DOM.project_id}
+				description={DOM.project_id}
+				story={DOMInfo.story}
+				labels={DOMInfo.labels}
+				twitter={DOM.twitter}
+				discord={DOM.discord}
+				website={DOM.website}
+				tokenSymbol={DOM.token_symbol}
+			/>
+		</div>
+	</section>
+{/if}
 
 <section class="container-medium">
 	<div class="column-12">
