@@ -73,7 +73,7 @@ export const deployDao = async () => {
 				paymentCurrency: ECurrencies.FLOW,
 				initialSupply: 0,
 				editDelay: '0.0',
-				mintTokens: false,
+				mintTokens: true,
 				walletAddresses: [],
 				hasMaxSupply: false
 			}

@@ -4,6 +4,7 @@
 	import { InputWrapper, Range, TooltipIcon } from '@emerald-dao/component-library';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import { roundGeneratorData } from '../../../stores/RoundGeneratorData';
+	import { currencies } from '$stores/flow/TokenStore';
 
 	export let tokenSymbol: string;
 	export let isValid: boolean;
@@ -37,9 +38,7 @@
 			<div class="funding-goal-input-wrapper" transition:fly|local={{ y: 10, duration: 140 }}>
 				<InputWrapper
 					name="fundingGoal"
-					iconUrl={$roundGeneratorData.currency === ECurrencies.FLOW
-						? '/flow-logo.png'
-						: '/usdc-logo.png'}
+					iconUrl={currencies[$roundGeneratorData.currency].image}
 					errors={res.getErrors('fundingGoal')}
 					isValid={res.isValid('fundingGoal')}
 					disabled={$roundGeneratorData.infiniteFundingGoal}

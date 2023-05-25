@@ -71,6 +71,7 @@ export interface TokenInfo {
 	symbol: string;
 	publicPath: string;
 	storagePath: string;
+	image: string;
 }
 
 export interface ActionData {

@@ -93,7 +93,7 @@
 			</div>
 		{/each}
 	{/each}
-	<img src="/toucans-logo.svg" alt="Toucans logo" style={`width: ${imagesAndIconsWidth}rem`} />
+	<img src="/toucans-logo.png" alt="Toucans logo" style={`width: ${imagesAndIconsWidth}rem`} />
 </div>
 
 <style lang="scss">
