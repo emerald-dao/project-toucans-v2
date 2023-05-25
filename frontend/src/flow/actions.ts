@@ -93,6 +93,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 		.replaceAll('INSERT SYMBOL', data.daoDetails.tokenName)
 		.replaceAll('INSERT URL', data.daoDetails.website)
 		.replaceAll('INSERT TWITTER', data.daoDetails.twitter)
+		.replaceAll('INSERT LOGO', data.daoDetails.logoIpfsUrl)
 		.replaceAll('INSERT DISCORD', data.daoDetails.discord);
 	const contractName = data.daoDetails.contractName;
 	const paymentCurrency = data.tokenomics.paymentCurrency;

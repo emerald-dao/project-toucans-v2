@@ -20,6 +20,19 @@ const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 export const deployDao = async () => {
 	const projectData = get(daoGeneratorData);
 
+	const uploadToIPFS = async (file: File) => {
+		try {
+			const cid = await client.storeBlob(file);
+			return `https://nftstorage.link/ipfs/${cid}`;
+		} catch (error) {
+			console.log(error);
+			throw new Error('Error uploading image to IPFS');
+		}
+	};
+	const logoIpfsUrl = await uploadToIPFS((projectData.daoDetails.logo as File[])[0]);
+	const bannerImage = await uploadToIPFS((projectData.daoDetails.bannerImage as File[])[0]);
+	projectData.daoDetails.logoIpfsUrl = logoIpfsUrl;
+
 	// After the contract is deployed to the blockchain, we upload images to IPFS and upload our data to the backend
 	const actionAfterDeployment: (
 		res: TransactionStatusObject
@@ -32,19 +45,6 @@ export const deployDao = async () => {
 		console.log('ProjectCreatedEvent', projectCreatedEvent);
 
 		restartAllSuites();
-
-		const uploadToIPFS = async (file: File) => {
-			try {
-				const cid = await client.storeBlob(file);
-				return `https://nftstorage.link/ipfs/${cid}`;
-			} catch (error) {
-				console.log(error);
-				throw new Error('Error uploading image to IPFS');
-			}
-		};
-
-		const logoIpfsUrl = await uploadToIPFS((projectData.daoDetails.logo as File[])[0]);
-		const bannerImage = await uploadToIPFS((projectData.daoDetails.bannerImage as File[])[0]);
 
 		await postProject(
 			get(user) as CurrentUserObject,
@@ -67,6 +67,7 @@ export const deployDao = async () => {
 				discord: '',
 				contractName: '',
 				logo: undefined,
+				logoIpfsUrl: '',
 				bannerImage: undefined
 			},
 			tokenomics: {

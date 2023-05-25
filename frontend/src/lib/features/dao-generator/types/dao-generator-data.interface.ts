@@ -10,6 +10,7 @@ export interface DaoGeneratorData {
 		discord: string;
 		contractName: string;
 		logo: File[] | undefined;
+		logoIpfsUrl: string;
 		bannerImage: File[] | undefined;
 	};
 	tokenomics: {
