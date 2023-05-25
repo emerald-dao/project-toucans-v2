@@ -34,6 +34,7 @@ import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?r
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
+import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
@@ -652,6 +653,19 @@ export const getBalances = async (userAddress: string) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getBalancesScript),
+			args: (arg, t) => [arg(userAddress, t.Address)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getBalances');
+		console.log(e);
+	}
+};
+
+export const getFlowBalance = async (userAddress: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getFlowBalanceScript),
 			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
 		return response;

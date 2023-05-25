@@ -5,6 +5,8 @@
 	import { generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { RecapCard, StepButtons, RecapElement } from '../../index';
 	import { editDelayOptions } from '../5-edit-delay/editDelayOptions';
+	import { getFlowBalance } from '$flow/actions';
+	import { user } from '$stores/flow/FlowStore';
 
 	onMount(() => {
 		if ($daoGeneratorData.daoDetails.logo) {
@@ -57,11 +59,16 @@
 		/>
 		<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
 	</RecapCard>
-	<label for="confirm-cost" class="switch">
-		<input type="checkbox" name="confirm-cost" id="confirm-cost" bind:checked={confirmCost} />
-		<span class="slider" />
-		I confirm this will cost 100 $FLOW token.
-	</label>
+	<div class="column-2">
+		<label for="confirm-cost" class="switch">
+			<input type="checkbox" name="confirm-cost" id="confirm-cost" bind:checked={confirmCost} />
+			<span class="slider" />
+			I confirm this will cost 100 $FLOW token.
+		</label>
+		{#await getFlowBalance($user.addr) then balance}
+			<span class="xsmall">You have a current balance of {Number(balance)} $FLOW.</span>
+		{/await}
+	</div>
 </div>
 <StepButtons active={confirmCost} />
 
