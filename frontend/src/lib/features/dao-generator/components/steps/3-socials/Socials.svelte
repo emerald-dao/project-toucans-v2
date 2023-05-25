@@ -35,7 +35,7 @@
 		<input
 			name="website"
 			type="text"
-			placeholder="alphadao.com"
+			placeholder="ecdao.org"
 			bind:value={$daoGeneratorData.daoDetails.website}
 			on:input={handleChange}
 		/>
@@ -58,7 +58,7 @@
 	</InputWrapper>
 	<InputWrapper
 		name="discord"
-		label="Discord invite"
+		label="Discord Invite"
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord')}
 		prefix="https://discord.gg/invite/"

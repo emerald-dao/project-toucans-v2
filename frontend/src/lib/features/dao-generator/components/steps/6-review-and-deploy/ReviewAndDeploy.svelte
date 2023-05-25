@@ -43,7 +43,7 @@
 		{#if $daoGeneratorData.daoDetails.twitter}
 			<RecapElement title="Twitter" data={'@' + $daoGeneratorData.daoDetails.twitter} />
 		{/if}
-		{#if $daoGeneratorData.daoDetails.discord && $daoGeneratorData.daoDetails.discord !== 'https://discord.gg/'}
+		{#if $daoGeneratorData.daoDetails.discord}
 			<RecapElement
 				title="Discord"
 				data={'https://discord.gg/invite/' + $daoGeneratorData.daoDetails.discord}

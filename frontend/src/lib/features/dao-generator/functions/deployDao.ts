@@ -64,7 +64,7 @@ export const deployDao = async () => {
 				description: '',
 				website: '',
 				twitter: '',
-				discord: 'https://discord.gg/',
+				discord: '',
 				contractName: '',
 				logo: undefined,
 				bannerImage: undefined
@@ -76,11 +76,6 @@ export const deployDao = async () => {
 				mintTokens: false,
 				walletAddresses: [],
 				hasMaxSupply: false
-			},
-			multisig: {
-				owner: '',
-				addresses: [],
-				threshold: 1
 			}
 		});
 

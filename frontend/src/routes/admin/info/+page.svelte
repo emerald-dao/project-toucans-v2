@@ -129,7 +129,7 @@
 		<input
 			name="website"
 			type="text"
-			placeholder="alphadao.com"
+			placeholder="ecdao.org"
 			bind:value={formData.website}
 			on:input={handleChange}
 		/>
@@ -145,23 +145,23 @@
 		<input
 			name="twitter"
 			type="text"
-			placeholder="@emerald_dao"
+			placeholder="emerald_dao"
 			bind:value={formData.twitter}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
 	<InputWrapper
 		name="discord"
-		label="Discord invite"
+		label="Discord Invite"
 		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord') && formData.discord !== 'https://discord.gg/'}
+		isValid={res.isValid('discord') && formData.discord.length > 0}
 		prefix="https://discord.gg/invite/"
 		icon="tabler:brand-discord"
 	>
 		<input
 			name="discord"
 			type="text"
-			placeholder="https://discord.gg/emeraldcity"
+			placeholder="emeraldcity"
 			bind:value={formData.discord}
 			on:input={handleChange}
 		/>
