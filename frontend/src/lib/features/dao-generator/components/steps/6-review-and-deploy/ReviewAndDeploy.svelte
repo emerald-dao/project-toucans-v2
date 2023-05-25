@@ -27,50 +27,50 @@
 	let confirmCost: boolean = false;
 </script>
 
-<div class="column-6" in:fly={{ y: 30, duration: 400 }}>
-	<RecapCard title="Overview" onEdit={() => generatorActiveStep.goToStep(0)}>
-		<div class="row-5">
-			{#if $daoGeneratorData.daoDetails.logo}
-				<img bind:this={logoElement} class="logo" alt="Dao logo" />
-			{/if}
-			<div class="column">
-				<RecapElement title="DAO Name" data={$daoGeneratorData.daoDetails.name} />
-				<RecapElement title="Token Name" data={$daoGeneratorData.daoDetails.tokenName} />
+{#await getFlowBalance($user.addr) then balance}
+	<div class="column-6" in:fly={{ y: 30, duration: 400 }}>
+		<RecapCard title="Overview" onEdit={() => generatorActiveStep.goToStep(0)}>
+			<div class="row-5">
+				{#if $daoGeneratorData.daoDetails.logo}
+					<img bind:this={logoElement} class="logo" alt="Dao logo" />
+				{/if}
+				<div class="column">
+					<RecapElement title="DAO Name" data={$daoGeneratorData.daoDetails.name} />
+					<RecapElement title="Token Name" data={$daoGeneratorData.daoDetails.tokenName} />
+				</div>
 			</div>
-		</div>
-		<RecapElement title="Description" data={$daoGeneratorData.daoDetails.description} />
-		{#if $daoGeneratorData.daoDetails.website}
-			<RecapElement title="Website" data={'https://' + $daoGeneratorData.daoDetails.website} />
-		{/if}
-		{#if $daoGeneratorData.daoDetails.twitter}
-			<RecapElement title="Twitter" data={'@' + $daoGeneratorData.daoDetails.twitter} />
-		{/if}
-		{#if $daoGeneratorData.daoDetails.discord}
+			<RecapElement title="Description" data={$daoGeneratorData.daoDetails.description} />
+			{#if $daoGeneratorData.daoDetails.website}
+				<RecapElement title="Website" data={'https://' + $daoGeneratorData.daoDetails.website} />
+			{/if}
+			{#if $daoGeneratorData.daoDetails.twitter}
+				<RecapElement title="Twitter" data={'@' + $daoGeneratorData.daoDetails.twitter} />
+			{/if}
+			{#if $daoGeneratorData.daoDetails.discord}
+				<RecapElement
+					title="Discord"
+					data={'https://discord.gg/invite/' + $daoGeneratorData.daoDetails.discord}
+				/>
+			{/if}
 			<RecapElement
-				title="Discord"
-				data={'https://discord.gg/invite/' + $daoGeneratorData.daoDetails.discord}
+				title="Edit Delay"
+				data={editDelayOptions.filter(
+					(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
+				)[0].title}
 			/>
-		{/if}
-		<RecapElement
-			title="Edit Delay"
-			data={editDelayOptions.filter(
-				(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
-			)[0].title}
-		/>
-		<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
-	</RecapCard>
-	<div class="column-2">
-		<label for="confirm-cost" class="switch">
-			<input type="checkbox" name="confirm-cost" id="confirm-cost" bind:checked={confirmCost} />
-			<span class="slider" />
-			I confirm this will cost 100 $FLOW token.
-		</label>
-		{#await getFlowBalance($user.addr) then balance}
+			<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
+		</RecapCard>
+		<div class="column-2">
+			<label for="confirm-cost" class="switch">
+				<input type="checkbox" name="confirm-cost" id="confirm-cost" bind:checked={confirmCost} />
+				<span class="slider" />
+				I confirm this will cost 100 $FLOW token.
+			</label>
 			<span class="xsmall">You have a current balance of {Number(balance)} $FLOW.</span>
-		{/await}
+		</div>
 	</div>
-</div>
-<StepButtons active={confirmCost} />
+	<StepButtons active={confirmCost && Number(balance) >= 100.1} />
+{/await}
 
 <style type="scss">
 	img {
