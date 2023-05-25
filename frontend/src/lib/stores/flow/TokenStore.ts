@@ -10,7 +10,7 @@ export const currencies: { [key: string]: TokenInfo } = {
 		receiverPath: 'flowTokenReceiver',
 		publicPath: 'flowTokenBalance',
 		storagePath: 'flowTokenVault',
-		image: 'flow-logo.png'
+		image: '/flow-logo.png'
 	},
 	USDC: {
 		contractName: 'FiatToken',
@@ -20,6 +20,6 @@ export const currencies: { [key: string]: TokenInfo } = {
 		receiverPath: 'USDCVaultReceiver',
 		publicPath: 'USDCVaultBalance',
 		storagePath: 'USDCVault',
-		image: 'usdc-logo.png'
+		image: '/usdc-logo.png'
 	}
 };
