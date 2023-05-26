@@ -71,7 +71,7 @@
 			<span class="xsmall">You have a current balance of {Number(balance)} $FLOW.</span>
 		</div>
 	</div>
-	<StepButtons active={confirmCost && Math.round(balance * 100) / 100 >= 100.1} />
+	<StepButtons active={confirmCost && Math.round(Number(balance) * 100) / 100 >= 100.1} />
 {/await}
 
 <style type="scss">
