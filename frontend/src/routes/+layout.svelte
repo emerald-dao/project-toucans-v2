@@ -76,13 +76,13 @@
 	<title>Toucans</title>
 </svelte:head>
 
-{#if $page.url.pathname === '/' || $page.url.pathname === '/discover'}
+{#if $page.url.pathname === '/' || $page.url.pathname === '/discover' || $page.url.pathname === '/docs'}
 	<Footer
 		{navElements}
 		{emeraldTools}
 		socials={socialMedia}
 		logoText="Toucans"
-		logoUrl="/ec-logo.png"
+		logoUrl="/toucans-logo.png"
 	/>
 {/if}
 

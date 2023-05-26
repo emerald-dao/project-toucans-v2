@@ -15,7 +15,7 @@
 </script>
 
 {#if DOM}
-	<section class="container-small">
+	<section class="container-small border-bottom">
 		<div class="column-12 align-center">
 			<h3>DAO of the Month</h3>
 			<ProjectCard
@@ -54,7 +54,7 @@
 </section>
 
 <style type="scss">
-	section:first-child {
+	.border-bottom {
 		border-bottom: 1px var(--clr-border-primary) solid;
 	}
 
