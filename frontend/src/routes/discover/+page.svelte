@@ -7,7 +7,7 @@
 	const DOMInfo = {
 		projectId: 'EmeraldCity',
 		story:
-			'The creators of Toucans. The first DAO on Flow. Community-run education, building & auditing.',
+			'Community-run education, building & auditing. We created this platform to allow anyone to create a DAO as cool as ours.',
 		labels: ['Building', 'Education', 'Community']
 	};
 	const DOM: DaoDatabaseData = projects.find(
@@ -22,7 +22,7 @@
 			<ProjectCard
 				name={DOM.name}
 				projectId={DOM.project_id}
-				description={DOM.project_id}
+				description={DOM.description}
 				story={DOMInfo.story}
 				labels={DOMInfo.labels}
 				twitter={DOM.twitter}
