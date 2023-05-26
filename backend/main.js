@@ -12,60 +12,73 @@ app.get('/', (req, res) => {
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
-// const actionIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.ToucansActions.`;
 
-fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
-  const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'NewFundingCycle');
-});
+const receiveEvent = (message) => {
+  // `message` is the event
+  console.log(message);
+  // go to supabase
 
-fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
-  const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Purchase');
-});
+};
 
-fcl.events(`${eventIdentifierPrefix}Mint`).subscribe((event) => {
-  const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Mint');
-});
+function createStream() {
+  const streamSDK = new GraffleSDK();
+  streamSDK.stream(receiveEvent);
+}
 
-fcl.events(`${eventIdentifierPrefix}BatchMint`).subscribe((event) => {
-  const { projectId, amounts, ...rest } = event;
-  appendAction(projectId, rest, 'BatchMint');
-});
+createStream();
 
-fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
-  const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Donate');
-});
+// fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
+//   const { projectId, ...rest } = event;
+//   appendAction(projectId, rest, 'NewFundingCycle');
+// });
 
-fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
-  const { projectId, ...rest } = event;
-  appendAction(projectId, rest, 'Withdraw');
-});
+// fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
+//   const { projectId, ...rest } = event;
+//   appendAction(projectId, rest, 'Purchase');
+// });
 
-fcl.events(`${eventIdentifierPrefix}BatchWithdraw`).subscribe((event) => {
-  const { projectId, amounts, ...rest } = event;
-  appendAction(projectId, rest, 'BatchWithdraw');
-});
+// fcl.events(`${eventIdentifierPrefix}Mint`).subscribe((event) => {
+//   const { projectId, ...rest } = event;
+//   appendAction(projectId, rest, 'Mint');
+// });
 
-fcl.events(`${eventIdentifierPrefix}UpdateThreshold`).subscribe((event) => {
-  const { projectId, ...rest } = event;
+// fcl.events(`${eventIdentifierPrefix}BatchMint`).subscribe((event) => {
+//   const { projectId, amounts, ...rest } = event;
+//   appendAction(projectId, rest, 'BatchMint');
+// });
 
-  appendAction(projectId, rest, 'UpdateThreshold');
-});
+// fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
+//   const { projectId, ...rest } = event;
+//   appendAction(projectId, rest, 'Donate');
+// });
 
-fcl.events(`${eventIdentifierPrefix}AddSigner`).subscribe(async (event) => {
-  const { projectId, signer } = event;
+// fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
+//   const { projectId, ...rest } = event;
+//   appendAction(projectId, rest, 'Withdraw');
+// });
 
-  appendAction(projectId, { signer }, 'AddSigner')
-});
+// fcl.events(`${eventIdentifierPrefix}BatchWithdraw`).subscribe((event) => {
+//   const { projectId, amounts, ...rest } = event;
+//   appendAction(projectId, rest, 'BatchWithdraw');
+// });
 
-fcl.events(`${eventIdentifierPrefix}RemoveSigner`).subscribe((event) => {
-  const { projectId, signer } = event;
+// fcl.events(`${eventIdentifierPrefix}UpdateThreshold`).subscribe((event) => {
+//   const { projectId, ...rest } = event;
 
-  appendAction(projectId, { signer }, 'RemoveSigner')
-});
+//   appendAction(projectId, rest, 'UpdateThreshold');
+// });
+
+// fcl.events(`${eventIdentifierPrefix}AddSigner`).subscribe(async (event) => {
+//   const { projectId, signer } = event;
+
+//   appendAction(projectId, { signer }, 'AddSigner')
+// });
+
+// fcl.events(`${eventIdentifierPrefix}RemoveSigner`).subscribe((event) => {
+//   const { projectId, signer } = event;
+
+//   appendAction(projectId, { signer }, 'RemoveSigner')
+// });
 
 async function appendAction(projectId, data, type) {
   console.log(type + ' Action: ', data);
