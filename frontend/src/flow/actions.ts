@@ -60,6 +60,27 @@ export const unauthenticate = () => fcl.unauthenticate();
 export const logIn = async () => fcl.logIn();
 export const signUp = () => fcl.signUp();
 
+const saveEventAction: (
+	res: TransactionStatusObject
+) => Promise<ActionExecutionResult> = async (executionResult: TransactionStatusObject) => {
+	const res = await fetch('/api/save-event-data', {
+		method: 'POST',
+		body: JSON.stringify({
+			transactionId: executionResult.events[0].transactionId
+		}),
+		headers: {
+			'content-type': 'application/json'
+		}
+	});
+
+	const response = await res.json();
+
+	return {
+		state: 'success',
+		errorMessage: response
+	};
+}
+
 //   _______                             _   _
 //  |__   __|                           | | (_)
 //     | |_ __ __ _ _ __  ___  __ _  ___| |_ _  ___  _ __  ___
@@ -168,7 +189,7 @@ export const fundProjectExecution = (
 	expectedAmount: string
 ) =>
 	executeTransaction(() =>
-		fundProject(projectOwner, projectId, amount, message, currency, expectedAmount)
+		fundProject(projectOwner, projectId, amount, message, currency, expectedAmount), saveEventAction
 	);
 
 const claimOverflow = async (
@@ -258,7 +279,7 @@ export const donateExecution = (
 	amount: string,
 	message: string,
 	currency: ECurrencies
-) => executeTransaction(() => donate(projectOwner, projectId, amount, message, currency));
+) => executeTransaction(() => donate(projectOwner, projectId, amount, message, currency), saveEventAction);
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
@@ -291,7 +312,7 @@ const newRound = async () => {
 	});
 };
 
-export const newRoundExecution = () => executeTransaction(newRound);
+export const newRoundExecution = () => executeTransaction(newRound, saveEventAction);
 
 const togglePurchasing = async (projectId: string) => {
 	return await fcl.mutate({
@@ -452,7 +473,7 @@ export const voteOnActionExecution = (
 	projectId: string,
 	actionUUID: string,
 	vote: boolean
-) => executeTransaction(() => voteOnAction(projectOwner, projectId, actionUUID, vote));
+) => executeTransaction(() => voteOnAction(projectOwner, projectId, actionUUID, vote), saveEventAction);
 
 const mintTokens = async (
 	projectOwner: string,

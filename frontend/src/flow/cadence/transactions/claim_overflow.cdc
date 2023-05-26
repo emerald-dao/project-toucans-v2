@@ -14,6 +14,11 @@ transaction(
   let Receiver: &{FungibleToken.Receiver, FungibleToken.Balance}
   
   prepare(signer: AuthAccount) {
+    if signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      signer.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      signer.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+    }
+
     let collection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
                     .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                     ?? panic("A DAOTreasury doesn't exist here.")

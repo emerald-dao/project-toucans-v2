@@ -11,6 +11,11 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
   let Payer: Address
 
   prepare(user: AuthAccount) {
+    if user.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      user.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      user.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+    }
+
     // Setup User Account
     if user.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) == nil {
       user.save(<- ExampleToken.createEmptyVault(), to: ExampleToken.VaultStoragePath)

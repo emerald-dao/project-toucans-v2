@@ -11,6 +11,11 @@ transaction(
   let Collection: &Toucans.Collection
   
   prepare(signer: AuthAccount) {
+    if signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      signer.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      signer.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+    }
+    
     self.Collection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
               ?? panic("Signer does not have Toucans collection does not exist.")
   }
