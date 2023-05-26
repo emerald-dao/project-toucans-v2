@@ -5,11 +5,13 @@
 	let testDaos = [
 		{
 			logoUrl: '/ec-logo.png',
-			name: 'Emerald City DAO',
+			name: 'Emerald City',
 			totalInvested: 1500,
 			currency: 'EMLD',
 			numberOfPayments: 12,
-			variationPercentage: 8.2
+			variationPercentage: 8.2,
+			projectId: 'EmeraldCity',
+			description: 'The first DAO on the Flow blockchain. The creators of Toucans.'
 		},
 		{
 			logoUrl: '/ballerz-fz-logo.jpg',
@@ -17,7 +19,10 @@
 			totalInvested: 1500,
 			currency: 'BFC',
 			numberOfPayments: 12,
-			variationPercentage: 8.2
+			variationPercentage: 8.2,
+			projectId: 'BallerzFC',
+			description:
+				'A DAO for the ownership and management of Ballerz FC and related assets in the MFL Universe.'
 		}
 	];
 </script>

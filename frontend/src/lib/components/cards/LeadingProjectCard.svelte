@@ -7,7 +7,7 @@
 	export let number: number;
 </script>
 
-<div class="card">
+<a class="card" id="no-style" href={`/p/${daoData.projectId}`}>
 	<div class="logo-container">
 		<div class="circle center">
 			<span class="number">
@@ -18,7 +18,7 @@
 	</div>
 	<div class="column align-start">
 		<h4>{daoData.name}</h4>
-		<div class="row-0">
+		<!-- <div class="row-0">
 			<span
 				class="variation"
 				class:positive={daoData.variationPercentage > 0}
@@ -34,11 +34,16 @@
 			</span>
 			<Currency amount={daoData.totalInvested} currency={daoData.currency} />
 		</div>
-		<span>{`${daoData.numberOfPayments} payments`}</span>
+		<span>{`${daoData.numberOfPayments} payments`}</span> -->
+		<p>{daoData.description}</p>
 	</div>
-</div>
+</a>
 
 <style type="scss">
+	#no-style {
+		text-decoration: none;
+		color: unset;
+	}
 	.card {
 		display: flex;
 		flex-direction: row;
@@ -67,8 +72,10 @@
 		}
 
 		img {
-			width: 90px;
-			height: 90px;
+			min-width: 90px;
+			min-height: 90px;
+			max-width: 90px;
+			max-height: 90px;
 			border: solid 1.5px var(--clr-neutral-600);
 			border-radius: 18px;
 		}
