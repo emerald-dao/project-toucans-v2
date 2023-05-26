@@ -66,7 +66,7 @@
 			{/if}
 			{#if daoData.generalInfo.discord}
 				<Button
-					href="https://discord.com/invite/{daoData.generalInfo.discord}"
+					href="https://discord.com/{daoData.generalInfo.discord}"
 					target="_blank"
 					color="neutral"
 					type="ghost"

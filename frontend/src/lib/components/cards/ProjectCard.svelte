@@ -35,7 +35,7 @@
 					{/if}
 					{#if discord}
 						<a
-							href={`https://discord.gg/invite/${discord}`}
+							href={`https://discord.gg/${discord}`}
 							rel="noreferrer"
 							class="header-link"
 							target="_blank"

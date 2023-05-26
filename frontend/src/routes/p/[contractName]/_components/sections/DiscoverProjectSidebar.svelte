@@ -56,7 +56,7 @@
 							{/if}
 							{#if daoData.generalInfo.discord}
 								<a
-									href={`https://discord.gg/invite/${daoData.generalInfo.discord}`}
+									href={`https://discord.gg/${daoData.generalInfo.discord}`}
 									rel="noreferrer"
 									class="header-link"
 									target="_blank"

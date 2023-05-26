@@ -61,7 +61,7 @@
 		label="Discord Invite"
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord')}
-		prefix="https://discord.gg/invite/"
+		prefix="https://discord.gg/"
 		icon="tabler:brand-discord"
 	>
 		<input

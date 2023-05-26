@@ -32,7 +32,7 @@
 		<RecapCard title="Overview" onEdit={() => generatorActiveStep.goToStep(0)}>
 			<div class="row-5">
 				{#if $daoGeneratorData.daoDetails.logo}
-					<img bind:this={logoElement} class="logo" alt="Dao logo" />
+					<img bind:this={logoElement} class="logo" alt="DAO Logo" />
 				{/if}
 				<div class="column">
 					<RecapElement title="DAO Name" data={$daoGeneratorData.daoDetails.name} />
@@ -49,7 +49,7 @@
 			{#if $daoGeneratorData.daoDetails.discord}
 				<RecapElement
 					title="Discord"
-					data={'https://discord.gg/invite/' + $daoGeneratorData.daoDetails.discord}
+					data={'https://discord.gg/' + $daoGeneratorData.daoDetails.discord}
 				/>
 			{/if}
 			<RecapElement

@@ -155,7 +155,7 @@
 		label="Discord Invite"
 		errors={res.getErrors('discord')}
 		isValid={res.isValid('discord') && formData.discord.length > 0}
-		prefix="https://discord.gg/invite/"
+		prefix="https://discord.gg/"
 		icon="tabler:brand-discord"
 	>
 		<input

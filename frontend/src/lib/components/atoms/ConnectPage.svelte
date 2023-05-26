@@ -21,7 +21,7 @@
 		</p>
 		<p class="h5">
 			We believe in this goal. Join us on <a
-				href="https://discord.com/invite/emeraldcity"
+				href="https://discord.com/emeraldcity"
 				target="_blank"
 				rel="noreferrer">discord</a
 			>
