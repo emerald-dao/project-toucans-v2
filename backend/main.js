@@ -1,6 +1,7 @@
 const fcl = require('@onflow/fcl');
 const express = require('express');
 const { supabase } = require('./supabaseClient');
+const { default: GraffleSDK } = require('./graffle');
 require('./flow/config.js');
 
 const app = express();
