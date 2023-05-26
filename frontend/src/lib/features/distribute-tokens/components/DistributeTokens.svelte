@@ -57,12 +57,12 @@
 	<div class="forms-wrapper sub-wrapper column-8">
 		<div class="introduction">
 			{#if distributionType === 'mint'}
-				<h5>Mint</h5>
+				<h5>Create Mint Action</h5>
 				<p class="small">
 					{`Mint $${daoData.generalInfo.token_symbol} tokens to external wallets.`}
 				</p>
 			{:else}
-				<h5>Withdraw</h5>
+				<h5>Create Withdraw Action</h5>
 				<p class="small">Withdraw tokens from your treasury to external wallets.</p>
 			{/if}
 		</div>
@@ -114,7 +114,7 @@
 		{#if distStaging.length > 0}
 			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
 				<Button width="full-width" on:click={distributeTokens}>
-					{distributionType === 'withdraw' ? 'Withdraw' : 'Mint'}
+					{distributionType === 'withdraw' ? 'Create Withdraw Action' : 'Create Mint Action'}
 				</Button>
 			</div>
 		{/if}

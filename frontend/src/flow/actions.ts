@@ -11,8 +11,7 @@ import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
-import acceptActionTx from './cadence/transactions/accept_action.cdc?raw';
-import declineActionTx from './cadence/transactions/decline_action.cdc?raw';
+import voteOnActionTx from './cadence/transactions/vote_on_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
 import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
@@ -426,24 +425,19 @@ const signAction = async (actionMessage: string, actionUUID: string) => {
 	return { keyIds, signatures, MSG, signatureBlock: latestBlock.height };
 };
 
-const acceptAction = async (
+const voteOnAction = async (
 	projectOwner: string,
 	projectId: string,
-	actionMessage: string,
-	actionUUID: string
+	actionUUID: string,
+	vote: boolean
 ) => {
-	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
-
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(acceptActionTx),
+		cadence: replaceWithProperValues(voteOnActionTx),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
 			arg(actionUUID, t.UInt64),
-			arg(MSG, t.String),
-			arg(keyIds, t.Array(t.Int)),
-			arg(signatures, t.Array(t.String)),
-			arg(signatureBlock, t.UInt64)
+			arg(vote, t.Bool)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -452,45 +446,12 @@ const acceptAction = async (
 	});
 };
 
-export const acceptActionExecution = (
+export const voteOnActionExecution = (
 	projectOwner: string,
 	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) => executeTransaction(() => acceptAction(projectOwner, projectId, actionMessage, actionUUID));
-
-const declineAction = async (
-	projectOwner: string,
-	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) => {
-	const { keyIds, signatures, MSG, signatureBlock } = await signAction(actionMessage, actionUUID);
-
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(declineActionTx),
-		args: (arg, t) => [
-			arg(projectOwner, t.Address),
-			arg(projectId, t.String),
-			arg(actionUUID, t.UInt64),
-			arg(MSG, t.String),
-			arg(keyIds, t.Array(t.Int)),
-			arg(signatures, t.Array(t.String)),
-			arg(signatureBlock, t.UInt64)
-		],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const declineActionExecution = (
-	projectOwner: string,
-	projectId: string,
-	actionMessage: string,
-	actionUUID: string
-) => executeTransaction(() => declineAction(projectOwner, projectId, actionMessage, actionUUID));
+	actionUUID: string,
+	vote: boolean
+) => executeTransaction(() => voteOnAction(projectOwner, projectId, actionUUID, vote));
 
 const mintTokens = async (
 	projectOwner: string,

@@ -945,6 +945,21 @@ pub contract Toucans {
       return &self.projects[projectId] as &Project{ProjectPublic}?
     }
 
+    // use this function to vote on other projects proposals
+    pub fun voteOnProjectAction(projectOwner: Address, projectId: String, actionUUID: UInt64, vote: Bool) {
+      let collection: &Collection{CollectionPublic} = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
+                    .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+                    ?? panic("A DAOTreasury doesn't exist here.")
+      let project: &Project{ProjectPublic} = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
+      let manager: &Manager{ManagerPublic} = project.borrowManagerPublic()
+      let action: &MultiSignAction = manager.borrowAction(actionUUID: actionUUID)
+      action.vote(acctAddress: self.owner!.address, vote: vote)
+
+      if manager.readyToFinalize(actionUUID: actionUUID) {
+        project.finalizeAction(actionUUID: actionUUID)
+      }
+    }
+
     init() {
       self.projects <- {}
     }
@@ -977,22 +992,11 @@ pub contract Toucans {
       access(self) let votes: {Address: Bool}
       pub let threshold: UInt64
 
-      pub fun decline(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
+      access(contract) fun vote(acctAddress: Address, vote: Bool) {
         pre {
           self.signers.contains(acctAddress): "This person cannot vote."
         }
-        let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
-        assert(sign, message: "Invalid signature!")
-        self.votes[acctAddress] = false
-      }
-
-      pub fun accept(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
-        pre {
-          self.signers.contains(acctAddress): "This person cannot vote."
-        }
-        let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
-        assert(sign, message: "Invalid signature!")
-        self.votes[acctAddress] = true
+        self.votes[acctAddress] = vote
       }
 
       pub fun getSigners(): [Address] {

@@ -4,7 +4,7 @@
 	import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
 	import Icon from '@iconify/svelte';
 	import { user } from '$stores/flow/FlowStore';
-	import { acceptActionExecution, declineActionExecution, getBatchAmounts } from '$flow/actions';
+	import { voteOnActionExecution, getBatchAmounts } from '$flow/actions';
 	import { Label, Modal, getModal } from '@emerald-dao/component-library';
 	import BatchMintingList from './atoms/BatchMintingList.svelte';
 
@@ -108,7 +108,7 @@
 				{#if !signed || ($user.addr && action.votes[$user.addr] === false)}
 					<div
 						class="action-wrapper sign"
-						on:click={() => acceptActionExecution(projectOwner, daoId, action.intent, action.id)}
+						on:click={() => voteOnActionExecution(projectOwner, daoId, action.id, true)}
 						on:keydown
 					>
 						<Icon icon="tabler:pencil-plus" />
@@ -117,7 +117,7 @@
 				{#if !signed || ($user.addr && action.votes[$user.addr] === true)}
 					<div
 						class="action-wrapper trash"
-						on:click={() => declineActionExecution(projectOwner, daoId, action.intent, action.id)}
+						on:click={() => voteOnActionExecution(projectOwner, daoId, action.id, false)}
 						on:keydown
 					>
 						<Icon icon="tabler:x" />
