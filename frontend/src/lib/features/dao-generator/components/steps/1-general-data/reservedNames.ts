@@ -1,2 +1,2 @@
-export const reservedNames = ['Emerald City', 'Emerald City DAO', 'Emerald DAO', 'Emerald Token', 'Flowverse', 'Flovatar', 'Flunks'];
-export const reservedContractNames = ['Emerald', 'EmeraldCity', 'EmeraldCityDAO', 'EmeraldDAO', 'EmeraldToken'];
+export const reservedNames = [];
+export const reservedContractNames = [];
