@@ -27,9 +27,14 @@
 
 	// let logoElement: HTMLImageElement;
 	let confirmCost: boolean = false;
+
+	async function getUserBalance() {
+		const balance = await getFlowBalance($user.addr);
+		return Math.round(Number(balance) * 100) / 100;
+	}
 </script>
 
-{#await getFlowBalance($user.addr) then balance}
+{#await getUserBalance() then balance}
 	<div class="column-6" in:fly={{ y: 30, duration: 400 }}>
 		<RecapCard title="Overview" onEdit={() => generatorActiveStep.goToStep(0)}>
 			<div class="row-5">
@@ -68,10 +73,10 @@
 				<span class="slider" />
 				I confirm this will cost 100 $FLOW token.
 			</label>
-			<span class="xsmall">You have a current balance of {Number(balance)} $FLOW.</span>
+			<span class="xsmall">You have a current balance of {balance} $FLOW.</span>
 		</div>
 	</div>
-	<StepButtons active={confirmCost && Math.round(Number(balance) * 100) / 100 >= 100.1} />
+	<StepButtons active={confirmCost && balance >= 100.1} />
 {/await}
 
 <style type="scss">

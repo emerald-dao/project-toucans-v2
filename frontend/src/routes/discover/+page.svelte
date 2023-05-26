@@ -5,8 +5,9 @@
 	export let data;
 	const projects: DaoDatabaseData[] = data.projects as DaoDatabaseData[];
 	const DOMInfo = {
-		projectId: 'TestingDAO',
-		story: 'This DAO...',
+		projectId: 'EmeraldCity',
+		story:
+			'The creators of Toucans. The first DAO on Flow. Community-run education, building & auditing.',
 		labels: ['Building', 'Education', 'Community']
 	};
 	const DOM: DaoDatabaseData = projects.find(
