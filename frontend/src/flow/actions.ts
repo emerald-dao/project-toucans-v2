@@ -420,6 +420,8 @@ const signAction = async (actionMessage: string, actionUUID: string) => {
 	});
 	console.log(keyIds);
 	console.log(signatures);
+	console.log(MSG)
+	console.log(latestBlock.height)
 
 	return { keyIds, signatures, MSG, signatureBlock: latestBlock.height };
 };
