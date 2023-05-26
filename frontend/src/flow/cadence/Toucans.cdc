@@ -982,9 +982,8 @@ pub contract Toucans {
           self.signers.contains(acctAddress): "This person cannot vote."
         }
         let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
-        if sign {
-          self.votes[acctAddress] = false
-        }
+        assert(sign, message: "Invalid signature!")
+        self.votes[acctAddress] = false
       }
 
       pub fun accept(acctAddress: Address, message: String, keyIds: [Int], signatures: [String], signatureBlock: UInt64) {
@@ -992,9 +991,8 @@ pub contract Toucans {
           self.signers.contains(acctAddress): "This person cannot vote."
         }
         let sign = ToucansUtils.verifySignature(uuid: self.uuid, intent: self.action.getIntent(), acctAddress: acctAddress, message: message, keyIds: keyIds, signatures: signatures, signatureBlock: signatureBlock)
-        if sign {
-          self.votes[acctAddress] = true
-        }
+        assert(sign, message: "Invalid signature!")
+        self.votes[acctAddress] = true
       }
 
       pub fun getSigners(): [Address] {
