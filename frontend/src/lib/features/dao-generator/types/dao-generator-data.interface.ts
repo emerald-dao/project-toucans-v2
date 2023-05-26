@@ -12,6 +12,7 @@ export interface DaoGeneratorData {
 		logo: File[] | undefined;
 		logoIpfsUrl: string;
 		bannerImage: File[] | undefined;
+		bannerLogoIpfsUrl: string;
 	};
 	tokenomics: {
 		paymentCurrency: ECurrencies;

@@ -74,7 +74,13 @@ pub contract ExampleToken: FungibleToken {
                         ),
                         mediaType: "image"
                     )
-                    let medias = MetadataViews.Medias([media])
+                    let bannerMedia = MetadataViews.Media(
+                            file: MetadataViews.HTTPFile(
+                            url: "INSERT BANNER LOGO"
+                        ),
+                        mediaType: "image"
+                    )
+                    let medias = MetadataViews.Medias([media, bannerMedia])
                     return FungibleTokenMetadataViews.FTDisplay(
                         name: "INSERT NAME",
                         symbol: "INSERT SYMBOL",

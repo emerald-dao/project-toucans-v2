@@ -32,6 +32,7 @@ export const deployDao = async () => {
 	const logoIpfsUrl = await uploadToIPFS((projectData.daoDetails.logo as File[])[0]);
 	const bannerImage = await uploadToIPFS((projectData.daoDetails.bannerImage as File[])[0]);
 	projectData.daoDetails.logoIpfsUrl = logoIpfsUrl;
+	projectData.daoDetails.bannerLogoIpfsUrl = bannerImage;
 
 	// After the contract is deployed to the blockchain, we upload images to IPFS and upload our data to the backend
 	const actionAfterDeployment: (
@@ -68,7 +69,8 @@ export const deployDao = async () => {
 				contractName: '',
 				logo: undefined,
 				logoIpfsUrl: '',
-				bannerImage: undefined
+				bannerImage: undefined,
+				bannerLogoIpfsUrl: ''
 			},
 			tokenomics: {
 				paymentCurrency: ECurrencies.FLOW,
