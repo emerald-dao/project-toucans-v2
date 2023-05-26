@@ -1,9 +1,20 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { generatorActiveStep, daoGeneratorSteps } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
+	import {
+		generatorActiveStep,
+		daoGeneratorSteps
+	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { Button } from '@emerald-dao/component-library';
 
 	export let active: boolean = true;
+	let finalLoading: boolean = false;
+
+	function increment() {
+		if ($generatorActiveStep === $daoGeneratorSteps.length - 1) {
+			finalLoading = true;
+		}
+		generatorActiveStep.increment();
+	}
 </script>
 
 <div class="step-buttons">
@@ -15,9 +26,9 @@
 		<div />
 	{/if}
 	<Button
-		on:click={generatorActiveStep.increment}
+		on:click={increment}
 		size="large"
-		state={active ? 'active' : 'disabled'}
+		state={finalLoading ? 'loading' : active ? 'active' : 'disabled'}
 	>
 		{#if $generatorActiveStep === $daoGeneratorSteps.length - 1}
 			Generate DAO
