@@ -227,6 +227,7 @@ pub contract Toucans {
     pub fun getCurrentIssuanceRate(): UFix64?
     pub fun getCurrentFundingCycle(): FundingCycle?
     pub fun getCurrentFundingCycleId(): UInt64?
+    pub fun getFundingCycle(cycleIndex: UInt64): FundingCycle
     pub fun getFundingCycles(): [FundingCycle]
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
