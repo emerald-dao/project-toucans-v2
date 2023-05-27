@@ -59,6 +59,11 @@
 			text: 'Mint',
 			color: 'alert'
 		},
+		Burn: {
+			icon: 'tabler:flame',
+			text: 'Burn',
+			color: 'alert'
+		},
 		UpdateThreshold: {
 			icon: 'tabler:signature',
 			text: 'Updated threshold',
@@ -96,12 +101,9 @@
 		{#if event.type === 'Withdraw' || event.type === 'Mint'}
 			<WalletLabel address={event.data.to} />
 		{/if}
-		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint'}
+		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn'}
 			<Currency
-				amount={event.type === 'Withdraw' ||
-				event.type === 'BatchWithdraw' ||
-				event.type === 'Mint' ||
-				event.type === 'BatchMint'
+				amount={event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Burn'
 					? -Number(event.data.amount)
 					: Number(event.data.amount)}
 				currency={event.data.tokenSymbol}

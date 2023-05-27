@@ -81,6 +81,12 @@
 					Mint
 				</a>
 			{/if}
+			<a href="/admin/burn" class="sidebar-link" class:active={$page.url.pathname.includes('burn')}>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:flame" />
+				</div>
+				Burn
+			</a>
 			<a
 				href="/admin/withdraw"
 				class="sidebar-link distribute-display"
@@ -143,7 +149,7 @@
 			class="sidebar-link small"
 			class:active={$page.url.pathname.includes('info')}
 		>
-			<div class="sidebar-link-icon ">
+			<div class="sidebar-link-icon">
 				<Icon icon="tabler:edit" />
 			</div>
 			Edit Info

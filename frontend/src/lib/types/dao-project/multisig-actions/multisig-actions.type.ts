@@ -6,4 +6,5 @@ export type MultisigActions =
 	| 'UpdateThreshold'
 	| 'Mint'
 	| 'BatchMint'
-	| 'MintToTreasury';
+	| 'MintToTreasury'
+	| 'Burn';

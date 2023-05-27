@@ -33,7 +33,8 @@
 		UpdateThreshold: 'tabler:alert-triangle',
 		Mint: 'tabler:coin',
 		BatchMint: 'tabler:coin',
-		MintToTreasury: 'tabler:pig-money'
+		MintToTreasury: 'tabler:pig-money',
+		Burn: 'tabler:flame'
 	};
 
 	const actionTypeToText: {
@@ -46,7 +47,8 @@
 		UpdateThreshold: 'Update Threshold',
 		Mint: 'Mint',
 		BatchMint: 'Batch Mint',
-		MintToTreasury: 'Mint to Treasury'
+		MintToTreasury: 'Mint to Treasury',
+		Burn: 'Burn'
 	};
 </script>
 

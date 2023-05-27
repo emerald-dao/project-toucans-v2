@@ -53,7 +53,7 @@ pub contract ToucansActions {
     pub let totalReadableAmount: String
 
     pub fun getIntent(): String {
-      return "Withdraw a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(self.amounts.keys.length.toString()).concat(" total wallets.")
+      return "Withdraw a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(self.amounts.keys.length.toString()).concat(" total wallets")
     }
 
     pub fun getTitle(): String {
@@ -105,7 +105,7 @@ pub contract ToucansActions {
     pub let totalReadableAmount: String
 
     pub fun getIntent(): String {
-      return "Mint a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(self.amounts.keys.length.toString()).concat(" total wallets.")
+      return "Mint a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(self.amounts.keys.length.toString()).concat(" total wallets")
     }
 
     pub fun getTitle(): String {
@@ -132,7 +132,7 @@ pub contract ToucansActions {
     pub let readableAmount: String
 
     pub fun getIntent(): String {
-      return "Mint ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to the treasury.")
+      return "Mint ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to the Treasury")
     }
 
     pub fun getTitle(): String {
@@ -151,7 +151,7 @@ pub contract ToucansActions {
     pub let signer: Address
 
     pub fun getIntent(): String {
-      return "Add ".concat(ToucansUtils.getFind(self.signer)).concat(" as a signer to the Treasury.")
+      return "Add ".concat(ToucansUtils.getFind(self.signer)).concat(" as a signer to the Treasury")
     }
 
     pub fun getTitle(): String {
@@ -171,7 +171,7 @@ pub contract ToucansActions {
     pub let signer: Address
 
     pub fun getIntent(): String {
-      return "Remove ".concat(ToucansUtils.getFind(self.signer)).concat(" as a signer from the Treasury.")
+      return "Remove ".concat(ToucansUtils.getFind(self.signer)).concat(" as a signer from the Treasury")
     }
 
     pub fun getTitle(): String {
@@ -197,6 +197,27 @@ pub contract ToucansActions {
 
     init(_ threshold: UInt64) {
       self.threshold = threshold
+    }
+  }
+
+  // burn your DAOs token from the treasury
+  pub struct BurnTokens: Action {
+    pub let amount: UFix64
+    pub let tokenSymbol: String
+    pub let readableAmount: String
+
+    pub fun getIntent(): String {
+      return "Burn ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the Treasury")
+    }
+
+    pub fun getTitle(): String {
+      return "Burn"
+    }
+
+    init(_ amount: UFix64, _ tokenSymbol: String) {
+      self.amount = amount
+      self.tokenSymbol = tokenSymbol
+      self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
     }
   }
 }

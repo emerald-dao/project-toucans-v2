@@ -18,6 +18,7 @@ export async function POST({ request }) {
     event.type.includes('Toucans.Purchase') ||
     event.type.includes('Toucans.Mint') ||
     event.type.includes('Toucans.BatchMint') ||
+    event.type.includes('Toucans.Burn') ||
     event.type.includes('Toucans.BatchWithdraw') ||
     event.type.includes('Toucans.Withdraw') ||
     event.type.includes('Toucans.AddSigner') ||

@@ -88,6 +88,13 @@ pub contract Toucans {
     amount: UFix64,
     failed: [Address]
   )
+  pub event Burn(
+    projectId: String,
+    by: Address, 
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    amount: UFix64
+  )
   pub event AddSigner(projectId: String, signer: Address)
   pub event RemoveSigner(projectId: String, signer: Address)
   pub event UpdateThreshold(projectId: String, newThreshold: UInt64)
@@ -206,6 +213,7 @@ pub contract Toucans {
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeBurn(amount: UFix64)
     pub fun proposeAddSigner(signer: Address)
     pub fun proposeRemoveSigner(signer: Address)
     pub fun proposeUpdateThreshold(threshold: UInt64)
@@ -289,6 +297,11 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    pub fun proposeBurn(amount: UFix64) {
+      let action = ToucansActions.BurnTokens(amount, self.projectTokenInfo.symbol)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       pre {
         self.minting: "Minting is turned off."
@@ -352,6 +365,9 @@ pub contract Toucans {
           case Type<ToucansActions.BatchMintTokens>():
             let mint = action as! ToucansActions.BatchMintTokens
             self.batchMint(vaults: mint.recipientVaults, amounts: mint.amounts)
+          case Type<ToucansActions.BurnTokens>():
+            let burn = action as! ToucansActions.BurnTokens
+            self.burn(amount: burn.amount)
           case Type<ToucansActions.MintTokensToTreasury>():
             let mint = action as! ToucansActions.MintTokensToTreasury
             let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
@@ -641,6 +657,13 @@ pub contract Toucans {
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType())
                 ?? panic("Unsupported token type for donating.")
+
+      // tax for emerald city (5%)
+      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
+                                          .borrow<&{FungibleToken.Receiver}>()
+                                          ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
+      emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
+
       emit Donate(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
@@ -711,6 +734,28 @@ pub contract Toucans {
         amounts: amounts,
         amount: totalAmount,
         failed: failed
+      )
+    }
+
+
+    //   ____                   
+    //  |  _ \                  
+    //  | |_) |_   _ _ __ _ __  
+    //  |  _ <| | | | '__| '_ \ 
+    //  | |_) | |_| | |  | | | |
+    //  |____/ \__,_|_|  |_| |_|
+                         
+
+    access(account) fun burn(amount: UFix64) {
+      let tokens <- self.treasury[self.projectTokenInfo.tokenType]?.withdraw!(amount: amount)
+      destroy tokens
+
+      emit Burn(
+        projectId: self.projectId,
+        by: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleId(),
+        tokenSymbol: self.projectTokenInfo.symbol,
+        amount: amount
       )
     }
 

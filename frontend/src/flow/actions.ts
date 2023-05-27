@@ -22,6 +22,7 @@ import batchWithdrawTokensTx from './cadence/transactions/treasury-actions/batch
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
 import batchMintTokensTx from './cadence/transactions/treasury-actions/batch_mint_tokens.cdc?raw';
+import burnTokensTx from './cadence/transactions/treasury-actions/burn_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
 import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
 
@@ -542,6 +543,28 @@ const mintTokensToTreasury = async (projectId: string, amount: string) => {
 
 export const mintTokensToTreasuryExecution = (projectId: string, amount: string) =>
 	executeTransaction(() => mintTokensToTreasury(projectId, amount));
+
+const burnTokens = async (
+	projectId: string,
+	amount: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(burnTokensTx, projectId),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const burnTokensExecution = (
+	projectId: string,
+	amount: string
+) => executeTransaction(() => burnTokens(projectId, amount));
 
 const setUpVault = async (projectId: string, contractAddress: string) => {
 	return await fcl.mutate({
