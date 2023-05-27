@@ -12,11 +12,19 @@
 
 <aside class="column-7">
 	<div class="card-primary column">
-		<img
-			src={daoData.generalInfo.banner_image}
-			alt="Background illustration"
-			class="banner-image"
-		/>
+		{#if daoData.generalInfo.banner_image}
+			<img
+				src={daoData.generalInfo.banner_image}
+				alt="Background illustration"
+				class="banner-image"
+			/>
+		{:else}
+			<img
+				src="/toucans-illustration.png"
+				alt="Default background illustration"
+				class="banner-image"
+			/>
+		{/if}
 		<div class="content-wrapper column">
 			<div class="column-4">
 				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
