@@ -12,7 +12,7 @@ export const navElements = [
 	},
 	{
 		name: 'Docs',
-		url: '/docs',
+		url: 'https://docs.ecdao.org/grow-your-city/toucans',
 		prefetch: true
 	}
 ];
