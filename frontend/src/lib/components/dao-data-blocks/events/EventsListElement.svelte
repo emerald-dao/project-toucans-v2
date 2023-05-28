@@ -81,7 +81,7 @@
 	<div class="row-3 align-center">
 		<IconCircle icon={EVENTS_DATA[event.type].icon} color={EVENTS_DATA[event.type].color} />
 		<span class="event-name">{EVENTS_DATA[event.type].text}</span>
-		<div class="column info-wrapper">
+		<div class="column info-wrapper timestamp">
 			<span class="date">{formatDate(new Date(event.timestamp))}</span>
 		</div>
 	</div>
@@ -133,6 +133,13 @@
 		justify-content: space-between;
 		width: 100%;
 		padding-block: var(--space-1);
+
+		.timestamp {
+			display: unset;
+			@media all and (max-width: 700px) {
+				display: none;
+			}
+		}
 
 		.event-name {
 			color: var(--clr-heading-main);
