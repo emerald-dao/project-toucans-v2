@@ -9,7 +9,11 @@
 
 <div class="main-wrapper" style={`font-size: ${fontSize}`}>
 	<span class="funding w-regular">{`$${funding.toLocaleString()}`}</span>
-	<span class="goal w-regular">{`/ ${goal.toLocaleString()} ${paymentToken}`}</span>
+	{#if goal === 'infinite'}
+		<span class="goal w-regular">{`/ `}<span>&#8734</span>{` ${paymentToken}`}</span>
+	{:else}
+		<span class="goal w-regular">{`/ ${goal.toLocaleString()} ${paymentToken}`}</span>
+	{/if}
 </div>
 
 <style lang="scss">
