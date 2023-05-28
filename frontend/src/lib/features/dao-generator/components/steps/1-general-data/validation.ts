@@ -64,6 +64,10 @@ const validationSuite = create((data = {}, daoProjects, currentField?) => {
 		enforce(data.tokenName).shorterThan(6);
 	});
 
+	test('tokenName', 'Token name should be longer than 2 chars', () => {
+		enforce(data.tokenName).longerThan(2);
+	});
+
 	// token name cannot be equal to "FLOW", "FUSD", "USD", "BTC", "ETH" or any other known currency symbol
 	test('tokenName', 'Token name cannot be equal to known currency names', () => {
 		enforce(data.tokenName).notEquals('FLOW');
