@@ -5,6 +5,8 @@
 	import LeadingProjects from './_components/sections/LeadingProjects.svelte';
 	import { StatsSection, PoweredByECDAO } from '@emerald-dao/component-library';
 
+	export let data;
+
 	const statsData = {
 		data1: { title: '', stat: '' },
 		data2: { title: '', stat: '' },
@@ -16,7 +18,7 @@
 <div class="no-overflow-x">
 	<Hero />
 	<ToucansFeatures />
-	<LeadingProjects />
+	<LeadingProjects projects={data.projects} />
 </div>
 <CreateYourToken />
 <!-- <StatsSection bordersColor="var(--clr-border-primary)" data={statsData} /> -->

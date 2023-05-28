@@ -5,10 +5,10 @@
 	export let data;
 	const projects: DaoDatabaseData[] = data.projects as DaoDatabaseData[];
 	const DOMInfo = {
-		projectId: 'EmeraldCity',
+		projectId: 'BallerzFC',
 		story:
-			'Community-run education, building & auditing. We created this platform to allow anyone to create a DAO as cool as ours.',
-		labels: ['Building', 'Education', 'Community']
+			'One of the first DAOs created on the platform, Ballerz FC has formed a strong community of Ballerz FC and broader MFL lovers.',
+		labels: ['Community']
 	};
 	const DOM: DaoDatabaseData = projects.find(
 		(project) => project.project_id === DOMInfo.projectId
@@ -29,6 +29,7 @@
 				discord={DOM.discord}
 				website={DOM.website}
 				tokenSymbol={DOM.token_symbol}
+				image={DOM.logo}
 			/>
 		</div>
 	</section>

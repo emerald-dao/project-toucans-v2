@@ -1,9 +1,10 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Currency } from '@emerald-dao/component-library';
+	import type { LeadingProjectData } from '$lib/types/dao-project/leading-project.interface';
+	import { Currency, Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 
-	export let daoData;
+	export let daoData: LeadingProjectData;
 	export let number: number;
 </script>
 
@@ -14,27 +15,27 @@
 				{number}
 			</span>
 		</div>
-		<img src={daoData.logoUrl} alt={`${daoData.name} logo`} />
+		<img src={daoData.logo} alt={`${daoData.name} logo`} />
 	</div>
 	<div class="column align-start">
 		<h4>{daoData.name}</h4>
-		<!-- <div class="row-0">
+		<div class="row-0">
 			<span
 				class="variation"
-				class:positive={daoData.variationPercentage > 0}
-				class:negative={daoData.variationPercentage < 0}
+				class:positive={daoData.totalAmount > 0}
+				class:negative={daoData.totalAmount < 0}
 			>
-				{#if daoData.variationPercentage > 0}
+				{#if daoData.totalAmount > 0}
 					<Icon icon="tabler:trending-up" color="#38e8c6" width="17" />
-					{`${daoData.variationPercentage}`}
+					{`${daoData.totalAmount}`}
 				{:else}
 					<Icon icon="tabler:trending-down" color="##f07575" width="17" />
-					{`${daoData.variationPercentage}%`}
+					{`${daoData.totalAmount}%`}
 				{/if}
 			</span>
-			<Currency amount={daoData.totalInvested} currency={daoData.currency} />
+			<Label size="small" color="tertiary" hasBorder={false}>{`$${daoData.currency}`}</Label>
+			<!-- <Currency amount={daoData.totalInvested} currency={daoData.currency} /> -->
 		</div>
-		<span>{`${daoData.numberOfPayments} payments`}</span> -->
 		<p>{daoData.description}</p>
 	</div>
 </a>
