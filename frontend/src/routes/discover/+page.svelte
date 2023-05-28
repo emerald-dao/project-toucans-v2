@@ -61,9 +61,15 @@
 	}
 
 	.wrap {
-		display: flex;
-		flex-direction: row;
-		gap: var(--space-8);
-		flex-wrap: wrap;
+		display: grid;
+		gap: var(--space-4);
+
+		@include mq(small) {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		@include mq(medium) {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
 	}
 </style>
