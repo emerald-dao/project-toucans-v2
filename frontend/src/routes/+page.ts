@@ -9,7 +9,6 @@ export const load: PageLoad = async ({ params }) => {
 
   for (const projectId of projectIds) {
     const { events, projectData }: { events: any[], projectData: DaoDatabaseData } = await fetchProjectRecentDonateOrPurchaseEvents(projectId);
-    console.log(events, projectData)
     let totalAmount = 0;
     for (const { data } of events) {
       totalAmount += Number(data.amount);
