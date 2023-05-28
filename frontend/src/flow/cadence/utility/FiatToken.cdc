@@ -1000,7 +1000,7 @@ pub contract FiatToken: FungibleToken {
         self.name = "USDC"
         self.version = "0.0"
         self.paused = false
-        self.totalSupply = 0.0
+        self.totalSupply = 1000.0
         self.blocklist = {}
         self.minterAllowances = {}
         self.managedMinters = {}

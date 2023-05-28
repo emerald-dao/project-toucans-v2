@@ -10,3 +10,6 @@ package-lock.json
 
 testnet-account.private.json
 testnet-account.private.json
+toucans-test.pkey
+mainnet-account.pkey
+testnet-account.pkey

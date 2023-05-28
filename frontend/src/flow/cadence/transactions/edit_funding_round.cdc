@@ -18,7 +18,7 @@ transaction(projectId: String, cycleIndex: UInt64) {
       fundingTarget: cfc.fundingTarget, 
       issuanceRate: cfc.issuanceRate, 
       reserveRate: cfc.reserveRate, 
-      timeframe: cfc.timeframe, 
+      timeframe: Toucans.CycleTimeFrame(cfc.timeframe.startTime, getCurrentBlock().timestamp), 
       payouts: cfc.payouts, 
       allowOverflow: cfc.allowOverflow, 
       allowedAddresses: cfc.allowedAddresses, 
