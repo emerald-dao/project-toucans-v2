@@ -8,19 +8,18 @@ export const load: PageLoad = async ({ params }) => {
   let projects: LeadingProjectData[] = [];
 
   for (const projectId of projectIds) {
-    const events = await fetchProjectRecentDonateOrPurchaseEvents(projectId);
+    const { events, projectData }: { events: any[], projectData: DaoDatabaseData } = await fetchProjectRecentDonateOrPurchaseEvents(projectId);
+    console.log(events, projectData)
     let totalAmount = 0;
     for (const { data } of events) {
       totalAmount += Number(data.amount);
     }
-    const projectData: DaoDatabaseData = events[0].projects;
-    const { description, logo, name, token_symbol } = projectData;
     projects.push({
       purchases: events.length,
-      description,
-      logo,
-      name,
-      currency: token_symbol,
+      description: projectData.description,
+      logo: projectData.logo,
+      name: projectData.name,
+      currency: projectData.token_symbol,
       projectId,
       totalAmount
     })
