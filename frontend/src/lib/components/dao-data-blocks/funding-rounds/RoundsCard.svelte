@@ -154,8 +154,12 @@
 
 		.funding-stats-wrapper {
 			display: grid;
-			grid-template-columns: 3fr 3fr 1fr 2fr;
+			grid-template-columns: 1fr 1fr;
 			gap: var(--space-1);
+
+			@include mq(medium) {
+				grid-template-columns: 3fr 3fr 1fr 2fr;
+			}
 
 			.chart-data-card {
 				padding: var(--space-3);
