@@ -470,6 +470,7 @@ pub contract Toucans {
         getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeframe.startTime,
         message: "You are no longer allowed to edit this upcoming cycle because of your edit delay." 
       )
+      assert(fundingCycle.details.cycleId == details.cycleId, message: "Cannot edit the cycleId.")
 
       // Check the cycle above it, if it exists
       if Int(cycleIndex) < self.fundingCycles.length - 1 {
