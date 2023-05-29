@@ -6,6 +6,7 @@
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
 	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
 	import RequiredNft from './atoms/RequiredNft.svelte';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let daoData: DAOProject;
 </script>
@@ -40,10 +41,12 @@
 							/>
 						</Label>
 					{/if}
-					<SubscribeButton
-						projectId={daoData.generalInfo.project_id}
-						projectOwner={daoData.generalInfo.owner}
-					/>
+					{#if $user.loggedIn}
+						<SubscribeButton
+							projectId={daoData.generalInfo.project_id}
+							projectOwner={daoData.generalInfo.owner}
+						/>
+					{/if}
 				</div>
 				<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
 				{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
