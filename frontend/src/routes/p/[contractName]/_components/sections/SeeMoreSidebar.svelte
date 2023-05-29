@@ -35,7 +35,7 @@
 		right: 0;
 		height: 100%;
 		width: 100%;
-		z-index: 99;
+		z-index: 1000;
 		display: flex;
 		flex-direction: column;
 		background: var(--clr-surface-primary);
