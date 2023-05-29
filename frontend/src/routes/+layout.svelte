@@ -35,7 +35,6 @@
 				console.log('User exists');
 			} else {
 				addUser($user as CurrentUserObject);
-				console.log('User added');
 			}
 		});
 	};

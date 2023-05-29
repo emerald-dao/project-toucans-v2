@@ -18,8 +18,6 @@
 	export let isSigner: boolean;
 	export let showDao = true;
 
-	console.log(action);
-
 	$: signed = Object.keys(action.votes).includes($user.addr as string);
 	$: yesCount = Object.values(action.votes).filter((v) => v === true).length;
 
