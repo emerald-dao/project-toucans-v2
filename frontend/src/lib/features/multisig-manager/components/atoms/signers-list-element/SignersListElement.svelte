@@ -10,7 +10,8 @@
 	export let i: number;
 	export let id: string | undefined = undefined;
 	export let owner: boolean = false;
-	export let editable = false;
+	export let editable: boolean = false;
+	export let deletable: boolean = true;
 	export let res: SuiteResult | undefined = undefined;
 	export let pending: boolean | undefined = undefined;
 	export let pendingMessage: string[] | undefined = undefined;
@@ -51,7 +52,7 @@
 	</div>
 	{#if owner}
 		<Label size="x-small" hasBorder={false}>Owner</Label>
-	{:else}
+	{:else if deletable}
 		<div class="trash-wrapper" on:click={() => dispatch('delete', id)} on:keydown>
 			<Icon icon="tabler:trash" class="delete" />
 		</div>

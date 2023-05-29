@@ -33,7 +33,7 @@
 		</TabPanel>
 		<TabPanel>
 			{#each daoData.onChainData.signers as signer, i}
-				<SignersListElement address={signer} {i} owner={i === 0} />
+				<SignersListElement address={signer} {i} owner={i === 0} deletable={false} />
 			{/each}
 		</TabPanel>
 		{#if fundingPerMonth}
