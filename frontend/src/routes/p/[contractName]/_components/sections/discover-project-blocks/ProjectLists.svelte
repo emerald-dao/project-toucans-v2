@@ -43,7 +43,7 @@
 		{/if}
 		{#if daoData.onChainData.fundingCycles.length > 0}
 			<TabPanel>
-				<RoundsList {daoData} />
+				<RoundsList {daoData} finishedFilter={false} />
 			</TabPanel>
 		{/if}
 		{#if daoData.onChainData.actions.length > 0}
