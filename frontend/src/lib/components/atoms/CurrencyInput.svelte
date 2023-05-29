@@ -45,15 +45,13 @@
 </script>
 
 <InputWrapper {name} {isValid} {errors} {label} {hasBorder} iconText={`$${currency}`} {tooltip}>
-	<div>
-		<input
-			type="text"
-			{name}
-			placeholder="0.00"
-			bind:value={amountValue}
-			bind:this={amountInput}
-			on:input={handleChange}
-			style={`font-size: ${fontSize}; color: ${fontColor}`}
-		/>
-	</div>
+	<input
+		type="text"
+		{name}
+		placeholder="0.00"
+		bind:value={amountValue}
+		bind:this={amountInput}
+		on:input={handleChange}
+		style={`font-size: ${fontSize}; color: ${fontColor}`}
+	/>
 </InputWrapper>

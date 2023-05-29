@@ -8,8 +8,11 @@
 	import CurrencySelect from '$components/atoms/CurrencySelect.svelte';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import FeeWarning from '../../atoms/FeeWarning.svelte';
 
 	export let isValid = false;
+	export let daoData: DAOProject;
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
@@ -31,23 +34,24 @@
 	{#if $paymentData.type === 'donation'}
 		<div class="currency-select-wrapper">
 			<CurrencySelect
-				currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
+				currencies={[ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]}
 				bind:value={$paymentData.currency}
 			/>
 		</div>
 	{/if}
-	<div>
-		<CurrencyInput
-			autofocus
-			currency={$paymentData.currency}
-			errors={res.getErrors('amount')}
-			isValid={res.isValid('amount')}
-			fontSize="var(--font-size-7)"
-			hasBorder={false}
-			on:input={(input) => handleChange(input.detail)}
-			bind:value={$paymentData.amount}
-		/>
-	</div>
+	{#if $paymentData.type === 'fund' || ($paymentData.type === 'donation' && $paymentData.currency !== daoData.generalInfo.token_symbol)}
+		<FeeWarning paymentCurrency={$paymentData.currency} />
+	{/if}
+	<CurrencyInput
+		autofocus
+		currency={$paymentData.currency}
+		errors={res.getErrors('amount')}
+		isValid={res.isValid('amount')}
+		fontSize="var(--font-size-7)"
+		hasBorder={false}
+		on:input={(input) => handleChange(input.detail)}
+		bind:value={$paymentData.amount}
+	/>
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
 		<div class="funding-data-wrapper">

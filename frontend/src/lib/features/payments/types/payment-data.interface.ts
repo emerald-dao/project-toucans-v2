@@ -2,6 +2,7 @@ import type { ECurrencies } from '$lib/types/common/enums';
 
 export interface DonationData extends PaymentData {
 	type: 'donation' | undefined;
+	daoTokenSymbol: string;
 }
 
 export interface FundData extends PaymentData {

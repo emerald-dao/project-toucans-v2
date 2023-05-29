@@ -220,6 +220,7 @@ pub contract Toucans {
     // If the action is ready to execute, then allow anyone to do it.
     pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
+    pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
     
@@ -679,6 +680,22 @@ pub contract Toucans {
         self.totalFunding = self.totalFunding + vault.balance
         self.funders[payer] = (self.funders[payer] ?? 0.0) + vault.balance
       }
+      self.depositToTreasury(vault: <- vault)
+    }
+
+    pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
+      pre {
+        vault.getType() == self.projectTokenInfo.tokenType: "The received vault is not the project's token type."
+      }
+      emit Donate(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        currentCycle: self.getCurrentFundingCycleId(),
+        amount: vault.balance,
+        tokenSymbol: self.projectTokenInfo.symbol,
+        by: payer,
+        message: message
+      )
       self.depositToTreasury(vault: <- vault)
     }
 

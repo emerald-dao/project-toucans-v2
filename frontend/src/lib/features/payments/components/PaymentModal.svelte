@@ -49,6 +49,8 @@
 			$paymentData.reserveRate = Number(
 				daoData.onChainData.currentFundingCycle!.details.reserveRate
 			);
+		} else if ($paymentData.type === 'donation') {
+			$paymentData.daoTokenSymbol = daoData.generalInfo.token_symbol;
 		}
 	};
 

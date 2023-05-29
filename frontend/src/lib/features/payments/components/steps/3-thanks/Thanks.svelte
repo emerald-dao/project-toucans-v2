@@ -16,7 +16,7 @@
 			{#if $paymentData.type === 'donation'}
 				{`You donated`}
 				<span class="strong">
-					{`${$paymentData.amount * 0.95} $${$paymentData.currency}`}
+					{`${$paymentData.amount} $${$paymentData.currency}`}
 				</span>
 				to
 				<span class="strong">
@@ -41,9 +41,7 @@
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${
-						$paymentData.amount * 0.95
-					}%20$${$paymentData.currency}%20to%20${$paymentData.daoName}%20on%20Toucans!`}
+					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${$paymentData.amount}%20$${$paymentData.currency}%20to%20${$paymentData.daoName}%20on%20Toucans!`}
 					target="_blank"
 					type="ghost"
 					color="neutral"

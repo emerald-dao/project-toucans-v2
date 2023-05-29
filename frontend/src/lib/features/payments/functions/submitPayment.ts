@@ -1,23 +1,28 @@
 import type { DonationData, FundData } from '../types/payment-data.interface';
-import { donateExecution, fundProjectExecution } from '$flow/actions';
+import { donateExecution, fundProjectExecution, transferProjectTokenToTreasuryExecution } from '$flow/actions';
 
 export const submitPayment = async (paymentData: DonationData | FundData) => {
 	if (paymentData.type === 'donation') {
-		const paymentResult = await donateExecution(
+		if (paymentData.currency === paymentData.daoTokenSymbol) {
+			return await transferProjectTokenToTreasuryExecution(
+				paymentData.daoAddress,
+				paymentData.projectId,
+				(paymentData.amount as number).toString(),
+				paymentData.specialMessage
+			)
+		}
+		return await donateExecution(
 			paymentData.daoAddress,
 			paymentData.projectId,
 			(paymentData.amount as number).toString(),
 			paymentData.specialMessage,
 			paymentData.currency
 		);
-
-		return paymentResult;
 	} else {
-
 		const expectedAmount = (paymentData.amount as number) * (0.95) *
 			(paymentData as FundData).issuanceRate *
 			(1 - (paymentData as FundData).reserveRate);
-		const paymentResult = await fundProjectExecution(
+		return await fundProjectExecution(
 			paymentData.daoAddress,
 			paymentData.projectId,
 			(paymentData.amount as number).toString(),
@@ -25,7 +30,5 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 			paymentData.currency,
 			expectedAmount.toString()
 		);
-
-		return paymentResult;
 	}
 };

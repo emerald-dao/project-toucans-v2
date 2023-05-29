@@ -10,6 +10,7 @@ import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
+import transferProjectTokenToTreasuryTx from './cadence/transactions/transfer_project_token_to_treasury.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import voteOnActionTx from './cadence/transactions/vote_on_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
@@ -281,6 +282,34 @@ export const donateExecution = (
 	message: string,
 	currency: ECurrencies
 ) => executeTransaction(() => donate(projectOwner, projectId, amount, message, currency), saveEventAction);
+
+const transferProjectTokenToTreasury = async (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	message: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(transferProjectTokenToTreasuryTx, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64),
+			arg(message, t.String)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const transferProjectTokenToTreasuryExecution = (
+	projectOwner: string,
+	projectId: string,
+	amount: string,
+	message: string
+) => executeTransaction(() => transferProjectTokenToTreasury(projectOwner, projectId, amount, message), saveEventAction);
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
