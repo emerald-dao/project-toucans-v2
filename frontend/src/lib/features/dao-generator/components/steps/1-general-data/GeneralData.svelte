@@ -12,13 +12,17 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
+	import { network } from '$flow/config';
 
 	export let validForm = false;
 
 	let existingProjects: DaoProject[];
 
 	onMount(async () => {
-		const { data } = await supabase.from('projects').select('name, token_symbol, project_id');
+		const { data } = await supabase
+			.from('projects')
+			.select('name, token_symbol, project_id')
+			.eq('network', network);
 
 		if (data) {
 			existingProjects = data;
