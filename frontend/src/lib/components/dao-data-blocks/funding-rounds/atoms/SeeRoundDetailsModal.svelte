@@ -22,7 +22,7 @@
 <div class="header-link row align-center" on:click={handleClick} on:keydown>
 	<Icon icon="tabler:eye" />
 </div>
-<Modal background="var(--clr-background-secondary)" id={modalName}>
+<Modal background="var(--clr-background-secondary)" id={modalName} overflowVisible={true}>
 	<RoundsCard
 		{round}
 		hasBorder={false}
