@@ -10,7 +10,11 @@
 <div class="column-2 align-start">
 	{#if fundersEntries.length > 0}
 		{#each fundersEntries as [address, balance]}
-			<UserBalanceListElement {address} {balance} tokenSymbol={daoData.generalInfo.token_symbol} />
+			<UserBalanceListElement
+				{address}
+				{balance}
+				tokenSymbol={daoData.onChainData.paymentCurrency}
+			/>
 		{/each}
 	{:else}
 		<div class="no-funders-wrapper">
