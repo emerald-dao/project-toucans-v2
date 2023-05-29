@@ -13,6 +13,8 @@ import { ECurrencies } from '../../../types/common/enums';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import { restartAllSuites } from './restartAllSuites';
 import type { ProjectCreatedEvent } from '$lib/types/dao-project/dao-event/events/project-created.interface';
+import { checkUser } from '$lib/features/users/functions/checkUser';
+import { addUser } from '$lib/features/users/functions/postUser';
 
 const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
@@ -46,6 +48,15 @@ export const deployDao = async () => {
 		console.log('ProjectCreatedEvent', projectCreatedEvent);
 
 		restartAllSuites();
+
+		// Add user to the users table if they don't exist
+		const userExists = await checkUser(get(user) as CurrentUserObject);
+		if (userExists) {
+			console.log('User exists');
+		} else {
+			await addUser(get(user) as CurrentUserObject);
+			console.log('User added');
+		}
 
 		await postProject(
 			get(user) as CurrentUserObject,
