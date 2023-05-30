@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Button, Modal, getModal, InputWrapper } from '@emerald-dao/component-library';
+	import { Button, Modal, getModal, InputWrapper, Range } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import RoundDatesPicker from '$lib/features/round-generator/components/atoms/RoundDatesPicker.svelte';
@@ -11,6 +11,7 @@
 	import submitRoundChanges, { type RoundChangesData } from '../functions/submitRoundChanges';
 
 	export let round: FundingCycle;
+	export let roundNumber: number;
 
 	$: adminData = getContext('admin-data') as {
 		activeDao: Writable<number>;
@@ -22,12 +23,16 @@
 
 	$: issuanceRate = Number(round.details.issuanceRate);
 	$: fundingTarget = Number(round.details.fundingTarget);
+	$: reserveRate = Number(round.details.reserveRate) * 100;
 
 	let formData: RoundChangesData = {
 		issuanceRate: 0,
 		fundingTarget: 0,
 		startDate: '0',
-		endDate: '0'
+		endDate: '0',
+		reserveRate: 0,
+		projectId: '',
+		cycleIndex: 0
 	};
 
 	onMount(() => {
@@ -35,6 +40,9 @@
 		formData.fundingTarget = fundingTarget;
 		formData.startDate = round.details.timeframe.startTime;
 		formData.endDate = round.details.timeframe.endTime || '0';
+		formData.reserveRate = reserveRate;
+		formData.projectId = $userDaos[$activeDao].generalInfo.project_id;
+		formData.cycleIndex = roundNumber;
 	});
 
 	const id = `edit-round-${round.details.cycleId}`;
@@ -48,9 +56,10 @@
 	let res = validationSuite.get();
 
 	$: validChanges =
-		res.isValid('issuance-rate') &&
-		res.isValid('funding-target') &&
-		(formData.issuanceRate !== issuanceRate || formData.fundingTarget !== fundingTarget);
+		res.hasErrors() === false &&
+		(formData.issuanceRate !== issuanceRate ||
+			formData.fundingTarget !== fundingTarget ||
+			formData.reserveRate !== reserveRate);
 </script>
 
 <div
@@ -94,7 +103,15 @@
 						on:input={handleChange}
 					/>
 				</InputWrapper>
-
+				<div class="range-wrapper column-1">
+					<label for="reserve-rate">Reserve rate <em>~ Current rate {reserveRate}</em></label>
+					<Range
+						bind:value={formData.reserveRate}
+						suffix="%"
+						id="reserveRate"
+						--clr-surface-secondary="var(--clr-surface-primary)"
+					/>
+				</div>
 				<label for="funding-target"
 					>Funding target <em
 						>~ Current target {$userDaos[$activeDao].onChainData.paymentCurrency}
@@ -131,11 +148,19 @@
 			grid-template-columns: 1fr 1fr;
 			gap: var(--space-12);
 			max-width: 700px;
+
+			.range-wrapper {
+				margin-bottom: var(--space-6);
+			}
 		}
 
 		.button-wrapper {
 			display: flex;
 			justify-content: flex-end;
 		}
+	}
+
+	em {
+		color: var(--clr-text-off);
 	}
 </style>
