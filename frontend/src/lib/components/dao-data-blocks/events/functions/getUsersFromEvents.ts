@@ -10,7 +10,6 @@ export function getUsersFromEvents(events: DaoEvent[]): string[] {
   )
   return filteredEvents.map((event) => {
     if (event.type === 'Withdraw' || event.type === 'Mint') {
-      console.log(event.data.to);
       return event.data.to;
     } else if (event.type === 'Purchase' || event.type === 'Donate') {
       return event.data.by;
