@@ -1,13 +1,11 @@
 import { daysOfDifference } from '$lib/utilities/formatDate';
 
 export const getRoundTiming = (startDate: Date, endDate: Date | null, isActive: boolean) => {
-	console.log(isActive);
-
 	const now = new Date();
 
 	const daysToStart = daysOfDifference(now, startDate);
 
-	if (endDate != null && (startDate < now || isActive)) {
+	if (endDate != null && (startDate < now && isActive)) {
 		return `${daysOfDifference(startDate, endDate)} days left`;
 	} else if (endDate === null && isActive) {
 		return `Infinite duration`;
@@ -17,7 +15,7 @@ export const getRoundTiming = (startDate: Date, endDate: Date | null, isActive: 
 		return `Starts today`;
 	} else if (endDate === null) {
 		return `Infinite duration`;
-	} else if (daysOfDifference(endDate, now) > 0) {
+	} else {
 		return `Finished`;
 	}
 };
