@@ -172,6 +172,26 @@ export const getFindProfile = async (address: string) => {
 	}
 };
 
+export const getFindNamesBatch = async (addressList: string[]) => {
+	try {
+		return await fcl.query({
+			cadence: `
+        import FIND from ${addresses.FIND}
+        pub fun main(addresses: [Address]): {Address: String} {
+					let answer: {Address: String} = {}
+					for address in addresses {
+						answer[address] = FIND.reverseLookup(address)
+					}
+					return answer
+        }
+        `,
+			args: (arg, t) => [arg(addressList, t.Array(t.Address))]
+		});
+	} catch (e) {
+		return null;
+	}
+};
+
 export const verifyAccountOwnership = async (userObject) => {
 	if (!userObject.loggedIn) {
 		return false;

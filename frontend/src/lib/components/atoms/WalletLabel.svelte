@@ -2,9 +2,10 @@
 	import Icon from '@iconify/svelte';
 
 	export let address: string;
+	export let find: string | undefined = undefined;
 </script>
 
-<span class="xsmall wallet-label"><Icon icon="tabler:wallet" />{address}</span>
+<span class="xsmall wallet-label"><Icon icon="tabler:wallet" />{find ? find : address}</span>
 
 <style lang="scss">
 	.wallet-label {

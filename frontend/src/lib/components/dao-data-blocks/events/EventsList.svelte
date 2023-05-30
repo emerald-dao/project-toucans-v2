@@ -1,6 +1,8 @@
 <script type="ts">
+	import { getFindNamesBatch } from '$flow/utils';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import EventsListElement from './EventsListElement.svelte';
+	import { getUsersFromEvents } from './functions/getUsersFromEvents';
 
 	export let daoData: DAOProject;
 
@@ -9,13 +11,18 @@
 				.sort((a, b) => (a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0))
 				.slice(0, 6)
 		: [];
+	$: addressList = getUsersFromEvents(recentActivity);
 </script>
 
 <div class="align-start">
 	{#if recentActivity.length > 0}
 		{#each recentActivity as event, i}
 			<div class="activity-wrapper">
-				<EventsListElement {event} {i} {daoData} />
+				{#await getFindNamesBatch(addressList)}
+					<EventsListElement {event} {i} {daoData} />
+				{:then findNames}
+					<EventsListElement {event} {i} {daoData} {findNames} />
+				{/await}
 			</div>
 		{/each}
 	{:else}
