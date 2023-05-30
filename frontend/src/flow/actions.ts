@@ -344,6 +344,45 @@ const newRound = async () => {
 
 export const newRoundExecution = () => executeTransaction(newRound, saveEventAction);
 
+const editRound = async (
+	projectId: string,
+	cycleIndex: number,
+	startDate: string,
+	endDate: string | null,
+	reserveRate: string,
+	issuanceRate: string,
+	fundingGoal: string | null
+) => {
+	const fundingTarget = fundingGoal ? null : formatFix(fundingGoal);
+	const endTime = endDate ? null : formatFix(endDate);
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(transferOverflowTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(String(cycleIndex), t.UInt64),
+			arg(formatFix(startDate), t.UFix64),
+			arg(endTime, t.Optional(t.UFix64)),
+			arg(reserveRate, t.UFix64),
+			arg(formatFix(issuanceRate), t.UFix64),
+			arg(fundingTarget, t.Optional(t.UFix64))
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const editRoundExecution = (
+	projectId: string,
+	cycleIndex: number,
+	startDate: string,
+	endDate: string | null,
+	reserveRate: string,
+	issuanceRate: string,
+	fundingGoal: string | null
+) => executeTransaction(() => editRound(projectId, cycleIndex, startDate, endDate, reserveRate, issuanceRate, fundingGoal));
+
 const togglePurchasing = async (projectId: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(togglePurchasingTx),

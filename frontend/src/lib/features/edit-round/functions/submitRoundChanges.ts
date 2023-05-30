@@ -1,5 +1,8 @@
-const submitRoundChanges = (data: RoundChangesData) => {
+import { editRoundExecution } from "$flow/actions";
+
+const submitRoundChanges = async (data: RoundChangesData) => {
 	console.log(data);
+	return await editRoundExecution(data.projectId, data.cycleIndex, data.startDate, data.endDate, data.reserveRate.toString(), data.issuanceRate.toString(), data.fundingTarget.toString())
 };
 
 export interface RoundChangesData {
@@ -7,6 +10,9 @@ export interface RoundChangesData {
 	fundingTarget: number;
 	startDate: string;
 	endDate: string;
+	reserveRate: number;
+	projectId: string;
+	cycleIndex: number;
 }
 
 export default submitRoundChanges;
