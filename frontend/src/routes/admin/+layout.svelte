@@ -1,7 +1,7 @@
 <script type="ts">
 	import { Button } from '@emerald-dao/component-library';
 	import { AdminNav } from './_components';
-	import { onMount, setContext } from 'svelte';
+	import { setContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { user } from '$stores/flow/FlowStore';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
