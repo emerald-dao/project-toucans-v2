@@ -2,7 +2,7 @@ import { editRoundExecution } from "$flow/actions";
 
 const submitRoundChanges = async (data: RoundChangesData) => {
 	console.log(data);
-	return await editRoundExecution(data.projectId, data.cycleIndex, data.startDate, data.endDate, data.reserveRate.toString(), data.issuanceRate.toString(), data.fundingTarget.toString())
+	return await editRoundExecution(data.projectId, data.cycleIndex, data.startDate, data.endDate, data.reserveRate, data.issuanceRate.toString(), data.fundingTarget.toString())
 };
 
 export interface RoundChangesData {

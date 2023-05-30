@@ -349,7 +349,7 @@ const editRound = async (
 	cycleIndex: number,
 	startDate: string,
 	endDate: string | null,
-	reserveRate: string,
+	reserveRate: number,
 	issuanceRate: string,
 	fundingGoal: string | null
 ) => {
@@ -362,7 +362,7 @@ const editRound = async (
 			arg(String(cycleIndex), t.UInt64),
 			arg(formatFix(startDate), t.UFix64),
 			arg(endTime, t.Optional(t.UFix64)),
-			arg(reserveRate, t.UFix64),
+			arg(formatFix(reserveRate / 100.0), t.UFix64),
 			arg(formatFix(issuanceRate), t.UFix64),
 			arg(fundingTarget, t.Optional(t.UFix64))
 		],
@@ -378,7 +378,7 @@ export const editRoundExecution = (
 	cycleIndex: number,
 	startDate: string,
 	endDate: string | null,
-	reserveRate: string,
+	reserveRate: number,
 	issuanceRate: string,
 	fundingGoal: string | null
 ) => executeTransaction(() => editRound(projectId, cycleIndex, startDate, endDate, reserveRate, issuanceRate, fundingGoal));
