@@ -3,10 +3,12 @@
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import RoundDatesPicker from '$lib/features/round-generator/components/atoms/RoundDatesPicker.svelte';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
+	import validationSuite from '../validation/validation';
+	import submitRoundChanges, { type RoundChangesData } from '../functions/submitRoundChanges';
 
 	export let round: FundingCycle;
 
@@ -18,7 +20,37 @@
 	$: activeDao = adminData.activeDao;
 	$: userDaos = adminData.userDaos;
 
+	$: issuanceRate = Number(round.details.issuanceRate);
+	$: fundingTarget = Number(round.details.fundingTarget);
+
+	let formData: RoundChangesData = {
+		issuanceRate: 0,
+		fundingTarget: 0,
+		startDate: '0',
+		endDate: '0'
+	};
+
+	onMount(() => {
+		formData.issuanceRate = issuanceRate;
+		formData.fundingTarget = fundingTarget;
+		formData.startDate = round.details.timeframe.startTime;
+		formData.endDate = round.details.timeframe.endTime || '0';
+	});
+
 	const id = `edit-round-${round.details.cycleId}`;
+
+	const handleChange = (input: Event | CustomEvent) => {
+		const target = input.target ?? (input as CustomEvent).detail.target;
+
+		res = validationSuite(formData, target.name);
+	};
+
+	let res = validationSuite.get();
+
+	$: validChanges =
+		res.isValid('issuance-rate') &&
+		res.isValid('funding-target') &&
+		(formData.issuanceRate !== issuanceRate || formData.fundingTarget !== fundingTarget);
 </script>
 
 <div
@@ -45,18 +77,47 @@
 				)}
 			/>
 			<div class="column-1">
-				<InputWrapper name="issuance-rate" label="Issuance rate">
-					<input type="number" name="issuance-rate" />
+				<label for="issuance-rate"
+					>Issuance rate <em
+						>~ Current rate {$userDaos[$activeDao].generalInfo.token_symbol} {issuanceRate}</em
+					></label
+				>
+				<InputWrapper
+					name="issuance-rate"
+					isValid={res.isValid('issuance-rate')}
+					errors={res.getErrors('issuance-rate')}
+				>
+					<input
+						type="number"
+						name="issuance-rate"
+						bind:value={formData.issuanceRate}
+						on:input={handleChange}
+					/>
 				</InputWrapper>
+
+				<label for="funding-target"
+					>Funding target <em
+						>~ Current target {$userDaos[$activeDao].onChainData.paymentCurrency}
+						{fundingTarget === 0 ? '∞' : fundingTarget}</em
+					>
+				</label>
+				<span class="xsmall"><em>* Put a 0 to make the target infinite</em></span>
 				<CurrencyInput
-					label="Funding target"
 					name="funding-target"
 					currency={$userDaos[$activeDao].onChainData.paymentCurrency}
+					bind:value={formData.fundingTarget}
+					on:input={handleChange}
+					isValid={res.isValid('funding-target')}
+					errors={res.getErrors('funding-target')}
 				/>
 			</div>
 		</div>
 		<div class="button-wrapper">
-			<Button>Submmit changes</Button>
+			<Button
+				width="extended"
+				state={validChanges ? 'active' : 'disabled'}
+				on:click={() => submitRoundChanges(formData)}>Submit changes</Button
+			>
 		</div>
 	</div>
 </Modal>
