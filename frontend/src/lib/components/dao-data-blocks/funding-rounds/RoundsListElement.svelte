@@ -65,7 +65,7 @@
 		</span>
 		<RoundStatusLabel status={roundStatus} />
 		<div class="row-2">
-			<EditRoundModal {round} />
+			<EditRoundModal {round} {roundNumber} />
 			<SeeRoundDetailsModal
 				{round}
 				{roundNumber}
