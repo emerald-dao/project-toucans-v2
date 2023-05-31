@@ -2,16 +2,16 @@
 	import { Button, Modal, getModal, InputWrapper, Range } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import RoundDatesPicker from '$lib/features/round-generator/components/atoms/RoundDatesPicker.svelte';
 	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import validationSuite from '../validation/validation';
 	import submitRoundChanges, { type RoundChangesData } from '../functions/submitRoundChanges';
+	import EditRoundDatePicker from './EditRoundDatePicker.svelte';
 
 	export let round: FundingCycle;
-	export let roundNumber: number;
+	export let cycleIndex: number;
 
 	$: adminData = getContext('admin-data') as {
 		activeDao: Writable<number>;
@@ -46,7 +46,7 @@
 		formData.endDate = round.details.timeframe.endTime || '0';
 		formData.reserveRate = reserveRate;
 		formData.projectId = $userDaos[$activeDao].generalInfo.project_id;
-		formData.cycleIndex = roundNumber;
+		formData.cycleIndex = cycleIndex;
 
 		infiniteRound = round.details.timeframe.endTime === null;
 	});
@@ -61,19 +61,13 @@
 
 	let res = validationSuite.get();
 
-	$: if (infiniteRound === true) {
-		formData.endDate = '0';
-	} else {
-		formData.endDate = round.details.timeframe.endTime ?? formData.startDate + 86400;
-	}
-
 	$: validChanges =
 		res.hasErrors() === false &&
 		(formData.issuanceRate !== issuanceRate ||
 			formData.fundingTarget !== fundingTarget ||
 			formData.reserveRate !== reserveRate ||
-			startDate !== formData.startDate ||
-			(endDate !== formData.endDate && infiniteRound === false));
+			Number(startDate) !== Number(formData.startDate) ||
+			Number(endDate) !== Number(formData.endDate));
 </script>
 
 <div
@@ -86,30 +80,32 @@
 	<Icon icon="tabler:edit" />
 </div>
 
-{startDate}
-{formData.startDate}
 <Modal {id}>
 	<div class="main-wrapper column-7">
 		<h4 class="h5">Edit funding round</h4>
 		<div class="content-wrapper">
 			<div class="column-4">
-				<RoundDatesPicker
+				<EditRoundDatePicker
 					rounds={$userDaos[$activeDao].onChainData.fundingCycles}
-					infiniteDuration={infiniteRound}
+					bind:infiniteDuration={infiniteRound}
+					cycleId={round.details.cycleId}
 					minStartTimePlus5Minutes={new Date()}
+					initialStartDate={round.details.timeframe.startTime}
+					initialEndDate={round.details.timeframe.endTime || '0'}
 					bind:startDate={formData.startDate}
 					bind:endDate={formData.endDate}
-				/>
-				<label for="infinite-duration" class="switch">
-					<input
-						type="checkbox"
-						name="infinite-duration"
-						id="infinite-duration"
-						bind:checked={infiniteRound}
-					/>
-					<span class="slider" />
-					Infinite round
-				</label>
+				>
+					<label for="infinite-duration" class="switch">
+						<input
+							type="checkbox"
+							name="infinite-duration"
+							id="infinite-duration"
+							bind:checked={infiniteRound}
+						/>
+						<span class="slider" />
+						Infinite round
+					</label>
+				</EditRoundDatePicker>
 			</div>
 			<div class="column-1">
 				<label for="issuance-rate"

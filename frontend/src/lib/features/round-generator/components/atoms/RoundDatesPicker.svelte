@@ -61,6 +61,6 @@
 	}
 </script>
 
-<div class="faltpickr-wrapper">
+<div class="flatpickr-wrapper">
 	<Flatpickr {options} bind:value bind:formattedValue on:change={handleChange} name="date" />
 </div>
