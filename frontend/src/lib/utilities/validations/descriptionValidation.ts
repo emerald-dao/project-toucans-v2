@@ -5,7 +5,21 @@ export const descriptionValidation = (descriptionData: string) => {
 		enforce(descriptionData).isNotBlank();
 	});
 
-	test('description', 'Description should be longer than 20 chars', () => {
-		enforce(descriptionData).longerThan(20);
+	test('description', 'Description should be longer than 14 chars', () => {
+		enforce(descriptionData).longerThan(14);
+	});
+
+	test('description', 'Description should be shorter than 320 chars', () => {
+		enforce(descriptionData).shorterThan(320);
+	});
+};
+
+export const longDescriptionValidation = (longDescriptionData: string) => {
+	test('longDescription', 'Long description should be longer than 320 chars', () => {
+		enforce(longDescriptionData).longerThan(320);
+	});
+
+	test('longDescription', 'Long description should be shorter than 1400 chars', () => {
+		enforce(longDescriptionData).shorterThan(1400);
 	});
 };

@@ -27,7 +27,8 @@
 		website: '',
 		twitter: '',
 		discord: '',
-		description: ''
+		description: '',
+		long_description: ''
 	};
 
 	onMount(() => populateFormData());
@@ -43,6 +44,8 @@
 		formData.twitter = (form?.twitter as string) ?? activeDaoData.generalInfo.twitter;
 		formData.discord = (form?.discord as string) ?? activeDaoData.generalInfo.discord;
 		formData.description = (form?.description as string) ?? activeDaoData.generalInfo.description;
+		formData.long_description =
+			(form?.long_description as string) ?? activeDaoData.generalInfo.long_description;
 	};
 
 	const handleChange = (input: Event) => {
@@ -61,6 +64,9 @@
 		formData.twitter = activeDaoData.generalInfo.twitter ? activeDaoData.generalInfo.twitter : '';
 		formData.discord = activeDaoData.generalInfo.discord ? activeDaoData.generalInfo.discord : '';
 		formData.description = activeDaoData.generalInfo.description;
+		formData.long_description = activeDaoData.generalInfo.long_description
+			? activeDaoData.generalInfo.long_description
+			: '';
 	};
 
 	const checkDataChanges = () => {
@@ -69,7 +75,8 @@
 				formData.website !== activeDaoData.generalInfo.website ||
 				formData.twitter !== activeDaoData.generalInfo.twitter ||
 				formData.discord !== activeDaoData.generalInfo.discord ||
-				formData.description !== activeDaoData.generalInfo.description
+				formData.description !== activeDaoData.generalInfo.description ||
+				formData.long_description !== activeDaoData.generalInfo.long_description
 			);
 		} else {
 			return false;
@@ -113,8 +120,23 @@
 	>
 		<textarea
 			name="description"
+			class="description"
 			placeholder="A DAO for the people"
 			bind:value={formData.description}
+			on:input={handleChange}
+		/>
+	</InputWrapper>
+	<InputWrapper
+		name="longDescription"
+		label="Long description"
+		errors={res.getErrors('longDescription')}
+		isValid={res.isValid('longDescription')}
+	>
+		<textarea
+			name="longDescription"
+			class="long-description"
+			placeholder="Here you can get creative and write a longer description :)"
+			bind:value={formData.long_description}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
@@ -190,9 +212,16 @@
 		width: 40ch;
 
 		textarea {
-			height: 10rem;
 			max-width: 100%;
 			min-width: 100%;
+
+			&.description {
+				height: 4rem;
+			}
+
+			&.long-description {
+				height: 7rem;
+			}
 		}
 
 		.button-wrapper {

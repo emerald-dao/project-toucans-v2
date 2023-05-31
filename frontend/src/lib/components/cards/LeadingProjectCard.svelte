@@ -1,4 +1,5 @@
 <script type="ts">
+	import { formatFix } from '$flow/utils';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import type { LeadingProjectData } from '$lib/types/dao-project/leading-project.interface';
 	import { Currency, Label } from '@emerald-dao/component-library';
@@ -27,10 +28,10 @@
 			>
 				{#if daoData.totalAmount > 0}
 					<Icon icon="tabler:trending-up" color="#38e8c6" width="17" />
-					{`${daoData.totalAmount}`}
+					{`${Math.round(daoData.totalAmount * 100) / 100}`}
 				{:else}
 					<Icon icon="tabler:trending-down" color="##f07575" width="17" />
-					{`${daoData.totalAmount}%`}
+					{`${Math.round(daoData.totalAmount * 100) / 100}%`}
 				{/if}
 			</span>
 			<Label size="small" color="tertiary" hasBorder={false}>{`$${daoData.currency}`}</Label>

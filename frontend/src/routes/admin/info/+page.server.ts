@@ -13,6 +13,7 @@ export const actions = {
 		const twitter = formData.get('twitter');
 		const discord = formData.get('discord');
 		const description = formData.get('description');
+		const long_description = formData.get('longDescription');
 
 		const { error } = await supabase
 			.from('projects')
@@ -20,7 +21,8 @@ export const actions = {
 				website,
 				twitter,
 				discord,
-				description
+				description,
+				long_description
 			})
 			.eq('project_id', formData.get('project_id'));
 
@@ -30,6 +32,6 @@ export const actions = {
 			});
 		}
 
-		return { success: true, website, twitter, discord, description };
+		return { success: true, website, twitter, discord, description, long_description };
 	}
 };
