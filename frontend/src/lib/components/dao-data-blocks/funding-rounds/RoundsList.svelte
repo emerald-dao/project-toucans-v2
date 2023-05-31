@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { user } from './../../../stores/flow/FlowStore';
 	import { RoundsListElement } from '$components/dao-data-blocks';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	export let daoData: DAOProject;
 	export let finishedFilter = true;
+
+	$: admin = $user ? daoData.onChainData.signers.includes($user.addr as string) : false;
 
 	let showFinished = false;
 </script>
@@ -28,6 +31,7 @@
 					projectToken={daoData.generalInfo.token_symbol}
 					paymentToken={daoData.onChainData.paymentCurrency}
 					projectId={daoData.generalInfo.project_id}
+					{admin}
 				/>
 			{/if}
 		{/each}
