@@ -1,5 +1,4 @@
 <div class="column-2">
-	<h4>Disclaimer</h4>
 	<p class="small">
 		By agreeing to fund this project, you are instilling trust upon it. Toucans is not responsible
 		for funds lost or stolen, or any losses by projects or their supporters.
