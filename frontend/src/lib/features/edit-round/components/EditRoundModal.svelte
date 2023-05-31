@@ -24,6 +24,10 @@
 	$: issuanceRate = Number(round.details.issuanceRate);
 	$: fundingTarget = Number(round.details.fundingTarget);
 	$: reserveRate = Number(round.details.reserveRate) * 100;
+	$: startDate = round.details.timeframe.startTime;
+	$: endDate = round.details.timeframe.endTime;
+
+	let infiniteRound = false;
 
 	let formData: RoundChangesData = {
 		issuanceRate: 0,
@@ -43,6 +47,8 @@
 		formData.reserveRate = reserveRate;
 		formData.projectId = $userDaos[$activeDao].generalInfo.project_id;
 		formData.cycleIndex = roundNumber;
+
+		infiniteRound = round.details.timeframe.endTime === null;
 	});
 
 	const id = `edit-round-${round.details.cycleId}`;
@@ -55,11 +61,19 @@
 
 	let res = validationSuite.get();
 
+	$: if (infiniteRound === true) {
+		formData.endDate = '0';
+	} else {
+		formData.endDate = round.details.timeframe.endTime ?? formData.startDate + 86400;
+	}
+
 	$: validChanges =
 		res.hasErrors() === false &&
 		(formData.issuanceRate !== issuanceRate ||
 			formData.fundingTarget !== fundingTarget ||
-			formData.reserveRate !== reserveRate);
+			formData.reserveRate !== reserveRate ||
+			startDate !== formData.startDate ||
+			(endDate !== formData.endDate && infiniteRound === false));
 </script>
 
 <div
@@ -72,39 +86,47 @@
 	<Icon icon="tabler:edit" />
 </div>
 
+{startDate}
+{formData.startDate}
 <Modal {id}>
 	<div class="main-wrapper column-7">
 		<h4 class="h5">Edit funding round</h4>
 		<div class="content-wrapper">
-			<RoundDatesPicker
-				rounds={$userDaos[$activeDao].onChainData.fundingCycles}
-				startDate={round.details.timeframe.startTime}
-				endDate={round.details.timeframe.endTime || ''}
-				infiniteDuration={round.details.timeframe.endTime === null}
-				minStartTimePlus5Minutes={new Date(
-					Number(round.details.timeframe.startTime) * 1000 + 300000
-				)}
-			/>
+			<div class="column-4">
+				<RoundDatesPicker
+					rounds={$userDaos[$activeDao].onChainData.fundingCycles}
+					infiniteDuration={infiniteRound}
+					minStartTimePlus5Minutes={new Date()}
+					bind:startDate={formData.startDate}
+					bind:endDate={formData.endDate}
+				/>
+				<label for="infinite-duration" class="switch">
+					<input
+						type="checkbox"
+						name="infinite-duration"
+						id="infinite-duration"
+						bind:checked={infiniteRound}
+					/>
+					<span class="slider" />
+					Infinite round
+				</label>
+			</div>
 			<div class="column-1">
 				<label for="issuance-rate"
 					>Issuance rate <em
 						>~ Current rate {$userDaos[$activeDao].generalInfo.token_symbol} {issuanceRate}</em
 					></label
 				>
-				<InputWrapper
+				<CurrencyInput
 					name="issuance-rate"
+					currency={$userDaos[$activeDao].generalInfo.token_symbol}
+					bind:value={formData.issuanceRate}
+					on:input={handleChange}
 					isValid={res.isValid('issuance-rate')}
 					errors={res.getErrors('issuance-rate')}
-				>
-					<input
-						type="number"
-						name="issuance-rate"
-						bind:value={formData.issuanceRate}
-						on:input={handleChange}
-					/>
-				</InputWrapper>
+				/>
 				<div class="range-wrapper column-1">
-					<label for="reserve-rate">Reserve rate <em>~ Current rate {reserveRate}</em></label>
+					<label for="reserve-rate">Reserve rate <em>~ Current rate {reserveRate}%</em></label>
 					<Range
 						bind:value={formData.reserveRate}
 						suffix="%"
