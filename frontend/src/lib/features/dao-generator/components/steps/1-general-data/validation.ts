@@ -70,6 +70,7 @@ const validationSuite = create((data = {}, daoProjects, currentField?) => {
 
 	// token name cannot be equal to "FLOW", "FUSD", "USD", "BTC", "ETH" or any other known currency symbol
 	test('tokenName', 'Token name cannot be equal to known currency names', () => {
+		enforce(data.tokenName).notEquals('RPC');
 		enforce(data.tokenName).notEquals('PARTY');
 		enforce(data.tokenName).notEquals('JOY');
 		enforce(data.tokenName).notEquals('FLOW');
