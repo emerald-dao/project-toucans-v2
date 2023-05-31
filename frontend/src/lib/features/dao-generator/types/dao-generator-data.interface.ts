@@ -5,6 +5,7 @@ export interface DaoGeneratorData {
 		name: string;
 		tokenName: string;
 		description: string;
+		longDescription?: string;
 		website: string;
 		twitter: string;
 		discord: string;

@@ -3,15 +3,20 @@ import {
 	twitterValidations,
 	websiteValidations
 } from '$lib/utilities/validations/socialsValidations';
-import { descriptionValidation } from '$lib/utilities/validations/descriptionValidation';
+import {
+	descriptionValidation,
+	longDescriptionValidation
+} from '$lib/utilities/validations/descriptionValidation';
 import { create, only, optional } from 'vest';
 
 const validationSuite = create((data = {}, currentField) => {
 	only(currentField);
 
-	optional(['website', 'discord', 'twitter', 'description']);
+	optional(['website', 'discord', 'twitter', 'description', 'longDescription']);
 
 	descriptionValidation(data.description);
+
+	longDescriptionValidation(data.long_description);
 
 	websiteValidations(data.website);
 

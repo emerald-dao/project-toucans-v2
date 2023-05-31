@@ -38,10 +38,26 @@
 	>
 		<textarea
 			name="description"
+			class="description"
 			placeholder="A DAO for the people"
 			bind:value={$daoGeneratorData.daoDetails.description}
 			on:input={handleChange}
 			bind:this={firstInput}
+		/>
+	</InputWrapper>
+	<InputWrapper
+		name="long-description"
+		label="Long description"
+		errors={res.getErrors('long-description')}
+		isValid={res.isValid('long-description')}
+		required={false}
+	>
+		<textarea
+			name="long-description"
+			class="long-description"
+			placeholder="Here you can write more information about your DAO! This text can be longer :)"
+			bind:value={$daoGeneratorData.daoDetails.longDescription}
+			on:input={handleChange}
 		/>
 	</InputWrapper>
 	<StepButtons active={res.isValid()} />
@@ -53,9 +69,16 @@
 		flex-direction: column;
 
 		textarea {
-			min-height: 15rem;
 			max-width: 100%;
 			min-width: 100%;
+
+			&.description {
+				height: 6rem;
+			}
+
+			&.long-description {
+				height: 16rem;
+			}
 		}
 	}
 </style>

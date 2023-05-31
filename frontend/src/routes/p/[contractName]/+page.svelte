@@ -82,12 +82,17 @@
 			<DiscoverProjectMain daoData={$daoDataStore} />
 		</div>
 	</div>
-	<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
-		<Icon icon="tabler:arrow-left" color="#ff66c4" width="19.5" />
-		<p class="xsmall w-medium">More</p>
-	</div>
-	{#if seeMore}
-		<SeeMoreSidebar on:closeModal={() => (seeMore = !seeMore)} />
+	{#if data.generalInfo.long_description}
+		<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
+			<Icon icon="tabler:arrow-left" color="#ff66c4" width="19.5" />
+			<p class="xsmall w-medium">About us</p>
+		</div>
+		{#if seeMore}
+			<SeeMoreSidebar
+				longDescription={data.generalInfo.long_description}
+				on:closeModal={() => (seeMore = !seeMore)}
+			/>
+		{/if}
 	{/if}
 </section>
 
@@ -130,7 +135,6 @@
 		display: flex;
 		align-items: center;
 		padding: var(--space-2) var(--space-4);
-		border: solid 1px var(--clr-tertiary-main);
 		border-right-width: 0px;
 		border-radius: var(--radius-1) 0px 0px var(--radius-1);
 		cursor: pointer;
