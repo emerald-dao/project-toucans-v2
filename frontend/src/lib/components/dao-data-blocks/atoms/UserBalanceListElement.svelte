@@ -1,15 +1,31 @@
 <script lang="ts">
 	import { Currency } from '@emerald-dao/component-library';
+	import type { FindProfile } from '@emerald-dao/component-library/models/user.interface';
+	import Icon from '@iconify/svelte';
 
 	export let address: string;
 	export let balance: string;
 	export let tokenSymbol: string;
+	export let findProfile: FindProfile | undefined = undefined;
 </script>
 
 <div class="activity-wrapper">
 	<div class="row-2 align-center">
-		<img src="/new-avatar.png" alt="avatar logo" />
-		<span class="holder-name">{address}</span>
+		{#if findProfile}
+			<img src={findProfile.avatar} alt="find avatar logo" />
+			<span class="holder-name">{findProfile.name}</span>
+			<a
+				href={`https://find.xyz/${findProfile.name}`}
+				target="_blank"
+				class="header-link"
+				rel="noreferrer"
+			>
+				<Icon icon="tabler:external-link" />
+			</a>
+		{:else}
+			<img src={'/new-avatar.png'} alt="avatar logo" />
+			<span class="holder-name">{address}</span>
+		{/if}
 	</div>
 	<Currency
 		amount={Number(balance)}

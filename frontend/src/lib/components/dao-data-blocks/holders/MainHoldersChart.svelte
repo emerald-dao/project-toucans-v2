@@ -12,7 +12,7 @@
 	const mainHoldersAccounts = mainHolders.map((holder) => holder[0]);
 	const mainHoldersAmounts = mainHolders.map((holder) => Number(holder[1]));
 
-	async function getFindInfo() {
+	async function fetchFindNames() {
 		const findNames: FindMap = await getFindNamesBatch(mainHoldersAccounts);
 		return mainHoldersAccounts.map((holder) => findNames[holder] || holder);
 	}
@@ -23,7 +23,7 @@
 		<span><em>This token has no holders yet</em></span>
 	{:else}
 		<div class="chart-wrapper">
-			{#await getFindInfo()}
+			{#await fetchFindNames()}
 				<PieChart
 					title="Token distribution"
 					chartData={mainHoldersAmounts}
