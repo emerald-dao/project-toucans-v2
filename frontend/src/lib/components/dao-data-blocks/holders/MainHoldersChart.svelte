@@ -7,6 +7,7 @@
 	export let daoData: DAOProject;
 
 	const mainHolders = Object.entries(daoData.onChainData.balances)
+		.filter((entry) => entry[0] !== daoData.generalInfo.owner)
 		.sort((a, b) => Number(b[1]) - Number(a[1]))
 		.slice(0, 6);
 	const mainHoldersAccounts = mainHolders.map((holder) => holder[0]);

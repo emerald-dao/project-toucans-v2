@@ -7,6 +7,7 @@
 
 	$: holdersEntries = Object.entries(daoData.onChainData.balances);
 	$: mainHoldersEntries = holdersEntries
+		.filter((entry) => entry[0] !== daoData.generalInfo.owner)
 		.sort((a, b) => (a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0))
 		.slice(0, 10);
 
