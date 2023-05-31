@@ -16,15 +16,13 @@
 
 <div class="align-start">
 	{#if recentActivity.length > 0}
-		{#each recentActivity as event, i}
-			<div class="activity-wrapper">
-				{#await getFindNamesBatch(addressList)}
-					<EventsListElement {event} {i} {daoData} />
-				{:then findNames}
+		{#await getFindNamesBatch(addressList) then findNames}
+			{#each recentActivity as event, i}
+				<div class="activity-wrapper">
 					<EventsListElement {event} {i} {daoData} {findNames} />
-				{/await}
-			</div>
-		{/each}
+				</div>
+			{/each}
+		{/await}
 	{:else}
 		<div class="no-events-wrapper">
 			<span class="small"><em>This DAO has no events yet</em></span>
