@@ -7,10 +7,12 @@
 
 	$: fundersEntries = Object.entries(daoData.onChainData.funders);
 	$: mainFunderEntries = fundersEntries
-		.sort((a, b) => (a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0))
+		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
 		.slice(0, 10);
 
 	async function fetchFindProfiles() {
+		console.log(fundersEntries);
+		console.log(mainFunderEntries);
 		const addressList = mainFunderEntries.map((entry) => entry[0]);
 		return await getFindProfilesBatch(addressList);
 	}
