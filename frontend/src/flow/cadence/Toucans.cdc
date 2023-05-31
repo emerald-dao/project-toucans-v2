@@ -106,7 +106,6 @@ pub contract Toucans {
     init(_ st: UFix64, _ et: UFix64?) {
       pre {
         et == nil || (et! > st): "The end time must be greater than the start time."
-        st >= getCurrentBlock().timestamp: "Start time must be now or in the future."
       }
       self.startTime = st
       self.endTime = et
@@ -411,6 +410,7 @@ pub contract Toucans {
     pub fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
+        timeframe.startTime >= getCurrentBlock().timestamp: "Start time must be now or in the future."
       }
 
       let newFundingCycle: FundingCycle = FundingCycle(details: FundingCycleDetails(
@@ -466,22 +466,32 @@ pub contract Toucans {
     // Allows you to edit a cycle that has not happened yet
     pub fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
       let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleIndex: cycleIndex)
-      // This ensures the cycle is in the future
+      let currentTime: UFix64 = getCurrentBlock().timestamp
+      assert(fundingCycle.details.cycleId == details.cycleId, message: "Cannot edit the cycleId.")
       assert(
-        getCurrentBlock().timestamp + self.editDelay <= fundingCycle.details.timeframe.startTime,
+        self.editDelay == 0.0 || (currentTime + self.editDelay <= details.timeframe.startTime),
         message: "You are no longer allowed to edit this upcoming cycle because of your edit delay." 
       )
-      assert(fundingCycle.details.cycleId == details.cycleId, message: "Cannot edit the cycleId.")
+      assert(
+        fundingCycle.details.timeframe.startTime == details.timeframe.startTime || 
+        currentTime <= fundingCycle.details.timeframe.startTime,
+        message: "You can only change the start time if the round hasn't started yet."
+      )
+      assert(
+        fundingCycle.details.timeframe.startTime == details.timeframe.startTime ||
+        currentTime <= details.timeframe.startTime,
+        message: "New start time must be greater than now."
+      )
 
       // Check the cycle above it, if it exists
       if Int(cycleIndex) < self.fundingCycles.length - 1 {
-        let aboveCycle = self.getFundingCycle(cycleIndex: cycleIndex + 1)
+        let aboveCycle: FundingCycle = self.getFundingCycle(cycleIndex: cycleIndex + 1)
         Toucans.assertNonConflictingCycles(earlierCycle: details, laterCycle: aboveCycle.details)
       }
 
       // Check the cycle below it, if it exists
       if cycleIndex > 0 {
-        let belowCycle = self.getFundingCycle(cycleIndex: cycleIndex - 1)
+        let belowCycle: FundingCycle = self.getFundingCycle(cycleIndex: cycleIndex - 1)
         Toucans.assertNonConflictingCycles(earlierCycle: belowCycle.details, laterCycle: details)
       }
 

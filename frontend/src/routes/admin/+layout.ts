@@ -6,6 +6,7 @@ import { user } from '$stores/flow/FlowStore';
 import { get } from 'svelte/store';
 import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
+import { network } from '$flow/config';
 
 export const ssr = false;
 
@@ -13,7 +14,7 @@ export const load: LayoutLoad = async ({ depends }) => {
 	depends('app:admin');
 
 	if (get(user).loggedIn) {
-		const { data } = await supabase.from('projects').select().eq('owner', get(user).addr);
+		const { data } = await supabase.from('projects').select().eq('owner', get(user).addr).eq('network', network);
 
 		if (!data || !data.length) {
 			return {

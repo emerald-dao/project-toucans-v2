@@ -1,0 +1,9 @@
+# robots.txt file for Toucans
+
+User-agent: *
+Allow: /*
+Allow: /discover
+Allow: /p/*
+
+
+Sitemap: https://toucans.ecdao.org/sitemap.xml

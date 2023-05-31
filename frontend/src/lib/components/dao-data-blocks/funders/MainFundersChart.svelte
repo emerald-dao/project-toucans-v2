@@ -1,5 +1,7 @@
 <script lang="ts">
 	import PieChart from '$components/charts/PieChart.svelte';
+	import { getFindNamesBatch } from '$flow/utils';
+	import type { FindMap } from '$lib/types/common/find.interface';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	export let daoData: DAOProject;
@@ -9,6 +11,11 @@
 		.slice(0, 6);
 	const mainFundersAccounts = mainFunders.map((holder) => holder[0]);
 	const mainFundersAmounts = mainFunders.map((holder) => Number(holder[1]));
+
+	async function getFindInfo() {
+		const findNames: FindMap = await getFindNamesBatch(mainFundersAccounts);
+		return mainFundersAccounts.map((funder) => findNames[funder] || funder);
+	}
 </script>
 
 <div class="panel-container">
@@ -16,11 +23,15 @@
 		<span><em>This token has no funders yet</em></span>
 	{:else}
 		<div class="chart-wrapper">
-			<PieChart
-				title="Token distribution"
-				chartData={mainFundersAmounts}
-				labels={mainFundersAccounts}
-			/>
+			{#await getFindInfo()}
+				<PieChart
+					title="Token distribution"
+					chartData={mainFundersAmounts}
+					labels={mainFundersAccounts}
+				/>
+			{:then findNames}
+				<PieChart title="Token distribution" chartData={mainFundersAmounts} labels={findNames} />
+			{/await}
 		</div>
 	{/if}
 </div>

@@ -127,7 +127,8 @@
 				"emulator": "f8d6e0586b0a20c7",
 				"mainnet": "577a3c409c5dcb5e"
 			}
-		}
+		},
+		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -171,7 +172,8 @@
 				"ToucansUtils",
 				"ToucansTokens",
 				"Toucans",
-				"ToucansActions"
+				"ToucansActions",
+				"TestingDAO"
 			]
 		},
 		"testnet": {

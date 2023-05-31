@@ -7,10 +7,12 @@
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import SeeRoundDetailsModal from '../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
 	import WalletLabel from '$components/atoms/WalletLabel.svelte';
+	import type { FindMap } from '$lib/types/common/find.interface';
 
 	export let event: DaoEvent;
 	export let i: number;
 	export let daoData: DAOProject;
+	export let findNames: FindMap = {};
 
 	const EVENTS_DATA: {
 		[event in DaoEventName]: {
@@ -96,10 +98,10 @@
 			</Modal>
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate'}
-			<WalletLabel address={event.data.by} />
+			<WalletLabel address={event.data.by} find={findNames[event.data.by]} />
 		{/if}
 		{#if event.type === 'Withdraw' || event.type === 'Mint'}
-			<WalletLabel address={event.data.to} />
+			<WalletLabel address={event.data.to} find={findNames[event.data.to]} />
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn'}
 			<Currency

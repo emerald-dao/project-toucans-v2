@@ -172,6 +172,61 @@ export const getFindProfile = async (address: string) => {
 	}
 };
 
+export const getFindNamesBatch = async (addressList: string[]) => {
+	try {
+		return await fcl.query({
+			cadence: `
+        import FIND from ${addresses.FIND}
+        pub fun main(addresses: [Address]): {Address: String} {
+					let answer: {Address: String} = {}
+					for address in addresses {
+						answer[address] = FIND.reverseLookup(address)
+					}
+					return answer
+        }
+        `,
+			args: (arg, t) => [arg(addressList, t.Array(t.Address))]
+		});
+	} catch (e) {
+		return null;
+	}
+};
+
+export const getFindProfilesBatch = async (addressList: string[]) => {
+	try {
+		return await fcl.query({
+			cadence: `
+        import FIND from ${addresses.FIND}
+        pub fun main(addresses: [Address]): {Address: Profile} {
+					let answer: {Address: Profile} = {}
+					for address in addresses {
+						if let name = FIND.reverseLookup(address) {
+              let profile = FIND.lookup(name)!
+              answer[address] = Profile(_name: name, _address: address, _avatar: profile.getAvatar())
+            }
+					}
+					return answer
+        }
+
+				pub struct Profile {
+          pub let name: String
+          pub let address: Address
+          pub let avatar: String
+
+          init(_name: String, _address: Address, _avatar: String) {
+            self.name = _name
+            self.address = _address
+            self.avatar = _avatar
+          }
+        }
+        `,
+			args: (arg, t) => [arg(addressList, t.Array(t.Address))]
+		});
+	} catch (e) {
+		return null;
+	}
+};
+
 export const verifyAccountOwnership = async (userObject) => {
 	if (!userObject.loggedIn) {
 		return false;
