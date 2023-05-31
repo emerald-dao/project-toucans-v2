@@ -65,6 +65,7 @@ export const signUp = () => fcl.signUp();
 const saveEventAction: (
 	res: TransactionStatusObject
 ) => Promise<ActionExecutionResult> = async (executionResult: TransactionStatusObject) => {
+	console.log('[SAVING]: Step 1');
 	const res = await fetch('/api/save-event-data', {
 		method: 'POST',
 		body: JSON.stringify({

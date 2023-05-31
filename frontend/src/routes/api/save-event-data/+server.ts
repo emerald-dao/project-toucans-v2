@@ -11,6 +11,8 @@ export async function POST({ request }) {
   const data = await request.json();
   const transactionId = data.transactionId;
 
+  console.log('[SAVING]: Step 2');
+
   const executionResult = (await fcl.tx(transactionId).onceSealed()) as TransactionStatusObject;
   const [event] = executionResult.events.filter((event) =>
     event.type.includes('Toucans.NewFundingCycle') ||
@@ -26,7 +28,7 @@ export async function POST({ request }) {
     event.type.includes('Toucans.UpdateThreshold')
   );
 
-  console.log('Saving event', event);
+  console.log('[SAVING]: Step 3', event);
 
   if (!event) {
     return json({});
