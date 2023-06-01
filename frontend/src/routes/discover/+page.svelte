@@ -3,7 +3,8 @@
 	import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface.js';
 
 	export let data;
-	const projects: DaoDatabaseData[] = data.projects as DaoDatabaseData[];
+	console.log(data);
+	const projects: DaoDatabaseData[] = data.allProjects as DaoDatabaseData[];
 	const DOMInfo = {
 		projectId: 'BallerzFC',
 		story:
