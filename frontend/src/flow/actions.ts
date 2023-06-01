@@ -355,13 +355,13 @@ const editRound = async (
 	issuanceRate: string,
 	fundingGoal: string | null
 ) => {
-	const fundingTarget = fundingGoal ? null : formatFix(fundingGoal);
-	const endTime = endDate ? null : formatFix(endDate);
+	const fundingTarget = fundingGoal ? formatFix(fundingGoal) : null;
+	const endTime = endDate ? formatFix(endDate) : null;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(editRoundTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
-			arg(String(cycleIndex), t.UInt64),
+			arg(cycleIndex.toString(), t.UInt64),
 			arg(formatFix(startDate), t.UFix64),
 			arg(endTime, t.Optional(t.UFix64)),
 			arg(formatFix(reserveRate / 100.0), t.UFix64),
