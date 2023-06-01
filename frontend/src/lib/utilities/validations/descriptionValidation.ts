@@ -1,4 +1,4 @@
-import { enforce, test } from 'vest';
+import { enforce, omitWhen, test } from 'vest';
 
 export const descriptionValidation = (descriptionData: string) => {
 	test('description', 'Description is needed', () => {
@@ -15,11 +15,13 @@ export const descriptionValidation = (descriptionData: string) => {
 };
 
 export const longDescriptionValidation = (longDescriptionData: string) => {
-	test('longDescription', 'Long description should be longer than 320 chars', () => {
-		enforce(longDescriptionData).longerThan(320);
-	});
+	omitWhen(longDescriptionData === '', () => {
+		test('longDescription', 'Long description should be longer than 320 chars', () => {
+			enforce(longDescriptionData).longerThan(320);
+		});
 
-	test('longDescription', 'Long description should be shorter than 1400 chars', () => {
-		enforce(longDescriptionData).shorterThan(1400);
+		test('longDescription', 'Long description should be shorter than 1400 chars', () => {
+			enforce(longDescriptionData).shorterThan(1400);
+		});
 	});
 };

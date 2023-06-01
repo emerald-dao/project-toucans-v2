@@ -10,8 +10,10 @@
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 	import { onMount } from 'svelte';
 
-	const handleChange = () => {
-		res = validationSuite($daoGeneratorData.daoDetails);
+	const handleChange = (input: Event) => {
+		const target = input.target as HTMLInputElement;
+
+		res = validationSuite($daoGeneratorData.daoDetails, target.name);
 	};
 
 	let res = validationSuite.get();
@@ -46,14 +48,14 @@
 		/>
 	</InputWrapper>
 	<InputWrapper
-		name="long-description"
+		name="longDescription"
 		label="Long description"
-		errors={res.getErrors('long-description')}
-		isValid={res.isValid('long-description')}
+		errors={res.getErrors('longDescription')}
+		isValid={res.isValid('longDescription')}
 		required={false}
 	>
 		<textarea
-			name="long-description"
+			name="longDescription"
 			class="long-description"
 			placeholder="Here you can write more information about your DAO! This text can be longer :)"
 			bind:value={$daoGeneratorData.daoDetails.longDescription}
