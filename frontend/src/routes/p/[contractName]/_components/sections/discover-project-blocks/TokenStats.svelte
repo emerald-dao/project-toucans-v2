@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { include } from 'vest';
 	import DataCard from '$components/cards/DataCard.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { user } from '$stores/flow/FlowStore';
 	import { Button } from '@emerald-dao/component-library';
-	import { getProjectInfo, setUpVaultExecution } from '$flow/actions';
-	import { formatFix } from '$flow/utils';
+	import { setUpVaultExecution } from '$flow/actions';
 
 	export let daoData: DAOProject;
 	async function setUpVault() {
