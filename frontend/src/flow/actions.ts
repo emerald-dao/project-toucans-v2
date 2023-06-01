@@ -356,7 +356,7 @@ const editRound = async (
 	fundingGoal: string | null
 ) => {
 	const fundingTarget = fundingGoal ? formatFix(fundingGoal) : null;
-	const endTime = endDate ? formatFix(endDate) : null;
+	const endTime = endDate && endDate !== '0' ? formatFix(endDate) : null;
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(editRoundTx),
 		args: (arg, t) => [
