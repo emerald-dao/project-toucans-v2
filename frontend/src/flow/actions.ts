@@ -12,6 +12,7 @@ import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
 import transferProjectTokenToTreasuryTx from './cadence/transactions/transfer_project_token_to_treasury.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
+import editRoundTx from './cadence/transactions/edit_round.cdc?raw';
 import voteOnActionTx from './cadence/transactions/vote_on_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
@@ -357,7 +358,7 @@ const editRound = async (
 	const fundingTarget = fundingGoal ? null : formatFix(fundingGoal);
 	const endTime = endDate ? null : formatFix(endDate);
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(transferOverflowTx),
+		cadence: replaceWithProperValues(editRoundTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
 			arg(String(cycleIndex), t.UInt64),
