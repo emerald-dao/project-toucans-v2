@@ -33,7 +33,7 @@
 		</TabPanel>
 		<TabPanel>
 			{#each daoData.onChainData.signers as signer, i}
-				<SignersListElement address={signer} {i} owner={i === 0} />
+				<SignersListElement address={signer} {i} owner={i === 0} deletable={false} />
 			{/each}
 		</TabPanel>
 		{#if fundingPerMonth}
@@ -43,7 +43,7 @@
 		{/if}
 		{#if daoData.onChainData.fundingCycles.length > 0}
 			<TabPanel>
-				<RoundsList {daoData} />
+				<RoundsList {daoData} finishedFilter={false} />
 			</TabPanel>
 		{/if}
 		{#if daoData.onChainData.actions.length > 0}

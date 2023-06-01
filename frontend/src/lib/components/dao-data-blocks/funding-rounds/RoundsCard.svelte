@@ -26,14 +26,12 @@
 	export let projectId: string;
 	export let claimOverflow = false;
 	export let activeRound: number | null;
-	console.log(round);
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.raisedTowardsGoal ? Number(round.raisedTowardsGoal) : 0;
 
 	$: goalReached = goal !== 'infinite' ? (goal as number) <= funding : false;
 	$: overflow = goal !== 'infinite' ? funding - (goal as number) : 0;
-	console.log(overflow);
 
 	const startDate = new Date(Number(round.details.timeframe.startTime) * 1000);
 	const endDate = round.details.timeframe.endTime

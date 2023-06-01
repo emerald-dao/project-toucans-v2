@@ -18,6 +18,7 @@
 	export let paymentToken: ECurrencies;
 	export let projectId: string;
 	export let activeRound: number | null;
+	export let admin: boolean = false;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.raisedTowardsGoal ? Number(round.raisedTowardsGoal) : 0;
@@ -43,7 +44,7 @@
 				: 'alert'}
 		/>
 		<FundingNumbers {goal} {funding} {paymentToken} />
-		{#if endDate == null && roundStatus === 'active'}
+		{#if endDate == null && roundStatus === 'active' && admin}
 			<Button
 				color="neutral"
 				type="ghost"

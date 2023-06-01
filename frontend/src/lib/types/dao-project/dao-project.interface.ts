@@ -19,6 +19,7 @@ export interface DaoDatabaseData {
 	contract_address: string;
 	created_at: string;
 	description: string;
+	long_description?: string;
 	discord: string | null;
 	logo: string;
 	banner_image: string;
