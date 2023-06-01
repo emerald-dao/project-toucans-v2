@@ -108,11 +108,12 @@
 				</EditRoundDatePicker>
 			</div>
 			<div class="column-1">
-				<label for="issuance-rate"
-					>Issuance rate <em
-						>~ Current rate {$userDaos[$activeDao].generalInfo.token_symbol} {issuanceRate}</em
-					></label
-				>
+				<label for="issuance-rate">
+					Issuance rate
+					<em>
+						(current rate: {issuanceRate} ${$userDaos[$activeDao].generalInfo.token_symbol})
+					</em>
+				</label>
 				<CurrencyInput
 					name="issuance-rate"
 					currency={$userDaos[$activeDao].generalInfo.token_symbol}
@@ -122,7 +123,7 @@
 					errors={res.getErrors('issuance-rate')}
 				/>
 				<div class="range-wrapper column-1">
-					<label for="reserve-rate">Reserve rate <em>~ Current rate {reserveRate}%</em></label>
+					<label for="reserve-rate">Reserve rate <em>(current rate: {reserveRate}%)</em></label>
 					<Range
 						bind:value={formData.reserveRate}
 						suffix="%"
@@ -131,10 +132,11 @@
 					/>
 				</div>
 				<label for="funding-target"
-					>Funding target <em
-						>~ Current target {$userDaos[$activeDao].onChainData.paymentCurrency}
-						{fundingTarget === 0 ? '∞' : fundingTarget}</em
-					>
+					>Funding target
+					<em>
+						(current target: {fundingTarget === 0 ? '∞' : fundingTarget}
+						${$userDaos[$activeDao].onChainData.paymentCurrency})
+					</em>
 				</label>
 				<span class="xsmall"><em>* Put a 0 to make the target infinite</em></span>
 				<CurrencyInput
