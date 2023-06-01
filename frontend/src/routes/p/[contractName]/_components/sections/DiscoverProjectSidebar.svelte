@@ -31,14 +31,8 @@
 				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
 				<div class="commands-wrapper row-2 align-center">
 					{#if daoData.onChainData.minting}
-						<Label size="xx-small" color="neutral" hasBorder={false}>
-							Minting enabled
-							<TooltipIcon
-								width={0.6}
-								tooltip={`Project signers can mint $${daoData.generalInfo.token_symbol}`}
-								backgroundColor="var(--clr-neutral-badge)"
-								borderColor="var(--clr-neutral-badge)"
-							/>
+						<Label size="xx-small" color="neutral" hasBorder={false} iconRight="tabler:check">
+							Minting
 						</Label>
 					{/if}
 					{#if $user.loggedIn}
