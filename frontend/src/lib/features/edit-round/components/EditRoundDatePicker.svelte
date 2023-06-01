@@ -44,13 +44,13 @@
 	const handleChange = (event: CustomEvent<[Date[], string, flatpickr.Instance]>) => {
 		const [selectedDates] = event.detail;
 
-		if (selectedDates[0] && !roundStarted) {
+		if (selectedDates[0] && selectedDates[1]) {
+			startDate = (selectedDates[0].getTime() / 1000).toString();
+			endDate = (selectedDates[1].getTime() / 1000).toString();
+		} else if (selectedDates[0] && !roundStarted) {
 			startDate = (selectedDates[0].getTime() / 1000).toString();
 		} else if (selectedDates[0] && roundStarted) {
 			endDate = (selectedDates[0].getTime() / 1000).toString();
-		} else if (selectedDates[0] && selectedDates[1]) {
-			startDate = (selectedDates[0].getTime() / 1000).toString();
-			endDate = (selectedDates[1].getTime() / 1000).toString();
 		}
 	};
 
