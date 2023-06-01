@@ -66,7 +66,9 @@
 		</span>
 		<RoundStatusLabel status={roundStatus} />
 		<div class="row-2">
-			<EditRoundModal {round} cycleIndex={roundNumber} />
+			{#if roundStatus !== 'finished' && admin}
+				<EditRoundModal {round} cycleIndex={roundNumber} />
+			{/if}
 			<SeeRoundDetailsModal
 				{round}
 				{roundNumber}
