@@ -52,7 +52,7 @@
 				</div>
 			</DropDownHeading>
 		</div>
-		<div class="column-8">
+		<div class="column-6">
 			<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 				<div class="sidebar-link-icon">
 					<Icon icon="tabler:home" />

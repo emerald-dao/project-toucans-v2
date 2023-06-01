@@ -2,7 +2,6 @@
 	import { fade } from 'svelte/transition';
 	import { user } from '$stores/flow/FlowStore';
 	import { roundGeneratorData } from '$lib/features/round-generator/stores/RoundGeneratorData';
-	import { ECurrencies } from '$lib/types/common/enums';
 	import RoundDatesPicker from '../../atoms/RoundDatesPicker.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { onMount } from 'svelte';

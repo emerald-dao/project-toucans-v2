@@ -1,10 +1,9 @@
 <script type="ts">
 	import { newRoundActiveStep } from './../stores/RoundGeneratorSteps';
-	import { Button, getModal, Modal } from '@emerald-dao/component-library';
+	import { Button, getModal } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { roundGeneratorData } from '../stores/RoundGeneratorData';
 	import { roundGeneratorSteps } from '../stores/RoundGeneratorSteps';
-	import { ECurrencies } from '$lib/types/common/enums';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
 

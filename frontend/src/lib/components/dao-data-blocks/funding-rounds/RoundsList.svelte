@@ -20,14 +20,14 @@
 		</label>
 	{/if}
 	{#if daoData.onChainData.fundingCycles.length > 0}
-		{#each daoData.onChainData.fundingCycles as round}
+		{#each daoData.onChainData.fundingCycles as round, i}
 			{#if new Date(Number(round.details.timeframe.endTime) * 1000) > new Date() || round.details.timeframe.endTime == null || showFinished}
 				<RoundsListElement
 					{round}
 					activeRound={daoData.onChainData.currentFundingCycle
 						? Number(daoData.onChainData.currentFundingCycle.details.cycleId)
 						: null}
-					roundNumber={Number(round.details.cycleId)}
+					roundNumber={i}
 					projectToken={daoData.generalInfo.token_symbol}
 					paymentToken={daoData.onChainData.paymentCurrency}
 					projectId={daoData.generalInfo.project_id}
