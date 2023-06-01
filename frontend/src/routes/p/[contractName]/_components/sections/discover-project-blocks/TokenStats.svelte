@@ -19,23 +19,27 @@
 	}
 
 	async function calculateTokenData(): Promise<TokenData> {
-		return await new Promise((resolve, reject) => {
-			let numHolders, totalHolding, numFunders, totalFunding;
-			numHolders = totalHolding = numFunders = totalFunding = 0;
+		let numHolders, totalHolding, numFunders, totalFunding;
+		numHolders = totalHolding = numFunders = totalFunding = 0;
 
-			for (const holder in daoData.onChainData.balances) {
-				if (holder === daoData.generalInfo.owner) continue;
-				numHolders++;
-				totalHolding += Number(daoData.onChainData.balances[holder]);
-			}
-			let averageHolding = totalHolding / numHolders;
-			for (const funder in daoData.onChainData.funders) {
-				numFunders++;
-				totalFunding += Number(daoData.onChainData.funders[funder]);
-			}
-			let averageFunding = totalFunding / numFunders;
-			resolve({ numHolders, averageHolding, numFunders, averageFunding });
-		});
+		for (const holder in daoData.onChainData.balances) {
+			if (holder === daoData.generalInfo.owner) continue;
+			numHolders++;
+			totalHolding += Number(daoData.onChainData.balances[holder]);
+		}
+
+		let averageHolding = totalHolding / numHolders ?? 0;
+		isNaN(averageHolding) ? (averageHolding = 0) : null;
+
+		for (const funder in daoData.onChainData.funders) {
+			numFunders++;
+			totalFunding += Number(daoData.onChainData.funders[funder]);
+		}
+
+		let averageFunding = totalFunding / numFunders;
+		isNaN(averageFunding) ? (averageFunding = 0) : null;
+
+		return { numHolders, averageHolding, numFunders, averageFunding };
 	}
 </script>
 

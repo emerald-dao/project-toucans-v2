@@ -3,7 +3,7 @@
 	import type { Writable } from 'svelte/store';
 	import { getContext, onMount } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Button, InputWrapper } from '@emerald-dao/component-library';
+	import { Button, InputWrapper, DropZone } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 	import { applyAction, enhance } from '$app/forms';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
@@ -28,7 +28,9 @@
 		twitter: '',
 		discord: '',
 		description: '',
-		long_description: ''
+		long_description: '',
+		logo: [],
+		bannerImage: []
 	};
 
 	onMount(() => populateFormData());
@@ -76,7 +78,9 @@
 				formData.twitter !== activeDaoData.generalInfo.twitter ||
 				formData.discord !== activeDaoData.generalInfo.discord ||
 				formData.description !== activeDaoData.generalInfo.description ||
-				formData.long_description !== activeDaoData.generalInfo.long_description
+				formData.long_description !== activeDaoData.generalInfo.long_description ||
+				formData.logo.length > 0 ||
+				formData.bannerImage.length > 0
 			);
 		} else {
 			return false;
@@ -91,7 +95,7 @@
 	let res = validationSuite.get();
 
 	$: activeDaoData && populateFormData();
-	$: activeDaoData && (formHasChanges = checkDataChanges());
+	$: activeDaoData && formData && (formHasChanges = checkDataChanges());
 	$: activeDaoData && resetValidation();
 </script>
 
@@ -111,86 +115,108 @@
 	in:fly={{ x: 10, duration: 400 }}
 	autocomplete="off"
 >
-	<input type="hidden" name="project_id" hidden value={activeDaoData.generalInfo.project_id} />
-	<InputWrapper
-		name="description"
-		label="Description"
-		errors={res.getErrors('description')}
-		isValid={res.isValid('description')}
-	>
-		<textarea
+	<div>
+		<input type="hidden" name="project_id" hidden value={activeDaoData.generalInfo.project_id} />
+		<InputWrapper
 			name="description"
-			class="description"
-			placeholder="A DAO for the people"
-			bind:value={formData.description}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-	<InputWrapper
-		name="longDescription"
-		label="Long description"
-		errors={res.getErrors('longDescription')}
-		isValid={res.isValid('longDescription')}
-	>
-		<textarea
+			label="Description"
+			errors={res.getErrors('description')}
+			isValid={res.isValid('description')}
+		>
+			<textarea
+				name="description"
+				class="description"
+				placeholder="A DAO for the people"
+				bind:value={formData.description}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+		<InputWrapper
 			name="longDescription"
-			class="long-description"
-			placeholder="Here you can get creative and write a longer description :)"
-			bind:value={formData.long_description}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-	<InputWrapper
-		name="website"
-		label="Website"
-		errors={res.getErrors('website')}
-		isValid={res.isValid('website') && formData.website.length > 0}
-		prefix="https://"
-		icon="tabler:world"
-	>
-		<input
+			label="Long description"
+			errors={res.getErrors('longDescription')}
+			isValid={res.isValid('longDescription')}
+		>
+			<textarea
+				name="longDescription"
+				class="long-description"
+				placeholder="Here you can get creative and write a longer description :)"
+				bind:value={formData.long_description}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+		<InputWrapper
 			name="website"
-			type="text"
-			placeholder="ecdao.org"
-			bind:value={formData.website}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-	<InputWrapper
-		name="twitter"
-		label="Twitter"
-		errors={res.getErrors('twitter')}
-		isValid={res.isValid('twitter') && formData.twitter.length > 0}
-		prefix="@"
-		icon="tabler:brand-twitter"
-	>
-		<input
+			label="Website"
+			errors={res.getErrors('website')}
+			isValid={res.isValid('website') && formData.website.length > 0}
+			prefix="https://"
+			icon="tabler:world"
+		>
+			<input
+				name="website"
+				type="text"
+				placeholder="ecdao.org"
+				bind:value={formData.website}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+		<InputWrapper
 			name="twitter"
-			type="text"
-			placeholder="emerald_dao"
-			bind:value={formData.twitter}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
-	<InputWrapper
-		name="discord"
-		label="Discord Invite"
-		errors={res.getErrors('discord')}
-		isValid={res.isValid('discord') && formData.discord.length > 0}
-		prefix="https://discord.gg/"
-		icon="tabler:brand-discord"
-	>
-		<input
+			label="Twitter"
+			errors={res.getErrors('twitter')}
+			isValid={res.isValid('twitter') && formData.twitter.length > 0}
+			prefix="@"
+			icon="tabler:brand-twitter"
+		>
+			<input
+				name="twitter"
+				type="text"
+				placeholder="emerald_dao"
+				bind:value={formData.twitter}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+		<InputWrapper
 			name="discord"
-			type="text"
-			placeholder="emeraldcity"
-			bind:value={formData.discord}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
+			label="Discord Invite"
+			errors={res.getErrors('discord')}
+			isValid={res.isValid('discord') && formData.discord.length > 0}
+			prefix="https://discord.gg/"
+			icon="tabler:brand-discord"
+		>
+			<input
+				name="discord"
+				type="text"
+				placeholder="emeraldcity"
+				bind:value={formData.discord}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+	</div>
+	<div class="column-7">
+		<div class="drop-zone-wrapper">
+			<label for="logo">Drop a new logo</label>
+			<DropZone
+				name="logo"
+				accept={['image/png', 'image/jpeg', 'image/jpg']}
+				maxAmountOfFiles={1}
+				bind:bindValue={formData.logo}
+			/>
+		</div>
+		<div class="drop-zone-wrapper">
+			<label for="banner">Drop a new banner image</label>
+			<DropZone
+				name="banner"
+				accept={['image/png', 'image/jpeg', 'image/jpg']}
+				maxAmountOfFiles={1}
+				bind:bindValue={formData.bannerImage}
+			/>
+		</div>
+	</div>
 	<div class="button-wrapper">
 		<Button
-			state={res.isValid() && formHasChanges && !submitionOnCourse
+			state={!res.hasErrors() && formHasChanges && !submitionOnCourse
 				? 'active'
 				: submitionOnCourse
 				? 'loading'
@@ -209,7 +235,14 @@
 
 <style lang="scss">
 	form {
-		width: 40ch;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-template-rows: 1fr auto;
+		column-gap: var(--space-13);
+		grid-gap: var(--space-7);
+		grid-template-areas:
+			'left right'
+			'button button';
 
 		textarea {
 			max-width: 100%;
@@ -229,6 +262,7 @@
 			flex-direction: row-reverse;
 			justify-content: space-between;
 			margin-top: var(--space-5);
+			grid-area: button;
 
 			.success-message {
 				color: var(--clr-font-text);

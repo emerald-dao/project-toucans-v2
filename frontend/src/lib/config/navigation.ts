@@ -13,7 +13,8 @@ export const navElements = [
 	{
 		name: 'Docs',
 		url: 'https://docs.ecdao.org/products/toucans',
-		prefetch: true
+		prefetch: true,
+		target: '_blank'
 	}
 ];
 
