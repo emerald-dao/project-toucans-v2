@@ -31,6 +31,7 @@
 		display: flex;
 		flex-direction: column;
 		background: var(--clr-surface-primary);
+		overflow-y: auto;
 
 		@include mq(medium) {
 			width: 35vw;
