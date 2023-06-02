@@ -7,6 +7,7 @@
 	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
 	import RequiredNft from './atoms/RequiredNft.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import { currencies } from '$stores/flow/TokenStore';
 
 	export let daoData: DAOProject;
 </script>
@@ -80,9 +81,15 @@
 								</a>
 							{/if}
 						</div>
-						{#if daoData.generalInfo.tradingLink}
+						{#if daoData.generalInfo.trading}
 							<a
-								href="https://increment.fi/"
+								href={`https://app.increment.fi/swap?in=A.${currencies[
+									daoData.onChainData.paymentCurrency
+								].contractAddress.slice(2)}.${
+									currencies[daoData.onChainData.paymentCurrency].contractName
+								}&out=A.${daoData.generalInfo.contract_address.slice(2)}.${
+									daoData.generalInfo.project_id
+								}`}
 								target="_blank"
 								class="trading-link header-link"
 								rel="noreferrer"
