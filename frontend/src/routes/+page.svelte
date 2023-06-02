@@ -4,7 +4,6 @@
 	import ToucansFeatures from './_components/sections/ToucansFeatures.svelte';
 	import LeadingProjects from './_components/sections/LeadingProjects.svelte';
 	import { StatsSection, PoweredByECDAO } from '@emerald-dao/component-library';
-	import DaoRanking from '$lib/features/dao-ranking/components/DaoRanking.svelte';
 
 	export let data;
 
@@ -17,7 +16,6 @@
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
 <div class="no-overflow-x">
-	<DaoRanking />
 	<Hero />
 	<ToucansFeatures />
 	<LeadingProjects projects={data.projects} />
