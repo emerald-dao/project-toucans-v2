@@ -14,7 +14,7 @@ export const currencies: { [key: string]: TokenInfo } = {
 	},
 	USDC: {
 		contractName: 'FiatToken',
-		contractAddress: addresses.USDC,
+		contractAddress: addresses.FiatToken,
 		symbol: 'USDC',
 		tokenType: '',
 		receiverPath: 'USDCVaultReceiver',
