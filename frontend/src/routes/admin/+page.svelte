@@ -11,6 +11,7 @@
 		TreasuryWallet,
 		DaoStatsIntro
 	} from './_components';
+	import { Seo } from '@emerald-dao/component-library';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -41,6 +42,13 @@
 		</div>
 	</div>
 </div>
+
+<Seo
+	title={`Admin | Toucans`}
+	description={`Manage your DAO's`}
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 <style lang="scss">
 	.main-wrapper {
