@@ -1,21 +1,19 @@
 export interface DaoRankingData {
 	number: number;
 	name: string;
-	price: number;
+	price: number | null;
 	hour: number;
 	day: number;
 	week: number;
-	circulatingSupply: number;
-	chart: ChartData;
+	circulating_supply: number;
+	payment_currency: string;
+	// chart data
+	numbers: number[]
+	title: string;
+	labels: string[];
 
 	// Extra data needed!
-	tokenSymbol: string;
+	token_symbol: string;
 	logo: string;
-	maxSupply: number;
-}
-
-interface ChartData {
-	title: string;
-	numbers: number[];
-	labels: string[];
+	//maxSupply: number;
 }

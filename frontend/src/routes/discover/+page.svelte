@@ -1,5 +1,6 @@
 <script type="ts">
 	import ProjectCard from '$components/cards/ProjectCard.svelte';
+	import DaoRanking from '$lib/features/dao-ranking/components/DaoRanking.svelte';
 	import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface.js';
 
 	export let data;
@@ -35,6 +36,8 @@
 		</div>
 	</section>
 {/if}
+
+<DaoRanking projectsData={data.rankings} />
 
 <section class="container-medium">
 	<div class="column-12">

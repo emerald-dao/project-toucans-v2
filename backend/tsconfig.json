@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "build",
+    "strict": false,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "es6"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+  "ts-node": {
+    "transpileOnly": true
+  }
+}

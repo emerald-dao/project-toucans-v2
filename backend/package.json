@@ -5,10 +5,10 @@
     "node": "16.15.0"
   },
   "description": "",
-  "main": "main.js",
+  "main": "main.ts",
   "scripts": {
-    "dev": "nodemon main.js",
-    "start": "node main.js"
+    "dev": "nodemon main.ts",
+    "start": "npx ts-node ./main.ts"
   },
   "author": "Jacob Tucker",
   "license": "ISC",
@@ -18,5 +18,8 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
   }
 }

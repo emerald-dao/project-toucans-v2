@@ -5,24 +5,31 @@
 	import PercentageVariation from './PercentageVariation.svelte';
 
 	export let project: DaoRankingData;
+	console.log(project.numbers);
 </script>
 
 <tr>
 	<th scope="row">{project.number}</th>
 	<td>{project.name}</td>
-	<td><Currency amount={project.price} currency="U$S" color="heading" /></td>
+	<td>
+		{#if project.price}
+			<Currency amount={project.price} currency="U$S" color="heading" />
+		{:else}
+			N/A
+		{/if}
+	</td>
 
 	<td><PercentageVariation variation={project.hour} /></td>
 	<td><PercentageVariation variation={project.day} /></td>
 	<td><PercentageVariation variation={project.week} /></td>
 
-	<td><Currency amount={project.circulatingSupply} currency="U$S" color="heading" /></td>
+	<td><Currency amount={project.circulating_supply} currency="U$S" color="heading" /></td>
 	<td>
 		<div class="chart-wrapper">
 			<LineChart
-				title={project.chart.title}
-				chartData={project.chart.numbers}
-				labels={project.chart.labels}
+				title={'Prueba'}
+				chartData={project.numbers}
+				labels={Array(project.numbers.length).fill('')}
 			/>
 		</div>
 	</td>
