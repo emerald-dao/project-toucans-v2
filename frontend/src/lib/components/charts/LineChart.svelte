@@ -40,36 +40,27 @@
 		labels,
 		datasets: [
 			{
-				label: title,
-				fill: true,
 				lineTension: 0.1,
 				borderWidth: 2,
-				borderDash: [],
-				borderDashOffset: 0.0,
 				borderJoinStyle: 'miter' as 'miter' | 'bevel' | 'round',
-				pointStyle: 'circle',
-				pointBorderWidth: 2,
-				pointHoverRadius: 2,
-				pointHoverBorderWidth: 2,
-				pointRadius: 2,
-				pointHitRadius: 10,
-				data: chartData
+				data: chartData,
+				pointRadius: 0
 			}
 		]
 	};
 
 	const options = {
 		responsive: true,
+		scales: {
+			y: {
+				ticks: {
+					display: false
+				}
+			}
+		},
 		plugins: {
 			legend: {
-				position: 'top',
-				labels: {
-					boxHeight: 1,
-					boxWidth: 20
-				}
-			},
-			tooltip: {
-				displayColors: false
+				display: false
 			}
 		}
 	};

@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
 	import RankingTable from './atoms/RankingTable.svelte';
+	import type { DaoRankingData } from '../types/dao-ranking-data.interface';
 
-	let projectsData = [
+	let projectsData: DaoRankingData[] = [
 		{
 			number: 1,
 			name: 'Dao1',
 			price: 300,
 			hour: 2,
-			day: 1,
+			day: -1,
 			week: 0,
 			circulatingSupply: 120,
 			chart: {
