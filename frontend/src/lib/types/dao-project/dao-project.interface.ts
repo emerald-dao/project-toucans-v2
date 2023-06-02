@@ -29,6 +29,7 @@ export interface DaoDatabaseData {
 	token_symbol: string;
 	twitter: string | null;
 	website: string | null;
+	tradingLink?: string;
 }
 
 export interface DaoBlockchainData {
