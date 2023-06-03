@@ -65,7 +65,7 @@ async function gatherTrendingProjects() {
   // 3. Select the top NUMBER_OF_PROJECTS_TO_SHOW from step 2a and sort
   const sort = Object.entries(projects).sort(([, a], [, b]) => b.week - a.week).slice(0, NUMBER_OF_PROJECTS_TO_SHOW);
   for (var i = 0; i < sort.length; i++) {
-    sort[i][1].number = i;
+    sort[i][1].number = i + 1;
   }
 
   const sortable = Object.fromEntries(sort);
