@@ -14,7 +14,7 @@ pub fun main(user: Address, tokenSymbol: String): Bool {
 
   // otherwise check the projects token
   let vault = getAccount(user).getCapability(ExampleToken.ReceiverPublicPath)
-                .borrow<&{FungibleToken.Receiver}>()
+                .borrow<&ExampleToken.Vault{FungibleToken.Receiver}>()
 
   return vault != nil
 }
