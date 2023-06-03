@@ -4,6 +4,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import { Button } from '@emerald-dao/component-library';
 	import { setUpVaultExecution } from '$flow/actions';
+	import Icon from '@iconify/svelte';
 
 	export let daoData: DAOProject;
 	async function setUpVault() {
@@ -63,6 +64,16 @@
 					Set Up Vault
 				</Button>
 			{/if}
+			<a
+				href={`https://flow.bayou33.app/`}
+				target="_blank"
+				class="transfer-link header-link"
+				rel="noreferrer"
+			>
+				<img src="/bayou-logo.png" alt="Bayou Logo" width="12" />
+				Transfer token
+				<Icon icon="tabler:external-link" width="12" />
+			</a>
 		</DataCard>
 	{/if}
 	<div class="secondary-wrapper">
@@ -134,5 +145,16 @@
 				flex-direction: row;
 			}
 		}
+	}
+	.transfer-link {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--space-1);
+		font-size: var(--font-size-1) !important;
+	}
+
+	.header-link {
+		font-size: var(--font-size-3);
 	}
 </style>
