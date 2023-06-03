@@ -12,12 +12,13 @@
 			<tr>
 				<th>#</th>
 				<th>Name</th>
-				<th>Price</th>
 				<th>1h</th>
 				<th>1d</th>
 				<th>7d</th>
 				<th>Circulating Supply</th>
-				<th>Last 7 days</th>
+				<th>Price</th>
+				<th>Market Cap</th>
+				<th>7 day Funding</th>
 			</tr>
 		</thead>
 		<tbody>
