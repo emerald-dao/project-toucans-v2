@@ -13,9 +13,9 @@
 	<th scope="row">{project.number}</th>
 	<td>{project.name}</td>
 
-	<td><PercentageVariation variation={project.hour} /></td>
-	<td><PercentageVariation variation={project.day} /></td>
-	<td><PercentageVariation variation={project.week} /></td>
+	<td><Currency amount={project.hour} currency={project.payment_currency} /></td>
+	<td><Currency amount={project.day} currency={project.payment_currency} /></td>
+	<td><Currency amount={project.week} currency={project.payment_currency} /></td>
 
 	<td
 		><Currency
@@ -34,7 +34,7 @@
 	<td>
 		{#if project.price}
 			<Currency
-				amount={Math.round(project.circulating_supply * project.price * 100) / 100}
+				amount={project.circulating_supply * project.price}
 				currency={project.payment_currency}
 				color="heading"
 			/>
