@@ -13,7 +13,7 @@
 	<td>{project.name}</td>
 	<td>
 		{#if project.price}
-			<Currency amount={project.price} currency="U$S" color="heading" />
+			<Currency amount={project.price} currency={project.payment_currency} color="heading" />
 		{:else}
 			N/A
 		{/if}
@@ -23,7 +23,13 @@
 	<td><PercentageVariation variation={project.day} /></td>
 	<td><PercentageVariation variation={project.week} /></td>
 
-	<td><Currency amount={project.circulating_supply} currency="U$S" color="heading" /></td>
+	<td
+		><Currency
+			amount={project.circulating_supply}
+			currency={project.token_symbol}
+			color="heading"
+		/></td
+	>
 	<td>
 		<div class="chart-wrapper">
 			<LineChart
