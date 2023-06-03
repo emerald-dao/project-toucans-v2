@@ -11,19 +11,19 @@ pub fun main(contractNames: [String], contractAddresses: [Address]): {String: In
 
     let project = projectCollection.borrowProjectPublic(projectId: contractName)!
 
-    answer[contractName] = Info(contract.totalSupply, project.getCurrentFundingCycle()?.details?.issuanceRate, project.paymentTokenInfo.symbol)
+    answer[contractName] = Info(contract.totalSupply, project.paymentTokenInfo.symbol)
   }
   return answer
 }
 
 pub struct Info {
   pub let totalSupply: UFix64
-  pub let currentPrice: UFix64?
+  pub let price: UFix64?
   pub let paymentCurrency: String
 
-  init(_ ts: UFix64, _ cp: UFix64?, _ pc: String) {
+  init(_ ts: UFix64, _ pc: String) {
     self.totalSupply = ts
-    self.currentPrice = cp
+    self.price = nil
     self.paymentCurrency = pc
   }
 }
