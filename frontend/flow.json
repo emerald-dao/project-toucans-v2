@@ -128,6 +128,38 @@
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
+		"SwapError": {
+			"source": "./src/flow/cadence/utility/SwapError.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "ddb929038d45d4b3",
+				"mainnet": "b78ef7afa52ff906"
+			}
+		},
+		"SwapConfig": {
+			"source": "./src/flow/cadence/utility/SwapConfig.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "ddb929038d45d4b3",
+				"mainnet": "b78ef7afa52ff906"
+			}
+		},
+		"SwapFactory": {
+			"source": "./src/flow/cadence/utility/SwapFactory.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "cbed4c301441ded2",
+				"mainnet": "b063c16cac85dbd1"
+			}
+		},
+		"SwapInterfaces": {
+			"source": "./src/flow/cadence/utility/SwapInterfaces.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "ddb929038d45d4b3",
+				"mainnet": "b78ef7afa52ff906"
+			}
+		},
 		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc"
 	},
 	"networks": {
@@ -173,7 +205,11 @@
 				"ToucansTokens",
 				"Toucans",
 				"ToucansActions",
-				"TestingDAO"
+				"TestingDAO",
+				"SwapError",
+				"SwapConfig",
+				"SwapInterfaces",
+				"SwapFactory"
 			]
 		},
 		"testnet": {

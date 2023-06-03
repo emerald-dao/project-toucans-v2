@@ -81,7 +81,7 @@
 								</a>
 							{/if}
 						</div>
-						{#if daoData.generalInfo.trading}
+						{#if daoData.onChainData.trading}
 							<a
 								href={`https://app.increment.fi/swap?in=A.${currencies[
 									daoData.onChainData.paymentCurrency

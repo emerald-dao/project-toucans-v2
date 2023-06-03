@@ -23,6 +23,10 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"../ToucansMultiSign.cdc"', addresses.Toucans)
 			.replace('"../ToucansTokens.cdc"', addresses.Toucans)
 			.replace('"../utility/NFTCatalog.cdc"', addresses.NFTCatalog)
+			.replace('"../utility/SwapInterfaces.cdc"', addresses.SwapUtils)
+			.replace('"../utility/SwapError.cdc"', addresses.SwapUtils)
+			.replace('"../utility/SwapConfig.cdc"', addresses.SwapUtils)
+			.replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)

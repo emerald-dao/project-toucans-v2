@@ -29,7 +29,6 @@ export interface DaoDatabaseData {
 	token_symbol: string;
 	twitter: string | null;
 	website: string | null;
-	trading: boolean;
 }
 
 export interface DaoBlockchainData {
@@ -63,6 +62,7 @@ export interface DaoBlockchainData {
 		[key: string]: string | undefined;
 	};
 	paymentCurrency: ECurrencies;
+	trading: boolean;
 }
 
 export interface TokenInfo {
