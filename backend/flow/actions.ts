@@ -42,8 +42,12 @@ async function getSwapPairInfo(pairAddr) {
   return response;
 }
 
-export async function getQuoteToFlowPriceFromDex(pairAddr) {
-  let info = await getSwapPairInfo(pairAddr)
+export const calcTokenPrice = {
+  FLOW: getQuoteToFlowPriceFromDex,
+  USDC: getQuoteToUSDCPriceFromDex
+}
+
+function getQuoteToFlowPriceFromDex(info) {
   let numFlow = 0.0
   let numQuote = 0.0
   if (info[0].includes('Flow')) {
@@ -53,14 +57,13 @@ export async function getQuoteToFlowPriceFromDex(pairAddr) {
     numFlow = parseFloat(info[3])
     numQuote = parseFloat(info[2])
   } else {
-    throw (`not paired with flow`)
+    return null;
   }
   // 1 quote token = xx flow
-  return numFlow / numQuote
+  return (numFlow / numQuote) || 0;
 }
 
-export async function getQuoteToUSDCPriceFromDex(pairAddr) {
-  let info = await getSwapPairInfo(pairAddr)
+function getQuoteToUSDCPriceFromDex(info) {
   let numUsdc = 0.0
   let numQuote = 0.0
   if (info[0].includes('FiatToken')) {
@@ -70,8 +73,8 @@ export async function getQuoteToUSDCPriceFromDex(pairAddr) {
     numUsdc = parseFloat(info[3])
     numQuote = parseFloat(info[2])
   } else {
-    throw (`not paired with USDC`)
+    return null;
   }
   // 1 quote token = xx usdc
-  return numUsdc / numQuote
+  return (numUsdc / numQuote) || 0;
 }

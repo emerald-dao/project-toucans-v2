@@ -2,8 +2,9 @@
 import { fetchAllFundEventsInTimeframe } from "./supabase/fetchAllFundEventsInTimeframe";
 import express from "express";
 import { DaoRankingData } from "./types/dao-ranking.interface";
-import { getTrendingData } from "./flow/actions";
+import { calcTokenPrice, getTrendingData } from "./flow/actions";
 import { supabase } from "./supabaseClient";
+import { formatFix } from "./flow/utils";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,7 +23,7 @@ function lessThanTimeAgo(date: Date, time: number) {
 async function gatherTrendingProjects() {
   // 1. Get all fund events in last 30 days
 
-  const NUMBER_OF_PROJECTS_TO_SHOW = 3;
+  const NUMBER_OF_PROJECTS_TO_SHOW = 7;
   const ONE_HOUR = 60 * 60 * 1000; /* ms */
   const ONE_DAY = 24 * ONE_HOUR; /* ms */
   const ONE_WEEK = 7 * ONE_DAY; /* ms */
@@ -39,7 +40,7 @@ async function gatherTrendingProjects() {
       projects[event.project_id] = {
         project_id: event.project_id,
         number: 0,
-        price: 0,
+        price: null,
         hour: 0,
         day: 0,
         week: 0,
@@ -78,16 +79,20 @@ async function gatherTrendingProjects() {
   const projectBlockchainData = await getTrendingData(projectIds, projectAddresses)
   for (const projectId in projectBlockchainData) {
     sortable[projectId].circulating_supply = projectBlockchainData[projectId].totalSupply;
-    sortable[projectId].price = projectBlockchainData[projectId].currentPrice;
     sortable[projectId].payment_currency = projectBlockchainData[projectId].paymentCurrency;
+    console.log(projectBlockchainData[projectId].pairInfo)
+    if (projectBlockchainData[projectId].pairInfo) {
+      sortable[projectId].price = formatFix(calcTokenPrice[projectBlockchainData[projectId].paymentCurrency](projectBlockchainData[projectId].pairInfo));
+    }
   }
+  console.log(sortable)
 
   // 5. return
   const { error } = await supabase.from('rankings').insert(Object.values(sortable));
   console.log('Error inserting rankings', error);
 }
 
-// gatherTrendingProjects();
+gatherTrendingProjects();
 
 // const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
 

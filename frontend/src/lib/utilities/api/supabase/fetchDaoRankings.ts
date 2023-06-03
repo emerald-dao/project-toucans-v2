@@ -12,7 +12,7 @@ export async function fetchDaoRankings() {
       )
     `)
     .order('id', { ascending: false })
-    .limit(3);
+    .limit(7);
 
   if (!data || !data.length) {
     return []
