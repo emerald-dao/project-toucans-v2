@@ -11,6 +11,7 @@
 		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
 		daoData.vaultSetup = true;
 	}
+	console.log(daoData.userBalance);
 
 	interface TokenData {
 		numHolders: number;
@@ -64,16 +65,18 @@
 					Set Up Vault
 				</Button>
 			{/if}
-			<a
-				href={`https://flow.bayou33.app/`}
-				target="_blank"
-				class="transfer-link header-link"
-				rel="noreferrer"
-			>
-				<img src="/bayou-logo.png" alt="Bayou Logo" width="12" />
-				Transfer token
-				<Icon icon="tabler:external-link" width="12" />
-			</a>
+			{#if daoData.vaultSetup && daoData.userBalance != 0}
+				<a
+					href={`https://flow.bayou33.app/`}
+					target="_blank"
+					class="transfer-link header-link"
+					rel="noreferrer"
+				>
+					<img src="/bayou-logo.png" alt="Bayou Logo" width="12" />
+					Transfer token
+					<Icon icon="tabler:external-link" width="12" />
+				</a>
+			{/if}
 		</DataCard>
 	{/if}
 	<div class="secondary-wrapper">
