@@ -52,12 +52,12 @@
 	<div class="right-wrapper">
 		<div class="title-wrapper">
 			<span class="tagline">No Code Required</span>
-			<h2 class="w-medium">Creating your own token is easy</h2>
-			<p>
+			<h2 class="w-medium">Creating your own DAO is easy</h2>
+			<!-- <p>
 				Whether you want to create a token to raise funds in a treasury, or simply as utility &
 				rewards for your community, Toucans makes it easy for you to build organizations together,
 				online.
-			</p>
+			</p> -->
 		</div>
 		<div class="column-16">
 			{#each stepsData as step, i}
