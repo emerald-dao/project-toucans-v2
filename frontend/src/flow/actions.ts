@@ -34,7 +34,8 @@ import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?r
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
-import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
+import hasProjectVaultSetupScript from './cadence/scripts/has_project_vault_setup.cdc?raw';
+import canReceiveTokenScript from './cadence/scripts/can_receive_token.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 // NFTCatalog
@@ -758,25 +759,42 @@ export const getFlowBalance = async (userAddress: string) => {
 	}
 };
 
-export const hasVaultSetup = async (
+export const hasProjectVaultSetup = async (
+	contractAddress: string,
+	projectId: string,
+	userAddress: string
+) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(hasProjectVaultSetupScript, projectId, contractAddress),
+			args: (arg, t) => [
+				arg(userAddress, t.Address)
+			]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in hasProjectVaultSetup');
+		console.log(e);
+	}
+};
+
+export const canReceiveToken = async (
 	contractAddress: string,
 	projectId: string,
 	userAddress: string,
 	tokenSymbol: ECurrencies | string
 ) => {
 	try {
-		console.log(tokenSymbol)
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(canReceiveTokenScript, projectId, contractAddress),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
 				arg(tokenSymbol, t.String)
 			]
 		});
-		console.log(response);
 		return response;
 	} catch (e) {
-		console.log('Error in hasVaultSetup');
+		console.log('Error in canReceiveToken');
 		console.log(e);
 	}
 };
