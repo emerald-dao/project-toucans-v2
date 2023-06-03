@@ -697,7 +697,11 @@ export const getTokenBalance = async (projectId: string, contractAddress: string
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
-			args: (arg, t) => [arg(user, t.Address)]
+			args: (arg, t) => [
+				arg(user, t.Address),
+				arg(projectId, t.String),
+				arg(contractAddress, t.Address)
+			]
 		});
 		return response;
 	} catch (e) {
