@@ -7,6 +7,7 @@ export interface DaoRankingData {
   payment_currency: string;
   num_holders: number;
   num_proposals: number;
+  num_participants: number;
   treasury_value: number;
   max_supply: number | null;
   // chart data

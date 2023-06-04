@@ -13,7 +13,7 @@
 	<td>${project.total_funding}</td>
 	<td>${project.treasury_value}</td>
 	<td>{project.num_proposals}</td>
-	<td>{project.num_holders}</td>
+	<td>{project.num_participants}</td>
 	<td>
 		<div class="chart-wrapper">
 			<LineChart

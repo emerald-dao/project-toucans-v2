@@ -19,6 +19,9 @@
 			? `$${Math.round(project.price * project.circulating_supply * 100) / 100}`
 			: 'N/A'}
 	</td>
+	<td>
+		{project.num_holders}
+	</td>
 </tr>
 
 <style type="scss">

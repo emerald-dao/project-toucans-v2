@@ -127,7 +127,7 @@ function generateGetTrendingDataScript(contractNames: string[], contractAddresse
       project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0,
       project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${v}.Vault>()) ?? 0.0
     }
-    answer["${v}"] = Info(${v}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, ${v}.getBalances().length, treasuryBalances${i}, ${v}.maxSupply, project${i}.totalFunding)
+    answer["${v}"] = Info(${v}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, ${v}.maxSupply, project${i}.totalFunding, project${i}.getFunders().keys, ${v}.getBalances().keys)
     `
   }).join('')
   let script = `
@@ -151,20 +151,22 @@ function generateGetTrendingDataScript(contractNames: string[], contractAddresse
     pub let pairInfo: [AnyStruct]?
     pub let paymentCurrency: String
     pub let numProposals: Int
-    pub let numHolders: Int
     pub let treasuryBalances: {String: UFix64}
     pub let maxSupply: UFix64?
     pub let totalFunding: UFix64
+    pub let funders: [Address]
+    pub let holders: [Address]
   
-    init(_ ts: UFix64, _ pi: [AnyStruct]?, _ pc: String, _ np: Int, _ nh: Int, _ tb: {String: UFix64}, _ ms: UFix64?, _ tf: UFix64) {
+    init(_ ts: UFix64, _ pi: [AnyStruct]?, _ pc: String, _ np: Int, _ tb: {String: UFix64}, _ ms: UFix64?, _ tf: UFix64, _ f: [Address], _ h: [Address]) {
       self.totalSupply = ts
       self.pairInfo = pi
       self.paymentCurrency = pc
       self.numProposals = np
-      self.numHolders = nh
       self.treasuryBalances = tb
       self.maxSupply = ms
       self.totalFunding = tf
+      self.funders = f
+      self.holders = h
     }
   }
   `

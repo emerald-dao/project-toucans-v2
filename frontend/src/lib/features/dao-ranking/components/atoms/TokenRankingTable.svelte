@@ -17,6 +17,7 @@
 				<th>Max Supply</th>
 				<th>Price</th>
 				<th>Market Cap</th>
+				<th># Holders</th>
 			</tr>
 		</thead>
 		<tbody>

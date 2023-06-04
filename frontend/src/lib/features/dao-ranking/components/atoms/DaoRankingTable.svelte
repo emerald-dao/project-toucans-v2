@@ -15,7 +15,7 @@
 				<th>Total Funding</th>
 				<th>Treasury Value</th>
 				<th># Proposals</th>
-				<th># Holders</th>
+				<th># Participants</th>
 				<th>7d Funding</th>
 			</tr>
 		</thead>

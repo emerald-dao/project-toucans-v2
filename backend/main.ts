@@ -42,6 +42,7 @@ async function gatherTrendingProjects() {
       num_holders: 0,
       max_supply: null,
       num_proposals: 0,
+      num_participants: 0,
       // price stuff
       price: null,
       treasury_value: null,
@@ -87,12 +88,13 @@ async function gatherTrendingProjects() {
     return null;
   }
   for (const projectId in projectBlockchainData) {
-    const { paymentCurrency, maxSupply, numHolders, numProposals, totalSupply, pairInfo, treasuryBalances, totalFunding } = projectBlockchainData[projectId];
+    const { paymentCurrency, maxSupply, holders, funders, numProposals, totalSupply, pairInfo, treasuryBalances, totalFunding } = projectBlockchainData[projectId];
     projects[projectId].circulating_supply = totalSupply;
     projects[projectId].max_supply = maxSupply;
     projects[projectId].total_funding = totalFunding;
     projects[projectId].payment_currency = paymentCurrency;
-    projects[projectId].num_holders = numHolders;
+    projects[projectId].num_holders = holders.length;
+    projects[projectId].num_participants = holders.concat(funders.filter((item) => holders.indexOf(item) < 0)).length;
     projects[projectId].num_proposals += Number(numProposals);
     // if there is a price
     if (pairInfo) {

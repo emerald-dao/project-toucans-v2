@@ -8,6 +8,7 @@ export interface DaoRankingData {
 	payment_currency: string;
 	num_holders: number;
 	num_proposals: number;
+	num_participants: number;
 	treasury_value: number;
 	token_symbol: string;
 	logo: string;
