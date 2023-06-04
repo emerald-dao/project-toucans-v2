@@ -12,6 +12,9 @@
 	<td>{project.name}</td>
 
 	<td><Currency amount={project.week} currency={project.payment_currency} /></td>
+	<td>{project.treasury_value}</td>
+	<td>{project.num_proposals}</td>
+	<td>{project.num_holders}</td>
 
 	<td
 		><Currency

@@ -13,6 +13,9 @@
 				<th>#</th>
 				<th>Name</th>
 				<th>7d Funding</th>
+				<th>Treasury Value (USD)</th>
+				<th># Proposals</th>
+				<th># Holders</th>
 				<th>Circulating Supply</th>
 				<th>Price (USD)</th>
 				<th>Market Cap (USD)</th>
