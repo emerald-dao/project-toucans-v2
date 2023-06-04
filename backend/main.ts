@@ -9,6 +9,7 @@ import { fetchFlowPrice } from "./functions/fetchFlowPrice";
 import { fetchAllProjects } from "./supabase/fetchAllProjects";
 import { network } from "./flow/config";
 import { roundToUSDPrice } from './flow/utils';
+import { fetchAllProposals } from './supabase/fetchAllProposals';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,7 +26,8 @@ async function gatherTrendingProjects() {
   const WEEK_AGO = new Date(new Date().setDate((new Date()).getDate() - 7));
 
   // shows activity on the platform
-  const events = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
+  const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
+  const proposalEvents = (await fetchAllProposals());
   const allProjects = await fetchAllProjects();
   const addressList = {}
   const tokenSymbolList = {}
@@ -50,14 +52,6 @@ async function gatherTrendingProjects() {
     tokenSymbolList[project_id] = token_symbol;
   }
 
-  for (const event of events) {
-    const addedTotal = (projects[event.project_id].week_funding) + Number(event.data.amount)
-    projects[event.project_id].numbers.push(addedTotal);
-    projects[event.project_id].week_funding = addedTotal;
-  }
-
-  console.log(projects)
-
   const projectIds = Object.keys(projects);
   const projectAddresses = [];
   for (const projectId of projectIds) {
@@ -73,6 +67,19 @@ async function gatherTrendingProjects() {
     console.log('Invalid blockchain data.')
     return null;
   }
+
+  for (const event of fundEvents) {
+    if (event.data.tokenSymbol === projectBlockchainData[event.project_id].paymentCurrency) {
+      const addedTotal = (projects[event.project_id].week_funding) + Number(event.data.amount)
+      projects[event.project_id].numbers.push(addedTotal);
+      projects[event.project_id].week_funding = addedTotal;
+    }
+  }
+
+  for (const event of proposalEvents) {
+    projects[event.project_id].num_proposals++;
+  }
+
   // fetch flow price
   const flowPrice = await fetchFlowPrice();
   if (!flowPrice) {
@@ -86,7 +93,7 @@ async function gatherTrendingProjects() {
     projects[projectId].total_funding = totalFunding;
     projects[projectId].payment_currency = paymentCurrency;
     projects[projectId].num_holders = numHolders;
-    projects[projectId].num_proposals = numProposals;
+    projects[projectId].num_proposals += Number(numProposals);
     // if there is a price
     if (pairInfo) {
       projects[projectId].price = roundToUSDPrice(calcTokenPrice[paymentCurrency](pairInfo));
