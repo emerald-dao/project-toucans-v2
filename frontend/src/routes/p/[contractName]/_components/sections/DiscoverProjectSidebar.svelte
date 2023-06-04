@@ -1,12 +1,13 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Label, TooltipIcon } from '@emerald-dao/component-library';
+	import { Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
 	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
 	import RequiredNft from './atoms/RequiredNft.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import { currencies } from '$stores/flow/TokenStore';
 
 	export let daoData: DAOProject;
 </script>
@@ -80,6 +81,24 @@
 								</a>
 							{/if}
 						</div>
+						{#if daoData.onChainData.trading}
+							<a
+								href={`https://app.increment.fi/swap?in=A.${currencies[
+									daoData.onChainData.paymentCurrency
+								].contractAddress.slice(2)}.${
+									currencies[daoData.onChainData.paymentCurrency].contractName
+								}&out=A.${daoData.generalInfo.contract_address.slice(2)}.${
+									daoData.generalInfo.project_id
+								}`}
+								target="_blank"
+								class="trading-link header-link"
+								rel="noreferrer"
+							>
+								<img src="/incrementfi.ico" alt="Incrementfi Logo" width="12" />
+								Trade token
+								<Icon icon="tabler:external-link" width="12" />
+							</a>
+						{/if}
 					</div>
 				{/if}
 				<p class="small description">{daoData.generalInfo.description}</p>
@@ -91,6 +110,11 @@
 					{/if}
 					<PaymentModal {daoData} paymentType="donate" />
 				</div>
+				{#if daoData.onChainData.currentFundingCycle}
+					<p class="payment-explanation">
+						{`By funding this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
+					</p>
+				{/if}
 				{#if daoData.onChainData.requiredNft != null}
 					<RequiredNft nft={daoData.onChainData.requiredNft} />
 				{/if}
@@ -136,12 +160,27 @@
 				right: 0;
 			}
 
+			.trading-link {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: var(--space-1);
+				font-size: var(--font-size-1) !important;
+				margin-left: var(--space-2);
+				margin-bottom: 2px;
+			}
+
 			.header-link {
 				font-size: var(--font-size-3);
 			}
 
 			p.description {
 				margin-bottom: var(--space-11);
+			}
+
+			.payment-explanation {
+				font-size: 0.65rem;
+				line-height: normal;
 			}
 		}
 	}

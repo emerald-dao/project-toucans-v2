@@ -1,4 +1,4 @@
-import { hasVaultSetup } from '$flow/actions';
+import { canReceiveToken } from '$flow/actions';
 import type { ECurrencies } from '$lib/types/common/enums';
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
@@ -35,7 +35,7 @@ const validationSuite = create((data: Distribution, currentField, availableBalan
 const checkAddress = async (address: string, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string) => {
 	return new Promise((resolve, reject) => {
 		setTimeout(async () => {
-			const success = await hasVaultSetup(projectOwner, projectId, address, currencyToDistribute)
+			const success = await canReceiveToken(projectOwner, projectId, address, currencyToDistribute)
 			if (success) {
 				resolve(true);
 			} else {

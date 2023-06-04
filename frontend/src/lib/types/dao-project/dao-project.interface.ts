@@ -62,6 +62,7 @@ export interface DaoBlockchainData {
 		[key: string]: string | undefined;
 	};
 	paymentCurrency: ECurrencies;
+	trading: boolean;
 }
 
 export interface TokenInfo {

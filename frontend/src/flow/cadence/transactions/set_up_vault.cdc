@@ -12,11 +12,18 @@ transaction() {
 
     if user.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) == nil {
       user.save(<- ExampleToken.createEmptyVault(), to: ExampleToken.VaultStoragePath)
+    }
+
+    if user.getCapability(ExampleToken.ReceiverPublicPath).borrow<&ExampleToken.Vault{FungibleToken.Receiver}>() == nil {
+      user.unlink(ExampleToken.ReceiverPublicPath)
       user.link<&ExampleToken.Vault{FungibleToken.Receiver}>(
           ExampleToken.ReceiverPublicPath,
           target: ExampleToken.VaultStoragePath
       )
+    }
 
+    if user.getCapability(ExampleToken.VaultPublicPath).borrow<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>() == nil {
+      user.unlink(ExampleToken.VaultPublicPath)
       user.link<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
           ExampleToken.VaultPublicPath,
           target: ExampleToken.VaultStoragePath

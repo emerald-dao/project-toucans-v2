@@ -18,7 +18,7 @@
 </script>
 
 {#if step.button}
-	<div class="row-space-between" in:fade={{ duration: 300 }}>
+	<div class="row-space-between" in:fade={{ duration: 300 }} class:gap={$activeStepStore > 0}>
 		<div class="row align-center">
 			{#if $activeStepStore > 0}
 				<Button
@@ -45,3 +45,9 @@
 		</Button>
 	</div>
 {/if}
+
+<style lang="scss">
+	.gap {
+		gap: var(--space-7);
+	}
+</style>

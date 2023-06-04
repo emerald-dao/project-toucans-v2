@@ -2,8 +2,6 @@ import { deployContractExecution } from '$flow/actions';
 import { get } from 'svelte/store';
 import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 import { user } from '$stores/flow/FlowStore';
-import { NFTStorage } from 'nft.storage';
-import { env as PublicEnv } from '$env/dynamic/public';
 import { goto } from '$app/navigation';
 import { generatorActiveStep } from '../stores/DaoGeneratorSteps';
 import type { CurrentUserObject, TransactionStatusObject } from '@onflow/fcl';
@@ -12,27 +10,16 @@ import { addNotification } from '$lib/features/notifications/functions/postNotif
 import { ECurrencies } from '../../../types/common/enums';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import { restartAllSuites } from './restartAllSuites';
-import type { ProjectCreatedEvent } from '$lib/types/dao-project/dao-event/events/project-created.interface';
 import { checkUser } from '$lib/features/users/functions/checkUser';
 import { addUser } from '$lib/features/users/functions/postUser';
-
-const NFT_STORAGE_TOKEN = PublicEnv.PUBLIC_NFT_STORAGE_KEY;
-const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
+import uploadToIPFS from '$lib/utilities/uploadToIpfs';
 
 export const deployDao = async () => {
 	const projectData = get(daoGeneratorData);
 
-	const uploadToIPFS = async (file: File) => {
-		try {
-			const cid = await client.storeBlob(file);
-			return `https://nftstorage.link/ipfs/${cid}`;
-		} catch (error) {
-			console.log(error);
-			throw new Error('Error uploading image to IPFS');
-		}
-	};
 	const logoIpfsUrl = await uploadToIPFS((projectData.daoDetails.logo as File[])[0]);
 	const bannerImage = await uploadToIPFS((projectData.daoDetails.bannerImage as File[])[0]);
+
 	projectData.daoDetails.logoIpfsUrl = logoIpfsUrl;
 	projectData.daoDetails.bannerLogoIpfsUrl = bannerImage;
 

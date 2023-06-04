@@ -3,6 +3,9 @@ import Toucans from "../Toucans.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import FiatToken from "../utility/FiatToken.cdc"
 import NFTCatalog from "../utility/NFTCatalog.cdc"
+import SwapInterfaces from "../utility/SwapInterfaces.cdc"
+import SwapConfig from "../utility/SwapConfig.cdc"
+import SwapFactory from "../utility/SwapFactory.cdc"
 
 pub fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
@@ -32,6 +35,7 @@ pub struct Info {
   pub let maxSupply: UFix64?
   pub let purchasing: Bool
   pub let requiredNft: NFTData?
+  pub let trading: Bool
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -70,6 +74,17 @@ pub struct Info {
     } else {
       self.requiredNft = nil
     }
+
+    let projectCurrencyIdentifier: String = info.projectTokenInfo.tokenType.identifier
+    let paymentCurrencyIdentifier: String = info.paymentTokenInfo.tokenType.identifier
+    if let pairAddress: Address = SwapFactory.getPairAddress(
+      token0Key: projectCurrencyIdentifier.slice(from: 0, upTo: projectCurrencyIdentifier.length - 6), 
+      token1Key: paymentCurrencyIdentifier.slice(from: 0, upTo: paymentCurrencyIdentifier.length - 6)
+    ) {
+      self.trading = true
+    } else {
+      self.trading = false
+    }
   }
 }
 
@@ -87,3 +102,4 @@ pub struct NFTData {
     self.link = data.collectionDisplay.externalURL.url
   }
 }
+

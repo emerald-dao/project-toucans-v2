@@ -5,6 +5,7 @@
 	import '@emerald-dao/design-system/build/variables-light.css';
 	import '@emerald-dao/design-system/build/variables.css';
 	import '@emerald-dao/component-library/styles/app.scss';
+	import '../lib/styles/app.scss';
 	import { Header, Footer, TransactionModal } from '@emerald-dao/component-library';
 	import {
 		navElements,

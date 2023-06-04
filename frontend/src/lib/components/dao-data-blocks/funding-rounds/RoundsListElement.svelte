@@ -11,6 +11,7 @@
 	import { getRoundTiming } from './helpers/getRoundTiming';
 	import { getRoundStatus } from './helpers/getRoundStatus';
 	import { togglePurchasingExecution } from '$flow/actions';
+	import EditRoundModal from '$lib/features/edit-round/components/EditRoundModal.svelte';
 
 	export let round: FundingCycle;
 	export let roundNumber: number;
@@ -64,14 +65,19 @@
 			{getRoundTiming(startDate, endDate, roundStatus === 'active')}
 		</span>
 		<RoundStatusLabel status={roundStatus} />
-		<SeeRoundDetailsModal
-			{round}
-			{roundNumber}
-			{projectToken}
-			{paymentToken}
-			{projectId}
-			{activeRound}
-		/>
+		<div class="row-2">
+			{#if roundStatus !== 'finished' && admin}
+				<EditRoundModal {round} cycleIndex={roundNumber} />
+			{/if}
+			<SeeRoundDetailsModal
+				{round}
+				{roundNumber}
+				{projectToken}
+				{paymentToken}
+				{projectId}
+				{activeRound}
+			/>
+		</div>
 	</div>
 </div>
 

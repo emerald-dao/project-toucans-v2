@@ -38,6 +38,7 @@
 		flex-direction: column;
 		align-items: flex-start;
 		padding: var(--space-8) var(--space-10);
+		width: 100%;
 
 		.heading-wrapper {
 			margin-bottom: var(--space-3);

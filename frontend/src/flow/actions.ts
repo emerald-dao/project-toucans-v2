@@ -12,6 +12,7 @@ import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
 import transferProjectTokenToTreasuryTx from './cadence/transactions/transfer_project_token_to_treasury.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
+import editRoundTx from './cadence/transactions/edit_round.cdc?raw';
 import voteOnActionTx from './cadence/transactions/vote_on_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
@@ -33,7 +34,8 @@ import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?r
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
-import hasVaultSetupScript from './cadence/scripts/has_vault_setup.cdc?raw';
+import hasProjectVaultSetupScript from './cadence/scripts/has_project_vault_setup.cdc?raw';
+import canReceiveTokenScript from './cadence/scripts/can_receive_token.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
@@ -345,6 +347,45 @@ const newRound = async () => {
 };
 
 export const newRoundExecution = () => executeTransaction(newRound, saveEventAction);
+
+const editRound = async (
+	projectId: string,
+	cycleIndex: number,
+	startDate: string,
+	endDate: string | null,
+	reserveRate: number,
+	issuanceRate: string,
+	fundingGoal: string | null
+) => {
+	const fundingTarget = fundingGoal && fundingGoal !== '0' ? formatFix(fundingGoal) : null;
+	const endTime = endDate && endDate !== '0' ? formatFix(endDate) : null;
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(editRoundTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(cycleIndex.toString(), t.UInt64),
+			arg(formatFix(startDate), t.UFix64),
+			arg(endTime, t.Optional(t.UFix64)),
+			arg(formatFix(reserveRate / 100.0), t.UFix64),
+			arg(formatFix(issuanceRate), t.UFix64),
+			arg(fundingTarget, t.Optional(t.UFix64))
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const editRoundExecution = (
+	projectId: string,
+	cycleIndex: number,
+	startDate: string,
+	endDate: string | null,
+	reserveRate: number,
+	issuanceRate: string,
+	fundingGoal: string | null
+) => executeTransaction(() => editRound(projectId, cycleIndex, startDate, endDate, reserveRate, issuanceRate, fundingGoal));
 
 const togglePurchasing = async (projectId: string) => {
 	return await fcl.mutate({
@@ -658,7 +699,11 @@ export const getTokenBalance = async (projectId: string, contractAddress: string
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
-			args: (arg, t) => [arg(user, t.Address)]
+			args: (arg, t) => [
+				arg(user, t.Address),
+				arg(projectId, t.String),
+				arg(contractAddress, t.Address)
+			]
 		});
 		return response;
 	} catch (e) {
@@ -715,25 +760,42 @@ export const getFlowBalance = async (userAddress: string) => {
 	}
 };
 
-export const hasVaultSetup = async (
+export const hasProjectVaultSetup = async (
+	contractAddress: string,
+	projectId: string,
+	userAddress: string
+) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(hasProjectVaultSetupScript, projectId, contractAddress),
+			args: (arg, t) => [
+				arg(userAddress, t.Address)
+			]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in hasProjectVaultSetup');
+		console.log(e);
+	}
+};
+
+export const canReceiveToken = async (
 	contractAddress: string,
 	projectId: string,
 	userAddress: string,
 	tokenSymbol: ECurrencies | string
 ) => {
 	try {
-		console.log(tokenSymbol)
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(hasVaultSetupScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(canReceiveTokenScript, projectId, contractAddress),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
 				arg(tokenSymbol, t.String)
 			]
 		});
-		console.log(response);
 		return response;
 	} catch (e) {
-		console.log('Error in hasVaultSetup');
+		console.log('Error in canReceiveToken');
 		console.log(e);
 	}
 };

@@ -4,7 +4,7 @@ import type { LeadingProjectData } from '$lib/types/dao-project/leading-project.
 import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 
 export const load: PageLoad = async ({ params }) => {
-  const projectIds = ['EmeraldCity', 'BallerzFC'];
+  const projectIds = ['SloppyStakes', 'BallerzFC'];
   let projects: LeadingProjectData[] = [];
 
   for (const projectId of projectIds) {

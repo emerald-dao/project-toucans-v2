@@ -26,5 +26,10 @@
 	select {
 		padding-block: var(--space-1);
 		font-size: var(--font-size-1);
+		color: var(--clr-text-main);
+	}
+
+	option {
+		color: var(--clr-text-inverse);
 	}
 </style>

@@ -15,7 +15,9 @@
 
 <Modal background="none" unstyled={true} {id}>
 	<div class="round-modal-wrapper" class:grid={steps.length > 2}>
-		<StepsOverview {steps} {heading} {icon} {description} hideLastStep={true} />
+		<div class="overview-wrapper">
+			<StepsOverview {steps} {heading} {icon} {description} hideLastStep={true} />
+		</div>
 		<div class="main-wrapper column-space-between">
 			<div class="column-6">
 				{#if steps[$activeStepStore].name || steps[$activeStepStore].description}
@@ -41,18 +43,29 @@
 
 <style type="scss">
 	.round-modal-wrapper {
-		display: grid;
-		grid-template-columns: 2fr 5fr;
-		width: 900px;
-		min-height: 540px;
 		border: 1px solid var(--clr-neutral-badge);
 		border-radius: var(--radius-5);
-		overflow: hidden;
 		background-color: var(--clr-background-secondary);
+		max-width: 900px;
+		overflow: hidden;
+
+		@include mq('medium') {
+			min-height: 500px;
+			display: grid;
+			grid-template-columns: 2fr 5fr;
+		}
+
+		.overview-wrapper {
+			display: none;
+
+			@include mq('medium') {
+				display: flex;
+			}
+		}
 
 		.main-wrapper {
 			padding: var(--space-9);
-			width: 100%;
+			gap: var(--space-7);
 
 			.title-wrapper {
 				border-bottom: 1px var(--clr-neutral-badge) solid;

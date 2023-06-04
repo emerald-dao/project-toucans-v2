@@ -1,7 +1,16 @@
 // This is the most basic script you can execute on Flow Network
 import Toucans from "../Toucans.cdc"
 
-transaction(projectId: String, cycleIndex: UInt64) {
+transaction(
+  projectId: String, 
+  cycleIndex: UInt64, 
+  // new options
+  startTime: UFix64, 
+  endTime: UFix64?, 
+  reserveRate: UFix64, 
+  issuanceRate: UFix64, 
+  fundingTarget: UFix64?
+) {
 
   let Project: &Toucans.Project
   
@@ -15,10 +24,10 @@ transaction(projectId: String, cycleIndex: UInt64) {
     let cfc: Toucans.FundingCycleDetails = self.Project.getFundingCycle(cycleIndex: cycleIndex).details
     let details: Toucans.FundingCycleDetails = Toucans.FundingCycleDetails(
       cycleId: cfc.cycleId, 
-      fundingTarget: cfc.fundingTarget, 
-      issuanceRate: cfc.issuanceRate, 
-      reserveRate: cfc.reserveRate, 
-      timeframe: Toucans.CycleTimeFrame(cfc.timeframe.startTime, getCurrentBlock().timestamp), 
+      fundingTarget: fundingTarget, 
+      issuanceRate: issuanceRate, 
+      reserveRate: reserveRate, 
+      timeframe: Toucans.CycleTimeFrame(startTime, endTime), 
       payouts: cfc.payouts, 
       allowOverflow: cfc.allowOverflow, 
       allowedAddresses: cfc.allowedAddresses, 

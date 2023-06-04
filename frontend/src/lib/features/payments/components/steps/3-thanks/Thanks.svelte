@@ -41,7 +41,11 @@
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${$paymentData.amount}%20$${$paymentData.currency}%20to%20${$paymentData.daoName}%20on%20Toucans!`}
+					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${$paymentData.amount}%20$${
+						$paymentData.currency
+					}%20to%20${
+						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
+					}%20on%20Toucans!`}
 					target="_blank"
 					type="ghost"
 					color="neutral"
@@ -50,7 +54,7 @@
 			{:else if $paymentData.type === 'fund'}
 				<Button
 					href={`https://twitter.com/intent/tweet?text=Just%20funded%20${
-						$paymentData.daoName
+						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
 					}%20with%20${$paymentData.amount}%20$${
 						$paymentData.currency
 					}%20on%20Toucans%20and%20got%20${

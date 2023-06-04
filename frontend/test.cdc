@@ -1,6 +1,9 @@
-import FlowToken from 0x1654653399040a61
+import SloppyStakes from 	0x53f389d96fb4ce5e
+import FungibleToken from 0xf233dcee88fe0abe
 
-pub fun main(address: Address): Address {
-  let cap = getAccount(address).getCapability<&FlowToken.Vault>(/public/nothing)
-  return cap.address
+pub fun main(user: Address): UFix64 {
+  let projectTokenVault = getAccount(user).getCapability(SloppyStakes.VaultPublicPath)
+                .borrow<&{FungibleToken.Balance}>()
+
+  return projectTokenVault?.balance ?? 0.0
 }

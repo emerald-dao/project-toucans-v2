@@ -4,12 +4,14 @@
 	import { user } from '$stores/flow/FlowStore';
 	import { Button } from '@emerald-dao/component-library';
 	import { setUpVaultExecution } from '$flow/actions';
+	import Icon from '@iconify/svelte';
 
 	export let daoData: DAOProject;
 	async function setUpVault() {
 		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
 		daoData.vaultSetup = true;
 	}
+	console.log(daoData.userBalance);
 
 	interface TokenData {
 		numHolders: number;
@@ -19,23 +21,27 @@
 	}
 
 	async function calculateTokenData(): Promise<TokenData> {
-		return await new Promise((resolve, reject) => {
-			let numHolders, totalHolding, numFunders, totalFunding;
-			numHolders = totalHolding = numFunders = totalFunding = 0;
+		let numHolders, totalHolding, numFunders, totalFunding;
+		numHolders = totalHolding = numFunders = totalFunding = 0;
 
-			for (const holder in daoData.onChainData.balances) {
-				if (holder === daoData.generalInfo.owner) continue;
-				numHolders++;
-				totalHolding += Number(daoData.onChainData.balances[holder]);
-			}
-			let averageHolding = totalHolding / numHolders;
-			for (const funder in daoData.onChainData.funders) {
-				numFunders++;
-				totalFunding += Number(daoData.onChainData.funders[funder]);
-			}
-			let averageFunding = totalFunding / numFunders;
-			resolve({ numHolders, averageHolding, numFunders, averageFunding });
-		});
+		for (const holder in daoData.onChainData.balances) {
+			if (holder === daoData.generalInfo.owner) continue;
+			numHolders++;
+			totalHolding += Number(daoData.onChainData.balances[holder]);
+		}
+
+		let averageHolding = totalHolding / numHolders ?? 0;
+		isNaN(averageHolding) ? (averageHolding = 0) : null;
+
+		for (const funder in daoData.onChainData.funders) {
+			numFunders++;
+			totalFunding += Number(daoData.onChainData.funders[funder]);
+		}
+
+		let averageFunding = totalFunding / numFunders;
+		isNaN(averageFunding) ? (averageFunding = 0) : null;
+
+		return { numHolders, averageHolding, numFunders, averageFunding };
 	}
 </script>
 
@@ -58,6 +64,18 @@
 				>
 					Set Up Vault
 				</Button>
+			{/if}
+			{#if daoData.vaultSetup && daoData.userBalance != 0}
+				<a
+					href={`https://flow.bayou33.app/`}
+					target="_blank"
+					class="transfer-link header-link"
+					rel="noreferrer"
+				>
+					<img src="/bayou-logo.png" alt="Bayou Logo" width="12" />
+					Transfer token
+					<Icon icon="tabler:external-link" width="12" />
+				</a>
 			{/if}
 		</DataCard>
 	{/if}
@@ -130,5 +148,16 @@
 				flex-direction: row;
 			}
 		}
+	}
+	.transfer-link {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--space-1);
+		font-size: var(--font-size-1) !important;
+	}
+
+	.header-link {
+		font-size: var(--font-size-3);
 	}
 </style>
