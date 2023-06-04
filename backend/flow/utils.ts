@@ -133,3 +133,7 @@ export const formatFix = (value) => {
   }
   return i.toFixed(4);
 };
+
+export const roundToUSDPrice = (value: number) => {
+  return Math.round(value * 100) / 100;
+}

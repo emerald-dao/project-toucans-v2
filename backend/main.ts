@@ -8,6 +8,7 @@ import { supabase } from "./supabaseClient";
 import { fetchFlowPrice } from "./functions/fetchFlowPrice";
 import { fetchAllProjects } from "./supabase/fetchAllProjects";
 import { network } from "./flow/config";
+import { roundToUSDPrice } from './flow/utils';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,10 +33,12 @@ async function gatherTrendingProjects() {
   for (const { project_id, contract_address, token_symbol } of allProjects) {
     projects[project_id] = {
       project_id,
-      week: 0,
+      week_funding: 0,
+      total_funding: 0,
       circulating_supply: 0,
       payment_currency: '',
       num_holders: 0,
+      max_supply: null,
       num_proposals: 0,
       // price stuff
       price: null,
@@ -48,9 +51,9 @@ async function gatherTrendingProjects() {
   }
 
   for (const event of events) {
-    const addedTotal = (projects[event.project_id].week) + Number(event.data.amount)
+    const addedTotal = (projects[event.project_id].week_funding) + Number(event.data.amount)
     projects[event.project_id].numbers.push(addedTotal);
-    projects[event.project_id].week = addedTotal;
+    projects[event.project_id].week_funding = addedTotal;
   }
 
   console.log(projects)
@@ -77,28 +80,30 @@ async function gatherTrendingProjects() {
     return null;
   }
   for (const projectId in projectBlockchainData) {
-    const paymentCurrency = projectBlockchainData[projectId].paymentCurrency;
-    projects[projectId].circulating_supply = projectBlockchainData[projectId].totalSupply;
+    const { paymentCurrency, maxSupply, numHolders, numProposals, totalSupply, pairInfo, treasuryBalances, totalFunding } = projectBlockchainData[projectId];
+    projects[projectId].circulating_supply = totalSupply;
+    projects[projectId].max_supply = maxSupply;
+    projects[projectId].total_funding = totalFunding;
     projects[projectId].payment_currency = paymentCurrency;
-    projects[projectId].num_holders = projectBlockchainData[projectId].numHolders;
-    projects[projectId].num_proposals = projectBlockchainData[projectId].numProposals;
+    projects[projectId].num_holders = numHolders;
+    projects[projectId].num_proposals = numProposals;
     // if there is a price
-    if (projectBlockchainData[projectId].pairInfo) {
-      // store the price in USD
+    if (pairInfo) {
+      projects[projectId].price = roundToUSDPrice(calcTokenPrice[paymentCurrency](pairInfo));
+    }
 
-      // gets price in payment currency
-      let price = calcTokenPrice[paymentCurrency](projectBlockchainData[projectId].pairInfo);
-      // converts price to USD
-      if (paymentCurrency === 'FLOW') {
-        price = price * flowPrice;
+    if (paymentCurrency === 'FLOW') {
+      projects[projectId].total_funding = roundToUSDPrice(projects[projectId].total_funding * flowPrice);
+      projects[projectId].week_funding = roundToUSDPrice(projects[projectId].week_funding * flowPrice);
+      if (projects[projectId].price) {
+        projects[projectId].price = roundToUSDPrice(projects[projectId].price * flowPrice);
       }
-      projects[projectId].price = Math.round(price * 100) / 100;
     }
 
     // figure out treasury balance
-    let mainBalances = Number(projectBlockchainData[projectId].treasuryBalances["USDC"]) + Number((projectBlockchainData[projectId].treasuryBalances["FLOW"]) * flowPrice);
+    let mainBalances = Number(treasuryBalances["USDC"]) + Number((treasuryBalances["FLOW"]) * flowPrice);
     if (projects[projectId].price) {
-      mainBalances += Number(projectBlockchainData[projectId].treasuryBalances[tokenSymbolList[projectId]]) * projects[projectId].price;
+      mainBalances += Number(treasuryBalances[tokenSymbolList[projectId]]) * projects[projectId].price;
     }
     projects[projectId].treasury_value = Math.round(mainBalances * 100) / 100;
   }

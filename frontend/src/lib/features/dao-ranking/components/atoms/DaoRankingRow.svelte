@@ -10,25 +10,10 @@
 <tr>
 	<th scope="row">{number}</th>
 	<td>{project.name}</td>
-
-	<td><Currency amount={project.week} currency={project.payment_currency} /></td>
-	<td>{project.treasury_value}</td>
+	<td>${project.total_funding}</td>
+	<td>${project.treasury_value}</td>
 	<td>{project.num_proposals}</td>
 	<td>{project.num_holders}</td>
-
-	<td
-		><Currency
-			amount={project.circulating_supply}
-			currency={project.token_symbol}
-			color="heading"
-		/></td
-	>
-	<td>
-		{project.price || 'N/A'}
-	</td>
-	<td>
-		{project.price ? Math.round(project.circulating_supply * project.price * 100) / 100 : 'N/A'}
-	</td>
 	<td>
 		<div class="chart-wrapper">
 			<LineChart

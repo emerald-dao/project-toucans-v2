@@ -37,7 +37,7 @@
 	</section>
 {/if}
 
-<DaoRanking projectsData={data.rankings} />
+<DaoRanking daoRankings={data.daoRankings} tokenRankings={data.tokenRankings} />
 
 <section class="container-medium">
 	<div class="column-12">

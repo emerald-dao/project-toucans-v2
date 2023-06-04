@@ -1,7 +1,7 @@
 <script type="ts">
 	import LineChart from '$components/charts/LineChart.svelte';
 	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
-	import RankingRow from './RankingRow.svelte';
+	import TokenRankingRow from './TokenRankingRow.svelte';
 
 	export let projectsData: DaoRankingData[];
 </script>
@@ -11,20 +11,17 @@
 		<thead>
 			<tr>
 				<th>#</th>
-				<th>Name</th>
-				<th>7d Funding</th>
-				<th>Treasury Value (USD)</th>
-				<th># Proposals</th>
-				<th># Holders</th>
+				<th>Symbol</th>
+				<th>DAO Name</th>
 				<th>Circulating Supply</th>
-				<th>Price (USD)</th>
-				<th>Market Cap (USD)</th>
-				<th>7 day Funding</th>
+				<th>Max Supply</th>
+				<th>Price</th>
+				<th>Market Cap</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each projectsData as project, i}
-				<RankingRow {project} number={i} />
+				<TokenRankingRow {project} number={i} />
 			{/each}
 		</tbody>
 	</table>
