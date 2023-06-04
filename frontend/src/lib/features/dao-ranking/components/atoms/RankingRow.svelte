@@ -2,19 +2,15 @@
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { Currency } from '@emerald-dao/component-library';
 	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
-	import PercentageVariation from './PercentageVariation.svelte';
-	import { formatFix } from '$flow/utils';
 
 	export let project: DaoRankingData;
-	console.log(project.numbers);
+	export let number: number;
 </script>
 
 <tr>
-	<th scope="row">{project.number}</th>
+	<th scope="row">{number}</th>
 	<td>{project.name}</td>
 
-	<td><Currency amount={project.hour} currency={project.payment_currency} /></td>
-	<td><Currency amount={project.day} currency={project.payment_currency} /></td>
 	<td><Currency amount={project.week} currency={project.payment_currency} /></td>
 
 	<td
@@ -25,11 +21,7 @@
 		/></td
 	>
 	<td>
-		{#if project.price}
-			<Currency amount={project.price} currency={project.payment_currency} color="heading" />
-		{:else}
-			N/A
-		{/if}
+		{project.price || 'N/A'}
 	</td>
 	<td>
 		{#if project.price}

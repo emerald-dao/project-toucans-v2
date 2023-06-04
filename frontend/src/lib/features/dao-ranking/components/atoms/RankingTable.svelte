@@ -12,18 +12,16 @@
 			<tr>
 				<th>#</th>
 				<th>Name</th>
-				<th>1h</th>
-				<th>1d</th>
-				<th>7d</th>
+				<th>7d Funding</th>
 				<th>Circulating Supply</th>
-				<th>Price</th>
-				<th>Market Cap</th>
+				<th>Price (USD)</th>
+				<th>Market Cap (USD)</th>
 				<th>7 day Funding</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each projectsData as project}
-				<RankingRow {project} />
+			{#each projectsData as project, i}
+				<RankingRow {project} number={i} />
 			{/each}
 		</tbody>
 	</table>

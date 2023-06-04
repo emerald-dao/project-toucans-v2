@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ params }) => {
   const rankings = (await fetchDaoRankings()).map(ranking => {
     const { projects, ...rest } = ranking;
     return { ...rest, ...projects }
-  }).sort((a, b) => a.number - b.number);
+  }).sort((a, b) => b.week - a.week);
 
   return {
     allProjects,

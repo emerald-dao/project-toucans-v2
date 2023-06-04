@@ -100,7 +100,7 @@ export function getCadenceCode(scriptFileName: string, contractName: string | un
   }
 }
 
-function replaceWithProperValues(script: string, contractName: string | undefined, contractAddress: string | undefined) {
+export function replaceWithProperValues(script: string, contractName: string | undefined, contractAddress: string | undefined) {
   return (
     script
       // For Tx/Scripts
