@@ -27,15 +27,7 @@
 		{project.price || 'N/A'}
 	</td>
 	<td>
-		{#if project.price}
-			<Currency
-				amount={project.circulating_supply * project.price}
-				currency={project.payment_currency}
-				color="heading"
-			/>
-		{:else}
-			N/A
-		{/if}
+		{project.price ? Math.round(project.circulating_supply * project.price * 100) / 100 : 'N/A'}
 	</td>
 	<td>
 		<div class="chart-wrapper">
