@@ -10,6 +10,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let data: DAOProject;
+	console.log(data);
 
 	let seeMore = false;
 
