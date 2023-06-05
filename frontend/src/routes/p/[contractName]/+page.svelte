@@ -8,6 +8,7 @@
 	import { getProjectInfo, getTokenBalance, hasProjectVaultSetup } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
+	import { Seo } from '@emerald-dao/component-library';
 
 	export let data: DAOProject;
 	console.log(data);
@@ -95,6 +96,13 @@
 		{/if}
 	{/if}
 </section>
+
+<Seo
+	title={`${$daoDataStore.generalInfo.name} | Toucans`}
+	description={`${$daoDataStore.generalInfo.name} DAO project`}
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 <style type="scss">
 	.main-wrapper {

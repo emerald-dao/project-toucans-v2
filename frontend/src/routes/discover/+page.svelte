@@ -1,6 +1,7 @@
 <script type="ts">
 	import ProjectCard from '$components/cards/ProjectCard.svelte';
 	import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface.js';
+	import { Seo } from '@emerald-dao/component-library';
 
 	export let data;
 	const projects: DaoDatabaseData[] = data.projects as DaoDatabaseData[];
@@ -54,6 +55,13 @@
 		</div>
 	</div>
 </section>
+
+<Seo
+	title={`Discover | Toucans`}
+	description={`Discover all the DAO projects generated in Toucans`}
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 <style type="scss">
 	.border-bottom {

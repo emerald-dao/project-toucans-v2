@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Button } from '@emerald-dao/component-library';
+	import { Button, Seo } from '@emerald-dao/component-library';
 	import { AdminNav } from './_components';
 	import { setContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
@@ -105,6 +105,13 @@
 		</div>
 	</section>
 {/if}
+
+<Seo
+	title={`Admin | Toucans`}
+	description={`Manage your DAO's`}
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 <style type="scss">
 	section {
