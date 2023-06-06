@@ -2,13 +2,13 @@
   "name": "backend",
   "version": "1.0.0",
   "engines": {
-    "node": "16.15.0"
+    "node": "18.x"
   },
   "description": "",
-  "main": "main.js",
+  "main": "main.ts",
   "scripts": {
-    "dev": "nodemon main.js",
-    "start": "node main.js"
+    "dev": "nodemon main.ts",
+    "start": "npx ts-node ./main.ts"
   },
   "author": "Jacob Tucker",
   "license": "ISC",
@@ -17,6 +17,11 @@
     "@supabase/supabase-js": "^1.35.7",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "node-cron": "^3.0.2",
     "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.3.1",
+    "ts-node": "^10.9.1"
   }
 }

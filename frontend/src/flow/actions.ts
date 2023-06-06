@@ -38,6 +38,7 @@ import hasProjectVaultSetupScript from './cadence/scripts/has_project_vault_setu
 import canReceiveTokenScript from './cadence/scripts/can_receive_token.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
+import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
@@ -876,3 +877,22 @@ export const getBatchAmounts = async (
 		throw new Error('Error in getBatchAmounts');
 	}
 };
+
+export const getTrendingData = async (
+	projectIds: string[],
+	contractAddresses: string[]
+) => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(getTrendingDataScript),
+			args: (arg, t) => [
+				arg(projectIds, t.Array(t.String)),
+				arg(contractAddresses, t.Array(t.Address))
+			]
+		});
+	} catch (e) {
+		console.log('Error in getTrendingData', e);
+		throw new Error('Error in getTrendingData');
+	}
+};
+
