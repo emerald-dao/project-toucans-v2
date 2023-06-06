@@ -12,12 +12,12 @@
 				<th class="left-align">#</th>
 				<th class="left-align">Symbol</th>
 				<th class="left-align">DAO Name</th>
-				<th>Circulating Supply</th>
-				<th>Max Supply</th>
 				<th>Price</th>
 				<th>Market Cap</th>
 				<th>24h Volume</th>
 				<th>TVL</th>
+				<th>Circulating Supply</th>
+				<th>Max Supply</th>
 				<th># Holders</th>
 			</tr>
 		</thead>
