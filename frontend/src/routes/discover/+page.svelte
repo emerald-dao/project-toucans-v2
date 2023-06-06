@@ -5,6 +5,7 @@
 	import HotestProjectsSection from './_components/sections/HotestProjectsSection.svelte';
 	import ProjectsGridSection from './_components/sections/ProjectsGridSection.svelte';
 	import { PUBLIC_FLOW_NETWORK } from '$env/static/public';
+	import { Seo } from '@emerald-dao/component-library';
 
 	export let data;
 
@@ -30,6 +31,13 @@
 
 	$: thisMonth = new Date().toLocaleString('default', { month: 'long' });
 </script>
+
+<Seo
+	title={`Discover | Toucans`}
+	description={`Discover all the DAO projects generated in Toucans`}
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 <HeroSection />
 {#if DOM}

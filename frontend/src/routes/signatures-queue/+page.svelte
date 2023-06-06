@@ -7,7 +7,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
-	import { Button } from '@emerald-dao/component-library';
+	import { Button, Seo } from '@emerald-dao/component-library';
 
 	let allNotifications: { project: string; notification: ActionData }[] = [];
 	let currentPage = 1;
@@ -104,6 +104,13 @@
 		{/if}
 	</section>
 {/if}
+
+<Seo
+	title="Signatures Queue | Toucans"
+	description="Actions waiting for signatures"
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 <style lang="scss">
 	h5 {

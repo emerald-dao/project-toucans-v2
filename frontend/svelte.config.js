@@ -11,6 +11,7 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [
 		preprocess({
+			preserve: ['ld+json'],
 			postcss: true,
 			scss: {
 				prependData: `@import '${filePath}/node_modules/@emerald-dao/component-library/styles/utils/mixins';`

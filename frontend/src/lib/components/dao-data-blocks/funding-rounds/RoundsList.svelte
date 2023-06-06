@@ -32,6 +32,7 @@
 					paymentToken={daoData.onChainData.paymentCurrency}
 					projectId={daoData.generalInfo.project_id}
 					{admin}
+					paused={!daoData.onChainData.purchasing}
 				/>
 			{/if}
 		{/each}
