@@ -10,9 +10,7 @@ export async function fetchDaoRankings() {
         token_symbol,
         name
       )
-    `)
-    .order('id', { ascending: false })
-    .limit(7);
+    `);
 
   if (!data || !data.length) {
     return []

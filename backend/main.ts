@@ -10,6 +10,8 @@ import { fetchAllProjects } from "./supabase/fetchAllProjects";
 import { network } from "./flow/config";
 import { roundToUSDPrice } from './flow/utils';
 import { fetchAllProposals } from './supabase/fetchAllProposals';
+import { fetchTokenInfo } from './functions/fetchTokenInfo';
+import cron from "node-cron";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -33,6 +35,7 @@ async function gatherTrendingProjects() {
   const tokenSymbolList = {}
   const projects: { [projectId: string]: DaoRankingData } = {}
   for (const { project_id, contract_address, token_symbol } of allProjects) {
+    const { tokenInfo } = await fetchTokenInfo(project_id, contract_address);
     projects[project_id] = {
       project_id,
       week_funding: 0,
@@ -46,6 +49,8 @@ async function gatherTrendingProjects() {
       // price stuff
       price: null,
       treasury_value: null,
+      volume_24h: tokenInfo && tokenInfo[2] || null,
+      tvl: tokenInfo && tokenInfo[1] || null,
       // chart data
       numbers: []
     }
@@ -59,7 +64,7 @@ async function gatherTrendingProjects() {
     projectAddresses.push(addressList[projectId]);
   }
   let projectBlockchainData = {};
-  const CHUNK_SIZE = 10;
+  const CHUNK_SIZE = 5;
   for (var i = 0; i < projectIds.length; i += CHUNK_SIZE) {
     const x = await getTrendingDatav2(projectIds.slice(i, i + CHUNK_SIZE), projectAddresses.slice(i, i + CHUNK_SIZE));
     projectBlockchainData = { ...projectBlockchainData, ...x }
@@ -123,11 +128,10 @@ async function gatherTrendingProjects() {
   console.log('Error inserting rankings', error);
 }
 
-gatherTrendingProjects();
-
-// getTrendingDatav2(['SloppyStakes', 'BallerzFC'], ['0x53f389d96fb4ce5e', '0x4ea047c3e73ca460']);
-
-// fetchFlowPrice();
+cron.schedule('*/30 * * * *', () => {
+  gatherTrendingProjects();
+  console.log('executing ranking task');
+});
 
 // const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
 

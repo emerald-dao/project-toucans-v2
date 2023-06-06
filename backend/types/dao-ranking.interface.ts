@@ -10,6 +10,8 @@ export interface DaoRankingData {
   num_participants: number;
   treasury_value: number;
   max_supply: number | null;
+  volume_24h: number | null;
+  tvl: number | null;
   // chart data
   numbers: number[];
 }

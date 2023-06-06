@@ -11,8 +11,12 @@ export const load: PageLoad = async () => {
 		return { ...rest, ...projects };
 	});
 
+	console.log(rankings)
+
 	const daoRankings = rankings.sort((a, b) => b.total_funding - a.total_funding);
 	const tokenRankings = rankings.filter((x) => x.price).sort((a, b) => b.price - a.price);
+
+	console.log(tokenRankings)
 
 	return {
 		allProjects,

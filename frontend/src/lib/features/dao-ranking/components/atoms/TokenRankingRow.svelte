@@ -69,6 +69,30 @@
 		{/if}
 	</td>
 	<td>
+		{#if project.volume_24h}
+			<Currency
+				amount={project.volume_24h}
+				color="heading"
+				fontSize="var(--font-size-1)"
+				moneyPrefix={true}
+			/>
+		{:else}
+			N/A
+		{/if}
+	</td>
+	<td>
+		{#if project.tvl}
+			<Currency
+				amount={project.tvl}
+				color="heading"
+				fontSize="var(--font-size-1)"
+				moneyPrefix={true}
+			/>
+		{:else}
+			N/A
+		{/if}
+	</td>
+	<td>
 		{project.num_holders}
 	</td>
 </tr>

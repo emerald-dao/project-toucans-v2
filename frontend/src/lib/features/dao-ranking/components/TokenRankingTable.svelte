@@ -16,6 +16,8 @@
 				<th>Max Supply</th>
 				<th>Price</th>
 				<th>Market Cap</th>
+				<th>24h Volume</th>
+				<th>TVL</th>
 				<th># Holders</th>
 			</tr>
 		</thead>

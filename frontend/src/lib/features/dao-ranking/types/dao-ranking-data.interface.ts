@@ -13,6 +13,8 @@ export interface DaoRankingData {
 	token_symbol: string;
 	logo: string;
 	max_supply: number | null;
+	volume_24h: number | null;
+	tvl: number | null;
 	// chart data
 	numbers: number[]
 	title: string;

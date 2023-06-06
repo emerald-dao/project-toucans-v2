@@ -17,6 +17,7 @@
     "@supabase/supabase-js": "^1.35.7",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "node-cron": "^3.0.2",
     "nodemon": "^2.0.15"
   },
   "devDependencies": {
