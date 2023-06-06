@@ -9,8 +9,8 @@
 		</h1>
 		<p class="large">
 			Step right in and immerse yourself in a world of limitless possibilities on the Flow
-			blockchain! We are thrilled to have you here, ready to explore the incredible communities
-			thriving within this innovative ecosystem.
+			blockchain! We are thrilled to have you here, ready to explore the incredible DAOs thriving
+			within this innovative ecosystem.
 		</p>
 	</div>
 </section>
