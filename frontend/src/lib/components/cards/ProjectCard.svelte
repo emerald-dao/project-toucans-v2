@@ -7,7 +7,11 @@
 </script>
 
 <a href={`/p/${project.project_id}`} class="card-primary">
-	<img src={project.banner_image} alt={`${name} banner`} class="banner" />
+	<img
+		src={project.banner_image ?? 'toucans-illustration.png'}
+		alt={`${name} banner`}
+		class="banner"
+	/>
 	<div class="content-wrapper column-5">
 		<div class="row-3 align-center">
 			<img src={project.logo} alt="DAO logo" class="logo" />
