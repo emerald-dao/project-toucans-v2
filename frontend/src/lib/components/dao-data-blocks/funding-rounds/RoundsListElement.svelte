@@ -20,6 +20,7 @@
 	export let projectId: string;
 	export let activeRound: number | null;
 	export let admin: boolean = false;
+	export let paused: boolean = true;
 
 	$: goal = round.details.fundingTarget ? Number(round.details.fundingTarget) : 'infinite';
 	$: funding = round.raisedTowardsGoal ? Number(round.raisedTowardsGoal) : 0;
@@ -46,15 +47,27 @@
 		/>
 		<FundingNumbers {goal} {funding} {paymentToken} />
 		{#if endDate == null && roundStatus === 'active' && admin}
-			<Button
-				color="neutral"
-				type="ghost"
-				size="x-small"
-				on:click={() => togglePurchasingExecution(projectId)}
-			>
-				<Icon icon="tabler:player-pause-filled" />
-				Pause
-			</Button>
+			{#if paused}
+				<Button
+					color="neutral"
+					type="ghost"
+					size="x-small"
+					on:click={() => togglePurchasingExecution(projectId)}
+				>
+					<Icon icon="tabler:player-play-filled" />
+					Start
+				</Button>
+			{:else}
+				<Button
+					color="neutral"
+					type="ghost"
+					size="x-small"
+					on:click={() => togglePurchasingExecution(projectId)}
+				>
+					<Icon icon="tabler:player-pause-filled" />
+					Pause
+				</Button>
+			{/if}
 		{/if}
 		{#if goalReached}
 			<GoalReached />
