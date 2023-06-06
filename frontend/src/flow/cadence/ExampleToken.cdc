@@ -114,8 +114,10 @@ pub contract ExampleToken: FungibleToken {
         }
 
         destroy() {
-            emit TokensBurned(amount: self.balance)
-            ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
+            if (self.balance > 0.0) {
+                emit TokensBurned(amount: self.balance)
+                ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
+            }
         }
     }
 
