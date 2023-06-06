@@ -3,19 +3,28 @@ import FungibleToken from "./utility/FungibleToken.cdc"
 import NFTCatalog from "./utility/NFTCatalog.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import FIND from "./utility/FIND.cdc"
+import EmeraldIdentity from "./utility/EmeraldIdentity.cdc"
 
 pub contract ToucansUtils {
   pub fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {
     if let entry: NFTCatalog.NFTCatalogMetadata = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier) {
-        let publicPath: PublicPath = entry.collectionData.publicPath
+      let publicPath: PublicPath = entry.collectionData.publicPath
+      let contractAddressToString: String = entry.contractAddress.toString()
+      let constructedIdentifier: String = "A.".concat(contractAddressToString.slice(from: 2, upTo: contractAddressToString.length)).concat(".").concat(entry.contractName).concat(".Collection")
+
+      var addresses: [Address] = [user]
+      if let discordID: String = EmeraldIdentity.getDiscordFromAccount(account: user) {
+        addresses = EmeraldIdentity.getEmeraldIDs(discordID: discordID).values
+      }
+      assert(addresses.contains(user), message: "Should always be true. Just making sure so the user doesn't get punished accidentally ;)")
+      for address in addresses {
         if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(user).getCapability(publicPath).borrow<&{NonFungibleToken.CollectionPublic}>() {
-            let identifier: String = collection.getType().identifier
-            let contractAddressToString: String = entry.contractAddress.toString()
-            let constructedIdentifier: String = "A.".concat(contractAddressToString.slice(from: 2, upTo: contractAddressToString.length)).concat(".").concat(entry.contractName).concat(".Collection")
-            if identifier == constructedIdentifier && collection.getIDs().length > 0 {
-                return true
-            }
+          let identifier: String = collection.getType().identifier
+          if identifier == constructedIdentifier && collection.getIDs().length > 0 {
+            return true
+          }
         }
+      }
     }
     
     return false

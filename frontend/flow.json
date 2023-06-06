@@ -160,6 +160,27 @@
 				"mainnet": "b78ef7afa52ff906"
 			}
 		},
+		"EmeraldIdentity": {
+			"source": "./src/flow/cadence/utility/EmeraldIdentity.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "39e42c67cc851cfb"
+			}
+		},
+		"EmeraldIdentityDapper": {
+			"source": "./src/flow/cadence/utility/EmeraldIdentityDapper.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "39e42c67cc851cfb"
+			}
+		},
+		"EmeraldIdentityLilico": {
+			"source": "./src/flow/cadence/utility/EmeraldIdentityLilico.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "39e42c67cc851cfb"
+			}
+		},
 		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc"
 	},
 	"networks": {
@@ -201,6 +222,9 @@
 				"NFTCatalog",
 				"ExampleNFT",
 				"FiatToken",
+				"EmeraldIdentityDapper",
+				"EmeraldIdentityLilico",
+				"EmeraldIdentity",
 				"ToucansUtils",
 				"ToucansTokens",
 				"Toucans",
