@@ -24,26 +24,6 @@
 		</a>
 	</td>
 	<td>
-		<Currency
-			amount={project.circulating_supply}
-			currency={project.token_symbol}
-			color="heading"
-			fontSize="var(--font-size-1)"
-		/>
-	</td>
-	<td>
-		{#if project.max_supply}
-			<Currency
-				amount={project.max_supply}
-				currency={project.token_symbol}
-				color="heading"
-				fontSize="var(--font-size-1)"
-			/>
-		{:else}
-			N/A
-		{/if}
-	</td>
-	<td>
 		{#if project.price}
 			<Currency
 				amount={project.price}
@@ -87,6 +67,26 @@
 				color="heading"
 				fontSize="var(--font-size-1)"
 				moneyPrefix={true}
+			/>
+		{:else}
+			N/A
+		{/if}
+	</td>
+	<td>
+		<Currency
+			amount={project.circulating_supply}
+			currency={project.token_symbol}
+			color="heading"
+			fontSize="var(--font-size-1)"
+		/>
+	</td>
+	<td>
+		{#if project.max_supply}
+			<Currency
+				amount={project.max_supply}
+				currency={project.token_symbol}
+				color="heading"
+				fontSize="var(--font-size-1)"
 			/>
 		{:else}
 			N/A
