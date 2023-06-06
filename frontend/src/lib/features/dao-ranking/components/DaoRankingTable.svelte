@@ -1,6 +1,6 @@
 <script type="ts">
-	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
-	import DaoRankingRow from './DaoRankingRow.svelte';
+	import type { DaoRankingData } from '../types/dao-ranking-data.interface';
+	import DaoRankingRow from './atoms/DaoRankingRow.svelte';
 
 	export let projectsData: DaoRankingData[];
 </script>

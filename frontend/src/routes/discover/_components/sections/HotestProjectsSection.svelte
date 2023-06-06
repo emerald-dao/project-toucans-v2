@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
-	import DaoRanking from '$lib/features/dao-ranking/components/DaoRanking.svelte';
-	import TokenRanking from '$lib/features/dao-ranking/components/TokenRanking.svelte';
 	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
+	import TokenRankingTable from '$lib/features/dao-ranking/components/TokenRankingTable.svelte';
+	import DaoRankingTable from '$lib/features/dao-ranking/components/DaoRankingTable.svelte';
 
 	export let daoRankings: DaoRankingData[];
 	export let tokenRankings: DaoRankingData[];
@@ -17,10 +17,10 @@
 				<Tab>Tokens</Tab>
 			</TabList>
 			<TabPanel>
-				<DaoRanking {daoRankings} />
+				<DaoRankingTable projectsData={daoRankings} />
 			</TabPanel>
 			<TabPanel>
-				<TokenRanking {tokenRankings} />
+				<TokenRankingTable projectsData={tokenRankings} />
 			</TabPanel>
 		</Tabs>
 	</div>

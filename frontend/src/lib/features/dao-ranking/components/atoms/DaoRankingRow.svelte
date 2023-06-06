@@ -6,8 +6,6 @@
 
 	export let project: DaoRankingData;
 	export let number: number;
-
-	console.log(project);
 </script>
 
 <tr>
@@ -21,8 +19,22 @@
 			{project.name}
 		</a>
 	</td>
-	<td>${project.total_funding}</td>
-	<td>${project.treasury_value}</td>
+	<td>
+		<Currency
+			amount={project.total_funding}
+			moneyPrefix={true}
+			color="heading"
+			fontSize="var(--font-size-1)"
+		/>
+	</td>
+	<td>
+		<Currency
+			amount={project.treasury_value}
+			moneyPrefix={true}
+			color="heading"
+			fontSize="var(--font-size-1)"
+		/>
+	</td>
 	<td>{project.num_proposals}</td>
 	<td>{project.num_participants}</td>
 	<td class="chart">
@@ -36,7 +48,6 @@
 	</td>
 </tr>
 
-<!-- </a> -->
 <style type="scss">
 	tr {
 		margin-block: var(--spacce-10);
@@ -52,7 +63,6 @@
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
-			// border: 1px red solid;
 			overflow-y: hidden;
 
 			.chart-wrapper {

@@ -12,27 +12,6 @@
 			{#each projects as project}
 				<ProjectCard {project} />
 			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
-			{#each projects as project}
-				<ProjectCard {project} />
-			{/each}
 		</div>
 	</div>
 </section>

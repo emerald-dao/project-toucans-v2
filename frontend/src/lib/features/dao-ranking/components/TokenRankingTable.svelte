@@ -1,7 +1,6 @@
 <script type="ts">
-	import LineChart from '$components/charts/LineChart.svelte';
-	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
-	import TokenRankingRow from './TokenRankingRow.svelte';
+	import type { DaoRankingData } from '../types/dao-ranking-data.interface';
+	import TokenRankingRow from './atoms/TokenRankingRow.svelte';
 
 	export let projectsData: DaoRankingData[];
 </script>
@@ -10,9 +9,9 @@
 	<table class="table table-bordered table-dark table-hover">
 		<thead>
 			<tr>
-				<th>#</th>
-				<th>Symbol</th>
-				<th>DAO Name</th>
+				<th class="left-align">#</th>
+				<th class="left-align">Symbol</th>
+				<th class="left-align">DAO Name</th>
 				<th>Circulating Supply</th>
 				<th>Max Supply</th>
 				<th>Price</th>
@@ -31,10 +30,16 @@
 <style type="scss">
 	.table {
 		width: 100%;
+		border-spacing: 0 var(--space-5);
 
 		th {
 			color: var(--clr-text-main);
 			font-size: var(--font-size-0);
+			text-align: right;
+		}
+
+		.left-align {
+			text-align: left;
 		}
 	}
 </style>

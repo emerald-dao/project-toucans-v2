@@ -37,4 +37,12 @@
 	strong {
 		color: var(--clr-primary-main);
 	}
+
+	h1 {
+		font-size: var(--font-size-7);
+
+		@include mq(small) {
+			font-size: var(--font-size-9);
+		}
+	}
 </style>
