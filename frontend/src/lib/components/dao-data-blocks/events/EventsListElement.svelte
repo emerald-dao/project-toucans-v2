@@ -111,6 +111,7 @@
 				currency={event.data.tokenSymbol}
 				color="heading"
 				fontSize="0.85rem"
+				decimalNumbers={2}
 			/>
 		{:else if event.type === 'NewFundingCycle'}
 			<SeeRoundDetailsModal

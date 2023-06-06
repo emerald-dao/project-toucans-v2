@@ -32,6 +32,7 @@
 		currency={tokenSymbol}
 		color="heading"
 		fontSize="var(--font-size-0)"
+		decimalNumbers={2}
 	/>
 </div>
 
