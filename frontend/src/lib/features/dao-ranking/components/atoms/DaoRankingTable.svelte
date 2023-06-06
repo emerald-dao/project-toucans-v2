@@ -1,5 +1,4 @@
 <script type="ts">
-	import LineChart from '$components/charts/LineChart.svelte';
 	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
 	import DaoRankingRow from './DaoRankingRow.svelte';
 
@@ -10,8 +9,8 @@
 	<table class="table table-bordered table-dark table-hover">
 		<thead>
 			<tr>
-				<th>#</th>
-				<th>Name</th>
+				<th class="left-align">#</th>
+				<th class="left-align">Name</th>
 				<th>Total Funding</th>
 				<th>Treasury Value</th>
 				<th># Proposals</th>
@@ -30,10 +29,16 @@
 <style type="scss">
 	.table {
 		width: 100%;
+		border-spacing: 0 var(--space-5);
 
 		th {
 			color: var(--clr-text-main);
 			font-size: var(--font-size-0);
+			text-align: right;
+		}
+
+		.left-align {
+			text-align: left;
 		}
 	}
 </style>

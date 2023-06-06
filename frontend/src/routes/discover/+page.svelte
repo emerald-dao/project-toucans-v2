@@ -1,79 +1,43 @@
 <script type="ts">
-	import ProjectCard from '$components/cards/ProjectCard.svelte';
-	import DaoRanking from '$lib/features/dao-ranking/components/DaoRanking.svelte';
+	import HeroSection from './_components/sections/HeroSection.svelte';
+	import FeaturedDaoSection from './_components/sections/FeaturedDaoSection.svelte';
 	import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface.js';
+	import HotestProjectsSection from './_components/sections/HotestProjectsSection.svelte';
+	import ProjectsGridSection from './_components/sections/ProjectsGridSection.svelte';
 
 	export let data;
-	console.log(data);
+
 	const projects: DaoDatabaseData[] = data.allProjects as DaoDatabaseData[];
+
 	const DOMInfo = {
-		projectId: 'BallerzFC',
+		projectId: 'TestingDAO',
 		story:
-			'One of the first DAOs created on the platform, Ballerz FC has formed a strong community of Ballerz FC and broader MFL lovers.',
-		labels: ['Community']
+			'One of the first DAOs created on the platform, Ballerz FC has formed a strong community of Ballerz FC and broader MFL lovers.'
 	};
 	const DOM: DaoDatabaseData = projects.find(
 		(project) => project.project_id === DOMInfo.projectId
 	) as DaoDatabaseData;
+
+	const ECDAOInfo = {
+		projectId: 'TestingDAO',
+		story:
+			'Toucans was created by the members of Emerald City DAO, the first DAO built #onFlow. We are a group of passionate builders crafting the future of Flow, the blockchain made for scalable and secure mainstream usage.'
+	};
+	const ECDAO: DaoDatabaseData = projects.find(
+		(project) => project.project_id === ECDAOInfo.projectId
+	) as DaoDatabaseData;
+
+	$: thisMonth = new Date().toLocaleString('default', { month: 'long' });
 </script>
 
+<HeroSection />
 {#if DOM}
-	<section class="container-small border-bottom">
-		<div class="column-12 align-center">
-			<h3>DAO of the Month</h3>
-			<ProjectCard
-				name={DOM.name}
-				projectId={DOM.project_id}
-				description={DOM.description}
-				story={DOMInfo.story}
-				labels={DOMInfo.labels}
-				twitter={DOM.twitter}
-				discord={DOM.discord}
-				website={DOM.website}
-				tokenSymbol={DOM.token_symbol}
-				image={DOM.logo}
-			/>
-		</div>
-	</section>
+	<FeaturedDaoSection project={DOM} story={DOMInfo.story} title={`DAO of ${thisMonth}`} />
 {/if}
-
-<DaoRanking daoRankings={data.daoRankings} tokenRankings={data.tokenRankings} />
-
-<section class="container-medium">
-	<div class="column-12">
-		<h3>Explore Projects</h3>
-		<div class="wrap">
-			{#each projects as project}
-				<ProjectCard
-					name={project.name}
-					image={project.logo}
-					projectId={project.project_id}
-					description={project.description}
-					twitter={project.twitter}
-					discord={project.discord}
-					website={project.website}
-					tokenSymbol={project.token_symbol}
-				/>
-			{/each}
-		</div>
-	</div>
-</section>
-
-<style type="scss">
-	.border-bottom {
-		border-bottom: 1px var(--clr-border-primary) solid;
-	}
-
-	.wrap {
-		display: grid;
-		gap: var(--space-4);
-
-		@include mq(small) {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		@include mq(medium) {
-			grid-template-columns: 1fr 1fr 1fr;
-		}
-	}
-</style>
+<HotestProjectsSection daoRankings={data.daoRankings} tokenRankings={data.tokenRankings} />
+<FeaturedDaoSection
+	project={ECDAO}
+	story={ECDAOInfo.story}
+	title={`Emerald City DAO - the creators of Toucans`}
+/>
+<ProjectsGridSection {projects} />

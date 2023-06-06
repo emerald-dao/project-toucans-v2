@@ -4,19 +4,19 @@ import type { PageLoad } from './$types';
 
 export const ssr = false;
 
-export const load: PageLoad = async ({ params }) => {
-  const allProjects = await getAllToucansProjects();
-  const rankings = (await fetchDaoRankings()).map(ranking => {
-    const { projects, ...rest } = ranking;
-    return { ...rest, ...projects }
-  });
+export const load: PageLoad = async () => {
+	const allProjects = await getAllToucansProjects();
+	const rankings = (await fetchDaoRankings()).map((ranking) => {
+		const { projects, ...rest } = ranking;
+		return { ...rest, ...projects };
+	});
 
-  const daoRankings = rankings.sort((a, b) => b.total_funding - a.total_funding);
-  const tokenRankings = rankings.filter(x => x.price).sort((a, b) => b.price - a.price);
+	const daoRankings = rankings.sort((a, b) => b.total_funding - a.total_funding);
+	const tokenRankings = rankings.filter((x) => x.price).sort((a, b) => b.price - a.price);
 
-  return {
-    allProjects,
-    daoRankings,
-    tokenRankings
-  };
+	return {
+		allProjects,
+		daoRankings,
+		tokenRankings
+	};
 };

@@ -127,6 +127,7 @@
 <style type="scss">
 	.card-primary {
 		height: fit-content;
+		border: none;
 		padding: 0;
 
 		.banner-image {
