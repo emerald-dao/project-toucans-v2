@@ -55,6 +55,20 @@
 			y: {
 				ticks: {
 					display: false
+				},
+				grid: {
+					display: false,
+					drawTicks: false,
+					drawBorder: false,
+					drawOnChartArea: false
+				}
+			},
+			x: {
+				grid: {
+					display: false,
+					drawBorder: false,
+					drawTicks: false,
+					drawOnChartArea: false
 				}
 			}
 		},
