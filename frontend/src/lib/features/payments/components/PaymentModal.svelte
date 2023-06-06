@@ -3,10 +3,9 @@
 	import { paymentActiveStep } from '$lib/features/payments/stores/PaymentSteps';
 	import { paymentSteps } from '$lib/features/payments/stores/PaymentSteps';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Button, getModal, Modal } from '@emerald-dao/component-library';
+	import { Button, getModal } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { user } from '$stores/flow/FlowStore';
-	import { ECurrencies } from '$lib/types/common/enums';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
 	import { ownsNFTFromCatalog } from '$flow/actions';
 
