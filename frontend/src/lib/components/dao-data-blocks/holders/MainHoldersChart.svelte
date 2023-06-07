@@ -6,8 +6,9 @@
 
 	export let daoData: DAOProject;
 
+	const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
 	const mainHolders = Object.entries(daoData.onChainData.balances)
-		.filter((entry) => entry[0] !== daoData.generalInfo.owner)
+		.filter((entry) => entry[0] !== daoData.generalInfo.owner && !lpAddresses.includes(entry[0]))
 		.sort((a, b) => Number(b[1]) - Number(a[1]))
 		.slice(0, 6);
 	const mainHoldersAccounts = mainHolders.map((holder) => holder[0]);

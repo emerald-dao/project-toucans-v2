@@ -63,6 +63,9 @@ export interface DaoBlockchainData {
 	};
 	paymentCurrency: ECurrencies;
 	trading: boolean;
+	lpAddresses: {
+		[key: string]: string;
+	}
 }
 
 export interface TokenInfo {

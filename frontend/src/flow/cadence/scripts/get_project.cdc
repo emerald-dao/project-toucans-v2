@@ -35,7 +35,8 @@ pub struct Info {
   pub let maxSupply: UFix64?
   pub let purchasing: Bool
   pub let requiredNft: NFTData?
-  pub let trading: Bool
+  pub var trading: Bool
+  pub let lpAddresses: {String: Address}
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -76,14 +77,23 @@ pub struct Info {
     }
 
     let projectCurrencyIdentifier: String = info.projectTokenInfo.tokenType.identifier
-    let paymentCurrencyIdentifier: String = info.paymentTokenInfo.tokenType.identifier
+    let usdcCurrencyIdentifier: String = Type<@FiatToken.Vault>().identifier
+    let flowCurrencyIdentifier: String = Type<@FlowToken.Vault>().identifier  
+    self.trading = false  
+    self.lpAddresses = {}
     if let pairAddress: Address = SwapFactory.getPairAddress(
       token0Key: projectCurrencyIdentifier.slice(from: 0, upTo: projectCurrencyIdentifier.length - 6), 
-      token1Key: paymentCurrencyIdentifier.slice(from: 0, upTo: paymentCurrencyIdentifier.length - 6)
+      token1Key: usdcCurrencyIdentifier.slice(from: 0, upTo: usdcCurrencyIdentifier.length - 6)
     ) {
+      self.lpAddresses["USDC"] = pairAddress
       self.trading = true
-    } else {
-      self.trading = false
+    }
+    if let pairAddress: Address = SwapFactory.getPairAddress(
+      token0Key: projectCurrencyIdentifier.slice(from: 0, upTo: projectCurrencyIdentifier.length - 6), 
+      token1Key: flowCurrencyIdentifier.slice(from: 0, upTo: flowCurrencyIdentifier.length - 6)
+    ) {
+      self.lpAddresses["FLOW"] = pairAddress
+      self.trading = true
     }
   }
 }
