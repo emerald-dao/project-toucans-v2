@@ -8,7 +8,7 @@
 
 	$: admin = $user ? daoData.onChainData.signers.includes($user.addr as string) : false;
 
-	let showFinished = false;
+	let showFinished = false || !finishedFilter;
 </script>
 
 <div class="rounds-wrapper">
