@@ -14,8 +14,22 @@ export async function POST({ request }) {
 	console.log('[SAVING]: Step 2');
 
 	try {
-		const executionResult = (await fcl.tx(transactionId).onceSealed()) as TransactionStatusObject;
-		console.log('[SAVING]: Step 2.5', executionResult);
+		const timeout =
+			<T>(cb: (res: (arg: T) => T) => T, interval: number) =>
+			() =>
+				new Promise((resolve) => setTimeout(() => cb(resolve as () => T), interval));
+		const timeoutPromise = timeout<string>((resolve) => resolve('timeout'), 3000);
+
+		const executionResult = (await Promise.race(
+			[timeoutPromise, fcl.tx(transactionId).onceSealed].map((f) => f())
+		)) as TransactionStatusObject | 'timeout';
+
+		if (executionResult === 'timeout') {
+			return json({
+				success: false,
+				error: 'There was an error fetching this transaction. Please check your id'
+			});
+		}
 
 		const [event] = executionResult.events.filter(
 			(event) =>
@@ -53,6 +67,8 @@ export async function POST({ request }) {
 
 		return json({ success: true });
 	} catch (error) {
+		console.log('[SAVING]: Step 4', error);
+
 		return json({ success: false, error });
 	}
 }
