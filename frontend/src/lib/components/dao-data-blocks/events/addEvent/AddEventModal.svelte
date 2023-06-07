@@ -4,7 +4,9 @@
 	import validationSuite from './validation';
 	import saveEvent from './saveEvent';
 
-	let id = '2344324';
+	export let projectId: string;
+
+	$: id = `add-event-modal-${projectId}`;
 
 	let eventId: string;
 
@@ -26,12 +28,23 @@
 
 	let savingEvent = false;
 
+	let savedEvent: boolean | undefined = undefined;
+	let errorMessage: string;
+
 	const handleAddEvent = async () => {
 		savingEvent = true;
 
 		const saveResult = await saveEvent(eventId);
 
-		console.log(saveResult);
+		if (saveResult.success) {
+			savedEvent = true;
+			errorMessage = '';
+
+			eventId = '';
+		} else {
+			savedEvent = false;
+			errorMessage = saveResult.error;
+		}
 
 		savingEvent = false;
 	};
@@ -65,14 +78,31 @@
 				/>
 			</InputWrapper>
 		</div>
-		<Button
-			on:click={handleAddEvent}
-			width="extended"
-			state={savingEvent ? 'loading' : res.isValid() ? 'active' : 'disabled'}
-		>
-			<Icon icon="tabler:plus" />
-			Add event
-		</Button>
+		<div class="row-space-between align-center">
+			<Button
+				on:click={handleAddEvent}
+				width="extended"
+				state={savingEvent ? 'loading' : res.isValid() ? 'active' : 'disabled'}
+			>
+				<Icon icon="tabler:plus" />
+				Add event
+			</Button>
+			{#if savedEvent === true}
+				<span class="success xsmall row-1 align-center">
+					<Icon icon="tabler:check" />
+					Event saved successfully
+				</span>
+			{:else if savedEvent === false}
+				<span class="error xsmall row-1 align-center">
+					<Icon icon="tabler:alert-triangle" />
+					{#if errorMessage.length > 0}
+						{errorMessage}
+					{:else}
+						There was an error saving the event
+					{/if}
+				</span>
+			{/if}
+		</div>
 	</div>
 </Modal>
 
@@ -90,6 +120,14 @@
 
 		.input-wrapper {
 			margin-bottom: var(--space-4);
+		}
+
+		.success {
+			color: var(--clr-primary-main);
+		}
+
+		.error {
+			color: var(--clr-alert-main);
 		}
 	}
 </style>

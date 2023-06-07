@@ -8,6 +8,7 @@
 	import AddEventModal from './addEvent/AddEventModal.svelte';
 
 	export let daoData: DAOProject;
+
 	let currentPage = 1;
 	const pageSize = 6;
 
@@ -66,7 +67,7 @@
 					<Icon icon="tabler:arrow-right" />
 				</Button>
 			</div>
-			<AddEventModal />
+			<AddEventModal projectId={daoData.generalInfo.project_id} />
 		</div>
 	{/if}
 </div>
