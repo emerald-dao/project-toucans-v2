@@ -8,45 +8,67 @@ import * as fcl from '@onflow/fcl';
 const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
 
 export async function POST({ request }) {
-  const data = await request.json();
-  const transactionId = data.transactionId;
+	const data = await request.json();
+	const transactionId = data.transactionId;
 
-  console.log('[SAVING]: Step 2');
+	console.log('[SAVING]: Step 2');
 
-  const executionResult = (await fcl.tx(transactionId).onceSealed()) as TransactionStatusObject;
-  const [event] = executionResult.events.filter((event) =>
-    event.type.includes('Toucans.NewFundingCycle') ||
-    event.type.includes('Toucans.Donate') ||
-    event.type.includes('Toucans.Purchase') ||
-    event.type.includes('Toucans.Mint') ||
-    event.type.includes('Toucans.BatchMint') ||
-    event.type.includes('Toucans.Burn') ||
-    event.type.includes('Toucans.BatchWithdraw') ||
-    event.type.includes('Toucans.Withdraw') ||
-    event.type.includes('Toucans.AddSigner') ||
-    event.type.includes('Toucans.RemoveSigner') ||
-    event.type.includes('Toucans.UpdateThreshold')
-  );
+	try {
+		const timeout =
+			<T>(cb: (res: (arg: T) => T) => T, interval: number) =>
+				() =>
+					new Promise((resolve) => setTimeout(() => cb(resolve as () => T), interval));
+		const timeoutPromise = timeout<string>((resolve) => resolve('timeout'), 3000);
 
-  console.log('[SAVING]: Step 3', event);
+		const executionResult = (await Promise.race(
+			[timeoutPromise, fcl.tx(transactionId).onceSealed].map((f) => f())
+		)) as TransactionStatusObject | 'timeout';
 
-  if (!event) {
-    return json({});
-  }
+		if (executionResult === 'timeout') {
+			return json({
+				success: false,
+				error: 'There was an error fetching this transaction. Please check your id'
+			});
+		}
 
-  const { projectId, amounts, ...rest } = event.data;
+		const [event] = executionResult.events.filter(
+			(event) =>
+				event.type.includes('Toucans.NewFundingCycle') ||
+				event.type.includes('Toucans.Donate') ||
+				event.type.includes('Toucans.Purchase') ||
+				event.type.includes('Toucans.Mint') ||
+				event.type.includes('Toucans.BatchMint') ||
+				event.type.includes('Toucans.Burn') ||
+				event.type.includes('Toucans.BatchWithdraw') ||
+				event.type.includes('Toucans.Withdraw') ||
+				event.type.includes('Toucans.AddSigner') ||
+				event.type.includes('Toucans.RemoveSigner') ||
+				event.type.includes('Toucans.UpdateThreshold')
+		);
 
-  const { error } = await supabase.from('events').insert({
-    project_id: projectId,
-    type: event.type.substring(27),
-    data: rest,
-    transaction_id: transactionId
-  });
+		console.log('[SAVING]: Step 3', event);
 
-  if (error) {
-    console.log('Error adding new event', error);
-    return json({ error });
-  }
+		if (!event) {
+			return json({ success: false, error: 'Transaction does not contain any Toucans events.' });
+		}
 
-  return json({});
+		const { projectId, amounts, ...rest } = event.data;
+
+		const { error } = await supabase.from('events').insert({
+			project_id: projectId,
+			type: event.type.substring(27),
+			data: rest,
+			transaction_id: transactionId
+		});
+
+		if (error) {
+			return json({ success: false, error: 'This transaction has already been added.' });
+		}
+
+		return json({ success: true });
+	} catch (error) {
+		console.log('[SAVING]: Step 4', error);
+
+		return json({ success: false, error });
+	}
 }
