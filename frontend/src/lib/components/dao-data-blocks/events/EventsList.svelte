@@ -5,6 +5,7 @@
 	import EventsListElement from './EventsListElement.svelte';
 	import { getUsersFromEvents } from './functions/getUsersFromEvents';
 	import Icon from '@iconify/svelte';
+	import AddEventModal from './addEvent/AddEventModal.svelte';
 
 	export let daoData: DAOProject;
 	let currentPage = 1;
@@ -65,26 +66,26 @@
 		</div>
 	{/if}
 	{#if pagesNumbers.length > 1}
-		<div class="pagination row-4">
-			<Button
-				on:click={prevPage}
-				state={currentPage === 1 ? 'disabled' : 'active'}
-				type="transparent"
-				color="neutral"
-			>
-				<Icon icon="tabler:arrow-left" />
-			</Button>
-			<Button
-				on:click={nextPage}
-				state={pageEnd >= allActivity.length ? 'disabled' : 'active'}
-				type="transparent"
-				color="neutral"
-			>
-				<Icon icon="tabler:arrow-right" />
-			</Button>
-			<Button on:click={() => null} type="transparent" color="neutral">
-				<Icon icon="tabler:plus" />
-			</Button>
+		<div class="pagination row-space-between">
+			<div class="row-4">
+				<Button
+					on:click={prevPage}
+					state={currentPage === 1 ? 'disabled' : 'active'}
+					type="transparent"
+					color="neutral"
+				>
+					<Icon icon="tabler:arrow-left" />
+				</Button>
+				<Button
+					on:click={nextPage}
+					state={pageEnd >= allActivity.length ? 'disabled' : 'active'}
+					type="transparent"
+					color="neutral"
+				>
+					<Icon icon="tabler:arrow-right" />
+				</Button>
+			</div>
+			<AddEventModal />
 		</div>
 	{/if}
 </div>
@@ -106,5 +107,9 @@
 		em {
 			color: var(--clr-text-off);
 		}
+	}
+
+	.pagination {
+		margin-top: var(--space-3);
 	}
 </style>
