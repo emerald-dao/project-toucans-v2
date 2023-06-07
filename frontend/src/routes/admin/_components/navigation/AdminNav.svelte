@@ -1,4 +1,5 @@
 <script type="ts">
+	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { page } from '$app/stores';
 	import { Currency, Label, AlertNumber } from '@emerald-dao/component-library';
@@ -7,7 +8,6 @@
 	import type { Writable } from 'svelte/store';
 	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
-	import dappInfo from '$lib/config/config';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -19,11 +19,19 @@
 
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
+	let copied = false;
 	const copyToClipboard = () => {
 		const app = new CopyToClipboard({
 			target: document.getElementById('clipboard') as Element,
 			props: { name: `${$page.url.origin}/p/${activeDaoData.generalInfo.project_id}` }
 		});
+
+		copied = true;
+
+		setTimeout(() => {
+			copied = false;
+		}, 2000);
+
 		app.$destroy();
 	};
 </script>
@@ -40,7 +48,15 @@
 							<span class="row-1 align-center">
 								{activeDaoData.generalInfo.project_id}
 							</span>
-							<Icon icon="tabler:copy" />
+							{#if copied}
+								<div in:fly|local={{ x: 10, duration: 300 }} class="row align-center">
+									<Icon icon="tabler:check" color="var(--clr-primary-main)" />
+								</div>
+							{:else}
+								<div in:fly|local={{ x: 10, duration: 300 }} class="row align-center">
+									<Icon icon="tabler:copy" />
+								</div>
+							{/if}
 						</div>
 					</Label>
 				</div>
