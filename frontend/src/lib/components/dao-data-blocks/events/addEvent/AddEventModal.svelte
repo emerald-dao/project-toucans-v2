@@ -14,7 +14,7 @@
 		getModal(id).open();
 
 		setTimeout(() => {
-			const input = document.getElementById('event-id') as HTMLInputElement;
+			const input = document.getElementById('transaction-id') as HTMLInputElement;
 
 			input.focus();
 		}, 100);
@@ -62,15 +62,15 @@
 		</p>
 		<div class="input-wrapper">
 			<InputWrapper
-				name="event-id"
-				isValid={res.isValid('event-id')}
-				errors={res.getErrors('event-id')}
-				label="Event ID *"
+				name="transaction-id"
+				isValid={res.isValid('transaction-id')}
+				errors={res.getErrors('transaction-id')}
+				label="Transaction ID *"
 			>
 				<input
 					type="text"
-					id="event-id"
-					name="event-id"
+					id="transaction-id"
+					name="transaction-id"
 					placeholder="2c1ea8618b8cf53d9af25e32a22d433981ada8113ce96cb2a1ec35ce3361fc47"
 					maxlength="64"
 					bind:value={eventId}

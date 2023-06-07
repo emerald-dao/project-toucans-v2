@@ -16,8 +16,8 @@ export async function POST({ request }) {
 	try {
 		const timeout =
 			<T>(cb: (res: (arg: T) => T) => T, interval: number) =>
-			() =>
-				new Promise((resolve) => setTimeout(() => cb(resolve as () => T), interval));
+				() =>
+					new Promise((resolve) => setTimeout(() => cb(resolve as () => T), interval));
 		const timeoutPromise = timeout<string>((resolve) => resolve('timeout'), 3000);
 
 		const executionResult = (await Promise.race(
@@ -49,7 +49,7 @@ export async function POST({ request }) {
 		console.log('[SAVING]: Step 3', event);
 
 		if (!event) {
-			return json({ success: false, error: 'Event does not exist.' });
+			return json({ success: false, error: 'Transaction does not contain any Toucans events.' });
 		}
 
 		const { projectId, amounts, ...rest } = event.data;
