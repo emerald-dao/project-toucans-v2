@@ -13,10 +13,7 @@ async function saveEvent(transactionId: string) {
 
 	console.log('response', response);
 
-	return {
-		state: 'success',
-		errorMessage: response
-	};
+	return response;
 }
 
 export default saveEvent;

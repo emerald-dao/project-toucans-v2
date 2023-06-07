@@ -32,7 +32,7 @@ export async function POST({ request }) {
 	console.log('[SAVING]: Step 3', event);
 
 	if (!event) {
-		return json({});
+		return json({ success: false, error: 'Event does not exist.' });
 	}
 
 	const { projectId, amounts, ...rest } = event.data;
@@ -45,9 +45,8 @@ export async function POST({ request }) {
 	});
 
 	if (error) {
-		console.log('Error adding new event', error);
-		return json({ error });
+		return json({ success: false, error: 'This transaction has already been added.' });
 	}
 
-	return json({});
+	return json({ success: true });
 }
