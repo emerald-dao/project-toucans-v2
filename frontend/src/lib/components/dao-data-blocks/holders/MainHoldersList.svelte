@@ -5,9 +5,10 @@
 
 	export let daoData: DAOProject;
 
+	const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
 	$: holdersEntries = Object.entries(daoData.onChainData.balances);
 	$: mainHoldersEntries = holdersEntries
-		.filter((entry) => entry[0] !== daoData.generalInfo.owner)
+		.filter((entry) => entry[0] !== daoData.generalInfo.owner && !lpAddresses.includes(entry[0]))
 		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
 		.slice(0, 10);
 
