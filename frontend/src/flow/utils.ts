@@ -27,6 +27,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"../utility/SwapError.cdc"', addresses.SwapUtils)
 			.replace('"../utility/SwapConfig.cdc"', addresses.SwapUtils)
 			.replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
+			.replace('"../utility/EmeraldIdentity.cdc"', addresses.EmeraldIdentity)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)

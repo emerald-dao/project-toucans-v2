@@ -54,11 +54,15 @@
 	};
 
 	const active = async () => {
-		if (paymentType === 'donate' || !daoData.onChainData.requiredNft || !$user.loggedIn) {
+		if (paymentType === 'donate' || !daoData.onChainData.requiredNft) {
 			return true;
 		}
 		if (!daoData.onChainData.purchasing) {
 			title = 'The project owner has turned funding off.';
+			return false;
+		}
+		if (!$user.loggedIn) {
+			title = 'Please log in to fund.';
 			return false;
 		}
 
@@ -72,6 +76,8 @@
 		}
 		return true;
 	};
+
+	$: $user.loggedIn && active();
 </script>
 
 {#await active() then active}

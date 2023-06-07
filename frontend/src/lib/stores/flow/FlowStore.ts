@@ -73,6 +73,11 @@ const contractData = {
 		emulator: '0xf8d6e0586b0a20c7',
 		testnet: '0xcbed4c301441ded2',
 		mainnet: '0xb063c16cac85dbd1'
+	},
+	EmeraldIdentity: {
+		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '',
+		mainnet: '0x39e42c67cc851cfb'
 	}
 };
 
@@ -99,5 +104,6 @@ export const addresses: {
 	FiatToken: contractData.FiatToken[network],
 	NFTCatalog: contractData.NFTCatalog[network],
 	SwapUtils: contractData.SwapUtils[network],
-	SwapFactory: contractData.SwapFactory[network]
+	SwapFactory: contractData.SwapFactory[network],
+	EmeraldIdentity: contractData.EmeraldIdentity[network]
 };
