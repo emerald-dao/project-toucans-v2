@@ -18,7 +18,7 @@ pub contract ToucansUtils {
       }
       assert(addresses.contains(user), message: "Should always be true. Just making sure so the user doesn't get punished accidentally ;)")
       for address in addresses {
-        if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(user).getCapability(publicPath).borrow<&{NonFungibleToken.CollectionPublic}>() {
+        if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).getCapability(publicPath).borrow<&{NonFungibleToken.CollectionPublic}>() {
           let identifier: String = collection.getType().identifier
           if identifier == constructedIdentifier && collection.getIDs().length > 0 {
             return true
