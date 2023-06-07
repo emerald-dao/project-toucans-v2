@@ -19,25 +19,6 @@
 		currentPage -= 1;
 	};
 
-	async function saveEvent(transactionId: string) {
-		const res = await fetch('/api/save-event-data', {
-			method: 'POST',
-			body: JSON.stringify({
-				transactionId
-			}),
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
-
-		const response = await res.json();
-
-		return {
-			state: 'success',
-			errorMessage: response
-		};
-	}
-
 	$: allActivity = daoData.events
 		? daoData.events.sort((a, b) =>
 				a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0

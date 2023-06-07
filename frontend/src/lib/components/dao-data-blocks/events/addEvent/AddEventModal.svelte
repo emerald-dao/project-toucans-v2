@@ -2,6 +2,7 @@
 	import { Button, InputWrapper, Modal, getModal } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import validationSuite from './validation';
+	import saveEvent from './saveEvent';
 
 	let id = '2344324';
 
@@ -22,6 +23,18 @@
 	};
 
 	let res = validationSuite.get();
+
+	let savingEvent = false;
+
+	const handleAddEvent = async () => {
+		savingEvent = true;
+
+		const saveResult = await saveEvent(eventId);
+
+		console.log(saveResult);
+
+		savingEvent = false;
+	};
 </script>
 
 <Button on:click={handleOpenModal} type="ghost" color="neutral" size="x-small">
@@ -53,9 +66,9 @@
 			</InputWrapper>
 		</div>
 		<Button
-			on:click={() => alert('submit event')}
+			on:click={handleAddEvent}
 			width="extended"
-			state={res.isValid() ? 'active' : 'disabled'}
+			state={savingEvent ? 'loading' : res.isValid() ? 'active' : 'disabled'}
 		>
 			<Icon icon="tabler:plus" />
 			Add event
