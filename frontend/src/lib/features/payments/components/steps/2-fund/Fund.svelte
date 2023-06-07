@@ -63,6 +63,7 @@
 						amount={$paymentData.issuanceRate}
 						color="heading"
 						fontSize="var(--font-size-1)"
+						decimalNumbers={2}
 					/>
 				</div>
 				<span class="small">minted per</span>
@@ -86,6 +87,7 @@
 							$paymentData.issuanceRate *
 							(1 - $paymentData.reserveRate)}
 						color="heading"
+						decimalNumbers={2}
 					/>
 					<span class="issuance xsmall"
 						>{`${100 - $paymentData.reserveRate * 100}% of the minted tokens after tax`}</span
@@ -101,6 +103,7 @@
 								$paymentData.issuanceRate *
 								$paymentData.reserveRate}
 							color="heading"
+							decimalNumbers={2}
 						/>
 						<span class="issuance xsmall"
 							>{`${$paymentData.reserveRate * 100}% of the minted tokens after tax`}</span

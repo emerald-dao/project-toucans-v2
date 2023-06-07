@@ -118,6 +118,7 @@
 					currency={projectToken}
 					fontSize="var(--font-size-0)"
 					color="heading"
+					decimalNumbers={2}
 				/>
 			</div>
 		</div>
