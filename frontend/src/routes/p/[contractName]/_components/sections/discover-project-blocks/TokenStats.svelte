@@ -11,7 +11,6 @@
 		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
 		daoData.vaultSetup = true;
 	}
-	console.log(daoData.userBalance);
 
 	interface TokenData {
 		numHolders: number;
@@ -21,11 +20,12 @@
 	}
 
 	async function calculateTokenData(): Promise<TokenData> {
+		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
 		let numHolders, totalHolding, numFunders, totalFunding;
 		numHolders = totalHolding = numFunders = totalFunding = 0;
 
 		for (const holder in daoData.onChainData.balances) {
-			if (holder === daoData.generalInfo.owner) continue;
+			if (holder === daoData.generalInfo.owner || lpAddresses.includes(holder)) continue;
 			numHolders++;
 			totalHolding += Number(daoData.onChainData.balances[holder]);
 		}
