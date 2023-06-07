@@ -12,7 +12,7 @@
 	</div> -->
 	<div class="row-5">
 		<div class="currency-card card column-3">
-			<span class="xsmall"> Circulating Supply </span>
+			<span class="xsmall"> Total Supply </span>
 			<Currency
 				amount={Number(daoData.onChainData.totalSupply)}
 				currency={daoData.generalInfo.token_symbol}

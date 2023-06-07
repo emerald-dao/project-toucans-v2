@@ -16,7 +16,7 @@
 				<th>Market Cap</th>
 				<th>24h Volume</th>
 				<th>TVL</th>
-				<th>Circulating Supply</th>
+				<th>Total Supply</th>
 				<th>Max Supply</th>
 				<th># Holders</th>
 			</tr>

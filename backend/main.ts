@@ -40,7 +40,7 @@ async function gatherTrendingProjects() {
       project_id,
       week_funding: 0,
       total_funding: 0,
-      circulating_supply: 0,
+      total_supply: 0,
       payment_currency: '',
       num_holders: 0,
       max_supply: null,
@@ -94,7 +94,7 @@ async function gatherTrendingProjects() {
   }
   for (const projectId in projectBlockchainData) {
     const { paymentCurrency, maxSupply, holders, funders, numProposals, totalSupply, pairInfo, treasuryBalances, totalFunding } = projectBlockchainData[projectId];
-    projects[projectId].circulating_supply = totalSupply;
+    projects[projectId].total_supply = totalSupply;
     projects[projectId].max_supply = maxSupply;
     projects[projectId].total_funding = totalFunding;
     projects[projectId].payment_currency = paymentCurrency;

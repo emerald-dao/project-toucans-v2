@@ -39,7 +39,7 @@
 	<td>
 		{#if project.price}
 			<Currency
-				amount={Math.round(project.price * project.circulating_supply * 100) / 100}
+				amount={Math.round(project.price * project.total_supply * 100) / 100}
 				color="heading"
 				fontSize="var(--font-size-1)"
 				moneyPrefix={true}
@@ -74,7 +74,7 @@
 	</td>
 	<td>
 		<Currency
-			amount={project.circulating_supply}
+			amount={project.total_supply}
 			currency={project.token_symbol}
 			color="heading"
 			fontSize="var(--font-size-1)"

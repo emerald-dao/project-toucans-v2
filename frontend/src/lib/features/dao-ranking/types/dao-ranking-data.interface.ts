@@ -4,7 +4,7 @@ export interface DaoRankingData {
 	price: number | null;
 	week_funding: number;
 	total_funding: number;
-	circulating_supply: number;
+	total_supply: number;
 	payment_currency: string;
 	num_holders: number;
 	num_proposals: number;

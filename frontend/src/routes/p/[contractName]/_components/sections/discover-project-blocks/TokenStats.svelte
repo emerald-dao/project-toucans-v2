@@ -90,7 +90,7 @@
 			/>
 		{/if}
 		<DataCard
-			title="Circulating Supply"
+			title="Total Supply"
 			data={Number(daoData.onChainData.totalSupply)}
 			isCurrency
 			currencyName={daoData.generalInfo.token_symbol}
