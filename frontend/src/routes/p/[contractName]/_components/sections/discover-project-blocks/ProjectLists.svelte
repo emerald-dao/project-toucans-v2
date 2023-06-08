@@ -4,6 +4,7 @@
 	import { MainFundersList, EventsList, RoundsList } from '$components/dao-data-blocks';
 	import SignersListElement from '$lib/features/multisig-manager/components/atoms/signers-list-element/SignersListElement.svelte';
 	import PendingActionsList from '$components/dao-data-blocks/pending-actions/PendingActionsList.svelte';
+	import VotesList from '$components/dao-data-blocks/votes/VotesList.svelte';
 
 	export let daoData: DAOProject;
 
@@ -27,6 +28,7 @@
 			{#if daoData.onChainData.actions.length > 0}
 				<Tab>Pending Actions</Tab>
 			{/if}
+			<Tab>Votes</Tab>
 		</TabList>
 		<TabPanel>
 			<EventsList {daoData} />
@@ -51,6 +53,9 @@
 				<PendingActionsList {daoData} showDetail={false} />
 			</TabPanel>
 		{/if}
+		<TabPanel>
+			<VotesList {daoData} />
+		</TabPanel>
 	</Tabs>
 </div>
 

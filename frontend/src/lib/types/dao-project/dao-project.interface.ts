@@ -10,6 +10,7 @@ import type { ECurrencies } from '../common/enums';
 export interface DAOProject {
 	generalInfo: DaoDatabaseData;
 	onChainData: DaoBlockchainData;
+	votes: Vote[];
 	events: DaoEvent[];
 	userBalance?: number;
 	vaultSetup: boolean;
@@ -88,6 +89,15 @@ export interface ActionData {
 	votes: {
 		[voter: string]: boolean;
 	};
+}
+
+export interface Vote {
+	title: string;
+	description: string;
+	for_total: number;
+	against_total: number;
+	created_at: string;
+	pending: boolean;
 }
 
 export interface RequiredNft {

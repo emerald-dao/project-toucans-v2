@@ -94,7 +94,7 @@
 		{#if isSigner}
 			<div class="row-2 align-center">
 				{#if signed && $user.addr && action.votes[$user.addr] === false}
-					<Label size="xx-small" hasBorder={false}>
+					<Label size="xx-small" hasBorder={false} color="alert">
 						Voted
 						<Icon icon="tabler:x" />
 					</Label>
