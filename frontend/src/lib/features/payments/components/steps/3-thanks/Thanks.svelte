@@ -58,7 +58,7 @@
 					}%20with%20${$paymentData.amount}%20$${
 						$paymentData.currency
 					}%20on%20Toucans%20and%20got%20${
-						$paymentData.amount * 0.95 * $paymentData.issuanceRate * $paymentData.reserveRate
+						$paymentData.amount * 0.95 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
 					}%20$${$paymentData.tokenName}: https://toucans.ecdao.org/p/${
 						daoData.generalInfo.project_id
 					}`}
