@@ -21,7 +21,6 @@ pub struct Info {
   pub let currentFundingCycle: Toucans.FundingCycle?
   pub let totalFunding: UFix64
   pub let editDelay: UFix64
-  pub let extra: {String: AnyStruct}
   pub let fundingCycles: [Toucans.FundingCycle]
   pub let totalSupply: UFix64
   pub let overflowBalance: UFix64
@@ -37,6 +36,7 @@ pub struct Info {
   pub let requiredNft: NFTData?
   pub var trading: Bool
   pub let lpAddresses: {String: Address}
+  pub let completedActionIds: {UInt64: Bool}
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -44,7 +44,6 @@ pub struct Info {
     self.currentFundingCycle = info.getCurrentFundingCycle()
     self.totalFunding = info.totalFunding
     self.editDelay = info.editDelay
-    self.extra = info.getExtra()
     self.fundingCycles = info.getFundingCycles()
     self.totalSupply = ExampleToken.totalSupply
     self.balances = ExampleToken.getBalances()
@@ -95,6 +94,7 @@ pub struct Info {
       self.lpAddresses["FLOW"] = pairAddress
       self.trading = true
     }
+    self.completedActionIds = info.getCompletedActionIds()
   }
 }
 

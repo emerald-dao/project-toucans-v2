@@ -1,15 +1,33 @@
 <script type="ts">
+	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import VotesListElement from './VotesListElement.svelte';
 
 	export let daoData: DAOProject;
+
+	function getVoteStatus(vote: Vote) {
+		if (vote.type === 'Toucans Action') {
+			if (daoData.onChainData.completedActionIds[vote.toucans_action_id] === true) {
+				return 'ACCEPTED';
+			} else if (daoData.onChainData.completedActionIds[vote.toucans_action_id] === false) {
+				return 'DECLINED';
+			}
+			return 'PENDING';
+		}
+		if (vote.pending) {
+			return 'PENDING';
+		} else if (vote.for_total >= vote.against_total) {
+			return 'ACCEPTED';
+		}
+		return 'DECLINED';
+	}
 </script>
 
 <div class="align-start">
 	{#if daoData.votes.length > 0}
 		{#each daoData.votes as vote, i}
 			<div class="activity-wrapper">
-				<VotesListElement {vote} {i} />
+				<VotesListElement {vote} {i} status={getVoteStatus(vote)} />
 			</div>
 		{/each}
 	{:else}

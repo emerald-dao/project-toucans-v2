@@ -232,6 +232,7 @@ pub contract Toucans {
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
     pub fun getExtra(): {String: AnyStruct}
+    pub fun getCompletedActionIds(): {UInt64: Bool}
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
     pub fun borrowManagerPublic(): &Manager{ManagerPublic}
@@ -350,6 +351,7 @@ pub contract Toucans {
       assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
       
       if actionState == ActionState.ACCEPTED {
+        self.markCompletedAction(actionUUID: actionUUID, mark: true)
         let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
         let action: {ToucansActions.Action} = actionWrapper.action
         switch action.getType() {
@@ -386,6 +388,9 @@ pub contract Toucans {
             self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
             emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
         }
+      }
+      if actionState == ActionState.DECLINED {
+        self.markCompletedAction(actionUUID: actionUUID, mark: false)
       }
 
       // Will delete the action and make sure everything is good to go
@@ -709,6 +714,15 @@ pub contract Toucans {
       self.depositToTreasury(vault: <- vault)
     }
 
+    access(self) fun markCompletedAction(actionUUID: UInt64, mark: Bool) {
+      if self.extra["completedActionIds"] == nil {
+        let completedActionIds: {UInt64: Bool} = {}
+        self.extra["completedActionIds"] = completedActionIds
+      }
+
+      (self.extra["completedActionIds"]! as! {UInt64: Bool}).insert(key: actionUUID, mark)
+    }
+
 
     //   __  __ _       _   _             
     //  |  \/  (_)     | | (_)            
@@ -897,6 +911,14 @@ pub contract Toucans {
       return self.extra
     }
 
+    pub fun getCompletedActionIds(): {UInt64: Bool} {
+      if self.extra["completedActionIds"] == nil {
+        return {}
+      }
+
+      return self.extra["completedActionIds"]! as! {UInt64: Bool}
+    }
+
     pub fun getFunders(): {Address: UFix64} {
       return self.funders
     }
@@ -948,6 +970,8 @@ pub contract Toucans {
       self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
+      let completedActionIds: {UInt64: Bool} = {}
+      self.extra["completedActionIds"] = completedActionIds
       self.fundingCycles = []
       self.minter <- minter
       self.funders = {}
