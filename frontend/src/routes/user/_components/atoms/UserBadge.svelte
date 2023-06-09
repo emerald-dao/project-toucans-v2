@@ -5,7 +5,7 @@
 
 <div class="column-1 align-center main-wrapper">
 	<img
-		src="/new-avatar.png"
+		src="/avatar-2.png"
 		alt="Badge"
 		on:mouseenter={() => (hover = true)}
 		on:mouseleave={() => (hover = false)}

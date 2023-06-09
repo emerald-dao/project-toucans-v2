@@ -25,7 +25,7 @@
 <style lang="scss">
 	section {
 		display: grid;
-		grid-template-columns: 2.2fr 3fr;
+		grid-template-columns: 3fr 5fr;
 		flex: 1;
 		gap: var(--space-18);
 	}

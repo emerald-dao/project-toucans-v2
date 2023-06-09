@@ -4,43 +4,41 @@
 	import { mockDaoData } from './mockdata';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import { Currency } from '@emerald-dao/component-library';
-	import UserBadge from './UserBadge.svelte';
 
 	const holdingDaos = ['Emerald City', 'Toucans', 'Ballerz'];
 	const holdingAmounts = [100, 200, 300];
 </script>
 
-<div class="column-12 align-center">
+<div class="column-space-between align-center">
 	<div class="top-section-wrapper">
-		<div class="column-space-between column-5">
-			<div class="column-10 balance-wrapper">
-				<div class="column-3 ">
-					<h4>Total Balance</h4>
-					<Currency
-						amount={709230}
-						moneyPrefix={true}
-						color="heading"
-						fontSize="var(--font-size-7)"
-					/>
-				</div>
-				<div class="column-3">
+		<div class="column-10 align-end">
+			<div class="column-3 align-end">
+				<h4>Total Balance</h4>
+				<Currency
+					amount={709230}
+					moneyPrefix={true}
+					color="heading"
+					fontSize="var(--font-size-7)"
+				/>
+			</div>
+			<div class="column-6">
+				<div class="column-3 align-end">
 					<h4>Total Funded</h4>
 					<Currency
 						amount={895345}
 						moneyPrefix={true}
 						color="heading"
-						fontSize="var(--font-size-7)"
+						fontSize="var(--font-size-5)"
 					/>
 				</div>
-				<div class="column-2">
-					<h4>Badges</h4>
-					<div class="badges-wrapper">
-						<UserBadge />
-						<UserBadge />
-						<UserBadge />
-						<UserBadge />
-						<UserBadge />
-					</div>
+				<div class="column-3 align-end">
+					<h4>Total Donated</h4>
+					<Currency
+						amount={895345}
+						moneyPrefix={true}
+						color="heading"
+						fontSize="var(--font-size-5)"
+					/>
 				</div>
 			</div>
 		</div>
@@ -54,14 +52,14 @@
 			<Icon icon="tabler:activity" />
 			Recent transactions
 		</h4>
-		<EventsList daoData={mockDaoData} pageSize={4} />
+		<EventsList daoData={mockDaoData} pageSize={4} addEventButton={false} />
 	</div>
 </div>
 
 <style lang="scss">
 	h4 {
 		font-size: var(--font-size-2);
-		color: var(--clr-text-main);
+		color: var(--clr-text-off);
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -70,44 +68,22 @@
 
 	.top-section-wrapper {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: var(--space-11);
-
-		.balance-wrapper {
-			margin-bottom: var(--space-4);
-		}
-
-		.badges-wrapper {
-			display: flex;
-			flex-direction: row;
-			gap: var(--space-3);
-			flex-wrap: wrap;
-		}
+		grid-template-columns: 2fr 3fr;
+		gap: var(--space-12);
 
 		.card {
-			padding: var(--space-6);
+			padding: var(--space-7);
 			display: flex;
 			align-items: center;
 			flex: 1;
 		}
 
 		.chart-wrapper {
-			max-width: 19rem;
-			background-color: var(--clr-background-secondary);
-			border: none;
+			max-width: 21rem;
 		}
 	}
 
 	.transactions-wrapper {
 		width: 100%;
-
-		span {
-			border-bottom: 0.5px solid var(--clr-border-primary);
-			padding-bottom: var(--space-2);
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			gap: var(--space-1);
-		}
 	}
 </style>

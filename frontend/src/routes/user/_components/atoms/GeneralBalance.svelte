@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Currency } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 
@@ -59,18 +60,13 @@
 </div>
 
 <style lang="scss">
-	h4 {
-		font-size: var(--font-size-2);
-		color: var(--clr-text-off);
-	}
-
 	.balances-wrapper {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
 
 		.balance-wrapper {
-			background-color: var(--clr-surface-primary);
+			background-color: var(--clr-background-secondary);
 			padding: var(--space-2) var(--space-4);
 			border-radius: var(--radius-2);
 			transition: 0.4s;
