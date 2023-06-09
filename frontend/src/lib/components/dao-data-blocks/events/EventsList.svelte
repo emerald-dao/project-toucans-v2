@@ -8,9 +8,9 @@
 	import AddEventModal from './addEvent/AddEventModal.svelte';
 
 	export let daoData: DAOProject;
+	export let pageSize = 6;
 
 	let currentPage = 1;
-	const pageSize = 6;
 
 	const nextPage = () => {
 		currentPage += 1;
