@@ -1,13 +1,15 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
 	import { Label, Modal, getModal } from '@emerald-dao/component-library';
-	import type { Vote } from '$lib/types/dao-project/dao-project.interface';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
 
 	export let vote: Vote;
 	export let i: number;
 	export let status: 'PENDING' | 'ACCEPTED' | 'DECLINED';
+
+	const total = vote.for_total + vote.against_total;
 </script>
 
 <div class="main-wrapper">
@@ -33,14 +35,18 @@
 			<span class="special-message-heading">Description</span>
 			<p class="special-message">{vote.description}</p>
 		</Modal>
-		<Label size="xx-small" hasBorder={false}>
-			{vote.for_total}
-			<Icon icon="tabler:check" />
-		</Label>
-		<Label size="xx-small" hasBorder={false} color="alert">
-			{vote.against_total}
-			<Icon icon="tabler:x" />
-		</Label>
+		{#if total}
+			<Label size="xx-small" hasBorder={false}>
+				%{Math.round((vote.for_total / total) * 100)}
+				<Icon icon="tabler:check" />
+			</Label>
+			<Label size="xx-small" hasBorder={false} color="alert">
+				%{Math.round((vote.against_total / total) * 100)}
+				<Icon icon="tabler:x" />
+			</Label>
+		{:else}
+			<span class="xsmall">No votes yet</span>
+		{/if}
 	</div>
 </div>
 

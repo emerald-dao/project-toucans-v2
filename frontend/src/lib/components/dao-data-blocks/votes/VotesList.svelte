@@ -6,6 +6,7 @@
 	export let daoData: DAOProject;
 
 	function getVoteStatus(vote: Vote) {
+		console.log(vote);
 		if (vote.type === 'Toucans Action') {
 			if (daoData.onChainData.completedActionIds[vote.toucans_action_id] === true) {
 				return 'ACCEPTED';

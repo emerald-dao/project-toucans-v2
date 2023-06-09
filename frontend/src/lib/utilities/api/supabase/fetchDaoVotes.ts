@@ -8,7 +8,9 @@ export const fetchDaoVotes = async (projectId: string) => {
     title,
     description,
     created_at,
-    pending
+    pending,
+    type,
+    toucans_action_id
   `)
     .eq('contract_name', projectId)
     .order('created_at', { ascending: false });
