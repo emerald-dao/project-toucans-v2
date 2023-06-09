@@ -37,12 +37,12 @@
 		</Modal>
 		{#if total}
 			<Label size="xx-small" hasBorder={false}>
-				%{Math.round((vote.for_total / total) * 100)}
 				<Icon icon="tabler:check" />
+				{Math.round((vote.for_total / total) * 100)}%
 			</Label>
 			<Label size="xx-small" hasBorder={false} color="alert">
-				%{Math.round((vote.against_total / total) * 100)}
 				<Icon icon="tabler:x" />
+				{Math.round((vote.against_total / total) * 100)}%
 			</Label>
 		{:else}
 			<span class="xsmall">No votes yet</span>
