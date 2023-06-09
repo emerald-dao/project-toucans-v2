@@ -5,12 +5,15 @@
 	import { onMount } from 'svelte';
 	import { setPieChartColors } from './setChartColors';
 	import { hyphenateAndLowerCase } from '$lib/utilities/formatStrings';
+	import { browser } from '$app/environment';
 
 	export let title: string;
 	export let chartData: number[];
 	export let labels: string[];
 
-	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+	if (browser) {
+		ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+	}
 
 	let chart: ChartJS | undefined;
 

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Currency } from '@emerald-dao/component-library';
-	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 

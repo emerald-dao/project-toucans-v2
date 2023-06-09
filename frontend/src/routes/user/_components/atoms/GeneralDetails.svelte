@@ -22,7 +22,7 @@
 				/>
 			</div>
 			<div class="column-6">
-				<div class="column-3 align-end">
+				<div class="column-2 align-end">
 					<h4>Total Funded</h4>
 					<Currency
 						amount={895345}
@@ -31,7 +31,7 @@
 						fontSize="var(--font-size-5)"
 					/>
 				</div>
-				<div class="column-3 align-end">
+				<div class="column-2 align-end">
 					<h4>Total Donated</h4>
 					<Currency
 						amount={895345}
