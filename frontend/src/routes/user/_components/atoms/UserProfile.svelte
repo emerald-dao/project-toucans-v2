@@ -2,8 +2,8 @@
 	import Icon from '@iconify/svelte';
 </script>
 
-<div class="column-7">
-	<div class="row-5 align-center">
+<div class="column-11">
+	<div class="row-6 align-center">
 		<img src="/new-avatar.png" alt="User avatar" class="avatar" />
 		<div class="column-2">
 			<h2 class="name">CrazyAnonToucan</h2>

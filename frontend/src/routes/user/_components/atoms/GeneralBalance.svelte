@@ -35,16 +35,6 @@
 </script>
 
 <div class="column-10">
-	<div class="row-9">
-		<div class="column-3">
-			<h4>Total Balance</h4>
-			<Currency amount={7230} moneyPrefix={true} color="heading" fontSize="var(--font-size-7)" />
-		</div>
-		<div class="column-3">
-			<h4>Total Funded</h4>
-			<Currency amount={8955} moneyPrefix={true} color="heading" fontSize="var(--font-size-7)" />
-		</div>
-	</div>
 	<div class="balances-wrapper">
 		{#each BALANCES as balance, i}
 			<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
