@@ -7,13 +7,18 @@
 
 	export let vote: Vote;
 	export let i: number;
+	export let status: 'PENDING' | 'ACCEPTED' | 'DECLINED';
 </script>
 
 <div class="main-wrapper">
 	<div class="row-3 align-center">
 		<IconCircle
-			icon={vote.pending ? 'tabler:clock' : 'tabler:check'}
-			color={vote.pending ? 'tertiary' : 'neutral'}
+			icon={status === 'PENDING'
+				? 'tabler:clock'
+				: status === 'ACCEPTED'
+				? 'tabler:check'
+				: 'tabler:x'}
+			color={status === 'PENDING' ? 'tertiary' : 'neutral'}
 		/>
 		<span class="vote-name">{vote.title}</span>
 		<div class="column info-wrapper timestamp">
