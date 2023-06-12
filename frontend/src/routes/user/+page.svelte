@@ -11,22 +11,24 @@
 	setContext('selectedVault', selectedVault);
 </script>
 
-<section class="container">
-	<div class="column-10">
+<div class="container">
+	<div class="column-5 section">
 		<UserProfile />
 		<GeneralBalance />
 	</div>
-	<GeneralDetails />
-</section>
+	<div class="section">
+		<GeneralDetails />
+	</div>
+</div>
 {#if $selectedVault > 0}
 	<UserVaults />
 {/if}
 
 <style lang="scss">
-	section {
+	.container {
 		display: grid;
-		grid-template-columns: 3fr 5fr;
+		grid-template-columns: 4fr 6fr;
 		flex: 1;
-		gap: var(--space-18);
+		gap: var(--space-16);
 	}
 </style>

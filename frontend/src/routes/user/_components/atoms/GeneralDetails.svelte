@@ -9,9 +9,9 @@
 	const holdingAmounts = [100, 200, 300];
 </script>
 
-<div class="column-space-between align-center">
-	<div class="top-section-wrapper">
-		<div class="column-10 align-end">
+<div class="column-8 align-center">
+	<div class="top-section-wrapper card">
+		<div class="column-10 align-end justify-center">
 			<div class="column-3 align-end">
 				<h4>Total Balance</h4>
 				<Currency
@@ -42,7 +42,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="chart-wrapper card column-2">
+		<div class="chart-wrapper column-2">
 			<h4>Asset Distribution</h4>
 			<PieChart title="Token allocation" chartData={holdingAmounts} labels={holdingDaos} />
 		</div>
@@ -69,21 +69,18 @@
 	.top-section-wrapper {
 		display: grid;
 		grid-template-columns: 2fr 3fr;
-		gap: var(--space-12);
-
-		.card {
-			padding: var(--space-7);
-			display: flex;
-			align-items: center;
-			flex: 1;
-		}
+		gap: var(--space-9);
 
 		.chart-wrapper {
-			max-width: 21rem;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			max-width: 18rem;
 		}
 	}
 
 	.transactions-wrapper {
 		width: 100%;
+		padding-inline: var(--space-12);
 	}
 </style>

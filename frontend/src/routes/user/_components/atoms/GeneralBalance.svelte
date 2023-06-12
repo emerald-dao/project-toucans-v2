@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Currency } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 
@@ -36,12 +37,21 @@
 
 <div class="column-10">
 	<div class="balances-wrapper">
+		<h4>
+			<Icon icon="tabler:writing-sign" />
+			Vaults
+		</h4>
 		{#each BALANCES as balance, i}
 			<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
 				<div class="select-wrapper" class:selected={$selectedVaultStore === i + 1}>
-					<div class="coin-name-wrapper row-2 align-center">
-						<img src={balance.logo} alt="Emerald City Logo" class="logo" />
-						<h4 class:selected={$selectedVaultStore === i + 1}>{balance.name}</h4>
+					<div class="row-space-between">
+						<div class="coin-name-wrapper row-2 align-center">
+							<img src={balance.logo} alt="Emerald City Logo" class="logo" />
+							<h4 class:selected={$selectedVaultStore === i + 1}>{balance.name}</h4>
+						</div>
+						<div class="eye-icon" class:selected={$selectedVaultStore === i + 1}>
+							<Icon icon="tabler:eye" />
+						</div>
 					</div>
 					<div class="row-2 align-end">
 						<Currency
@@ -62,7 +72,16 @@
 	.balances-wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-4);
+		gap: var(--space-3);
+
+		h4 {
+			font-size: var(--font-size-2);
+			color: var(--clr-text-off);
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: var(--space-1);
+		}
 
 		.balance-wrapper {
 			background-color: var(--clr-background-secondary);
@@ -73,6 +92,20 @@
 			&:hover {
 				cursor: pointer;
 				filter: brightness(110%);
+
+				.eye-icon {
+					color: var(--clr-text-main);
+				}
+			}
+
+			.eye-icon {
+				font-size: var(--font-size-1);
+				color: var(--clr-text-off);
+				transition: 0.4s;
+
+				&.selected {
+					color: var(--clr-heading-main);
+				}
 			}
 
 			.select-wrapper {

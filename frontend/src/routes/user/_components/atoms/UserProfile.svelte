@@ -48,7 +48,7 @@
 
 <style lang="scss">
 	.name {
-		font-size: var(--font-size-6);
+		font-size: var(--font-size-7);
 	}
 
 	.dao-labels-wrapper {
@@ -102,8 +102,8 @@
 
 	.avatar {
 		aspect-ratio: 1 !important;
-		width: 70px;
-		height: 70px;
+		width: 110px;
+		height: 110px;
 		border-radius: 50%;
 	}
 
