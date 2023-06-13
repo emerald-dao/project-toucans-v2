@@ -11,7 +11,7 @@
 	const selectedVaultStore: Writable<number> = getContext('selectedVault');
 
 	const handleSelectVault = (vaultId: number) => {
-		selectedVaultStore.set(vaultId);
+		selectedVaultStore.set(vaultId + numberOfPages * activePage);
 	};
 
 	let activePage = 0;
