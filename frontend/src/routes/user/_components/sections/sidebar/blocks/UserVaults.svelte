@@ -13,21 +13,49 @@
 	const handleSelectVault = (vaultId: number) => {
 		selectedVaultStore.set(vaultId);
 	};
+
+	let activePage = 0;
+
+	const vaultsPerPage = 3;
+
+	$: vaultsToShow = userData.vaults.slice(
+		activePage * vaultsPerPage,
+		(activePage + 1) * vaultsPerPage
+	);
+	$: numberOfPages = Math.ceil(userData.vaults.length / vaultsPerPage);
+
+	// If the selectedVault is not inside the actual page, change the page
+	$: if ($selectedVaultStore !== 0) {
+		if (
+			$selectedVaultStore > (activePage + 1) * vaultsPerPage ||
+			$selectedVaultStore < activePage * vaultsPerPage
+		) {
+			activePage = Math.floor($selectedVaultStore / vaultsPerPage);
+		}
+	}
 </script>
 
 {#if userData.vaults.length > 0}
-	<div class="column-10">
-		<div class="balances-wrapper">
+	<div class="balances-wrapper">
+		<div class="column-3">
 			<DashboardHeading icon="tabler:writing-sign">Vaults</DashboardHeading>
-			{#each userData.vaults as vault, i}
+			{#each vaultsToShow as vault, i}
 				<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
-					<div class="select-wrapper" class:selected={$selectedVaultStore === i + 1}>
+					<div
+						class="select-wrapper"
+						class:selected={$selectedVaultStore === i + 1 + numberOfPages * activePage}
+					>
 						<div class="row-space-between">
 							<div class="coin-name-wrapper row-2 align-center">
 								<img src={vault.daoData.logoUrl} alt={`${vault.daoData.name} logo`} class="logo" />
-								<h4 class:selected={$selectedVaultStore === i + 1}>{vault.daoData.name}</h4>
+								<h4 class:selected={$selectedVaultStore === i + 1 + numberOfPages * activePage}>
+									{vault.daoData.name}
+								</h4>
 							</div>
-							<div class="eye-icon" class:selected={$selectedVaultStore === i + 1}>
+							<div
+								class="eye-icon"
+								class:selected={$selectedVaultStore === i + 1 + numberOfPages * activePage}
+							>
 								<Icon icon="tabler:eye" />
 							</div>
 						</div>
@@ -49,6 +77,30 @@
 				</div>
 			{/each}
 		</div>
+		<div class="pagination">
+			<div>
+				{#if activePage > 0}
+					<div on:click={() => (activePage -= 1)} class="header-link">
+						<Icon icon="tabler:arrow-left" />
+					</div>
+				{/if}
+			</div>
+			<div class="page-number">
+				<span class="xsmall">
+					{activePage + 1}
+					<span class="off">
+						/ {numberOfPages}
+					</span>
+				</span>
+			</div>
+			<div class="justify-end">
+				{#if activePage < numberOfPages - 1}
+					<div on:click={() => (activePage += 1)} class="header-link">
+						<Icon icon="tabler:arrow-right" />
+					</div>
+				{/if}
+			</div>
+		</div>
 	</div>
 {/if}
 
@@ -57,6 +109,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
+		justify-content: space-between;
+		flex: 1;
 
 		h4 {
 			font-size: var(--font-size-2);
@@ -119,6 +173,27 @@
 				height: 19px;
 				aspect-ratio: 1;
 				border-radius: 50%;
+			}
+		}
+
+		.pagination {
+			display: grid;
+			grid-template-columns: 1fr 3fr 1fr;
+			padding-inline: var(--space-9);
+
+			.off {
+				color: var(--clr-text-off);
+			}
+
+			& > div {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+
+			.page-number {
+				display: flex;
+				justify-content: center;
 			}
 		}
 	}

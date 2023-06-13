@@ -23,16 +23,66 @@ export const USER_MOCK: UserData = {
 			balance: 7800,
 			tokenValue: 1.3
 		},
-		// {
-		// 	daoData: {
-		// 		name: 'Emerald City DAO',
-		// 		logoUrl: 'ec-logo.png',
-		// 		contractName: 'emeraldDao',
-		// 		tokenSymbol: 'EMLD'
-		// 	},
-		// 	balance: 7800,
-		// 	tokenValue: 1.3
-		// },
+		{
+			daoData: {
+				name: 'Emerald City DAO',
+				logoUrl: 'ec-logo.png',
+				contractName: 'emeraldDao',
+				tokenSymbol: 'EMLD'
+			},
+			balance: 7800,
+			tokenValue: 1.3
+		},
+		{
+			daoData: {
+				name: 'Emerald City DAO',
+				logoUrl: 'ec-logo.png',
+				contractName: 'emeraldDao',
+				tokenSymbol: 'EMLD'
+			},
+			balance: 7800,
+			tokenValue: 1.3
+		},
+		{
+			daoData: {
+				name: 'Emerald City DAO',
+				logoUrl: 'ec-logo.png',
+				contractName: 'emeraldDao',
+				tokenSymbol: 'EMLD'
+			},
+			balance: 7800,
+			tokenValue: 1.3
+		},
+		{
+			daoData: {
+				name: 'Another DAO',
+				logoUrl: 'avatar-2.png',
+				contractName: 'anotherDao',
+				tokenSymbol: 'DAOA'
+			},
+			balance: 10800,
+			tokenValue: 3.3
+		},
+		{
+			daoData: {
+				name: 'Another DAO',
+				logoUrl: 'avatar-2.png',
+				contractName: 'anotherDao',
+				tokenSymbol: 'DAOA'
+			},
+			balance: 10800,
+			tokenValue: 3.3
+		},
+		{
+			daoData: {
+				name: 'Another DAO',
+				logoUrl: 'avatar-2.png',
+				contractName: 'anotherDao',
+				tokenSymbol: 'DAOA'
+			},
+			balance: 10800,
+			tokenValue: 3.3
+		},
 		{
 			daoData: {
 				name: 'Another DAO',

@@ -5,11 +5,16 @@
 	import UserName from './blocks/UserName.svelte';
 </script>
 
-<div class="column-8 section">
+<div class="column-6 section">
 	<UserName />
-	<div class="column-8">
-		<SignerOf />
+	<div class="column-6 secondary-wrapper">
 		<UserBadges />
 		<UserVaults />
 	</div>
 </div>
+
+<style lang="scss">
+	.secondary-wrapper {
+		flex: 1;
+	}
+</style>

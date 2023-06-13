@@ -102,13 +102,13 @@
 		padding: var(--space-8);
 
 		.balances-wrapper {
-			border-right: 1px solid var(--clr-neutral-badge);
-			padding-right: var(--space-8);
+			border-right: 0.5px solid var(--clr-border-primary);
+			padding-right: var(--space-6);
 			padding-block: var(--space-3);
 
 			h5 {
 				font-size: var(--font-size-1);
-				color: var(--clr-text-off);
+				color: var(--clr-text-primary);
 				margin: 0;
 			}
 		}
