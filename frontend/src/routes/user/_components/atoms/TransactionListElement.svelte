@@ -3,16 +3,10 @@
 	import { formatDate } from '$lib/utilities/formatDate';
 	import { Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import type { DaoEvent, DaoEventName } from '$lib/types/dao-project/dao-event/dao-event.type';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
-	import SeeRoundDetailsModal from '../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
-	import WalletLabel from '$components/atoms/WalletLabel.svelte';
-	import type { FindMap } from '$lib/types/common/find.interface';
 
 	export let event: DaoEvent;
 	export let i: number;
-	export let daoData: DAOProject;
-	export let findNames: FindMap = {};
 
 	const EVENTS_DATA: {
 		[event in DaoEventName]: {
@@ -97,12 +91,6 @@
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
 		{/if}
-		{#if event.type === 'Purchase' || event.type === 'Donate'}
-			<WalletLabel address={event.data.by} find={findNames[event.data.by]} />
-		{/if}
-		{#if event.type === 'Withdraw' || event.type === 'Mint'}
-			<WalletLabel address={event.data.to} find={findNames[event.data.to]} />
-		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn'}
 			<Currency
 				amount={event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Burn'
@@ -112,17 +100,6 @@
 				color="heading"
 				fontSize="0.85rem"
 				decimalNumbers={2}
-			/>
-		{:else if event.type === 'NewFundingCycle'}
-			<SeeRoundDetailsModal
-				round={daoData.onChainData.fundingCycles[Number(event.data.newCycleId)]}
-				projectToken={daoData.generalInfo.token_symbol}
-				paymentToken={daoData.onChainData.paymentCurrency}
-				roundNumber={Number(event.data.newCycleId)}
-				projectId={daoData.generalInfo.project_id}
-				activeRound={daoData.onChainData.currentFundingCycle
-					? Number(daoData.onChainData.currentFundingCycle.details.cycleId)
-					: null}
 			/>
 		{/if}
 	</div>

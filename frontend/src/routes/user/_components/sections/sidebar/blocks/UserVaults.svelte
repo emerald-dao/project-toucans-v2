@@ -3,70 +3,54 @@
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import DashboardHeading from '../../../atoms/DashboardHeading.svelte';
+	import type { UserData } from '../../../../_types/user-data.interface';
+
+	const userData: UserData = getContext('userData');
 
 	const selectedVaultStore: Writable<number> = getContext('selectedVault');
 
 	const handleSelectVault = (vaultId: number) => {
 		selectedVaultStore.set(vaultId);
 	};
-
-	const BALANCES = [
-		{
-			token: 'EMD',
-			amount: 300.0,
-			value: 786.0,
-			logo: '/ec-logo.png',
-			name: 'Emerald City DAO'
-		},
-		{
-			token: 'EMD',
-			amount: 300.0,
-			value: 786.0,
-			logo: '/ec-logo.png',
-			name: 'Emerald City DAO'
-		},
-		{
-			token: 'EMD',
-			amount: 300.0,
-			value: 786.0,
-			logo: '/ec-logo.png',
-			name: 'Emerald City DAO'
-		}
-	];
 </script>
 
-<div class="column-10">
-	<div class="balances-wrapper">
-		<h4>
-			<Icon icon="tabler:writing-sign" />
-			Vaults
-		</h4>
-		{#each BALANCES as balance, i}
-			<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
-				<div class="select-wrapper" class:selected={$selectedVaultStore === i + 1}>
-					<div class="row-space-between">
-						<div class="coin-name-wrapper row-2 align-center">
-							<img src={balance.logo} alt="Emerald City Logo" class="logo" />
-							<h4 class:selected={$selectedVaultStore === i + 1}>{balance.name}</h4>
+{#if userData.vaults.length > 0}
+	<div class="column-10">
+		<div class="balances-wrapper">
+			<DashboardHeading icon="tabler:writing-sign">Vaults</DashboardHeading>
+			{#each userData.vaults as vault, i}
+				<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
+					<div class="select-wrapper" class:selected={$selectedVaultStore === i + 1}>
+						<div class="row-space-between">
+							<div class="coin-name-wrapper row-2 align-center">
+								<img src={vault.daoData.logoUrl} alt={`${vault.daoData.name} logo`} class="logo" />
+								<h4 class:selected={$selectedVaultStore === i + 1}>{vault.daoData.name}</h4>
+							</div>
+							<div class="eye-icon" class:selected={$selectedVaultStore === i + 1}>
+								<Icon icon="tabler:eye" />
+							</div>
 						</div>
-						<div class="eye-icon" class:selected={$selectedVaultStore === i + 1}>
-							<Icon icon="tabler:eye" />
+						<div class="row-2 align-end">
+							<Currency
+								amount={vault.balance}
+								currency={vault.daoData.tokenSymbol}
+								color="heading"
+								fontSize="var(--font-size-3)"
+							/>
+							<Currency
+								amount={vault.balance / vault.tokenValue}
+								moneyPrefix={true}
+								color="text"
+								fontSize="var(--font-size-0)"
+							/>
 						</div>
-					</div>
-					<div class="row-2 align-end">
-						<Currency
-							amount={8955}
-							currency={balance.token}
-							color="heading"
-							fontSize="var(--font-size-3)"
-						/>
-						<Currency amount={356} moneyPrefix={true} color="text" fontSize="var(--font-size-0)" />
 					</div>
 				</div>
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	.balances-wrapper {
@@ -134,6 +118,7 @@
 				width: 19px;
 				height: 19px;
 				aspect-ratio: 1;
+				border-radius: 50%;
 			}
 		}
 	}

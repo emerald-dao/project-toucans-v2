@@ -1,33 +1,30 @@
 <script lang="ts">
-	import UserProfile from './_components/atoms/UserProfile.svelte';
-	import UserVaults from './_components/atoms/UserVaults.svelte';
-	import GeneralBalance from './_components/atoms/GeneralBalance.svelte';
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
-	import GeneralDetails from './_components/atoms/GeneralDetails.svelte';
+	import UserSidebar from './_components/sections/sidebar/UserSidebar.svelte';
+	import UserMain from './_components/sections/main/UserMain.svelte';
+	import VaultDetail from './_components/sections/vaultDetail/VaultDetail.svelte';
+
+	export let data;
 
 	let selectedVault = writable(0);
 
+	setContext('userData', data);
 	setContext('selectedVault', selectedVault);
 </script>
 
 <div class="container">
-	<div class="column-5 section">
-		<UserProfile />
-		<GeneralBalance />
-	</div>
-	<div class="section">
-		<GeneralDetails />
-	</div>
+	<UserSidebar />
+	<UserMain />
 </div>
 {#if $selectedVault > 0}
-	<UserVaults />
+	<VaultDetail />
 {/if}
 
 <style lang="scss">
 	.container {
 		display: grid;
-		grid-template-columns: 4fr 6fr;
+		grid-template-columns: 5fr 6fr;
 		flex: 1;
 		gap: var(--space-16);
 	}
