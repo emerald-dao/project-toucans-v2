@@ -7,4 +7,12 @@
 	const userData: UserData = getContext('userData');
 </script>
 
-<TransactionsList events={userData.transactions} />
+<div class="main-wrapper">
+	<TransactionsList events={userData.transactions} />
+</div>
+
+<style lang="scss">
+	.main-wrapper {
+		padding-inline: var(--space-8);
+	}
+</style>

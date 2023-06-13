@@ -14,7 +14,8 @@
 <style lang="scss">
 	h4 {
 		font-size: var(--font-size-2);
-		color: var(--clr-text-off);
+		color: var(--clr-text-primary);
+		opacity: 0.8;
 		display: flex;
 		flex-direction: row;
 		align-items: center;

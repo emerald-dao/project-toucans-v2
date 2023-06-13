@@ -45,7 +45,7 @@
 </script>
 
 <div class="main-wrapper card">
-	<div class="column-10 align-end justify-center">
+	<div class="column-7 align-end justify-center balances-wrapper">
 		<div class="column-3 align-end">
 			<DashboardHeading>Total Balance</DashboardHeading>
 			<Currency
@@ -55,46 +55,36 @@
 				fontSize="var(--font-size-7)"
 			/>
 		</div>
-		<div class="column-6">
-			<div class="row-4">
-				<div class="column-2 align-end">
-					<DashboardHeading>Flow Funded</DashboardHeading>
-					<Currency
-						amount={flowFunded}
-						moneyPrefix={true}
-						color="heading"
-						fontSize="var(--font-size-5)"
-					/>
-				</div>
-				<div class="column-2 align-start">
-					<DashboardHeading>USDC Funded</DashboardHeading>
-					<Currency
-						amount={usdcFunded}
-						moneyPrefix={true}
-						color="heading"
-						fontSize="var(--font-size-5)"
-					/>
-				</div>
+		<div class="column-4">
+			<div class="column-1 align-end">
+				<h5>Total Funding</h5>
+				<Currency
+					amount={flowFunded}
+					currency="FLOW"
+					color="heading"
+					fontSize="var(--font-size-3)"
+				/>
+				<Currency
+					amount={usdcFunded}
+					currency="USDC"
+					color="heading"
+					fontSize="var(--font-size-3)"
+				/>
 			</div>
-			<div class="row-4">
-				<div class="column-2 align-end">
-					<DashboardHeading>Flow Donated</DashboardHeading>
-					<Currency
-						amount={flowDonated}
-						moneyPrefix={true}
-						color="heading"
-						fontSize="var(--font-size-5)"
-					/>
-				</div>
-				<div class="column-2 align-end">
-					<DashboardHeading>USDC Donated</DashboardHeading>
-					<Currency
-						amount={usdcDonated}
-						moneyPrefix={true}
-						color="heading"
-						fontSize="var(--font-size-5)"
-					/>
-				</div>
+			<div class="column-1 align-end">
+				<h5>Total Donations</h5>
+				<Currency
+					amount={flowDonated}
+					currency="FLOW"
+					color="heading"
+					fontSize="var(--font-size-3)"
+				/>
+				<Currency
+					amount={usdcDonated}
+					currency="USDC"
+					color="heading"
+					fontSize="var(--font-size-3)"
+				/>
 			</div>
 		</div>
 	</div>
@@ -109,14 +99,26 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: var(--space-9);
-		flex: 1;
 		padding: var(--space-8);
+
+		.balances-wrapper {
+			border-right: 1px solid var(--clr-neutral-badge);
+			padding-right: var(--space-8);
+			padding-block: var(--space-3);
+
+			h5 {
+				font-size: var(--font-size-1);
+				color: var(--clr-text-off);
+				margin: 0;
+			}
+		}
 
 		.chart-wrapper {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			max-width: 17rem;
+			justify-content: center;
+			max-width: 15rem;
 		}
 	}
 </style>

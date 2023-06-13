@@ -7,12 +7,16 @@
 </script>
 
 <div class="column-2 transactions-wrapper">
-	<DashboardHeading icon="tabler:activity">Recent transactions</DashboardHeading>
+	<div class="header-wrapper">
+		<DashboardHeading icon="tabler:activity">Recent transactions</DashboardHeading>
+	</div>
 	{#if events.length === 0}
 		<p><em>This user has no transactions yet</em></p>
 	{:else}
 		{#each events as event, i}
-			<TransactionListElement {event} {i} />
+			<div class="activity-wrapper">
+				<TransactionListElement {event} {i} />
+			</div>
 		{/each}
 	{/if}
 </div>
@@ -20,10 +24,24 @@
 <style lang="scss">
 	.transactions-wrapper {
 		width: 100%;
-		padding-inline: var(--space-8);
+
+		.header-wrapper {
+			border-bottom: 1px solid var(--clr-border-primary);
+			padding: var(--space-2);
+		}
+
+		.activity-wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			padding: var(--space-2);
+			border-bottom: 1px solid var(--clr-neutral-badge);
+		}
 	}
 
 	em {
 		font-size: var(--font-size-0);
+		color: var(--clr-text-off);
 	}
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { UserData } from './../../../_types/user-data.interface';
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
 	import { Currency } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
@@ -33,7 +33,7 @@
 </script>
 
 {#if vault}
-	<div class="main-wrapper column-10" transition:fly|local={{ x: 400, duration: 800 }}>
+	<div class="main-wrapper column-10" transition:fly={{ x: 400, duration: 800 }}>
 		<div class="close-button header-link" on:click={handleCloseVault}>
 			<Icon icon="tabler:x" />
 		</div>
@@ -61,11 +61,27 @@
 					</div>
 				</div>
 				<div class="column-space-between">
-					<div class="header-link" on:click={handlePrevVault}>
-						<Icon icon="tabler:arrow-up" />
+					<div>
+						{#if $selectedVaultStore > 1}
+							<div
+								class="header-link"
+								on:click={handlePrevVault}
+								transition:fade={{ duration: 100 }}
+							>
+								<Icon icon="tabler:arrow-up" />
+							</div>
+						{/if}
 					</div>
-					<div class="header-link" on:click={handleNextVault}>
-						<Icon icon="tabler:arrow-down" />
+					<div>
+						{#if userData.vaults.length > $selectedVaultStore}
+							<div
+								class="header-link"
+								on:click={handleNextVault}
+								transition:fade={{ duration: 100 }}
+							>
+								<Icon icon="tabler:arrow-down" />
+							</div>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -129,7 +145,7 @@
 			}
 
 			.events-wrapper {
-				padding-inline: var(--space-6);
+				padding-inline: var(--space-7);
 			}
 		}
 

@@ -112,7 +112,6 @@
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
-		padding-block: var(--space-1);
 
 		.timestamp {
 			display: unset;
@@ -145,9 +144,5 @@
 	.special-message {
 		max-width: 40ch;
 		margin-top: var(--space-2);
-	}
-
-	.row-3 {
-		align-items: center;
 	}
 </style>
