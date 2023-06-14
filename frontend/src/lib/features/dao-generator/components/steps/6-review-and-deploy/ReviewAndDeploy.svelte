@@ -71,7 +71,7 @@
 			<label for="confirm-cost" class="switch">
 				<input type="checkbox" name="confirm-cost" id="confirm-cost" bind:checked={confirmCost} />
 				<span class="slider" />
-				I confirm this will cost 100 $FLOW token.
+				I confirm this will cost 200 $FLOW token.
 			</label>
 			<span class="xsmall">You have a current balance of {balance} $FLOW.</span>
 		</div>
