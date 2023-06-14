@@ -7,7 +7,7 @@ export const USER_MOCK: UserData = {
 	signerOf: [
 		{
 			name: 'Emerald City DAO',
-			logoUrl: 'ec-logo.png',
+			logoUrl: '/ec-logo.png',
 			contractName: 'emeraldDao',
 			tokenSymbol: 'EMLD'
 		}
@@ -16,7 +16,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Emerald City DAO',
-				logoUrl: 'ec-logo.png',
+				logoUrl: '/ec-logo.png',
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
@@ -26,7 +26,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Emerald City DAO',
-				logoUrl: 'ec-logo.png',
+				logoUrl: '/ec-logo.png',
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
@@ -36,7 +36,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Emerald City DAO',
-				logoUrl: 'ec-logo.png',
+				logoUrl: '/ec-logo.png',
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
@@ -46,7 +46,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Emerald City DAO',
-				logoUrl: 'ec-logo.png',
+				logoUrl: '/ec-logo.png',
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
@@ -56,7 +56,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Another DAO',
-				logoUrl: 'avatar-2.png',
+				logoUrl: '/avatar-2.png',
 				contractName: 'anotherDao',
 				tokenSymbol: 'DAOA'
 			},
@@ -66,7 +66,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Another DAO',
-				logoUrl: 'avatar-2.png',
+				logoUrl: '/avatar-2.png',
 				contractName: 'anotherDao',
 				tokenSymbol: 'DAOA'
 			},
@@ -76,7 +76,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Another DAO',
-				logoUrl: 'avatar-2.png',
+				logoUrl: '/avatar-2.png',
 				contractName: 'anotherDao',
 				tokenSymbol: 'DAOA'
 			},
@@ -86,7 +86,7 @@ export const USER_MOCK: UserData = {
 		{
 			daoData: {
 				name: 'Another DAO',
-				logoUrl: 'avatar-2.png',
+				logoUrl: '/avatar-2.png',
 				contractName: 'anotherDao',
 				tokenSymbol: 'DAOA'
 			},
