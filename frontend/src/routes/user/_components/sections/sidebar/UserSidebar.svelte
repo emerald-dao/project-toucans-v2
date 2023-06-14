@@ -5,7 +5,7 @@
 	import UserName from './blocks/UserName.svelte';
 </script>
 
-<div class="column-6 section">
+<div class="column-6">
 	<UserName />
 	<div class="column-6 secondary-wrapper">
 		<UserBadges />

@@ -96,6 +96,12 @@
 
 <style lang="scss">
 	.main-wrapper {
+		display: none;
+
+		@include mq('medium') {
+			display: block;
+		}
+
 		position: fixed;
 		right: 0;
 		background-color: var(--clr-background-secondary);
@@ -123,15 +129,6 @@
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
-
-				h3 {
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					gap: var(--space-1);
-					color: var(--clr-text-main);
-					font-size: var(--font-size-3);
-				}
 
 				.logo {
 					width: 50px;

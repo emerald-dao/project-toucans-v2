@@ -128,11 +128,13 @@
 			transition: 0.4s;
 
 			&:hover {
-				cursor: pointer;
-				filter: brightness(110%);
+				@include mq('medium') {
+					cursor: pointer;
+					filter: brightness(110%);
 
-				.eye-icon {
-					color: var(--clr-text-main);
+					.eye-icon {
+						color: var(--clr-text-main);
+					}
 				}
 			}
 
@@ -140,9 +142,14 @@
 				font-size: var(--font-size-1);
 				color: var(--clr-text-off);
 				transition: 0.4s;
+				display: none;
 
-				&.selected {
-					color: var(--clr-heading-main);
+				@include mq('medium') {
+					display: block;
+
+					&.selected {
+						color: var(--clr-heading-main);
+					}
 				}
 			}
 
@@ -154,8 +161,10 @@
 				gap: var(--space-3);
 				transition: 0.6s;
 
-				&.selected {
-					background-color: var(--clr-surface-secondary);
+				@include mq('medium') {
+					&.selected {
+						background-color: var(--clr-surface-secondary);
+					}
 				}
 			}
 
@@ -163,8 +172,10 @@
 				font-size: var(--font-size-2);
 				color: var(--clr-text-off);
 
-				&.selected {
-					color: var(--clr-text-main);
+				@include mq('medium') {
+					&.selected {
+						color: var(--clr-text-main);
+					}
 				}
 			}
 

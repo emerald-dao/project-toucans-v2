@@ -45,8 +45,8 @@
 </script>
 
 <div class="main-wrapper card">
-	<div class="column-7 align-end justify-center balances-wrapper">
-		<div class="column-3 align-end">
+	<div class="column-7 justify-center balances-wrapper">
+		<div class="currency-wrapper large">
 			<DashboardHeading>Total Balance</DashboardHeading>
 			<Currency
 				amount={totalBalance}
@@ -56,7 +56,7 @@
 			/>
 		</div>
 		<div class="column-4">
-			<div class="column-1 align-end">
+			<div class="currency-wrapper">
 				<h5>Total Funding</h5>
 				<Currency
 					amount={flowFunded}
@@ -71,7 +71,7 @@
 					fontSize="var(--font-size-3)"
 				/>
 			</div>
-			<div class="column-1 align-end">
+			<div class="currency-wrapper">
 				<h5>Total Donations</h5>
 				<Currency
 					amount={flowDonated}
@@ -96,29 +96,52 @@
 
 <style lang="scss">
 	.main-wrapper {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: var(--space-9);
-		padding: var(--space-8);
+		@include mq('small') {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-9);
+			padding: var(--space-8);
+		}
 
 		.balances-wrapper {
-			border-right: 0.5px solid var(--clr-border-primary);
 			padding-right: var(--space-6);
 			padding-block: var(--space-3);
 
-			h5 {
-				font-size: var(--font-size-1);
-				color: var(--clr-text-primary);
-				margin: 0;
+			@include mq('small') {
+				border-right: 0.5px solid var(--clr-border-primary);
+			}
+
+			.currency-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-1);
+
+				@include mq('small') {
+					align-items: flex-end;
+				}
+
+				&.large {
+					gap: var(--space-3);
+				}
+
+				h5 {
+					font-size: var(--font-size-1);
+					color: var(--clr-text-primary);
+					margin: 0;
+				}
 			}
 		}
 
 		.chart-wrapper {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			max-width: 15rem;
+			display: none;
+
+			@include mq('small') {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				max-width: 15rem;
+			}
 		}
 	}
 </style>

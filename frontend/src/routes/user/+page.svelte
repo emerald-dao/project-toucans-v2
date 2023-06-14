@@ -13,7 +13,7 @@
 	setContext('selectedVault', selectedVault);
 </script>
 
-<div class="container">
+<div class="container section">
 	<UserSidebar />
 	<UserMain />
 </div>
@@ -23,9 +23,15 @@
 
 <style lang="scss">
 	.container {
-		display: grid;
-		grid-template-columns: 5fr 6fr;
-		flex: 1;
-		gap: var(--space-16);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-9);
+
+		@include mq('medium') {
+			display: grid;
+			grid-template-columns: 5fr 6fr;
+			flex: 1;
+			gap: var(--space-16);
+		}
 	}
 </style>

@@ -3,13 +3,13 @@
 	import RecentTransactions from './blocks/RecentTransactions.svelte';
 </script>
 
-<div class="section">
+<div class="main-wrapper">
 	<BalanceData />
 	<RecentTransactions />
 </div>
 
 <style lang="scss">
-	.section {
+	.main-wrapper {
 		flex: 1;
 		display: flex;
 		flex-direction: column;

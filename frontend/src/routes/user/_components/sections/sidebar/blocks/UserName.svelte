@@ -7,7 +7,7 @@
 	const userData: UserData = getContext('userData');
 </script>
 
-<div class="row-6 align-center">
+<div class="main-wrapper">
 	<img src={userData.avatar} alt="User avatar" class="avatar" />
 	<div class="column-4">
 		<div class="column-1">
@@ -22,22 +22,36 @@
 </div>
 
 <style lang="scss">
-	.name {
-		font-size: var(--font-size-7);
-	}
-
-	.address {
+	.main-wrapper {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		align-items: center;
-		gap: var(--space-1);
-		color: var(--clr-text-off);
-	}
+		text-align: center;
 
-	.avatar {
-		aspect-ratio: 1 !important;
-		width: 130px;
-		height: 130px;
-		border-radius: 50%;
+		@include mq('small') {
+			flex-direction: row;
+			align-items: center;
+			text-align: left;
+			gap: var(--space-6);
+		}
+
+		.name {
+			font-size: var(--font-size-7);
+		}
+
+		.address {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: var(--space-1);
+			color: var(--clr-text-off);
+		}
+
+		.avatar {
+			aspect-ratio: 1 !important;
+			width: 140px;
+			height: 140px;
+			border-radius: 50%;
+		}
 	}
 </style>

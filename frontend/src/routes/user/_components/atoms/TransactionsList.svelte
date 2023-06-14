@@ -14,9 +14,11 @@
 		<p><em>This user has no transactions yet</em></p>
 	{:else}
 		{#each events as event, i}
-			<div class="activity-wrapper">
-				<TransactionListElement {event} {i} />
-			</div>
+			{#if i < 4}
+				<div class="activity-wrapper">
+					<TransactionListElement {event} {i} />
+				</div>
+			{/if}
 		{/each}
 	{/if}
 </div>
