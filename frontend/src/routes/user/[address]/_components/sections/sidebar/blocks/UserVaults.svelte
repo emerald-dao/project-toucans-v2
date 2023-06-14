@@ -67,7 +67,7 @@
 								fontSize="var(--font-size-3)"
 							/>
 							<Currency
-								amount={vault.balance / vault.tokenValue}
+								amount={vault.balance * vault.tokenValue}
 								moneyPrefix={true}
 								color="text"
 								fontSize="var(--font-size-0)"

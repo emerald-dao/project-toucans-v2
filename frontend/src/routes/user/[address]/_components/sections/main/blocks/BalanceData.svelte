@@ -7,13 +7,30 @@
 
 	const userData: UserData = getContext('userData');
 
-	const holdingDaos = userData.vaults.map((vaultData) => {
+	const vaults = [...userData.vaults];
+
+	vaults.sort((a, b) => {
+		return b.balance * b.tokenValue - a.balance * a.tokenValue;
+	});
+
+	const topThreeVaults = vaults.slice(0, 3);
+
+	const holdingDaos = topThreeVaults.map((vaultData) => {
 		return vaultData.daoData.name;
 	});
 
-	const holdingAmounts = userData.vaults.map((vaultData) => {
-		return vaultData.balance;
+	const holdingAmounts = topThreeVaults.map((vaultData) => {
+		return vaultData.balance * vaultData.tokenValue;
 	});
+
+	const otherVaults = vaults.slice(3);
+
+	const otherVaultsValue = otherVaults.reduce((acc, cur) => {
+		return acc + cur.balance * cur.tokenValue;
+	}, 0);
+
+	holdingDaos.push('Other');
+	holdingAmounts.push(otherVaultsValue);
 
 	let totalBalance = 0;
 	let flowDonated = 0;
@@ -22,8 +39,8 @@
 	let usdcFunded = 0;
 
 	onMount(() => {
-		userData.vaults.map((vaultData) => {
-			totalBalance += vaultData.balance / vaultData.tokenValue;
+		vaults.map((vaultData) => {
+			totalBalance += vaultData.balance * vaultData.tokenValue;
 		});
 
 		userData.transactions.map((transaction) => {

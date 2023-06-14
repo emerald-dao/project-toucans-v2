@@ -17,7 +17,6 @@
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
 <div class="no-overflow-x">
-	<a href="/user">User</a>
 	<Hero />
 	<ToucansFeatures />
 	<LeadingProjects projects={data.projects} />

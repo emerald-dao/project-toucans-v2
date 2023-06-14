@@ -53,7 +53,7 @@
 							color="heading"
 						/>
 						<Currency
-							amount={vault.balance / vault.tokenValue}
+							amount={vault.balance * vault.tokenValue}
 							moneyPrefix={true}
 							fontSize="var(--font-size-3)"
 							decimalNumbers={2}
