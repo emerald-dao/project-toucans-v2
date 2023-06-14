@@ -1,14 +1,17 @@
 <script lang="ts">
+	import type { UserData } from './../../../_types/user-data.interface';
 	import UserVaults from './blocks/UserVaults.svelte';
-	import SignerOf from './blocks/SignerOf.svelte';
-	import UserBadges from './blocks/userBadges/UserBadges.svelte';
 	import UserName from './blocks/UserName.svelte';
+	import { getContext } from 'svelte';
+	import UserBadges from '../../../_features/badges/components/UserBadges.svelte';
+
+	const userData: UserData = getContext('userData');
 </script>
 
 <div class="column-6">
 	<UserName />
 	<div class="column-6 secondary-wrapper">
-		<UserBadges />
+		<UserBadges {userData} />
 		<UserVaults />
 	</div>
 </div>

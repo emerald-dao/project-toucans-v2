@@ -20,7 +20,7 @@ export const USER_MOCK: UserData = {
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
-			balance: 7800,
+			balance: 99800,
 			tokenValue: 1.3
 		},
 		{
@@ -30,7 +30,7 @@ export const USER_MOCK: UserData = {
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
-			balance: 7800,
+			balance: 1800,
 			tokenValue: 1.3
 		},
 		{
@@ -40,7 +40,7 @@ export const USER_MOCK: UserData = {
 				contractName: 'emeraldDao',
 				tokenSymbol: 'EMLD'
 			},
-			balance: 7800,
+			balance: 3800,
 			tokenValue: 1.3
 		},
 		{

@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
+	import type { Level } from '../../badges.interfaces';
+	import Icon from '@iconify/svelte';
+
+	export let badgeLevel: Level;
+
 	let hover = false;
 </script>
 
@@ -12,10 +17,12 @@
 	/>
 	{#if hover}
 		<div class="description-wrapper" transition:fly|local={{ y: 10, duration: 400 }}>
-			<span class="title">💚 Kindhearted Pigeon</span>
-			<span class="description"
-				>Awarded for all those kind souls that made their first donation.</span
-			>
+			<span class="title">{badgeLevel.name}</span>
+			<span class="goal xsmall">
+				<Icon icon="tabler:circle-check" />
+				{badgeLevel.goal}
+			</span>
+			<span class="description">{badgeLevel.description}</span>
 		</div>
 	{/if}
 </div>
@@ -33,7 +40,7 @@
 		.description-wrapper {
 			position: absolute;
 			background-color: var(--clr-surface-secondary);
-			bottom: -110px;
+			bottom: -155px;
 			left: -80px;
 			padding: var(--space-4);
 			border-radius: var(--radius-1);
@@ -46,6 +53,14 @@
 			.title {
 				font-size: var(--font-size-1);
 				color: var(--clr-heading-main);
+			}
+
+			.goal {
+				color: var(--clr-primary-main);
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: var(--space-1);
 			}
 
 			.description {
