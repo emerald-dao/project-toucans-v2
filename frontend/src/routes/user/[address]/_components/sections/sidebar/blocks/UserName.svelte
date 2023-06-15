@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import type { UserData } from '../../../../_types/user-data.interface';
 	import { getContext } from 'svelte';
-	import SignerOf from './SignerOf.svelte';
+	// import SignerOf from './SignerOf.svelte';
 
 	const userData: UserData = getContext('userData');
 </script>
@@ -17,7 +17,7 @@
 				{userData.address}
 			</span>
 		</div>
-		<SignerOf />
+		<!-- <SignerOf /> -->
 	</div>
 </div>
 

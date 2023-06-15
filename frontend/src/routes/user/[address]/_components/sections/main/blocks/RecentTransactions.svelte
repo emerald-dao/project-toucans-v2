@@ -13,6 +13,6 @@
 
 <style lang="scss">
 	.main-wrapper {
-		padding-inline: var(--space-8);
+		padding-inline: var(--space-4);
 	}
 </style>

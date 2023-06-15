@@ -16,10 +16,12 @@ export const load = async ({ params }): Promise<UserData> => {
 	}
 
 	const projects = await fetchDaoRankings();
-	const y = projects.map(x => {
-		return { key: x.project_id, value: x.projects.owner }
-	})
-	const balances = await getProjectBalances(USER_MOCK.address, y)
+	console.log(projects, 'projects');
+
+	const y = projects.map((x) => {
+		return { key: x.project_id, value: x.projects.owner };
+	});
+	const balances = await getProjectBalances(USER_MOCK.address, y);
 	USER_MOCK.vaults = [];
 	for (const project of projects) {
 		if (balances[project.project_id]) {
@@ -32,7 +34,7 @@ export const load = async ({ params }): Promise<UserData> => {
 				},
 				balance: balances[project.project_id],
 				tokenValue: project.price || 0
-			})
+			});
 		}
 	}
 	// sort daos by highest value
@@ -40,6 +42,8 @@ export const load = async ({ params }): Promise<UserData> => {
 		return b.balance * b.tokenValue - a.balance * a.tokenValue;
 	});
 
-	USER_MOCK.transactions = await fetchAllProjectRecentDonateOrPurchaseEventsByUser(USER_MOCK.address)
+	USER_MOCK.transactions = await fetchAllProjectRecentDonateOrPurchaseEventsByUser(
+		USER_MOCK.address
+	);
 	return USER_MOCK;
 };

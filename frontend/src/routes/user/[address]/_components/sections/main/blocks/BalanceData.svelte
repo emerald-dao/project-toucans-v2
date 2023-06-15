@@ -106,8 +106,12 @@
 		</div>
 	</div>
 	<div class="chart-wrapper column-2">
-		<DashboardHeading>Asset Distribution</DashboardHeading>
-		<PieChart title="Token allocation" chartData={holdingAmounts} labels={holdingDaos} />
+		<DashboardHeading>Token Distribution</DashboardHeading>
+		{#if totalBalance > 0}
+			<PieChart title="Token allocation" chartData={holdingAmounts} labels={holdingDaos} />
+		{:else}
+			<span class="small"><em>This wallet has no tokens</em></span>
+		{/if}
 	</div>
 </div>
 
@@ -160,5 +164,9 @@
 				max-width: 15rem;
 			}
 		}
+	}
+
+	em {
+		color: var(--clr-text-off);
 	}
 </style>

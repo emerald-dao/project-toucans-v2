@@ -35,10 +35,10 @@
 	}
 </script>
 
-{#if userData.vaults.length > 0}
-	<div class="balances-wrapper">
-		<div class="column-3">
-			<DashboardHeading icon="tabler:writing-sign">Vaults</DashboardHeading>
+<div class="balances-wrapper">
+	<div class="column-3">
+		<DashboardHeading icon="tabler:writing-sign">Vaults</DashboardHeading>
+		{#if userData.vaults.length > 0}
 			{#each vaultsToShow as vault, i}
 				<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
 					<div
@@ -76,7 +76,11 @@
 					</div>
 				</div>
 			{/each}
-		</div>
+		{:else}
+			<span class="small"><em>This user has no vaults</em></span>
+		{/if}
+	</div>
+	{#if userData.vaults.length > vaultsPerPage}
 		<div class="pagination">
 			<div>
 				{#if activePage > 0}
@@ -101,8 +105,8 @@
 				{/if}
 			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
+</div>
 
 <style lang="scss">
 	.balances-wrapper {
@@ -207,5 +211,9 @@
 				justify-content: center;
 			}
 		}
+	}
+
+	em {
+		color: var(--clr-text-off);
 	}
 </style>
