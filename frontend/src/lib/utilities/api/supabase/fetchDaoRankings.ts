@@ -1,3 +1,4 @@
+import { network } from "$flow/config";
 import { supabase } from "$lib/supabaseClient";
 
 export async function fetchDaoRankings() {
@@ -11,7 +12,8 @@ export async function fetchDaoRankings() {
         name,
         owner
       )
-    `);
+    `)
+    .eq('projects.network', network);
 
   if (!data || !data.length) {
     return []
