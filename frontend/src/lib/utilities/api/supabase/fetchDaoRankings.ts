@@ -5,7 +5,7 @@ export async function fetchDaoRankings() {
   const { data } = await supabase.from('rankings')
     .select(`
       *,
-      projects (
+      projects!inner (
         contract_address,
         logo,
         token_symbol,
