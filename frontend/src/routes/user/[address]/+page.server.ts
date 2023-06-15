@@ -17,10 +17,11 @@ export const load = async ({ params }): Promise<UserData> => {
 		USER_MOCK.address = params.address;
 	}
 
-	// create user name and avatar if not found
-	const userNumber = getRandomUserNumber(params.address, RANDOM_USERS.length);
-	USER_MOCK.name = RANDOM_USERS[userNumber].name;
-	USER_MOCK.avatar = RANDOM_USERS[userNumber].avatar;
+	if (!findProfile) {
+		const userNumber = getRandomUserNumber(params.address, RANDOM_USERS.length);
+		USER_MOCK.name = RANDOM_USERS[userNumber].name;
+		USER_MOCK.avatar = RANDOM_USERS[userNumber].avatar;
+	}
 
 	const projects = await fetchDaoRankings();
 	console.log(projects, 'projects');
