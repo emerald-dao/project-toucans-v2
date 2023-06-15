@@ -31,7 +31,7 @@ export const load = async ({ params }): Promise<UserData> => {
 					contractName: project.project_id
 				},
 				balance: balances[project.project_id],
-				tokenValue: project.price
+				tokenValue: project.price || 0
 			})
 		}
 	}
