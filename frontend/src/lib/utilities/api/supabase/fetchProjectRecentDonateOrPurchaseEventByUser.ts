@@ -5,7 +5,8 @@ export const fetchAllProjectRecentDonateOrPurchaseEventsByUser = async (userAddr
   const { data } = await supabase.from('events')
     .select()
     .or('type.eq.Donate,type.eq.Purchase')
-    .eq('data->>by', userAddress);
+    .eq('data->>by', userAddress)
+    .order('timestamp', { ascending: false })
 
   return data || [];
 };
