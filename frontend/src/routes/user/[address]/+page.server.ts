@@ -1,16 +1,18 @@
 import { getProjectBalances } from '$flow/actions';
-import { getFindProfile } from '$flow/utils';
+import { getFindProfileFromAddressOrName } from '$flow/utils';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
 import { USER_MOCK } from './_mockData/usermock';
 import type { UserData } from './_types/user-data.interface';
 
 export const load = async ({ params }): Promise<UserData> => {
-	USER_MOCK.address = params.address;
-	const findProfile = await getFindProfile(USER_MOCK.address);
+	const findProfile = await getFindProfileFromAddressOrName(params.address);
 	if (findProfile) {
+		USER_MOCK.address = findProfile.address;
 		USER_MOCK.name = findProfile.name;
 		USER_MOCK.avatar = findProfile.avatar;
+	} else {
+		USER_MOCK.address = params.address;
 	}
 
 	const projects = await fetchDaoRankings();
