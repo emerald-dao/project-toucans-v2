@@ -29,13 +29,10 @@
 			<span class="title">{badgeLevel.name}</span>
 			<span class="goal xsmall" class:off={noLevel}>
 				{#if noLevel}
-					<Icon icon="tabler:circle-x" />
+					User has to {badgeLevel.goal.toLowerCase()} to unlock this badge
 				{:else}
 					<Icon icon="tabler:circle-check" />
-				{/if}
-				{badgeLevel.goal}
-				{#if noLevel}
-					to get this badge
+					{badgeLevel.goal}
 				{/if}
 			</span>
 			{#if !noLevel}
@@ -43,7 +40,7 @@
 			{/if}
 			{#if nextLevelGoal}
 				<span class="goal xsmall off">
-					{nextLevelGoal} to get next level
+					User has to {nextLevelGoal.toLowerCase()} to unlock this level
 				</span>
 			{/if}
 		</div>
@@ -53,6 +50,7 @@
 <style lang="scss">
 	.main-wrapper {
 		position: relative;
+		display: inline-block;
 
 		img {
 			width: 60px;
@@ -70,11 +68,22 @@
 			border-radius: var(--radius-1);
 		}
 
+		.description-wrapper:after {
+			position: absolute;
+			bottom: 100%;
+			left: 24px;
+			width: 0;
+			border-bottom: 5px var(--clr-surface-secondary) solid;
+			border-right: 5px solid transparent;
+			border-left: 5px solid transparent;
+			content: ' ';
+			font-size: 0;
+			line-height: 0;
+		}
+
 		.description-wrapper {
 			position: absolute;
 			background-color: var(--clr-surface-secondary);
-			bottom: -155px;
-			left: -80px;
 			padding: var(--space-4);
 			border-radius: var(--radius-1);
 			width: 300px;
@@ -82,6 +91,7 @@
 			flex-direction: column;
 			gap: var(--space-2);
 			z-index: 10;
+			margin-top: 10px;
 
 			.title {
 				font-size: var(--font-size-1);
