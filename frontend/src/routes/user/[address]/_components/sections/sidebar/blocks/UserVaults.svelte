@@ -65,6 +65,7 @@
 								currency={vault.daoData.tokenSymbol}
 								color="heading"
 								fontSize="var(--font-size-3)"
+								decimalNumbers={4}
 							/>
 							<Currency
 								amount={vault.balance * vault.tokenValue}

@@ -1,163 +1,112 @@
 const RANDOM_USERS: randomUsers = [
 	{
 		name: 'TropicalToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/tropical-toucan.png'
 	},
 	{
 		name: 'FeatheredFiestaToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/feathered-fiesta-toucan.png'
 	},
 	{
 		name: 'ColorfulBeakToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/colorful-beak-toucan.png'
 	},
 	{
 		name: 'SwoopingToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'ToucanTango',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/swooping-toucan.png'
 	},
 	{
 		name: 'RainbowPlumageToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/rainbow-plumage-toucan.png'
 	},
 	{
 		name: 'JungleJewelToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/jungle-jewel-toucan.png'
 	},
 	{
 		name: 'CuriousCrestToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/curious-crest-toucan.png'
 	},
 	{
 		name: 'FlightOfFancyToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/flight-of-fancy-toucan.png'
 	},
 	{
 		name: 'VibrantVisionToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/vibrant-vision-toucan.png'
 	},
 	{
 		name: 'WhiskeredWandererToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/whiskered-wanderer-toucan.png'
 	},
 	{
 		name: 'ToucanTwist',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/toucan-twist.png'
 	},
-	{
-		name: 'TropicanaToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
+
 	{
 		name: 'BeakyBuddyToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/beaky-buddy-toucan.png'
 	},
 	{
 		name: 'BoldBeakToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/bold-beak-toucan.png'
 	},
 	{
 		name: 'ToucanTreat',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/toucan-treat.png'
 	},
 	{
 		name: 'CrazyCrestToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/crazy-crest-toucan.png'
 	},
 	{
 		name: 'ToucanTango',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/toucan-tango.png'
 	},
 	{
 		name: 'ToucanTreasure',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/treasure-toucan.png'
 	},
 	{
 		name: 'LivelyLorikeetToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'RainbowToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/lively-lorikeet-toucan.png'
 	},
 	{
 		name: 'GlideToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'TropicalToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'VividToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/glide-toucan.png'
 	},
 	{
 		name: 'CuriousToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'ColorfulToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'WhiskeredToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/curious-toucan.png'
 	},
 	{
 		name: 'JewelToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/jewel-toucan.png'
 	},
 	{
 		name: 'FantasyToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'TwistToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/fantasy-toucan.png'
 	},
 	{
 		name: 'ExoticToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/exotic-toucan.png'
 	},
 	{
 		name: 'MarvelToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/marvel-toucan.png'
 	},
 	{
 		name: 'TropicanaToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'VibrantToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'WingedToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'TangoToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/tropicana-toucan.pngt'
 	},
 	{
 		name: 'FlamboyantToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'TreasureToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
-	},
-	{
-		name: 'RadiantToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/flamboyant-toucan.png'
 	},
 	{
 		name: 'CharmToucan',
-		avatar: '/badges/capitalized-toucan/level-5.png'
+		avatar: '/avatars/charm-toucan.png'
 	}
 ];
 
