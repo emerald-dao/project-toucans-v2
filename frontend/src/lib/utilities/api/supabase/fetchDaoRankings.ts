@@ -8,7 +8,8 @@ export async function fetchDaoRankings() {
         contract_address,
         logo,
         token_symbol,
-        name
+        name,
+        owner
       )
     `);
 

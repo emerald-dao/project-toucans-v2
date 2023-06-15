@@ -1,11 +1,12 @@
 import { network } from '$flow/config';
 import { supabase } from '$lib/supabaseClient';
+import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 
-export const getAllToucansProjects = async () => {
+export async function getAllToucansProjects(): Promise<DaoDatabaseData[]> {
 	const { data } = await supabase
 		.from('projects')
 		.select()
 		.eq('network', network);
 
-	return data;
+	return data as DaoDatabaseData[];
 };
