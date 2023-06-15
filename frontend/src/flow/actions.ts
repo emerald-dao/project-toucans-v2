@@ -155,9 +155,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 };
 
 export const deployContractExecution = (
-	data: DaoGeneratorData,
-	actionAfterSucceed: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
-) => executeTransaction(() => deployContract(data), actionAfterSucceed);
+	data: DaoGeneratorData
+) => executeTransaction(() => deployContract(data));
 
 const fundProject = async (
 	projectOwner: string,

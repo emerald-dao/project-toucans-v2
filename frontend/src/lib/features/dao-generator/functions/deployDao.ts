@@ -23,70 +23,52 @@ export const deployDao = async () => {
 	projectData.daoDetails.logoIpfsUrl = logoIpfsUrl;
 	projectData.daoDetails.bannerLogoIpfsUrl = bannerImage;
 
-	// After the contract is deployed to the blockchain, we upload images to IPFS and upload our data to the backend
-	const actionAfterDeployment: (
-		res: TransactionStatusObject
-	) => Promise<ActionExecutionResult> = async (res: TransactionStatusObject) => {
-		const [projectCreatedEvent] = res.events.filter((event) =>
-			event.type.includes('Toucans.ProjectCreated')
-		);
-		const eventData = projectCreatedEvent.data;
+	const executionResult = await deployContractExecution(projectData);
 
-		console.log('ProjectCreatedEvent', projectCreatedEvent);
+	// Add user to the users table if they don't exist
+	const userExists = await checkUser(get(user) as CurrentUserObject);
+	if (!userExists) {
+		await addUser(get(user) as CurrentUserObject);
+	}
 
-		restartAllSuites();
-
-		// Add user to the users table if they don't exist
-		const userExists = await checkUser(get(user) as CurrentUserObject);
-		if (userExists) {
-			console.log('User exists');
-		} else {
-			await addUser(get(user) as CurrentUserObject);
-			console.log('User added');
-		}
-
+	if (executionResult.state === 'success') {
 		await postProject(
 			get(user) as CurrentUserObject,
 			projectData,
-			eventData.projectId,
+			projectData.daoDetails.contractName,
 			logoIpfsUrl,
 			bannerImage
 		);
-		await addNotification(eventData.projectId, get(user).addr as string);
+		await addNotification(projectData.daoDetails.contractName, get(user).addr as string);
 		await goto(`/p/${projectData.daoDetails.contractName}`);
+	}
 
-		generatorActiveStep.reset();
-		daoGeneratorData.set({
-			daoDetails: {
-				name: '',
-				tokenName: '',
-				description: '',
-				website: '',
-				twitter: '',
-				discord: '',
-				contractName: '',
-				logo: undefined,
-				logoIpfsUrl: '',
-				bannerImage: undefined,
-				bannerLogoIpfsUrl: ''
-			},
-			tokenomics: {
-				paymentCurrency: ECurrencies.FLOW,
-				initialSupply: 0,
-				editDelay: '0.0',
-				mintTokens: true,
-				walletAddresses: [],
-				hasMaxSupply: false
-			}
-		});
+	restartAllSuites();
 
-		return {
-			state: 'success',
-			errorMessage: ''
-		};
-	};
-
-	const executionResult = await deployContractExecution(projectData, actionAfterDeployment);
+	generatorActiveStep.reset();
+	daoGeneratorData.set({
+		daoDetails: {
+			name: '',
+			tokenName: '',
+			description: '',
+			website: '',
+			twitter: '',
+			discord: '',
+			contractName: '',
+			logo: undefined,
+			logoIpfsUrl: '',
+			bannerImage: undefined,
+			bannerLogoIpfsUrl: ''
+		},
+		tokenomics: {
+			paymentCurrency: ECurrencies.FLOW,
+			initialSupply: 0,
+			editDelay: '0.0',
+			mintTokens: true,
+			walletAddresses: [],
+			hasMaxSupply: false
+		}
+	});
 
 	return executionResult;
 };
