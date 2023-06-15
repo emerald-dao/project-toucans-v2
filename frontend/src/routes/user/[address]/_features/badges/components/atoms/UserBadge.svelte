@@ -29,7 +29,7 @@
 			<span class="title">{badgeLevel.name}</span>
 			<span class="goal xsmall" class:off={noLevel}>
 				{#if noLevel}
-					User has to {badgeLevel.goal.toLowerCase()} to unlock this badge
+					User has to {badgeLevel.goal.toLowerCase()} to unlock this badge.
 				{:else}
 					<Icon icon="tabler:circle-check" />
 					{badgeLevel.goal}
@@ -39,8 +39,8 @@
 				<span class="description">{badgeLevel.description}</span>
 			{/if}
 			{#if nextLevelGoal}
-				<span class="goal xsmall off">
-					User has to {nextLevelGoal.toLowerCase()} to unlock this level
+				<span class="next-level xsmall">
+					User has to {nextLevelGoal.toLowerCase()} to unlock the next level.
 				</span>
 			{/if}
 		</div>
@@ -108,6 +108,10 @@
 				&.off {
 					color: var(--clr-alert-main);
 				}
+			}
+
+			.next-level {
+				color: var(--clr-text-off);
 			}
 
 			.description {

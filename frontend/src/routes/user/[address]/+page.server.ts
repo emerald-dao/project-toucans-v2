@@ -2,6 +2,8 @@ import { getProjectBalances } from '$flow/actions';
 import { getFindProfileFromAddressOrName } from '$flow/utils';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
+import getRandomUserNumber from './_features/userNames/getRandomUserNumber';
+import RANDOM_USERS from './_features/userNames/randomUsers';
 import { USER_MOCK } from './_mockData/usermock';
 import type { UserData } from './_types/user-data.interface';
 
@@ -14,6 +16,11 @@ export const load = async ({ params }): Promise<UserData> => {
 	} else {
 		USER_MOCK.address = params.address;
 	}
+
+	// create user name and avatar if not found
+	const userNumber = getRandomUserNumber(params.address, RANDOM_USERS.length);
+	USER_MOCK.name = RANDOM_USERS[userNumber].name;
+	USER_MOCK.avatar = RANDOM_USERS[userNumber].avatar;
 
 	const projects = await fetchDaoRankings();
 	console.log(projects, 'projects');

@@ -1,8 +1,14 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import type { UserConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const config: UserConfig = {
-	plugins: [sveltekit()],
+	plugins: [
+		sveltekit(),
+		nodePolyfills({
+			protocolImports: true
+		})
+	],
 
 	// Fixes issue with @onflow/fcl. "node-fetch" couldn't be used in client, so replaced it with "isomorphic-fetch"
 	resolve: {

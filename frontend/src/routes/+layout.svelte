@@ -27,6 +27,8 @@
 		notifications,
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
+	import getRandomUserNumber from './user/[address]/_features/userNames/getRandomUserNumber';
+	import RANDOM_USERS from './user/[address]/_features/userNames/randomUsers';
 
 	const connect = async () => {
 		logIn().then(async () => {
@@ -45,6 +47,14 @@
 
 	$: notificationsNumber = getNotificationsNumber($notifications);
 	$: if (notificationsNumber > 0) avatarDropdownNav[1].notifications = notificationsNumber;
+
+	let userNumber: number;
+
+	$: if ($user.addr) {
+		userNumber = getRandomUserNumber($user.addr, RANDOM_USERS.length);
+	}
+	$: userAvatar = userNumber ? RANDOM_USERS[userNumber].avatar : undefined;
+	$: userName = userNumber ? RANDOM_USERS[userNumber].name : undefined;
 </script>
 
 <TransactionModal
@@ -67,6 +77,8 @@
 	logoUrl="/toucans-logo.png"
 	{notificationsNumber}
 	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
+	{userAvatar}
+	{userName}
 />
 <main>
 	<slot />
