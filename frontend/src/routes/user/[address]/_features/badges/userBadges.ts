@@ -153,40 +153,40 @@ const USER_BADGES: Badge[] = [
 				image: '/badges/efficient-plumage/level-1.png',
 				description:
 					"You're swift and efficient! Your transactions are executed with speed and precision.",
-				goal: 'Perform 10 transactions'
+				goal: 'Perform 1 transactions'
 			},
 			{
 				name: '🔄 Streamlined Avian',
 				image: '/badges/efficient-plumage/level-2.png',
 				description: "You've mastered the art of efficiency! Your transactions flow seamlessly.",
-				goal: 'Perform 50 transactions'
+				goal: 'Perform 10 transactions'
 			},
 			{
 				name: '🛠️ Resourceful Beak',
 				image: '/badges/efficient-plumage/level-3.png',
 				description: "You're a resourceful toucan! Your transactions are optimized and effective.",
-				goal: 'Perform 100 transactions'
+				goal: 'Perform 50 transactions'
 			},
 			{
 				name: '📈 Productive Plumage',
 				image: '/badges/efficient-plumage/level-4.png',
 				description:
 					'Your productivity knows no bounds! Your transactions yield impressive results.',
-				goal: 'Perform 500 transactions'
+				goal: 'Perform 100 transactions'
 			},
 			{
 				name: '✨ Optimal Feather',
 				image: '/badges/efficient-plumage/level-5.png',
 				description:
 					"You're a model of optimal efficiency! Your transactions set the gold standard.",
-				goal: 'Perform 1000 transactions'
+				goal: 'Perform 500 transactions'
 			}
 		],
 		rule: (user) => {
 			const transactionCount = user.transactions.length;
-			if (transactionCount >= 100) return 5;
-			if (transactionCount >= 50) return 4;
-			if (transactionCount >= 25) return 3;
+			if (transactionCount >= 500) return 5;
+			if (transactionCount >= 100) return 4;
+			if (transactionCount >= 50) return 3;
 			if (transactionCount >= 10) return 2;
 			if (transactionCount >= 1) return 1;
 			return 0;
