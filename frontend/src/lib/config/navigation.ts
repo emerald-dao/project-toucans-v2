@@ -1,4 +1,6 @@
-import { notifications } from '../features/notifications/stores/NotificationsStore';
+import { user } from '$stores/flow/FlowStore';
+import { get } from 'svelte/store';
+
 export const navElements = [
 	{
 		name: 'Generate DAO',
@@ -63,7 +65,7 @@ export const avatarDropdownNav = [
 	},
 	{
 		name: 'Profile',
-		url: '/admin',
+		url: `/user/${get(user)?.addr}`,
 		prefetch: true,
 		icon: 'tabler:user'
 	},
