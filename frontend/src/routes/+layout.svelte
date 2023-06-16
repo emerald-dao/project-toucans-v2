@@ -55,6 +55,10 @@
 	}
 	$: userAvatar = userNumber ? RANDOM_USERS[userNumber].avatar : undefined;
 	$: userName = userNumber ? RANDOM_USERS[userNumber].name : undefined;
+
+	$: if ($user.addr) {
+		avatarDropdownNav[1].url = `/user/${$user.addr}`;
+	}
 </script>
 
 <TransactionModal
@@ -70,7 +74,7 @@
 	user={$user}
 	{navElements}
 	sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
-	avatarDropDownNavigation={avatarDropdownNav}
+	avatarDropDownNavigation={$user.addr ? avatarDropdownNav : undefined}
 	{network}
 	transactionInProgress={$transactionStore.progress}
 	logoText="Toucans"
