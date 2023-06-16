@@ -4,7 +4,6 @@ export interface UserData {
 	name: string;
 	avatar: string;
 	address: string;
-	signerOf: DaoProfile[];
 	vaults: Vault[];
 	transactions: DaoEvent[];
 }

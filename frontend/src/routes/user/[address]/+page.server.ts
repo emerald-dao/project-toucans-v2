@@ -1,39 +1,60 @@
 import { getProjectBalances } from '$flow/actions';
 import { getFindProfileFromAddressOrName } from '$flow/utils';
+import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
 import getRandomUserNumber from './_features/userNames/getRandomUserNumber';
 import RANDOM_USERS from './_features/userNames/randomUsers';
-import { USER_MOCK } from './_mockData/usermock';
-import type { UserData } from './_types/user-data.interface';
+import type { UserData, Vault } from './_types/user-data.interface';
 
 export const load = async ({ params }): Promise<UserData> => {
-	const findProfile = await getFindProfileFromAddressOrName(params.address);
+	return {
+		...(await getUserProfile(params.address)),
+		address: params.address,
+		vaults: await getUserVaults(params.address),
+		transactions: (await fetchAllProjectRecentDonateOrPurchaseEventsByUser(
+			params.address
+		)) as DaoEvent[]
+	};
+};
+
+const getUserProfile = async (
+	address: string
+): Promise<{
+	name: string;
+	avatar: string;
+}> => {
+	const findProfile = await getFindProfileFromAddressOrName(address);
+
 	if (findProfile) {
-		USER_MOCK.address = findProfile.address;
-		USER_MOCK.name = findProfile.name;
-		USER_MOCK.avatar = findProfile.avatar;
+		return {
+			name: findProfile.name,
+			avatar: findProfile.avatar
+		};
 	} else {
-		USER_MOCK.address = params.address;
-	}
+		const userNumber = getRandomUserNumber(address, RANDOM_USERS.length);
 
-	if (!findProfile) {
-		const userNumber = getRandomUserNumber(params.address, RANDOM_USERS.length);
-		USER_MOCK.name = RANDOM_USERS[userNumber].name;
-		USER_MOCK.avatar = RANDOM_USERS[userNumber].avatar;
+		return {
+			name: RANDOM_USERS[userNumber].name,
+			avatar: RANDOM_USERS[userNumber].avatar
+		};
 	}
+};
 
+const getUserVaults = async (address: string): Promise<Vault[]> => {
 	const projects = await fetchDaoRankings();
-	console.log(projects, 'projects');
 
 	const y = projects.map((x) => {
 		return { key: x.project_id, value: x.projects.owner };
 	});
-	const balances = await getProjectBalances(USER_MOCK.address, y);
-	USER_MOCK.vaults = [];
+
+	const balances = await getProjectBalances(address, y);
+
+	const vaults: Vault[] = [];
+
 	for (const project of projects) {
 		if (balances[project.project_id]) {
-			USER_MOCK.vaults.push({
+			vaults.push({
 				daoData: {
 					name: project.projects.name,
 					logoUrl: project.projects.logo,
@@ -45,13 +66,11 @@ export const load = async ({ params }): Promise<UserData> => {
 			});
 		}
 	}
+
 	// sort daos by highest value
-	USER_MOCK.vaults.sort((a, b) => {
+	vaults.sort((a, b) => {
 		return b.balance * b.tokenValue - a.balance * a.tokenValue;
 	});
 
-	USER_MOCK.transactions = await fetchAllProjectRecentDonateOrPurchaseEventsByUser(
-		USER_MOCK.address
-	);
-	return USER_MOCK;
+	return vaults;
 };
