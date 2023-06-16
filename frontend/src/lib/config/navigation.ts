@@ -56,20 +56,26 @@ export const socialMedia = [
 
 export const avatarDropdownNav = [
 	{
-		name: 'Dashboard',
+		name: 'DAO Manager',
 		url: '/admin',
 		prefetch: true,
-		icon: 'tabler:home'
+		icon: 'tabler:adjustments'
 	},
 	{
-		name: 'Pending actions',
+		name: 'Profile',
+		url: '/admin',
+		prefetch: true,
+		icon: 'tabler:user'
+	},
+	{
+		name: 'Pending Actions',
 		url: '/signatures-queue',
 		prefetch: true,
 		icon: 'tabler:pencil-plus',
 		notifications: 0
 	},
 	{
-		name: 'Create new DAO',
+		name: 'Create DAO',
 		url: '/dao-generator',
 		prefetch: true,
 		icon: 'tabler:square-rounded-plus'
