@@ -8,19 +8,21 @@ import RANDOM_USERS from './_features/userNames/randomUsers';
 import type { UserData, Vault } from './_types/user-data.interface';
 
 export const load = async ({ params }): Promise<UserData> => {
+	const { address, name, avatar } = await getUserProfile(params.address);
+
 	return {
-		...(await getUserProfile(params.address)),
-		address: params.address,
-		vaults: await getUserVaults(params.address),
-		transactions: (await fetchAllProjectRecentDonateOrPurchaseEventsByUser(
-			params.address
-		)) as DaoEvent[]
+		name,
+		avatar,
+		address,
+		vaults: await getUserVaults(address),
+		transactions: (await fetchAllProjectRecentDonateOrPurchaseEventsByUser(address)) as DaoEvent[]
 	};
 };
 
 const getUserProfile = async (
 	address: string
 ): Promise<{
+	address: string;
 	name: string;
 	avatar: string;
 }> => {
@@ -28,6 +30,7 @@ const getUserProfile = async (
 
 	if (findProfile) {
 		return {
+			address: findProfile.address,
 			name: findProfile.name,
 			avatar: findProfile.avatar
 		};
@@ -35,6 +38,7 @@ const getUserProfile = async (
 		const userNumber = getRandomUserNumber(address, RANDOM_USERS.length);
 
 		return {
+			address,
 			name: RANDOM_USERS[userNumber].name,
 			avatar: RANDOM_USERS[userNumber].avatar
 		};
