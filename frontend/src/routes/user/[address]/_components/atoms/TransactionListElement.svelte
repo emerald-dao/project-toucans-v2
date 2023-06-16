@@ -92,7 +92,6 @@
 			</Modal>
 		{/if}
 		<div class="dao-label">
-			<!-- <img src={event.logoUrl} alt={`${dao.name} logo`} class="dao-logo" /> -->
 			<a class="header-link" href={`/p/${event.project_id}`}>{event.project_id}</a>
 		</div>
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn'}
@@ -154,12 +153,6 @@
 
 		.header-link {
 			font-size: var(--font-size-0);
-		}
-
-		.dao-logo {
-			width: 16px;
-			height: 16px;
-			aspect-ratio: 1;
 		}
 	}
 
