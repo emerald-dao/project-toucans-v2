@@ -1,111 +1,111 @@
 const RANDOM_USERS: randomUsers = [
 	{
-		name: 'TropicalToucan',
+		name: 'Tropical Toucan',
 		avatar: '/avatars/tropical-toucan.png'
 	},
 	{
-		name: 'FeatheredFiestaToucan',
+		name: 'Feathered Fiesta Toucan',
 		avatar: '/avatars/feathered-fiesta-toucan.png'
 	},
 	{
-		name: 'ColorfulBeakToucan',
+		name: 'Colorful Beak Toucan',
 		avatar: '/avatars/colorful-beak-toucan.png'
 	},
 	{
-		name: 'SwoopingToucan',
+		name: 'Swooping Toucan',
 		avatar: '/avatars/swooping-toucan.png'
 	},
 	{
-		name: 'RainbowPlumageToucan',
+		name: 'Rainbow Plumage Toucan',
 		avatar: '/avatars/rainbow-plumage-toucan.png'
 	},
 	{
-		name: 'JungleJewelToucan',
+		name: 'Jungle Jewel Toucan',
 		avatar: '/avatars/jungle-jewel-toucan.png'
 	},
 	{
-		name: 'CuriousCrestToucan',
+		name: 'Curious Crest Toucan',
 		avatar: '/avatars/curious-crest-toucan.png'
 	},
 	{
-		name: 'FlightOfFancyToucan',
+		name: 'Flight Of Fancy Toucan',
 		avatar: '/avatars/flight-of-fancy-toucan.png'
 	},
 	{
-		name: 'VibrantVisionToucan',
+		name: 'Vibrant Vision Toucan',
 		avatar: '/avatars/vibrant-vision-toucan.png'
 	},
 	{
-		name: 'WhiskeredWandererToucan',
+		name: 'Whiskered Wanderer Toucan',
 		avatar: '/avatars/whiskered-wanderer-toucan.png'
 	},
 	{
-		name: 'ToucanTwist',
+		name: 'Toucan Twist',
 		avatar: '/avatars/toucan-twist.png'
 	},
 
 	{
-		name: 'BeakyBuddyToucan',
+		name: 'Beaky Buddy Toucan',
 		avatar: '/avatars/beaky-buddy-toucan.png'
 	},
 	{
-		name: 'BoldBeakToucan',
+		name: 'Bold Beak Toucan',
 		avatar: '/avatars/bold-beak-toucan.png'
 	},
 	{
-		name: 'ToucanTreat',
+		name: 'Toucan Treat',
 		avatar: '/avatars/toucan-treat.png'
 	},
 	{
-		name: 'CrazyCrestToucan',
+		name: 'Crazy Crest Toucan',
 		avatar: '/avatars/crazy-crest-toucan.png'
 	},
 	{
-		name: 'ToucanTango',
+		name: 'Toucan Tango',
 		avatar: '/avatars/toucan-tango.png'
 	},
 	{
-		name: 'ToucanTreasure',
+		name: 'Toucan Treasure',
 		avatar: '/avatars/treasure-toucan.png'
 	},
 	{
-		name: 'LivelyLorikeetToucan',
+		name: 'Lively Lorikeet Toucan',
 		avatar: '/avatars/lively-lorikeet-toucan.png'
 	},
 	{
-		name: 'GlideToucan',
+		name: 'Glide Toucan',
 		avatar: '/avatars/glide-toucan.png'
 	},
 	{
-		name: 'CuriousToucan',
+		name: 'Curious Toucan',
 		avatar: '/avatars/curious-toucan.png'
 	},
 	{
-		name: 'JewelToucan',
+		name: 'Jewel Toucan',
 		avatar: '/avatars/jewel-toucan.png'
 	},
 	{
-		name: 'FantasyToucan',
+		name: 'Fantasy Toucan',
 		avatar: '/avatars/fantasy-toucan.png'
 	},
 	{
-		name: 'ExoticToucan',
+		name: 'Exotic Toucan',
 		avatar: '/avatars/exotic-toucan.png'
 	},
 	{
-		name: 'MarvelToucan',
+		name: 'Marvel Toucan',
 		avatar: '/avatars/marvel-toucan.png'
 	},
 	{
-		name: 'TropicanaToucan',
-		avatar: '/avatars/tropicana-toucan.pngt'
+		name: 'Tropicana Toucan',
+		avatar: '/avatars/tropicana-toucan.png'
 	},
 	{
-		name: 'FlamboyantToucan',
+		name: 'Flamboyant Toucan',
 		avatar: '/avatars/flamboyant-toucan.png'
 	},
 	{
-		name: 'CharmToucan',
+		name: 'Charm Toucan',
 		avatar: '/avatars/charm-toucan.png'
 	}
 ];

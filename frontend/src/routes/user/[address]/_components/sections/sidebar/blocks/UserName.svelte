@@ -37,6 +37,7 @@
 
 		.name {
 			font-size: var(--font-size-7);
+			overflow-wrap: break-word;
 		}
 
 		.address {
