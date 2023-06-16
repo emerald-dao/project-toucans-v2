@@ -53,6 +53,7 @@
 			width: 140px;
 			height: 140px;
 			border-radius: 50%;
+			border: 2px solid var(--clr-neutral-badge);
 		}
 	}
 </style>
