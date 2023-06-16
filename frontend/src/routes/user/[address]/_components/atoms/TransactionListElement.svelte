@@ -81,7 +81,7 @@
 			<span class="date">{formatDate(new Date(event.timestamp))}</span>
 		</div>
 	</div>
-	<div class="row-3">
+	<div class="row-3 align-center">
 		{#if (event.type === 'Purchase' || event.type === 'Donate') && event.data.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
@@ -91,6 +91,10 @@
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
 		{/if}
+		<div class="dao-label">
+			<!-- <img src={event.logoUrl} alt={`${dao.name} logo`} class="dao-logo" /> -->
+			<a class="header-link" href={`/p/${event.project_id}`}>{event.project_id}</a>
+		</div>
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn'}
 			<Currency
 				amount={event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Burn'
@@ -134,6 +138,28 @@
 				line-height: normal;
 				color: var(--clr-text-off);
 			}
+		}
+	}
+
+	.dao-label {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--space-1);
+		color: var(--clr-text-main);
+		border: 1px solid var(--clr-border-primary);
+		padding: 0px var(--space-3);
+		border-radius: 20px;
+		width: fit-content;
+
+		.header-link {
+			font-size: var(--font-size-0);
+		}
+
+		.dao-logo {
+			width: 16px;
+			height: 16px;
+			aspect-ratio: 1;
 		}
 	}
 

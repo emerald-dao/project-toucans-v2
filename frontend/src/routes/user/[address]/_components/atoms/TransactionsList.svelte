@@ -6,20 +6,22 @@
 	export let events: DaoEvent[];
 </script>
 
-<div class="column-2 transactions-wrapper">
+<div class="column transactions-wrapper">
 	<div class="header-wrapper">
 		<DashboardHeading icon="tabler:activity">Recent transactions</DashboardHeading>
 	</div>
 	{#if events.length === 0}
 		<p><em>This user has no transactions yet</em></p>
 	{:else}
-		{#each events as event, i}
-			{#if i < 4}
-				<div class="activity-wrapper">
-					<TransactionListElement {event} {i} />
-				</div>
-			{/if}
-		{/each}
+		<div>
+			{#each events as event, i}
+				{#if i < 4}
+					<div class="activity-wrapper">
+						<TransactionListElement {event} {i} />
+					</div>
+				{/if}
+			{/each}
+		</div>
 	{/if}
 </div>
 
@@ -37,7 +39,7 @@
 			align-items: center;
 			justify-content: space-between;
 			width: 100%;
-			padding: var(--space-2);
+			padding: var(--space-3);
 			border-bottom: 1px solid var(--clr-neutral-badge);
 		}
 	}
