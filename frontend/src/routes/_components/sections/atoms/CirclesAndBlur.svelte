@@ -45,7 +45,7 @@
 			imageUrl: 'published-nft-logo.jpeg',
 			circleNumber: 4,
 			alt: 'Published NFT logo',
-			position: 'left',
+			position: 'right',
 			speed: 'normal'
 		}
 	];
