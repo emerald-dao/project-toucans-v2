@@ -153,11 +153,6 @@
 		.info-wrapper {
 			margin-right: var(--space-3);
 
-			// .address {
-			// 	font-size: var(--font-size-0);
-			// 	margin-bottom: -2px;
-			// }
-
 			.date {
 				font-size: var(--font-size-0);
 				line-height: normal;

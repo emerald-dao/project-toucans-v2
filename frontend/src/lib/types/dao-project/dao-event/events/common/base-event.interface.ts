@@ -5,4 +5,5 @@ export interface BaseEvent {
 	id: number;
 	type: DaoEventName;
 	timestamp: string;
+	transaction_id: string;
 }
