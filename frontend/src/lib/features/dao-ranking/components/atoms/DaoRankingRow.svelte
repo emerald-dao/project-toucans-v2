@@ -21,7 +21,7 @@
 	</td>
 	<td>
 		<Currency
-			amount={project.total_funding}
+			amount={project.treasury_value}
 			moneyPrefix={true}
 			color="heading"
 			fontSize="var(--font-size-1)"
@@ -29,7 +29,7 @@
 	</td>
 	<td>
 		<Currency
-			amount={project.treasury_value}
+			amount={project.total_funding}
 			moneyPrefix={true}
 			color="heading"
 			fontSize="var(--font-size-1)"

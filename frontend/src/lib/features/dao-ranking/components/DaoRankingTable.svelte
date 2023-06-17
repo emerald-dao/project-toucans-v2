@@ -11,8 +11,8 @@
 			<tr>
 				<th class="left-align">#</th>
 				<th class="left-align">Name</th>
-				<th>Total Funding</th>
 				<th>Treasury Value</th>
+				<th>Total Funding</th>
 				<th># Proposals</th>
 				<th># Participants</th>
 				<th>7d Funding</th>
