@@ -5,12 +5,11 @@
 <section class={`section-large discover-hero-${$theme}`}>
 	<div class="container-small column-5">
 		<h1 class="w-medium">
-			Discover thriving communities and tokens built <strong>#onFlow</strong>
+			Discover thriving DAOs and tokens built <strong>#onFlow</strong>
 		</h1>
 		<p class="large">
-			Step right in and immerse yourself in a world of limitless possibilities on the Flow
-			blockchain! We are thrilled to have you here, ready to explore the incredible DAOs thriving
-			within this innovative ecosystem.
+			Below you will find a list of DAOs and tokens that have launched on Toucans. Explore all
+			projects and the most popular. The stats are updated every 30 minutes.
 		</p>
 	</div>
 </section>
