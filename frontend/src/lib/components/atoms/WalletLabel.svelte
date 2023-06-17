@@ -5,7 +5,7 @@
 	export let find: string | undefined = undefined;
 </script>
 
-<a href={`/user/${address}`} class="header-link">
+<a href={`/u/${address}`} class="header-link">
 	<Icon icon="tabler:wallet" />{find ? find : address}
 </a>
 

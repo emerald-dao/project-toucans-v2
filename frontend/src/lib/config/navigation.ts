@@ -65,7 +65,7 @@ export const avatarDropdownNav = [
 	},
 	{
 		name: 'Profile',
-		url: `/user/${get(user)?.addr}`,
+		url: `/u/${get(user)?.addr}`,
 		prefetch: true,
 		icon: 'tabler:user'
 	},

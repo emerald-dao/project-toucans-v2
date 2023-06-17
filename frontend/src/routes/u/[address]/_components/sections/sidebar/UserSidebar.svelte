@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { UserData } from './../../../_types/user-data.interface';
+	import type { UserData } from '../../../_types/user-data.interface';
 	import UserVaults from './blocks/UserVaults.svelte';
 	import UserName from './blocks/UserName.svelte';
 	import { getContext } from 'svelte';

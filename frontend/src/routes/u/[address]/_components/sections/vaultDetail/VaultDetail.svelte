@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { UserData } from './../../../_types/user-data.interface';
+	import type { UserData } from '../../../_types/user-data.interface';
 	import { fly, fade } from 'svelte/transition';
 	import { Currency } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';

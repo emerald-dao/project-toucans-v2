@@ -27,8 +27,8 @@
 		notifications,
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
-	import getRandomUserNumber from './user/[address]/_features/userNames/getRandomUserNumber';
-	import RANDOM_USERS from './user/[address]/_features/userNames/randomUsers';
+	import getRandomUserNumber from './u/[address]/_features/userNames/getRandomUserNumber';
+	import RANDOM_USERS from './u/[address]/_features/userNames/randomUsers';
 
 	const connect = async () => {
 		logIn().then(async () => {
@@ -57,7 +57,7 @@
 	$: userName = userNumber ? RANDOM_USERS[userNumber].name : undefined;
 
 	$: if ($user.addr) {
-		avatarDropdownNav[1].url = `/user/${$user.addr}`;
+		avatarDropdownNav[1].url = `/u/${$user.addr}`;
 	}
 </script>
 
