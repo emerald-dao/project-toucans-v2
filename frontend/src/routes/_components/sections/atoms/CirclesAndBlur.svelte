@@ -26,19 +26,27 @@
 		},
 		{
 			type: 'image',
-			imageUrl: 'flunks-logo.jpg',
-			circleNumber: 1,
-			alt: 'Flunks logo',
+			imageUrl: 'ballerz-fc-logo.jpeg',
+			circleNumber: 2,
+			alt: 'Ballerz FC logo',
 			position: 'left',
 			speed: 'normal'
 		},
 		{
 			type: 'image',
-			imageUrl: 'flowverse-logo.jpg',
-			circleNumber: 2,
-			alt: 'Flowverse logo',
+			imageUrl: 'sloppy-logo.jpeg',
+			circleNumber: 3,
+			alt: 'Sloppy logo',
 			position: 'right',
 			speed: 'fast'
+		},
+		{
+			type: 'image',
+			imageUrl: 'published-nft-logo.jpeg',
+			circleNumber: 4,
+			alt: 'Published NFT logo',
+			position: 'left',
+			speed: 'normal'
 		}
 	];
 
