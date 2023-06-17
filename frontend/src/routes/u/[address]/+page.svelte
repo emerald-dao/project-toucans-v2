@@ -7,7 +7,7 @@
 
 	export let data;
 
-	let selectedVault = writable(0);
+	let selectedVault = writable(null);
 
 	setContext('userData', data);
 	setContext('selectedVault', selectedVault);
@@ -17,7 +17,7 @@
 	<UserSidebar />
 	<UserMain />
 </div>
-{#if $selectedVault > 0}
+{#if $selectedVault !== null}
 	<VaultDetail />
 {/if}
 

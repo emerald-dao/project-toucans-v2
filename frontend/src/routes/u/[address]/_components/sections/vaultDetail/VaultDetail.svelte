@@ -8,27 +8,33 @@
 	import TransactionsList from '../../atoms/TransactionsList.svelte';
 
 	const userData: UserData = getContext('userData');
-	const selectedVaultStore: Writable<number> = getContext('selectedVault');
+	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
 
-	$: vault = $selectedVaultStore > 0 ? userData.vaults[$selectedVaultStore - 1] : null;
+	$: vault = $selectedVaultStore !== null ? userData.vaults[$selectedVaultStore] : null;
 
 	$: transactions =
-		$selectedVaultStore > 0
+		$selectedVaultStore !== null
 			? userData.transactions.filter(
 					(transaction) => transaction.project_id === vault?.daoData.contractName
 			  )
 			: null;
 
 	const handleCloseVault = () => {
-		selectedVaultStore.set(0);
+		selectedVaultStore.set(null);
 	};
 
 	const handleNextVault = () => {
-		selectedVaultStore.update((value) => value + 1);
+		selectedVaultStore.update((value) => {
+			if (value === null) return 0;
+			else return value + 1;
+		});
 	};
 
 	const handlePrevVault = () => {
-		selectedVaultStore.update((value) => value - 1);
+		selectedVaultStore.update((value) => {
+			if (value === null) return 0;
+			else return value - 1;
+		});
 	};
 </script>
 
@@ -62,7 +68,7 @@
 				</div>
 				<div class="column-space-between">
 					<div>
-						{#if $selectedVaultStore > 1}
+						{#if $selectedVaultStore !== null && $selectedVaultStore > 0}
 							<div
 								class="header-link"
 								on:click={handlePrevVault}
@@ -73,7 +79,7 @@
 						{/if}
 					</div>
 					<div>
-						{#if userData.vaults.length > $selectedVaultStore}
+						{#if $selectedVaultStore !== null && userData.vaults.length - 1 > $selectedVaultStore}
 							<div
 								class="header-link"
 								on:click={handleNextVault}

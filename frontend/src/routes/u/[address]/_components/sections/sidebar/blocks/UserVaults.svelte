@@ -8,10 +8,10 @@
 
 	const userData: UserData = getContext('userData');
 
-	const selectedVaultStore: Writable<number> = getContext('selectedVault');
+	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
 
 	const handleSelectVault = (vaultId: number) => {
-		selectedVaultStore.set(vaultId + numberOfPages * activePage);
+		selectedVaultStore.set(vaultId + vaultsPerPage * activePage);
 	};
 
 	let activePage = 0;
@@ -25,10 +25,10 @@
 	$: numberOfPages = Math.ceil(userData.vaults.length / vaultsPerPage);
 
 	// If the selectedVault is not inside the actual page, change the page
-	$: if ($selectedVaultStore !== 0) {
+	$: if ($selectedVaultStore !== null) {
 		if (
-			$selectedVaultStore > (activePage + 1) * vaultsPerPage ||
-			$selectedVaultStore < activePage * vaultsPerPage
+			$selectedVaultStore >= (activePage + 1) * vaultsPerPage ||
+			$selectedVaultStore <= activePage * vaultsPerPage
 		) {
 			activePage = Math.floor($selectedVaultStore / vaultsPerPage);
 		}
@@ -40,21 +40,21 @@
 		<DashboardHeading icon="tabler:writing-sign">Vaults</DashboardHeading>
 		{#if userData.vaults.length > 0}
 			{#each vaultsToShow as vault, i}
-				<div class="balance-wrapper" on:click={() => handleSelectVault(i + 1)}>
+				<div class="balance-wrapper" on:click={() => handleSelectVault(i)}>
 					<div
 						class="select-wrapper"
-						class:selected={$selectedVaultStore === i + 1 + numberOfPages * activePage}
+						class:selected={$selectedVaultStore === i + vaultsPerPage * activePage}
 					>
 						<div class="row-space-between">
 							<div class="coin-name-wrapper row-2 align-center">
 								<img src={vault.daoData.logoUrl} alt={`${vault.daoData.name} logo`} class="logo" />
-								<h4 class:selected={$selectedVaultStore === i + 1 + numberOfPages * activePage}>
+								<h4 class:selected={$selectedVaultStore === i + vaultsPerPage * activePage}>
 									{vault.daoData.name}
 								</h4>
 							</div>
 							<div
 								class="eye-icon"
-								class:selected={$selectedVaultStore === i + 1 + numberOfPages * activePage}
+								class:selected={$selectedVaultStore === i + vaultsPerPage * activePage}
 							>
 								<Icon icon="tabler:eye" />
 							</div>
