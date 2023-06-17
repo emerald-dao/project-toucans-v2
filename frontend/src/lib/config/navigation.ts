@@ -58,16 +58,16 @@ export const socialMedia = [
 
 export const avatarDropdownNav = [
 	{
-		name: 'DAO Manager',
-		url: '/admin',
-		prefetch: true,
-		icon: 'tabler:adjustments'
-	},
-	{
 		name: 'Profile',
 		url: `/u/${get(user)?.addr}`,
 		prefetch: true,
 		icon: 'tabler:user'
+	},
+	{
+		name: 'DAO Manager',
+		url: '/admin',
+		prefetch: true,
+		icon: 'tabler:adjustments'
 	},
 	{
 		name: 'Pending Actions',
