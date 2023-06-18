@@ -56,8 +56,17 @@
 	$: userAvatar = userNumber ? RANDOM_USERS[userNumber].avatar : undefined;
 	$: userName = userNumber ? RANDOM_USERS[userNumber].name : undefined;
 
+	const setFindProfile = async (userAddr: string) => {
+		const findProfile = await getFindProfile(userAddr);
+		if (findProfile) {
+			avatarDropdownNav[0].url = `/u/${findProfile.name}`;
+		}
+	};
+
 	$: if ($user.addr) {
+		console.log('hi!');
 		avatarDropdownNav[0].url = `/u/${$user.addr}`;
+		setFindProfile($user.addr);
 	}
 </script>
 
