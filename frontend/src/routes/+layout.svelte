@@ -46,7 +46,7 @@
 	$: !$user.addr && ($notifications = null);
 
 	$: notificationsNumber = getNotificationsNumber($notifications);
-	$: if (notificationsNumber > 0) avatarDropdownNav[1].notifications = notificationsNumber;
+	$: if (notificationsNumber > 0) avatarDropdownNav[2].notifications = notificationsNumber;
 
 	let userNumber: number;
 
@@ -57,7 +57,7 @@
 	$: userName = userNumber ? RANDOM_USERS[userNumber].name : undefined;
 
 	$: if ($user.addr) {
-		avatarDropdownNav[1].url = `/u/${$user.addr}`;
+		avatarDropdownNav[0].url = `/u/${$user.addr}`;
 	}
 </script>
 
