@@ -4,9 +4,12 @@
 	import { Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import type { DaoEvent, DaoEventName } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	export let event: DaoEvent;
 	export let i: number;
+
+	const messageId = `message-${i}-${uuidv4()}`;
 
 	const EVENTS_DATA: {
 		[event in DaoEventName]: {
@@ -83,10 +86,10 @@
 	</div>
 	<div class="row-3 align-center">
 		{#if (event.type === 'Purchase' || event.type === 'Donate') && event.data.message}
-			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
+			<div class="header-link" on:click={() => getModal(messageId).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>
-			<Modal background="var(--clr-background-secondary)" id={`message-${i}`}>
+			<Modal background="var(--clr-background-secondary)" id={messageId}>
 				<span class="special-message-heading">Added Message</span>
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
