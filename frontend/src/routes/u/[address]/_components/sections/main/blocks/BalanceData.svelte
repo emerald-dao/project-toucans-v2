@@ -17,7 +17,7 @@
 
 	// If some of the vaults balance is 0, remove them from the array
 	topThreeVaults.forEach((vaultData, index) => {
-		if (vaultData.balance === 0) {
+		if (Number(vaultData.balance) === 0) {
 			topThreeVaults.splice(index, 1);
 		}
 	});
