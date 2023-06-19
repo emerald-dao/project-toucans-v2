@@ -10,7 +10,7 @@
 <div class="main-wrapper">
 	<img src={userData.avatar} alt="User avatar" class="avatar" />
 	<div class="column-4">
-		<div class="column-1">
+		<div class="column-1 name-wrapper">
 			<h2 class="name w-medium">{userData.name}</h2>
 			<span class="address">
 				<Icon icon="tabler:wallet" />
@@ -35,17 +35,25 @@
 			gap: var(--space-6);
 		}
 
-		.name {
-			font-size: var(--font-size-7);
-			overflow-wrap: break-word;
-		}
-
-		.address {
-			display: flex;
-			flex-direction: row;
+		.name-wrapper {
 			align-items: center;
-			gap: var(--space-1);
-			color: var(--clr-text-off);
+
+			@include mq('small') {
+				align-items: flex-start;
+			}
+
+			.name {
+				font-size: var(--font-size-7);
+				overflow-wrap: break-word;
+			}
+
+			.address {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: var(--space-1);
+				color: var(--clr-text-off);
+			}
 		}
 
 		.avatar {

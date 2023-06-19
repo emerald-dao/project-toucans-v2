@@ -15,6 +15,13 @@
 
 	const topThreeVaults = vaults.slice(0, 3);
 
+	// If some of the vaults balance is 0, remove them from the array
+	topThreeVaults.forEach((vaultData, index) => {
+		if (Number(vaultData.balance) === 0) {
+			topThreeVaults.splice(index, 1);
+		}
+	});
+
 	const holdingDaos = topThreeVaults.map((vaultData) => {
 		return vaultData.daoData.name;
 	});
@@ -29,8 +36,10 @@
 		return acc + cur.balance * cur.tokenValue;
 	}, 0);
 
-	holdingDaos.push('Other');
-	holdingAmounts.push(otherVaultsValue);
+	if (otherVaultsValue > 0) {
+		holdingDaos.push('Other');
+		holdingAmounts.push(otherVaultsValue);
+	}
 
 	let totalBalance = 0;
 	let flowDonated = 0;
