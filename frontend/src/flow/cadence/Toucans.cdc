@@ -3,6 +3,7 @@ import Crypto
 import ToucansTokens from "./ToucansTokens.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
 import ToucansActions from "./ToucansActions.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
 
 pub contract Toucans {
 
@@ -17,9 +18,15 @@ pub contract Toucans {
     }
   }
 
+  pub resource DummyMinter: Minter {
+    pub fun mint(amount: UFix64): @FungibleToken.Vault {
+      return <- FlowToken.createEmptyVault()
+    }
+  }
+
   pub event ProjectCreated(
     projectId: String,
-    tokenTypeIdentifier: String,
+    tokenTypeIdentifier: String?,
     by: Address
   )
 
@@ -200,11 +207,11 @@ pub contract Toucans {
   }
 
   pub resource interface ProjectPublic {
-    pub let projectId: String
-    pub let projectTokenInfo: ToucansTokens.TokenInfo
+    pub var projectId: String
+    pub var projectTokenInfo: ToucansTokens.TokenInfo
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     pub var totalFunding: UFix64
-    pub let editDelay: UFix64
+    pub var editDelay: UFix64
     pub var purchasing: Bool
     pub let minting: Bool
 
@@ -236,16 +243,17 @@ pub contract Toucans {
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
     pub fun borrowManagerPublic(): &Manager{ManagerPublic}
+    pub fun hasTokenContract(): Bool
   }
 
   pub resource Project: ProjectPublic {
-    pub let projectId: String
-    pub let projectTokenInfo: ToucansTokens.TokenInfo
+    pub var projectId: String
+    pub var projectTokenInfo: ToucansTokens.TokenInfo
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     // Of payment tokens
     pub var totalFunding: UFix64
     // You cannot edit or start a new cycle within this time frame
-    pub let editDelay: UFix64
+    pub var editDelay: UFix64
     pub let minting: Bool
     pub var purchasing: Bool
     pub var nextCycleId: UInt64
@@ -258,10 +266,28 @@ pub contract Toucans {
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let multiSignManager: @Manager
     access(self) let overflow: @FungibleToken.Vault
-    access(self) let minter: @{Minter}
+    access(self) var minter: @{Minter}
     access(self) let funders: {Address: UFix64}
     access(self) var extra: {String: AnyStruct}
     access(self) var additions: @{String: AnyResource}
+
+    // This function will be called when the owner is ready to add their own token to the DAO.  
+    //
+    // This function is useless if the project owner already configured a token when they
+    // created the project.
+    pub fun evolve(projectTokenInfo: ToucansTokens.TokenInfo, minter: @{Minter}, initialTreasurySupply: UFix64, editDelay: UFix64) {
+      pre {
+        !self.hasTokenContract(): "This project already has an associated token."
+      }
+      self.projectId = projectTokenInfo.contractName
+      self.editDelay = editDelay
+      self.projectTokenInfo = projectTokenInfo
+      let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
+      assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
+      self.depositToTreasury(vault: <- initialVault)
+      let dummyMinter <- self.minter <- minter
+      destroy dummyMinter
+    }
 
 
     //  __  __       _ _   _    _____ _             
@@ -294,6 +320,7 @@ pub contract Toucans {
         recipientVault.borrow()!.getType() == self.projectTokenInfo.tokenType: 
           "This vault cannot receive the projects token."
         self.minting: "Minting is turned off."
+        self.hasTokenContract(): "There is no token to mint."
       }
       let action = ToucansActions.MintTokens(recipientVault, amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
@@ -307,6 +334,7 @@ pub contract Toucans {
     pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       pre {
         self.minting: "Minting is turned off."
+        self.hasTokenContract(): "There is no token to mint."
       }
       let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
@@ -315,6 +343,7 @@ pub contract Toucans {
     pub fun proposeMintToTreasury(amount: UFix64) {
       pre {
         self.minting: "Minting is turned off."
+        self.hasTokenContract(): "There is no token to mint."
       }
       let action = ToucansActions.MintTokensToTreasury(amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
@@ -416,6 +445,7 @@ pub contract Toucans {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
         timeframe.startTime >= getCurrentBlock().timestamp: "Start time must be now or in the future."
+        self.hasTokenContract(): "There is no token to mint."
       }
 
       let newFundingCycle: FundingCycle = FundingCycle(details: FundingCycleDetails(
@@ -511,6 +541,7 @@ pub contract Toucans {
       pre {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
         self.purchasing: "Purchasing is turned off at the moment."
+        self.hasTokenContract(): "There is no token to purchase."
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
@@ -701,6 +732,7 @@ pub contract Toucans {
     pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
       pre {
         vault.getType() == self.projectTokenInfo.tokenType: "The received vault is not the project's token type."
+        self.hasTokenContract(): "There is no project token."
       }
       emit Donate(
         projectId: self.projectId,
@@ -737,6 +769,7 @@ pub contract Toucans {
     access(account) fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
       pre {
         self.minting: "Minting is off. You cannot do this."
+        self.hasTokenContract(): "There is no token to mint."
       }
 
       let tokens <- self.minter.mint(amount: amount)
@@ -755,6 +788,7 @@ pub contract Toucans {
     access(account) fun batchMint(vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       pre {
         self.minting: "Minting is off. You cannot do this."
+        self.hasTokenContract(): "There is no token to mint."
       }
 
       let failed: [Address] = []
@@ -927,6 +961,10 @@ pub contract Toucans {
       return self.overflow.balance
     }
 
+    pub fun hasTokenContract(): Bool {
+      return self.minter.getType() != Type<@DummyMinter>()
+    }
+
 
     //   ____                               
     //  |  _ \                              
@@ -966,7 +1004,20 @@ pub contract Toucans {
       pre {
         ToucansTokens.getTokenInfo(tokenType: paymentTokenInfo.tokenType) != nil: "Unsupported token type for payment."
       }
-      self.projectId = projectTokenInfo.contractName
+
+      let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
+      let emptyPaymentVault <- paymentContract.createEmptyVault()
+
+      // no new token created
+      if minter.getType() == Type<@DummyMinter>() {
+        self.projectId = self.uuid.toString()
+        self.treasury <- {emptyPaymentVault.getType(): <- emptyPaymentVault}
+      } else {
+        self.projectId = projectTokenInfo.contractName
+        let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
+        assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
+        self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
+      }
       self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
@@ -981,12 +1032,6 @@ pub contract Toucans {
       self.minting = minting
       self.purchasing = true
       self.additions <- {}
-
-      let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialTreasurySupply)
-      assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
-      let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
-      let emptyPaymentVault <- paymentContract.createEmptyVault()
-      self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       self.overflow <- paymentContract.createEmptyVault()
       self.multiSignManager <- create Manager(_initialSigners: initialSigners, _initialThreshold: initialThreshold)
     }
@@ -1011,6 +1056,37 @@ pub contract Toucans {
   pub resource Collection: CollectionPublic {
     pub let projects: @{String: Project}
 
+    pub fun createProjectNoToken(
+      paymentTokenInfo: ToucansTokens.TokenInfo,
+      extra: {String: AnyStruct},
+      payment: @FlowToken.Vault
+    ) {
+      let project: @Project <- create Project(
+        projectTokenInfo: ToucansTokens.dummyFlowTokenInfo(), 
+        paymentTokenInfo: paymentTokenInfo, 
+        minter: <- create DummyMinter(), 
+        editDelay: 0.0, 
+        initialSigners: [self.owner!.address], 
+        initialThreshold: 1, 
+        minting: false, 
+        initialTreasurySupply: 0.0, 
+        extra: extra
+      )
+      let projectId: String = project.uuid.toString()
+      self.projects[projectId] <-! project
+
+      // payment
+      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
+                              .borrow<&{FungibleToken.Receiver}>()!
+      emeraldCityTreasury.deposit(from: <- payment)
+
+      emit ProjectCreated(
+        projectId: projectId,
+        tokenTypeIdentifier: nil,
+        by: self.owner!.address
+      )
+    }
+
     pub fun createProject(
       projectTokenInfo: ToucansTokens.TokenInfo, 
       paymentTokenInfo: ToucansTokens.TokenInfo,
@@ -1018,11 +1094,17 @@ pub contract Toucans {
       editDelay: UFix64,
       minting: Bool,
       initialTreasurySupply: UFix64,
-      extra: {String: AnyStruct}
+      extra: {String: AnyStruct},
+      payment: @FlowToken.Vault
     ) {
       let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, initialSigners: [self.owner!.address], initialThreshold: 1, minting: minting, initialTreasurySupply: initialTreasurySupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
       self.projects[projectId] <-! project
+
+      // payment
+      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
+                              .borrow<&{FungibleToken.Receiver}>()!
+      emeraldCityTreasury.deposit(from: <- payment)
 
       emit ProjectCreated(
         projectId: projectId,

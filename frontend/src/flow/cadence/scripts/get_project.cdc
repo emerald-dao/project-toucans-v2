@@ -37,6 +37,7 @@ pub struct Info {
   pub var trading: Bool
   pub let lpAddresses: {String: Address}
   pub let completedActionIds: {UInt64: Bool}
+  pub let hasToken: Bool
 
   init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
     self.projectId = info.projectId
@@ -95,6 +96,7 @@ pub struct Info {
       self.trading = true
     }
     self.completedActionIds = info.getCompletedActionIds()
+    self.hasToken = info.hasTokenContract()
   }
 }
 

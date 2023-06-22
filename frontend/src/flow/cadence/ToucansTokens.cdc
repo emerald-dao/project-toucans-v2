@@ -66,6 +66,17 @@ pub contract ToucansTokens {
     return Address(r)
   }
 
+  pub fun dummyFlowTokenInfo(): TokenInfo {
+    return TokenInfo(
+      "FlowToken", 
+      self.stringToAddress(stringAddress: FlowToken.getType().identifier.slice(from: 2, upTo: 18)), 
+      "FLOW", 
+      /public/flowTokenReceiver, 
+      /public/flowTokenBalance, 
+      /storage/flowTokenVault
+    )
+  }
+
   init() {
     self.tokens = {
       Type<@FlowToken.Vault>(): TokenInfo("FlowToken", self.stringToAddress(stringAddress: FlowToken.getType().identifier.slice(from: 2, upTo: 18)), "FLOW", /public/flowTokenReceiver, /public/flowTokenBalance, /storage/flowTokenVault),

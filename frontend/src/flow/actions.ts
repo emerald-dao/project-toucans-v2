@@ -155,8 +155,35 @@ const deployContract = async (data: DaoGeneratorData) => {
 };
 
 export const deployContractExecution = (
-	data: DaoGeneratorData
-) => executeTransaction(() => deployContract(data));
+	data: DaoGeneratorData,
+	actionAfterSucceed: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
+) => executeTransaction(() => deployContract(data), actionAfterSucceed);
+
+const deployDAONoToken = async (data: DaoGeneratorData) => {
+	console.log(data);
+	const paymentCurrency = data.tokenomics.paymentCurrency;
+	const paymentCurrencyInfo = currencies[paymentCurrency];
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(deployExampleTokenTx),
+		args: (arg, t) => [
+			arg(paymentCurrencyInfo.contractName, t.String),
+			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
+			arg(paymentCurrencyInfo.symbol, t.String),
+			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
+			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
+			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const deployDAONoTokenExecution = (
+	data: DaoGeneratorData,
+	actionAfterSucceed: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
+) => executeTransaction(() => deployDAONoToken(data), actionAfterSucceed);
 
 const fundProject = async (
 	projectOwner: string,

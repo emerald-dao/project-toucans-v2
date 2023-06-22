@@ -71,6 +71,7 @@ export interface DaoBlockchainData {
 	completedActionIds: {
 		[actionId: string]: boolean
 	}
+	hasToken: boolean
 }
 
 export interface TokenInfo {

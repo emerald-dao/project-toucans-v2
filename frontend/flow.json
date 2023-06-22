@@ -181,7 +181,8 @@
 				"mainnet": "39e42c67cc851cfb"
 			}
 		},
-		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc"
+		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc",
+		"Test": "./src/flow/cadence/Test.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -211,29 +212,7 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
-				"FCLCrypto",
-				"NonFungibleToken",
-				"MetadataViews",
-				"FungibleTokenMetadataViews",
-				"FUSD",
-				"FIND",
-				"OnChainMultiSig",
-				"NFTCatalogSnapshot",
-				"NFTCatalog",
-				"ExampleNFT",
-				"FiatToken",
-				"EmeraldIdentityDapper",
-				"EmeraldIdentityLilico",
-				"EmeraldIdentity",
-				"ToucansUtils",
-				"ToucansTokens",
-				"Toucans",
-				"ToucansActions",
-				"TestingDAO",
-				"SwapError",
-				"SwapConfig",
-				"SwapInterfaces",
-				"SwapFactory"
+				"Test"
 			]
 		},
 		"testnet": {
