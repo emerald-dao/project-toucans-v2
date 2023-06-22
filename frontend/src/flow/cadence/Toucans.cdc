@@ -5,6 +5,8 @@ import ToucansUtils from "./ToucansUtils.cdc"
 import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 
+// TOOD: CHANGE Toucans.account.address to 0x5643fd47a29770e7
+
 pub contract Toucans {
 
   pub let CollectionStoragePath: StoragePath
@@ -546,7 +548,7 @@ pub contract Toucans {
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(self.paymentTokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(Toucans.account.address).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
@@ -708,7 +710,7 @@ pub contract Toucans {
                 ?? panic("Unsupported token type for donating.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(Toucans.account.address).getCapability(tokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
@@ -1076,7 +1078,7 @@ pub contract Toucans {
       self.projects[projectId] <-! project
 
       // payment
-      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
+      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(Toucans.account.address).getCapability(/public/flowTokenReceiver)
                               .borrow<&{FungibleToken.Receiver}>()!
       emeraldCityTreasury.deposit(from: <- payment)
 
@@ -1102,7 +1104,7 @@ pub contract Toucans {
       self.projects[projectId] <-! project
 
       // payment
-      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
+      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(Toucans.account.address).getCapability(/public/flowTokenReceiver)
                               .borrow<&{FungibleToken.Receiver}>()!
       emeraldCityTreasury.deposit(from: <- payment)
 

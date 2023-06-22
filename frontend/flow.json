@@ -212,7 +212,29 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
-				"Test"
+				"FCLCrypto",
+				"NonFungibleToken",
+				"MetadataViews",
+				"FungibleTokenMetadataViews",
+				"FUSD",
+				"FIND",
+				"OnChainMultiSig",
+				"NFTCatalogSnapshot",
+				"NFTCatalog",
+				"ExampleNFT",
+				"FiatToken",
+				"EmeraldIdentityDapper",
+				"EmeraldIdentityLilico",
+				"EmeraldIdentity",
+				"ToucansUtils",
+				"ToucansTokens",
+				"Toucans",
+				"ToucansActions",
+				"TestingDAO",
+				"SwapError",
+				"SwapConfig",
+				"SwapInterfaces",
+				"SwapFactory"
 			]
 		},
 		"testnet": {

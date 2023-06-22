@@ -3,6 +3,7 @@ import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc
 import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
 import ToucansTokens from "./ToucansTokens.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
  
 pub contract TestingDAO: FungibleToken {
 
@@ -216,7 +217,8 @@ pub contract TestingDAO: FungibleToken {
         editDelay: 0.0,
         minting: true,
         initialTreasurySupply: 100.0,
-        extra: {}
+        extra: {},
+        payment: <- (self.account.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: 200.0) as! @FlowToken.Vault)
       )
 
       self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)
