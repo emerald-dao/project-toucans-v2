@@ -7,6 +7,7 @@ export const emptyDaoGeneratorData: DaoGeneratorData = {
 		name: '',
 		tokenName: '',
 		description: '',
+		longDescription: undefined,
 		website: '',
 		twitter: '',
 		discord: '',

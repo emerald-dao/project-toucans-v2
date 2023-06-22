@@ -30,7 +30,6 @@ export async function POST({ request }) {
 		discord: data.daoDetails.discord,
 		logo: data.logo,
 		owner: data.user.addr,
-		type: data.tokenomics.tokenType,
 		banner_image: data.bannerImage,
 		network
 	});
