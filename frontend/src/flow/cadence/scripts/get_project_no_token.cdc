@@ -1,4 +1,3 @@
-import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import FiatToken from "../utility/FiatToken.cdc"
@@ -22,16 +21,13 @@ pub struct Info {
   pub let totalFunding: UFix64
   pub let editDelay: UFix64
   pub let fundingCycles: [Toucans.FundingCycle]
-  pub let totalSupply: UFix64
   pub let overflowBalance: UFix64
-  pub let balances: {Address: UFix64}
   pub let treasuryBalances: {String: UFix64}
   pub let funders: {Address: UFix64}
   pub let signers: [Address]
   pub let threshold: UInt64
   pub let minting: Bool
   pub let paymentCurrency: String
-  pub let maxSupply: UFix64?
   pub let purchasing: Bool
   pub let requiredNft: NFTData?
   pub var trading: Bool
@@ -45,19 +41,15 @@ pub struct Info {
     self.totalFunding = info.totalFunding
     self.editDelay = info.editDelay
     self.fundingCycles = info.getFundingCycles()
-    self.totalSupply = ExampleToken.totalSupply
-    self.balances = ExampleToken.getBalances()
     self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
     self.minting = info.minting
     self.treasuryBalances = {
       "FLOW": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
       "USDC": info.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
-      info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: info.paymentTokenInfo.tokenType) ?? 0.0,
-      info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
+      info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: info.paymentTokenInfo.tokenType) ?? 0.0
     }
     self.paymentCurrency = info.paymentTokenInfo.symbol
-    self.maxSupply = ExampleToken.maxSupply
     self.purchasing = info.purchasing
 
     let manager = info.borrowManagerPublic()

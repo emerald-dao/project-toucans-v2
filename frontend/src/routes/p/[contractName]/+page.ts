@@ -25,8 +25,9 @@ export const load: PageLoad = async ({ params, depends }) => {
 		events: (await fetchProjectEvents(generalInfo.project_id)).reverse(),
 		votes: (await fetchDaoVotes(generalInfo.project_id)),
 		userBalance: userAddress
-			? await getTokenBalance(generalInfo.project_id, generalInfo.contract_address, userAddress)
+			? await getTokenBalance(generalInfo.project_id, generalInfo.owner, userAddress)
 			: null,
-		vaultSetup: userAddress ? await hasProjectVaultSetup(generalInfo.contract_address, generalInfo.project_id, userAddress) : true
+		vaultSetup: userAddress ? await hasProjectVaultSetup(generalInfo.contract_address, generalInfo.project_id, userAddress) : true,
+		hasToken: generalInfo.contract_address !== null
 	};
 };

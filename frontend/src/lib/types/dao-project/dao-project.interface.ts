@@ -15,10 +15,11 @@ export interface DAOProject {
 	events: DaoEvent[];
 	userBalance?: number;
 	vaultSetup: boolean;
+	hasToken: boolean;
 }
 
 export interface DaoDatabaseData {
-	contract_address: string;
+	contract_address: string | null;
 	created_at: string;
 	description: string;
 	long_description?: string;
@@ -71,7 +72,6 @@ export interface DaoBlockchainData {
 	completedActionIds: {
 		[actionId: string]: boolean
 	}
-	hasToken: boolean
 }
 
 export interface TokenInfo {

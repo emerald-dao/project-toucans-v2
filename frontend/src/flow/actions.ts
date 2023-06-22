@@ -30,6 +30,7 @@ import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
+import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?raw';
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
@@ -689,6 +690,18 @@ export const setUpVaultExecution = (projectId: string, contractAddress: string) 
 //                     |_|
 
 export const getProjectInfo: (
+	contractAddress: string | null,
+	owner: string,
+	projectId: string
+) => Promise<DaoBlockchainData> = async (contractAddress, owner, projectId) => {
+	if (contractAddress) {
+		return await getProjectWithTokenInfo(contractAddress, owner, projectId)
+	} else {
+		return await getProjectNoTokenInfo(owner, projectId);
+	}
+};
+
+export const getProjectWithTokenInfo: (
 	contractAddress: string,
 	owner: string,
 	projectId: string
@@ -696,6 +709,23 @@ export const getProjectInfo: (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectScript, projectId, contractAddress),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		response.actions = await getProjectActions(owner, projectId);;
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectInfo');
+		console.log(e);
+	}
+};
+
+const getProjectNoTokenInfo: (
+	owner: string,
+	projectId: string
+) => Promise<DaoBlockchainData> = async (owner, projectId) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectNoTokenScript),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
 		response.actions = await getProjectActions(owner, projectId);;
@@ -722,14 +752,14 @@ export const getProjectActions: (
 	}
 };
 
-export const getTokenBalance = async (projectId: string, contractAddress: string, user: string) => {
+export const getTokenBalance = async (projectId: string, projectOwner: string, user: string) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(getTokenBalanceScript),
 			args: (arg, t) => [
 				arg(user, t.Address),
 				arg(projectId, t.String),
-				arg(contractAddress, t.Address)
+				arg(projectOwner, t.Address)
 			]
 		});
 		return response;
