@@ -8,6 +8,7 @@ import { executeTransaction, formatFix, replaceWithProperValues, splitList, swit
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
+import deployDAOTx from './cadence/transactions/deploy_dao.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
 import transferProjectTokenToTreasuryTx from './cadence/transactions/transfer_project_token_to_treasury.cdc?raw';
@@ -165,7 +166,7 @@ const deployDAONoToken = async (data: DaoGeneratorData) => {
 	const paymentCurrency = data.tokenomics.paymentCurrency;
 	const paymentCurrencyInfo = currencies[paymentCurrency];
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(deployExampleTokenTx),
+		cadence: replaceWithProperValues(deployDAOTx),
 		args: (arg, t) => [
 			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
