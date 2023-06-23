@@ -12,7 +12,7 @@ export const postProject = async (
 		method: 'POST',
 		body: JSON.stringify({
 			user,
-			...data,
+			daoData: data,
 			logo: logoUrl,
 			bannerImage: bannerUrl,
 			projectId

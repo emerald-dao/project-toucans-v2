@@ -1,2 +1,2 @@
-export const reservedNames = [];
-export const reservedContractNames = [];
+export const reservedNames: string[] = [];
+export const reservedContractNames: string[] = [];

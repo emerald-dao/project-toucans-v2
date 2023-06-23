@@ -1,10 +1,13 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
-	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 	import Icon from '@iconify/svelte';
 	import StepButtons from '../../atoms/StepButtons.svelte';
 	import { editDelayOptions } from './editDelayOptions';
 	import GLOSSARY from '$lib/config/glossary';
+	import type { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
+	import { getContext } from 'svelte';
+
+	const daoGeneratorData: typeof daoAndTokenGeneratorData = getContext('daoGeneratorData');
 </script>
 
 <form in:fly={{ y: 30, duration: 400 }} class="column-5">
