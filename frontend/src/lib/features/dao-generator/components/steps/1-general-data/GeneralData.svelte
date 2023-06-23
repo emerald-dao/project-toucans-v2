@@ -1,10 +1,5 @@
 <script type="ts">
 	import { InputWrapper, DropZone } from '@emerald-dao/component-library';
-	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-	import {
-		daoGeneratorSteps,
-		generatorActiveStep
-	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { fly } from 'svelte/transition';
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 	import validationSuite, { type DaoProject } from './validation';
@@ -13,6 +8,17 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';
 	import { network } from '$flow/config';
+	import { getContext } from 'svelte';
+	import type { createSteps } from '$stores/custom/steps/Steps';
+	import type { createActiveStep } from '$stores/custom/steps/ActiveStep';
+	import type { daoGeneratorData as TdaoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
+	import type { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
+
+	const daoGeneratorData: typeof TdaoGeneratorData | typeof daoAndTokenGeneratorData =
+		getContext('daoGeneratorData');
+	const generatorActiveStep: ReturnType<typeof createActiveStep> =
+		getContext('daoGeneratorActiveStep');
+	const daoGeneratorSteps: ReturnType<typeof createSteps> = getContext('daoGeneratorSteps');
 
 	export let validForm = false;
 
@@ -54,7 +60,7 @@
 			contractNamePending = true;
 		}
 
-		if (target.name === 'tokenName') {
+		if (target.name === 'tokenName' && $daoGeneratorData.daoDetails.daoType === 'daoAndToken') {
 			$daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName.toUpperCase();
 			tokenNamePending = true;
 		}
@@ -89,9 +95,10 @@
 	$: if ($daoGeneratorData.daoDetails.name) {
 	}
 
-	$: $daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName
-		.toUpperCase()
-		.replace(/[^A-Z]/g, '');
+	$: if ($daoGeneratorData.daoDetails.daoType === 'daoAndToken')
+		$daoGeneratorData.daoDetails.tokenName = $daoGeneratorData.daoDetails.tokenName
+			.toUpperCase()
+			.replace(/[^A-Z]/g, '');
 
 	$: validForm =
 		res.isValid() &&
@@ -144,25 +151,27 @@
 			on:input={handleChange}
 		/>
 	</InputWrapper>
-	<InputWrapper
-		name="tokenName"
-		label="Token Name"
-		icon="tabler:currency-dollar"
-		pending={tokenNamePending}
-		pendingMessage={tokenNamePendingMessage}
-		errors={res.getErrors('tokenName')}
-		isValid={res.isValid('tokenName')}
-		required={true}
-	>
-		<input
+	{#if $daoGeneratorData.daoDetails.daoType === 'daoAndToken'}
+		<InputWrapper
 			name="tokenName"
-			type="text"
-			placeholder="EMLD"
-			maxlength="5"
-			bind:value={$daoGeneratorData.daoDetails.tokenName}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
+			label="Token Name"
+			icon="tabler:currency-dollar"
+			pending={tokenNamePending}
+			pendingMessage={tokenNamePendingMessage}
+			errors={res.getErrors('tokenName')}
+			isValid={res.isValid('tokenName')}
+			required={true}
+		>
+			<input
+				name="tokenName"
+				type="text"
+				placeholder="EMLD"
+				maxlength="5"
+				bind:value={$daoGeneratorData.daoDetails.tokenName}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
+	{/if}
 	<div class="drop-zone-wrapper">
 		<label for="logo">Logo *</label>
 		<DropZone

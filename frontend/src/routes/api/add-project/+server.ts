@@ -4,11 +4,19 @@ import { env as PrivateEnv } from '$env/dynamic/private';
 import { env as PublicEnv } from '$env/dynamic/public';
 import { verifyAccountOwnership } from '$flow/utils.js';
 import { network } from '$flow/config';
+import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-generator-data.interface.js';
+import type { CurrentUserObject } from '@onflow/fcl';
 
 const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
 
 export async function POST({ request }) {
-	const data = await request.json();
+	const data: {
+		user: CurrentUserObject;
+		daoData: DaoGeneratorData;
+		logo: string;
+		bannerImage: string;
+		projectId: string;
+	} = await request.json();
 
 	// Make sure a valid user was passed in
 	const verifyAccount = await verifyAccountOwnership(data.user);
@@ -16,18 +24,20 @@ export async function POST({ request }) {
 		return json({});
 	}
 
-	const tokenName = data.daoDetails.tokenName;
-	const name = data.daoDetails.name;
+	const name = data.daoData.daoDetails.name;
+	const tokenName =
+		data.daoData.daoDetails.daoType === 'daoAndToken' ? data.daoData.daoDetails.tokenName : null;
+	const contractAddress = data.daoData.daoDetails.daoType === 'daoAndToken' ? data.user.addr : null;
 
 	const { error: ProjectError } = await supabase.from('projects').insert({
 		project_id: data.projectId,
 		name,
 		token_symbol: tokenName,
-		contract_address: data.user.addr,
-		description: data.daoDetails.description,
-		website: data.daoDetails.website,
-		twitter: data.daoDetails.twitter,
-		discord: data.daoDetails.discord,
+		contract_address: contractAddress,
+		description: data.daoData.daoDetails.description,
+		website: data.daoData.daoDetails.website,
+		twitter: data.daoData.daoDetails.twitter,
+		discord: data.daoData.daoDetails.discord,
 		logo: data.logo,
 		owner: data.user.addr,
 		banner_image: data.bannerImage,
@@ -40,11 +50,13 @@ export async function POST({ request }) {
 	}
 
 	const { error: EventError } = await supabase.from('events').insert({
-		project_id: data.daoDetails.contractName,
+		project_id: data.daoData.daoDetails.contractName,
 		type: 'ProjectCreated',
 		data: {
 			by: data.user.addr,
-			tokenTypeIdentifier: `A.${data.user.addr.slice(2)}.${data.daoDetails.contractName}.Vault`
+			tokenTypeIdentifier: `A.${data.user.addr?.slice(2)}.${
+				data.daoData.daoDetails.contractName
+			}.Vault`
 		}
 	});
 

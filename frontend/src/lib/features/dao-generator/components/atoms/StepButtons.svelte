@@ -1,12 +1,16 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import {
-		generatorActiveStep,
-		daoGeneratorSteps
-	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { Button } from '@emerald-dao/component-library';
+	import { getContext } from 'svelte';
+	import type { createSteps } from '$stores/custom/steps/Steps';
+	import type { createActiveStep } from '$stores/custom/steps/ActiveStep';
+
+	const generatorActiveStep: ReturnType<typeof createActiveStep> =
+		getContext('daoGeneratorActiveStep');
+	const daoGeneratorSteps: ReturnType<typeof createSteps> = getContext('daoGeneratorSteps');
 
 	export let active: boolean = true;
+
 	let finalLoading: boolean = false;
 
 	function increment() {
