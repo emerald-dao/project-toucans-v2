@@ -21,7 +21,7 @@ export const emptyDaoAndTokenGeneratorData: DaoAndTokenGeneratorData = {
 		initialSupply: 0,
 		hasMaxSupply: false,
 		maxSupply: undefined,
-		editDelay: '259200.00',
+		editDelay: '0.00',
 		mintTokens: true,
 		walletAddresses: []
 	}

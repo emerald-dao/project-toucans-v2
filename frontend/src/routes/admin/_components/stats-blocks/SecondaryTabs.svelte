@@ -10,15 +10,19 @@
 	<Tabs>
 		<TabList>
 			<Tab><span class="xsmall">Main Funders</span></Tab>
-			<Tab><span class="xsmall">Main Holders</span></Tab>
+			{#if daoData.hasToken}
+				<Tab><span class="xsmall">Main Holders</span></Tab>
+			{/if}
 		</TabList>
 		<div class="panels-wrapper">
 			<TabPanel>
 				<MainFundersList {daoData} />
 			</TabPanel>
-			<TabPanel>
-				<MainHoldersList {daoData} />
-			</TabPanel>
+			{#if daoData.hasToken}
+				<TabPanel>
+					<MainHoldersList {daoData} />
+				</TabPanel>
+			{/if}
 		</div>
 	</Tabs>
 </div>

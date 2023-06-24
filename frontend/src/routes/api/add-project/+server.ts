@@ -35,6 +35,7 @@ export async function POST({ request }) {
 		token_symbol: tokenName,
 		contract_address: contractAddress,
 		description: data.daoData.daoDetails.description,
+		long_description: data.daoData.daoDetails.longDescription,
 		website: data.daoData.daoDetails.website,
 		twitter: data.daoData.daoDetails.twitter,
 		discord: data.daoData.daoDetails.discord,
@@ -54,9 +55,8 @@ export async function POST({ request }) {
 		type: 'ProjectCreated',
 		data: {
 			by: data.user.addr,
-			tokenTypeIdentifier: `A.${data.user.addr?.slice(2)}.${
-				data.daoData.daoDetails.contractName
-			}.Vault`
+			tokenTypeIdentifier: `A.${data.user.addr?.slice(2)}.${data.daoData.daoDetails.contractName
+				}.Vault`
 		}
 	});
 

@@ -13,18 +13,26 @@
 <div class="card">
 	<Tabs>
 		<TabList>
-			<Tab>Main holders</Tab>
+			{#if daoData.hasToken}
+				<Tab>Main holders</Tab>
+			{/if}
 			<Tab>Main funders</Tab>
-			<Tab>Liquidity pools</Tab>
+			{#if daoData.hasToken}
+				<Tab>Liquidity pools</Tab>
+			{/if}
 		</TabList>
-		<TabPanel>
-			<MainHoldersChart {daoData} />
-		</TabPanel>
+		{#if daoData.hasToken}
+			<TabPanel>
+				<MainHoldersChart {daoData} />
+			</TabPanel>
+		{/if}
 		<TabPanel>
 			<MainFundersChart {daoData} />
 		</TabPanel>
-		<TabPanel>
-			<LiquidityPoolsChart {daoData} />
-		</TabPanel>
+		{#if daoData.hasToken}
+			<TabPanel>
+				<LiquidityPoolsChart {daoData} />
+			</TabPanel>
+		{/if}
 	</Tabs>
 </div>

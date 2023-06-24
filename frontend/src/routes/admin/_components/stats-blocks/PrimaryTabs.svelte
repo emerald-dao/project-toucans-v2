@@ -14,7 +14,9 @@
 			{#if daoData.onChainData.currentFundingCycle}
 				<Tab>Active Round</Tab>
 			{/if}
-			<Tab>Rounds</Tab>
+			{#if daoData.onChainData.fundingCycles.length > 0}
+				<Tab>Rounds</Tab>
+			{/if}
 		</TabList>
 		<TabPanel>
 			<EventsList {daoData} />
@@ -33,9 +35,11 @@
 				</div>
 			</TabPanel>
 		{/if}
-		<TabPanel>
-			<RoundsList {daoData} finishedFilter={false} />
-		</TabPanel>
+		{#if daoData.onChainData.fundingCycles.length > 0}
+			<TabPanel>
+				<RoundsList {daoData} finishedFilter={false} />
+			</TabPanel>
+		{/if}
 	</Tabs>
 </div>
 

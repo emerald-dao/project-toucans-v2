@@ -12,17 +12,36 @@
 		daoData.vaultSetup = true;
 	}
 
-	interface TokenData {
+	interface HoldingData {
 		numHolders: number;
 		averageHolding: number;
+	}
+
+	interface FundingData {
 		numFunders: number;
 		averageFunding: number;
 	}
 
-	async function calculateTokenData(): Promise<TokenData> {
+	async function calculateFundingData(): Promise<FundingData> {
 		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
-		let numHolders, totalHolding, numFunders, totalFunding;
-		numHolders = totalHolding = numFunders = totalFunding = 0;
+		let numFunders, totalFunding;
+		numFunders = totalFunding = 0;
+
+		for (const funder in daoData.onChainData.funders) {
+			numFunders++;
+			totalFunding += Number(daoData.onChainData.funders[funder]);
+		}
+
+		let averageFunding = totalFunding / numFunders;
+		isNaN(averageFunding) ? (averageFunding = 0) : null;
+
+		return { numFunders, averageFunding };
+	}
+
+	async function calculateHoldingData(): Promise<HoldingData> {
+		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
+		let numHolders, totalHolding;
+		numHolders = totalHolding = 0;
 
 		for (const holder in daoData.onChainData.balances) {
 			if (holder === daoData.generalInfo.owner || lpAddresses.includes(holder)) continue;
@@ -33,20 +52,12 @@
 		let averageHolding = totalHolding / numHolders ?? 0;
 		isNaN(averageHolding) ? (averageHolding = 0) : null;
 
-		for (const funder in daoData.onChainData.funders) {
-			numFunders++;
-			totalFunding += Number(daoData.onChainData.funders[funder]);
-		}
-
-		let averageFunding = totalFunding / numFunders;
-		isNaN(averageFunding) ? (averageFunding = 0) : null;
-
-		return { numHolders, averageHolding, numFunders, averageFunding };
+		return { numHolders, averageHolding };
 	}
 </script>
 
 <div class="main-wrapper">
-	{#if $user.addr}
+	{#if $user.addr && daoData.hasToken}
 		<DataCard
 			title="Your Balance"
 			data={daoData.userBalance}
@@ -80,7 +91,7 @@
 		</DataCard>
 	{/if}
 	<div class="secondary-wrapper">
-		{#if daoData.onChainData.maxSupply}
+		{#if daoData.hasToken && daoData.onChainData.maxSupply}
 			<DataCard
 				title="Max Supply"
 				data={Number(daoData.onChainData.maxSupply)}
@@ -89,12 +100,14 @@
 				tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
 			/>
 		{/if}
-		<DataCard
-			title="Total Supply"
-			data={Number(daoData.onChainData.totalSupply)}
-			isCurrency
-			currencyName={daoData.generalInfo.token_symbol}
-		/>
+		{#if daoData.hasToken}
+			<DataCard
+				title="Total Supply"
+				data={Number(daoData.onChainData.totalSupply)}
+				isCurrency
+				currencyName={daoData.generalInfo.token_symbol}
+			/>
+		{/if}
 		<DataCard
 			title="Total Funding"
 			data={Number(daoData.onChainData.totalFunding)}
@@ -102,15 +115,19 @@
 			isCurrency
 		/>
 	</div>
-	{#await calculateTokenData() then tokenData}
-		<div class="secondary-wrapper-small">
-			<DataCard title="Unique Holders" data={tokenData.numHolders} />
-			<DataCard
-				title="Average Holding"
-				data={tokenData.averageHolding}
-				isCurrency
-				currencyName={daoData.generalInfo.token_symbol}
-			/>
+	<div class="secondary-wrapper-small">
+		{#if daoData.hasToken}
+			{#await calculateHoldingData() then tokenData}
+				<DataCard title="Unique Holders" data={tokenData.numHolders} />
+				<DataCard
+					title="Average Holding"
+					data={tokenData.averageHolding}
+					isCurrency
+					currencyName={daoData.generalInfo.token_symbol}
+				/>
+			{/await}
+		{/if}
+		{#await calculateFundingData() then tokenData}
 			<DataCard title="Unique Funders" data={tokenData.numFunders} />
 			<DataCard
 				title="Average Funding"
@@ -118,8 +135,8 @@
 				isCurrency
 				currencyName={daoData.onChainData.paymentCurrency}
 			/>
-		</div>
-	{/await}
+		{/await}
+	</div>
 </div>
 
 <style lang="scss">

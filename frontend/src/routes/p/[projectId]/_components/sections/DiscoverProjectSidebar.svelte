@@ -31,7 +31,7 @@
 			<div class="column-4">
 				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
 				<div class="commands-wrapper row-2 align-center">
-					{#if daoData.onChainData.minting}
+					{#if daoData.hasToken && daoData.onChainData.minting}
 						<Label size="xx-small" color="neutral" hasBorder={false} iconRight="tabler:check">
 							Minting
 						</Label>
@@ -81,7 +81,7 @@
 								</a>
 							{/if}
 						</div>
-						{#if daoData.onChainData.trading}
+						{#if daoData.hasToken && daoData.onChainData.trading}
 							<a
 								href={`https://app.increment.fi/swap?in=A.${currencies[
 									daoData.onChainData.paymentCurrency
@@ -105,12 +105,12 @@
 			</div>
 			<div class="column-5">
 				<div class="row-4">
-					{#if daoData.onChainData.currentFundingCycle}
+					{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
 						<PaymentModal {daoData} paymentType="fund" />
 					{/if}
 					<PaymentModal {daoData} paymentType="donate" />
 				</div>
-				{#if daoData.onChainData.currentFundingCycle}
+				{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
 					<p class="payment-explanation">
 						{`By funding this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
 					</p>

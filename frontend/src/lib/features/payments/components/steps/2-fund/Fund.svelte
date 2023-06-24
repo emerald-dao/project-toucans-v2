@@ -33,10 +33,17 @@
 >
 	{#if $paymentData.type === 'donation'}
 		<div class="currency-select-wrapper">
-			<CurrencySelect
-				currencies={[ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]}
-				bind:value={$paymentData.currency}
-			/>
+			{#if daoData.hasToken}
+				<CurrencySelect
+					currencies={[ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]}
+					bind:value={$paymentData.currency}
+				/>
+			{:else}
+				<CurrencySelect
+					currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
+					bind:value={$paymentData.currency}
+				/>
+			{/if}
 		</div>
 	{/if}
 	{#if $paymentData.type === 'fund' || ($paymentData.type === 'donation' && $paymentData.currency !== daoData.generalInfo.token_symbol)}

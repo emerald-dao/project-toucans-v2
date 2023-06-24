@@ -5,6 +5,7 @@ import Toucans from "../Toucans.cdc"
 import ToucansTokens from "../ToucansTokens.cdc"
 
 transaction(
+  projectId: String,
   // PAYMENT TOKEN INFO
   ptContractName: String,
   ptContractAddress: Address,
@@ -41,6 +42,7 @@ transaction(
 
     let toucansProjectCollection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
     toucansProjectCollection.createProjectNoToken(
+      projectId: projectId,
       paymentTokenInfo: ToucansTokens.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath), 
       extra: extra, 
       payment: <- payment

@@ -11,15 +11,17 @@
 		<p>{daoData.generalInfo.description}</p>
 	</div> -->
 	<div class="row-5">
-		<div class="currency-card card column-3">
-			<span class="xsmall"> Total Supply </span>
-			<Currency
-				amount={Number(daoData.onChainData.totalSupply)}
-				currency={daoData.generalInfo.token_symbol}
-				color="heading"
-				fontSize="var(--font-size-5)"
-			/>
-		</div>
+		{#if daoData.hasToken}
+			<div class="currency-card card column-3">
+				<span class="xsmall"> Total Supply </span>
+				<Currency
+					amount={Number(daoData.onChainData.totalSupply)}
+					currency={daoData.generalInfo.token_symbol}
+					color="heading"
+					fontSize="var(--font-size-5)"
+				/>
+			</div>
+		{/if}
 		<div class="currency-card card column-3">
 			<span class="xsmall">Total Funding</span>
 			<Currency

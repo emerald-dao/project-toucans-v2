@@ -75,17 +75,19 @@
 				</div>
 				Home
 			</a>
-			<a
-				href="/admin/rounds"
-				class="sidebar-link"
-				class:active={$page.url.pathname.includes('rounds')}
-			>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:pig-money" />
-				</div>
-				Rounds
-			</a>
-			{#if activeDaoData.onChainData.minting}
+			{#if activeDaoData.hasToken}
+				<a
+					href="/admin/rounds"
+					class="sidebar-link"
+					class:active={$page.url.pathname.includes('rounds')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:pig-money" />
+					</div>
+					Rounds
+				</a>
+			{/if}
+			{#if activeDaoData.hasToken && activeDaoData.onChainData.minting}
 				<a
 					href="/admin/mint"
 					class="sidebar-link"
@@ -136,16 +138,18 @@
 				</div>
 				Multisig
 			</a>
-			<a
-				href="/admin/overflow"
-				class="sidebar-link distribute-display"
-				class:active={$page.url.pathname.includes('overflow')}
-			>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:moneybag" />
-				</div>
-				Overflow
-			</a>
+			{#if activeDaoData.hasToken}
+				<a
+					href="/admin/overflow"
+					class="sidebar-link distribute-display"
+					class:active={$page.url.pathname.includes('overflow')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:moneybag" />
+					</div>
+					Overflow
+				</a>
+			{/if}
 		</div>
 	</div>
 	<div class="column-6">

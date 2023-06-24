@@ -10,7 +10,7 @@
 	export let daoData: DAOProject;
 
 	$: currentFundingCycleData =
-		daoData.onChainData.currentFundingCycle && daoData.events
+		daoData.hasToken && daoData.onChainData.currentFundingCycle && daoData.events
 			? getFundingCycleData(
 					daoData.onChainData.fundingCycles,
 					daoData.events,

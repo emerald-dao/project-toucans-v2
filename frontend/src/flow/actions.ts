@@ -165,9 +165,14 @@ const deployDAONoToken = async (data: DaoGeneratorData) => {
 	console.log(data);
 	const paymentCurrency = data.tokenomics.paymentCurrency;
 	const paymentCurrencyInfo = currencies[paymentCurrency];
+	const projectId = data.daoDetails.name.replace(
+		/[^\w\s]|\s/gi,
+		''
+	);
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployDAOTx),
 		args: (arg, t) => [
+			arg(projectId, t.String),
 			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
 			arg(paymentCurrencyInfo.symbol, t.String),

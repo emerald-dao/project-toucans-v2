@@ -209,7 +209,7 @@ pub contract Toucans {
   }
 
   pub resource interface ProjectPublic {
-    pub var projectId: String
+    pub let projectId: String
     pub var projectTokenInfo: ToucansTokens.TokenInfo
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     pub var totalFunding: UFix64
@@ -249,7 +249,7 @@ pub contract Toucans {
   }
 
   pub resource Project: ProjectPublic {
-    pub var projectId: String
+    pub let projectId: String
     pub var projectTokenInfo: ToucansTokens.TokenInfo
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     // Of payment tokens
@@ -281,7 +281,6 @@ pub contract Toucans {
       pre {
         !self.hasTokenContract(): "This project already has an associated token."
       }
-      self.projectId = projectTokenInfo.contractName
       self.editDelay = editDelay
       self.projectTokenInfo = projectTokenInfo
       let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
@@ -993,6 +992,7 @@ pub contract Toucans {
     }
 
     init(
+      projectId: String,
       projectTokenInfo: ToucansTokens.TokenInfo,
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
@@ -1012,14 +1012,13 @@ pub contract Toucans {
 
       // no new token created
       if minter.getType() == Type<@DummyMinter>() {
-        self.projectId = self.uuid.toString()
         self.treasury <- {emptyPaymentVault.getType(): <- emptyPaymentVault}
       } else {
-        self.projectId = projectTokenInfo.contractName
         let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
         assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
         self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       }
+      self.projectId = projectId
       self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
@@ -1059,11 +1058,13 @@ pub contract Toucans {
     pub let projects: @{String: Project}
 
     pub fun createProjectNoToken(
+      projectId: String,
       paymentTokenInfo: ToucansTokens.TokenInfo,
       extra: {String: AnyStruct},
       payment: @FlowToken.Vault
     ) {
       let project: @Project <- create Project(
+        projectId: projectId,
         projectTokenInfo: ToucansTokens.dummyFlowTokenInfo(), 
         paymentTokenInfo: paymentTokenInfo, 
         minter: <- create DummyMinter(), 
@@ -1074,7 +1075,6 @@ pub contract Toucans {
         initialTreasurySupply: 0.0, 
         extra: extra
       )
-      let projectId: String = project.uuid.toString()
       self.projects[projectId] <-! project
 
       // payment
@@ -1099,8 +1099,19 @@ pub contract Toucans {
       extra: {String: AnyStruct},
       payment: @FlowToken.Vault
     ) {
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, initialSigners: [self.owner!.address], initialThreshold: 1, minting: minting, initialTreasurySupply: initialTreasurySupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
+      let project: @Project <- create Project(
+        projectId: projectId, 
+        projectTokenInfo: projectTokenInfo, 
+        paymentTokenInfo: paymentTokenInfo, 
+        minter: <- minter, 
+        editDelay: editDelay, 
+        initialSigners: [self.owner!.address], 
+        initialThreshold: 1, 
+        minting: minting, 
+        initialTreasurySupply: initialTreasurySupply, 
+        extra: extra
+      )
       self.projects[projectId] <-! project
 
       // payment
