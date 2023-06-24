@@ -46,9 +46,11 @@
 				<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
 				{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
 					<div class="row-3 align-end">
-						<Label size="small" color="tertiary" hasBorder={false}
-							>{`$${daoData.generalInfo.token_symbol}`}</Label
-						>
+						{#if daoData.hasToken}
+							<Label size="small" color="tertiary" hasBorder={false}
+								>{`$${daoData.generalInfo.token_symbol}`}</Label
+							>
+						{/if}
 						<div class="row-2 align-end">
 							{#if daoData.generalInfo.twitter}
 								<a
