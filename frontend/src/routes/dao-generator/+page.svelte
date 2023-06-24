@@ -7,10 +7,10 @@
 		{
 			title: 'DAO',
 			description:
-				'This option will launch a DAO. It will set up a multi-sig treasury, the ability to donate, and more. It will not create a token upon deployment.',
+				'This option will launch a DAO. It will set up a multi-sig treasury, the ability to donate, vote, and more. It will not create a token upon deployment.',
 			icon: 'tabler:users',
 			slug: 'dao',
-			estimatedTime: '4 minutes',
+			estimatedTime: '3 minutes',
 			cost: {
 				amount: 200,
 				currency: 'FLOW'
@@ -19,7 +19,7 @@
 		{
 			title: 'DAO + Token',
 			description:
-				'This option will do everything the DAO option does as well as deploy a new fungible token on the Flow blockchain for you to fundraise in, mint, and more.',
+				'This option will do everything the DAO option does as well as deploy a new fungible token on the Flow blockchain for you to fundraise with, mint, trade, and more.',
 			icon: 'tabler:coin',
 			slug: 'dao-token',
 			estimatedTime: '5 minutes',
