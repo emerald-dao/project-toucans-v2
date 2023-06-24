@@ -14,8 +14,8 @@
 <form in:fly={{ y: 30, duration: 400 }} class="column-2" autocomplete="off">
 	<div class="payment-currency column-2">
 		<div class="row-2 align-center">
-			<label for="currencies">Payment currency</label>
-			<TooltipIcon tooltip={GLOSSARY.paymentCurrency} width={0.75} />
+			<label for="currencies">Preferred currency</label>
+			<TooltipIcon tooltip={GLOSSARY.preferredCurrnecy} width={0.75} />
 		</div>
 		<CurrencySelect
 			currencies={[ECurrencies.FLOW, ECurrencies.USDC]}

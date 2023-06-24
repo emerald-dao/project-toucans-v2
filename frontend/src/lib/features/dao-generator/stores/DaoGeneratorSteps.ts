@@ -8,7 +8,7 @@ import {
 	Tokenomics,
 	ReviewAndDeploy,
 	EditDelay,
-	PaymentCurrency
+	PreferredCurrency
 } from '../components/steps';
 import { get } from 'svelte/store';
 import { daoAndTokenGeneratorData } from './DaoAndTokenGeneratorData';
@@ -91,9 +91,9 @@ export const daoGeneratorSteps = createSteps([
 		state: 'inactive'
 	},
 	{
-		name: 'Payment Currency',
-		slug: 'payment-currency',
-		component: PaymentCurrency,
+		name: 'Preferred Currency',
+		slug: 'preferred-currency',
+		component: PreferredCurrency,
 		action: null,
 		form: true,
 		state: 'inactive'

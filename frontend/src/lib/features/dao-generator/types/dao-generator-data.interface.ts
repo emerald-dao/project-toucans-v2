@@ -36,7 +36,6 @@ export interface DaoOnlyGeneratorData {
 		website: string;
 		twitter: string;
 		discord: string;
-		contractName: string;
 		logo: File[] | undefined;
 		bannerImage: File[] | undefined;
 	};

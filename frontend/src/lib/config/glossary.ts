@@ -8,7 +8,9 @@ const GLOSSARY = {
 	editDelay:
 		'Numbers of days in which you can edit the configuration of your funding round before it starts. This is to prevent any last-minute changes that could affect the outcome of the round. The higher the delay, the greater trust your community will have in you.',
 	signer:
-		"Address required to sign transactiont that involve transfering money from the DAO's treasury"
+		"Address required to sign transactiont that involve transfering money from the DAO's treasury",
+	preferredCurrnecy:
+		"The preferred/main currency used in the DAO. Toucans will automatically track user funding in this currency."
 };
 
 export default GLOSSARY;

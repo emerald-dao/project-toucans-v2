@@ -133,25 +133,25 @@
 			bind:this={firstInput}
 		/>
 	</InputWrapper>
-	<InputWrapper
-		name="contractName"
-		label="Contract Name"
-		pending={contractNamePending}
-		pendingMessage={contractNamePendingMessage}
-		errors={res.getErrors('contractName')}
-		isValid={res.isValid('contractName')}
-		required={true}
-	>
-		<input
-			type="text"
-			name="contractName"
-			placeholder="EmeraldToken"
-			maxlength="30"
-			bind:value={$daoGeneratorData.daoDetails.contractName}
-			on:input={handleChange}
-		/>
-	</InputWrapper>
 	{#if $daoGeneratorData.daoDetails.daoType === 'daoAndToken'}
+		<InputWrapper
+			name="contractName"
+			label="Contract Name"
+			pending={contractNamePending}
+			pendingMessage={contractNamePendingMessage}
+			errors={res.getErrors('contractName')}
+			isValid={res.isValid('contractName')}
+			required={true}
+		>
+			<input
+				type="text"
+				name="contractName"
+				placeholder="EmeraldToken"
+				maxlength="30"
+				bind:value={$daoGeneratorData.daoDetails.contractName}
+				on:input={handleChange}
+			/>
+		</InputWrapper>
 		<InputWrapper
 			name="tokenName"
 			label="Token Name"

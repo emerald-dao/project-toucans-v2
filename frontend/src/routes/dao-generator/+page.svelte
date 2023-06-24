@@ -7,7 +7,7 @@
 		{
 			title: 'DAO',
 			description:
-				'A DAO is a decentralized autonomous organization, a group of people who are organized around a shared mission or goal and governed by a set of rules enforced on a blockchain.',
+				'This option will launch a DAO. It will set up a multi-sig treasury, the ability to donate, and more. It will not create a token upon deployment.',
 			icon: 'tabler:users',
 			slug: 'dao',
 			estimatedTime: '4 minutes',
@@ -19,7 +19,7 @@
 		{
 			title: 'DAO + Token',
 			description:
-				'A DAO is a decentralized autonomous organization, a group of people who are organized around a shared mission or goal and governed by a set of rules enforced on a blockchain.',
+				'This option will do everything the DAO option does as well as deploy a new fungible token on the Flow blockchain for you to fundraise in, mint, and more.',
 			icon: 'tabler:coin',
 			slug: 'dao-token',
 			estimatedTime: '5 minutes',
@@ -49,7 +49,7 @@
 	<div class="container-small center column-12">
 		<div class="column-3 center">
 			<h2 class="h4 w-medium">Create a DAO in Minutes!</h2>
-			<p>What type of DAO you'll want to create?</p>
+			<p>Choose an option below before getting started.</p>
 		</div>
 
 		<div class="row-6">

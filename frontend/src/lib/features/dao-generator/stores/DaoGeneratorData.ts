@@ -7,7 +7,6 @@ export const emptyDaoGeneratorData: DaoOnlyGeneratorData = {
 		daoType: 'daoOnly',
 		name: '',
 		description: '',
-		contractName: '',
 		longDescription: undefined,
 		website: '',
 		twitter: '',
