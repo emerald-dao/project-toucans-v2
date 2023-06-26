@@ -6,6 +6,7 @@ import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 
 // TOOD: CHANGE Toucans.account.address to 0x5643fd47a29770e7
+// TODO: CHANGE paths back to normal
 
 pub contract Toucans {
 
@@ -1377,8 +1378,8 @@ pub contract Toucans {
   }
 
   init() {
-    self.CollectionStoragePath = /storage/ToucansCollection
-    self.CollectionPublicPath = /public/ToucansCollection
+    self.CollectionStoragePath = /storage/ToucansCollection006
+    self.CollectionPublicPath = /public/ToucansCollection006
   }
 
 }
