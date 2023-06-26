@@ -105,14 +105,12 @@
 			</div>
 			<div class="column-5">
 				<div class="row-4">
-					{#if daoData.onChainData.currentFundingCycle}
-						<PaymentModal {daoData} paymentType="fund" />
-					{/if}
+					<PaymentModal {daoData} paymentType="fund" />
 					<PaymentModal {daoData} paymentType="donate" />
 				</div>
 				{#if daoData.onChainData.currentFundingCycle}
 					<p class="payment-explanation">
-						{`By funding this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
+						{`By purchasing this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
 					</p>
 				{/if}
 				{#if daoData.onChainData.requiredNft != null}
