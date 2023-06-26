@@ -17,7 +17,7 @@
 
 	const PAYMENT_DATA = {
 		fund: {
-			title: 'Fund',
+			title: 'Purchase',
 			icon: 'tabler:cash-banknote',
 			action: () => initPayment('fund')
 		},
@@ -25,6 +25,47 @@
 			title: 'Donate',
 			icon: 'tabler:heart-handshake',
 			action: () => initPayment('donation')
+		}
+	};
+
+	const PURCHASE_CONDITIONS = [
+		{
+			message: 'Please log in to purchase.',
+			test: () => $user.loggedIn
+		},
+		{
+			message: 'There is no active round.',
+			test: () => daoData.onChainData.currentFundingCycle !== null
+		},
+		{
+			message: 'The project owner has turned purchasing off.',
+			test: () => daoData.onChainData.purchasing
+		},
+		{
+			message: 'You do not own the required NFT to purchase.',
+			test: async () => {
+				if (daoData.onChainData.requiredNft) {
+					await ownsNFTFromCatalog(
+						$user.addr as string,
+						daoData.onChainData.requiredNft.identifier
+					);
+				} else {
+					return true;
+				}
+			}
+		}
+	];
+
+	const checkActivePurchasing = async () => {
+		if (paymentType === 'donate') {
+			return null;
+		} else {
+			const failedCondition = PURCHASE_CONDITIONS.find((condition) => !condition.test());
+
+			if (failedCondition) {
+				return failedCondition.message;
+			}
+			return null;
 		}
 	};
 
@@ -53,45 +94,40 @@
 		}
 	};
 
-	const active = async () => {
-		if (paymentType === 'donate' || !daoData.onChainData.requiredNft) {
-			return true;
-		}
-		if (!daoData.onChainData.purchasing) {
-			title = 'The project owner has turned funding off.';
-			return false;
-		}
-		if (!$user.loggedIn) {
-			title = 'Please log in to fund.';
-			return false;
-		}
+	let failedPurchasCondition: string | null = '';
 
-		const owns = await ownsNFTFromCatalog(
-			$user.addr as string,
-			daoData.onChainData.requiredNft.identifier
-		);
-		if (!owns) {
-			title = 'You do not own the required NFT to fund.';
-			return false;
-		}
-		return true;
-	};
-
-	$: $user.loggedIn && active();
+	$: $user && checkActivePurchasing().then((res) => (failedPurchasCondition = res));
 </script>
 
-{#await active() then active}
+{#if !failedPurchasCondition}
 	<Button
 		size="large"
 		width="full-width"
 		on:click={PAYMENT_DATA[paymentType].action}
-		state={active ? 'active' : 'disabled'}
+		state="active"
+		type={paymentType === 'fund' ? 'generic' : 'ghost'}
+		color={paymentType === 'fund' ? 'primary' : 'neutral'}
 		{title}
 	>
 		<Icon icon={PAYMENT_DATA[paymentType].icon} />
 		{PAYMENT_DATA[paymentType].title}
 	</Button>
-{/await}
+{:else}
+	<div class="button-wrapper" data-tooltip={failedPurchasCondition}>
+		<Button
+			size="large"
+			width="full-width"
+			on:click={PAYMENT_DATA[paymentType].action}
+			state="disabled"
+			type={paymentType === 'fund' ? 'generic' : 'ghost'}
+			color={paymentType === 'fund' ? 'primary' : 'neutral'}
+			{title}
+		>
+			<Icon icon={PAYMENT_DATA[paymentType].icon} />
+			{PAYMENT_DATA[paymentType].title}
+		</Button>
+	</div>
+{/if}
 <StepsProcessModal
 	steps={$paymentSteps}
 	activeStepStore={paymentActiveStep}
@@ -106,3 +142,9 @@
 		{paymentType}
 	/>
 </StepsProcessModal>
+
+<style lang="scss">
+	.button-wrapper {
+		width: 100%;
+	}
+</style>
