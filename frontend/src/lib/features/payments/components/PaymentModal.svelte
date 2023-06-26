@@ -8,7 +8,6 @@
 	import { user } from '$stores/flow/FlowStore';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
 	import { ownsNFTFromCatalog } from '$flow/actions';
-	import type { CurrentUserObject } from '@onflow/fcl';
 
 	export let daoData: DAOProject;
 	export let paymentType: 'fund' | 'donate';
