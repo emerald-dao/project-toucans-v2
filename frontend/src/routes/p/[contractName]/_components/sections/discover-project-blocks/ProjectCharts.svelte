@@ -4,7 +4,8 @@
 	import {
 		LiquidityPoolsChart,
 		MainFundersChart,
-		MainHoldersChart
+		MainHoldersChart,
+		RecentFundingChart
 	} from '$components/dao-data-blocks';
 
 	export let daoData: DAOProject;
@@ -13,10 +14,14 @@
 <div class="card">
 	<Tabs>
 		<TabList>
+			<Tab>Recent funding</Tab>
 			<Tab>Main holders</Tab>
 			<Tab>Main funders</Tab>
 			<Tab>Liquidity pools</Tab>
 		</TabList>
+		<TabPanel>
+			<RecentFundingChart {daoData} />
+		</TabPanel>
 		<TabPanel>
 			<MainHoldersChart {daoData} />
 		</TabPanel>

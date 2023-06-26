@@ -15,6 +15,7 @@ export interface DAOProject {
 	events: DaoEvent[];
 	userBalance?: number;
 	vaultSetup: boolean;
+	recentFunding: number[];
 }
 
 export interface DaoDatabaseData {
@@ -67,10 +68,10 @@ export interface DaoBlockchainData {
 	trading: boolean;
 	lpAddresses: {
 		[key: string]: string;
-	}
+	};
 	completedActionIds: {
-		[actionId: string]: boolean
-	}
+		[actionId: string]: boolean;
+	};
 }
 
 export interface TokenInfo {

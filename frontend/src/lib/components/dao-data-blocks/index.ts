@@ -4,6 +4,8 @@ export { default as MainFundersList } from './funders/MainFundersList.svelte';
 export { default as MainHoldersChart } from './holders/MainHoldersChart.svelte';
 export { default as MainHoldersList } from './holders/MainHoldersList.svelte';
 
+export { default as RecentFundingChart } from './recentFundingChart/RecentFundingChart.svelte';
+
 export { default as LiquidityPoolsChart } from './pools/LiquidityPoolsChart.svelte';
 
 export { default as EventsList } from './events/EventsList.svelte';
