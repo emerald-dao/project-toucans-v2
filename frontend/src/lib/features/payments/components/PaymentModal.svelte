@@ -57,7 +57,7 @@
 		}
 	];
 
-	const checkActuvePurchasing = async () => {
+	const checkActivePurchasing = async () => {
 		if (paymentType === 'donate') {
 			return null;
 		} else {
@@ -97,7 +97,7 @@
 
 	let failedPurchasCondition: string | null = '';
 
-	$: $user && checkActuvePurchasing().then((res) => (failedPurchasCondition = res));
+	$: $user && checkActivePurchasing().then((res) => (failedPurchasCondition = res));
 </script>
 
 {#if !failedPurchasCondition}
