@@ -4,8 +4,7 @@
 	import {
 		LiquidityPoolsChart,
 		MainFundersChart,
-		MainHoldersChart,
-		RecentFundingChart
+		MainHoldersChart
 	} from '$components/dao-data-blocks';
 
 	export let daoData: DAOProject;
@@ -14,14 +13,16 @@
 <div class="card">
 	<Tabs>
 		<TabList>
-			<Tab>Recent funding</Tab>
-			<Tab>Main holders</Tab>
-			<Tab>Main funders</Tab>
-			<Tab>Liquidity pools</Tab>
+			<Tab>
+				<p>Main holders</p>
+			</Tab>
+			<Tab>
+				<p>Main funders</p>
+			</Tab>
+			<Tab>
+				<p>Liquidity pools</p>
+			</Tab>
 		</TabList>
-		<TabPanel>
-			<RecentFundingChart {daoData} />
-		</TabPanel>
 		<TabPanel>
 			<MainHoldersChart {daoData} />
 		</TabPanel>
@@ -33,3 +34,14 @@
 		</TabPanel>
 	</Tabs>
 </div>
+
+<style lang="scss">
+	p {
+		font-size: var(--font-size-0);
+		line-height: normal;
+
+		@include mq(medium) {
+			font-size: var(--font-size-1);
+		}
+	}
+</style>

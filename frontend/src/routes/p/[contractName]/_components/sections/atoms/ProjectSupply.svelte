@@ -1,0 +1,153 @@
+<script lang="ts">
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { Currency, ProgressBar, TooltipIcon } from '@emerald-dao/component-library';
+
+	export let daoData: DAOProject;
+
+	interface TokenData {
+		numHolders: number;
+		averageHolding: number;
+		numFunders: number;
+		averageFunding: number;
+	}
+
+	async function calculateTokenData(): Promise<TokenData> {
+		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
+		let numHolders, totalHolding, numFunders, totalFunding;
+		numHolders = totalHolding = numFunders = totalFunding = 0;
+
+		for (const holder in daoData.onChainData.balances) {
+			if (holder === daoData.generalInfo.owner || lpAddresses.includes(holder)) continue;
+			numHolders++;
+			totalHolding += Number(daoData.onChainData.balances[holder]);
+		}
+
+		let averageHolding = totalHolding / numHolders ?? 0;
+		isNaN(averageHolding) ? (averageHolding = 0) : null;
+
+		for (const funder in daoData.onChainData.funders) {
+			numFunders++;
+			totalFunding += Number(daoData.onChainData.funders[funder]);
+		}
+
+		let averageFunding = totalFunding / numFunders;
+		isNaN(averageFunding) ? (averageFunding = 0) : null;
+
+		return { numHolders, averageHolding, numFunders, averageFunding };
+	}
+</script>
+
+<div class="card column-5 align-start">
+	<div class="secondary-wrapper">
+		<div class="row-6">
+			<div class="column-1 align-start">
+				<div class="row-2 align-center">
+					<p class="xsmall">Total Supply</p>
+					<TooltipIcon width={0.6} tooltip="The total amount of minted tokens." />
+				</div>
+				<Currency
+					amount={daoData.onChainData.totalSupply}
+					currency={daoData.generalInfo.token_symbol}
+					color="heading"
+					fontSize="var(--font-size-3)"
+				/>
+			</div>
+			<div class="column-1 align-start">
+				<div class="row-2 align-center">
+					<p class="xsmall">Max Supply</p>
+					<TooltipIcon
+						width={0.6}
+						tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
+					/>
+				</div>
+				{#if daoData.onChainData.maxSupply}
+					<Currency
+						amount={daoData.onChainData.maxSupply}
+						currency={daoData.generalInfo.token_symbol}
+						color="heading"
+						fontSize="var(--font-size-3)"
+					/>
+				{:else}
+					<p class="unlimited">∞</p>
+				{/if}
+			</div>
+		</div>
+		{#if daoData.onChainData.maxSupply}
+			<ProgressBar
+				labelText="Circulating ratio"
+				max={Number(daoData.onChainData.maxSupply)}
+				value={Number(daoData.onChainData.totalSupply)}
+				showPercentage={true}
+			/>
+		{/if}
+	</div>
+	{#await calculateTokenData() then tokenData}
+		<div class="tertiary-wrapper">
+			<div>
+				<p class="xsmall">Unique Holders</p>
+				<Currency amount={tokenData.numHolders} color="heading" fontSize="var(--font-size-1)" />
+			</div>
+			<div>
+				<p class="xsmall">Average Holding</p>
+				<Currency
+					amount={tokenData.averageHolding}
+					color="heading"
+					currency={daoData.generalInfo.token_symbol}
+					fontSize="var(--font-size-1)"
+				/>
+			</div>
+			<div>
+				<p class="xsmall">Unique Funders</p>
+				<Currency amount={tokenData.numFunders} color="heading" fontSize="var(--font-size-1)" />
+			</div>
+			<div>
+				<p class="xsmall">Average Funding</p>
+				<Currency
+					amount={tokenData.averageFunding}
+					color="heading"
+					currency={daoData.onChainData.paymentCurrency}
+					fontSize="var(--font-size-1)"
+				/>
+			</div>
+		</div>
+	{/await}
+</div>
+
+<style lang="scss">
+	.card {
+		padding: 0;
+		flex: 1;
+
+		.secondary-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-4);
+			border-bottom: 0.5px solid var(--clr-border-primary);
+			padding-bottom: var(--space-7);
+			width: 100%;
+			padding-top: var(--space-6);
+
+			.unlimited {
+				color: var(--clr-heading-main);
+				font-size: var(--font-size-3);
+			}
+		}
+
+		.tertiary-wrapper {
+			width: 100%;
+			padding-bottom: var(--space-6);
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-4);
+
+			p {
+				color: var(--clr-text-off);
+			}
+		}
+
+		.tertiary-wrapper,
+		.secondary-wrapper {
+			padding-inline: var(--space-7);
+		}
+	}
+</style>

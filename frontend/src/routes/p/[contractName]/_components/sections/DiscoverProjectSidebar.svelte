@@ -133,7 +133,6 @@
 			width: 100%;
 			height: 120px;
 			object-fit: cover;
-			opacity: 0.7;
 			border-bottom: 1px var(--clr-border-primary) solid;
 			border-radius: var(--radius-4) var(--radius-4) 0 0;
 		}
