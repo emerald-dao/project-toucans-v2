@@ -11,10 +11,7 @@
 <tr>
 	<th scope="row" class="left-align fit-content soft-text">{number + 1}</th>
 	<td>
-		<a
-			href={`https://${dappInfo.url}/p/${project.project_id}`}
-			class="row-2 align-center left-align fit-content"
-		>
+		<a href={`/p/${project.project_id}`} class="row-2 align-center left-align fit-content">
 			<img src={project.logo} alt={`${project.name} logo`} class="logo" />
 			{project.name}
 		</a>
