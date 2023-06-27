@@ -8,6 +8,7 @@ export interface BaseVote {
   created_at: string;
   pending: boolean;
   type: 'Toucans' | 'Toucans Action';
+  discord_message_link: string;
 }
 
 export interface ToucansGeneralVote extends BaseVote {

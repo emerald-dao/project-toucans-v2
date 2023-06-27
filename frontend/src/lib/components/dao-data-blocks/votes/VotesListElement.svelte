@@ -28,6 +28,16 @@
 		</div>
 	</div>
 	<div class="row-3">
+		{#if status === 'PENDING'}
+			<a
+				href={vote.discord_message_link}
+				target="_blank"
+				class="trading-link header-link"
+				rel="noreferrer"
+			>
+				<Icon icon="tabler:external-link" />
+			</a>
+		{/if}
 		<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 			<Icon icon="tabler:message" />
 		</div>
@@ -99,5 +109,18 @@
 
 	.row-3 {
 		align-items: center;
+
+		.trading-link {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: var(--space-1);
+			margin-left: var(--space-2);
+			margin-bottom: 2px;
+		}
+
+		.header-link {
+			font-size: var(--font-size-3);
+		}
 	}
 </style>
