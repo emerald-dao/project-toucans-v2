@@ -114,7 +114,7 @@
 				</div>
 				{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
 					<p class="payment-explanation">
-						{`By funding this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
+						{`By purchasing this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
 					</p>
 				{/if}
 				{#if daoData.onChainData.requiredNft != null}
@@ -137,7 +137,6 @@
 			width: 100%;
 			height: 120px;
 			object-fit: cover;
-			opacity: 0.7;
 			border-bottom: 1px var(--clr-border-primary) solid;
 			border-radius: var(--radius-4) var(--radius-4) 0 0;
 		}

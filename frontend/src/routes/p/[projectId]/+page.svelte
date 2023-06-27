@@ -87,7 +87,7 @@
 	</div>
 	{#if data.generalInfo.long_description}
 		<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
-			<Icon icon="tabler:arrow-left" color="#ff66c4" width="19.5" />
+			<Icon icon="tabler:arrow-left" />
 			<p class="xsmall w-medium">About us</p>
 		</div>
 		{#if seeMore}
@@ -148,10 +148,7 @@
 		border-right-width: 0px;
 		border-radius: var(--radius-1) 0px 0px var(--radius-1);
 		cursor: pointer;
-		background-color: var(--clr-tertiary-badge);
-
-		p {
-			color: var(--clr-tertiary-main);
-		}
+		background-color: var(--clr-surface-secondary);
+		gap: var(--space-1);
 	}
 </style>
