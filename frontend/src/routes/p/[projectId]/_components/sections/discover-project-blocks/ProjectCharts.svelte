@@ -6,6 +6,7 @@
 		MainFundersChart,
 		MainHoldersChart
 	} from '$components/dao-data-blocks';
+	import MainVotersChart from '$components/dao-data-blocks/votes/MainVotersChart.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -17,6 +18,7 @@
 				<Tab>Main holders</Tab>
 			{/if}
 			<Tab>Main funders</Tab>
+			<Tab>Main Voters</Tab>
 			{#if daoData.hasToken}
 				<Tab>Liquidity pools</Tab>
 			{/if}
@@ -28,6 +30,9 @@
 		{/if}
 		<TabPanel>
 			<MainFundersChart {daoData} />
+		</TabPanel>
+		<TabPanel>
+			<MainVotersChart {daoData} />
 		</TabPanel>
 		{#if daoData.hasToken}
 			<TabPanel>

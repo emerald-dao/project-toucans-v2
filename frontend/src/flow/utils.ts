@@ -6,6 +6,8 @@ import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$lib/stores/custom/steps/step.interface';
 import { ECurrencies } from '$lib/types/common/enums';
 
+import getAccountFromDiscordBatchScript from './cadence/scripts/get_account_from_discord_batch.cdc?raw';
+
 export function replaceWithProperValues(script: string, contractName = '', contractAddress = '') {
 	return (
 		script
@@ -291,6 +293,17 @@ export const getFindProfilesBatch = async (addressList: string[]) => {
         }
         `,
 			args: (arg, t) => [arg(addressList, t.Array(t.Address))]
+		});
+	} catch (e) {
+		return null;
+	}
+};
+
+export const getAccountFromDiscordBatch = async (discordIds: string[]) => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(getAccountFromDiscordBatchScript),
+			args: (arg, t) => [arg(discordIds, t.Array(t.String))]
 		});
 	} catch (e) {
 		return null;
