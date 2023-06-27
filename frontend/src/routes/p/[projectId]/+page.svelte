@@ -11,7 +11,6 @@
 	import { Seo } from '@emerald-dao/component-library';
 
 	export let data: DAOProject;
-	console.log(data);
 
 	let seeMore = false;
 

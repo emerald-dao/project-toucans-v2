@@ -4,17 +4,41 @@
 
 	export let daoData: DAOProject;
 
-	interface TokenData {
+	interface HoldingData {
 		numHolders: number;
 		averageHolding: number;
+	}
+
+	interface FundingData {
 		numFunders: number;
 		averageFunding: number;
 	}
 
-	async function calculateTokenData(): Promise<TokenData> {
+	async function calculateFundingData(): Promise<FundingData> {
 		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
-		let numHolders, totalHolding, numFunders, totalFunding;
-		numHolders = totalHolding = numFunders = totalFunding = 0;
+
+		let numFunders, totalFunding;
+
+		numFunders = totalFunding = 0;
+
+		for (const funder in daoData.onChainData.funders) {
+			numFunders++;
+			totalFunding += Number(daoData.onChainData.funders[funder]);
+		}
+
+		let averageFunding = totalFunding / numFunders;
+
+		isNaN(averageFunding) ? (averageFunding = 0) : null;
+
+		return { numFunders, averageFunding };
+	}
+
+	async function calculateHoldingData(): Promise<HoldingData> {
+		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
+
+		let numHolders, totalHolding;
+
+		numHolders = totalHolding = 0;
 
 		for (const holder in daoData.onChainData.balances) {
 			if (holder === daoData.generalInfo.owner || lpAddresses.includes(holder)) continue;
@@ -23,17 +47,10 @@
 		}
 
 		let averageHolding = totalHolding / numHolders ?? 0;
+
 		isNaN(averageHolding) ? (averageHolding = 0) : null;
 
-		for (const funder in daoData.onChainData.funders) {
-			numFunders++;
-			totalFunding += Number(daoData.onChainData.funders[funder]);
-		}
-
-		let averageFunding = totalFunding / numFunders;
-		isNaN(averageFunding) ? (averageFunding = 0) : null;
-
-		return { numHolders, averageHolding, numFunders, averageFunding };
+		return { numHolders, averageHolding };
 	}
 </script>
 
@@ -81,8 +98,8 @@
 			/>
 		{/if}
 	</div>
-	{#await calculateTokenData() then tokenData}
-		<div class="tertiary-wrapper">
+	<div class="tertiary-wrapper">
+		{#await calculateHoldingData() then tokenData}
 			<div>
 				<p class="xsmall">Unique Holders</p>
 				<Currency amount={tokenData.numHolders} color="heading" fontSize="var(--font-size-1)" />
@@ -96,6 +113,8 @@
 					fontSize="var(--font-size-1)"
 				/>
 			</div>
+		{/await}
+		{#await calculateFundingData() then tokenData}
 			<div>
 				<p class="xsmall">Unique Funders</p>
 				<Currency amount={tokenData.numFunders} color="heading" fontSize="var(--font-size-1)" />
@@ -109,8 +128,8 @@
 					fontSize="var(--font-size-1)"
 				/>
 			</div>
-		</div>
-	{/await}
+		{/await}
+	</div>
 </div>
 
 <style lang="scss">

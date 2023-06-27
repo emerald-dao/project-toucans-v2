@@ -10,8 +10,6 @@
 		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
 		daoData.vaultSetup = true;
 	}
-
-	daoData.userBalance = 8040.49;
 </script>
 
 <div class="main-wrapper row-8 align-end">
@@ -32,7 +30,7 @@
 				Transfer
 			</Button>
 		</div>
-	{:else}
+	{:else if !daoData.vaultSetup}
 		<Button
 			size="small"
 			color="primary"
