@@ -2,7 +2,6 @@
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { Currency } from '@emerald-dao/component-library';
 	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
-	import dappInfo from '$lib/config/config';
 
 	export let project: DaoRankingData;
 	export let number: number;
@@ -12,8 +11,8 @@
 	<th scope="row" class="left-align fit-content soft-text">{number + 1}</th>
 	<td>
 		<a href={`/p/${project.project_id}`} class="row-2 align-center left-align fit-content">
-			<img src={project.logo} alt={`${project.name} logo`} class="logo" />
-			{project.name}
+			<img src={project.projects.logo} alt={`${project.projects.name} logo`} class="logo" />
+			{project.projects.name}
 		</a>
 	</td>
 	<td>
@@ -37,7 +36,7 @@
 	<td class="chart">
 		<div class="chart-wrapper">
 			<LineChart
-				title={`${project.name}-chart`}
+				title={`${project.projects.name}-chart`}
 				chartData={project.numbers}
 				labels={Array(project.numbers.length).fill('')}
 			/>

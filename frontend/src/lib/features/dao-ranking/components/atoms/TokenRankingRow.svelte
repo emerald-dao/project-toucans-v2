@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Currency, Label } from '@emerald-dao/component-library';
 	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
-	import dappInfo from '$lib/config/config';
 
 	export let project: DaoRankingData;
 	export let number: number;
@@ -11,13 +10,13 @@
 	<th scope="row" class="left-align fit-content soft-text">{number + 1}</th>
 	<td class="left-align">
 		<Label size="xx-small" hasBorder={false} color="tertiary">
-			{project.token_symbol}
+			{project.projects.token_symbol}
 		</Label>
 	</td>
 	<td>
 		<a href={`/p/${project.project_id}`} class="row-2 align-center left-align fit-content">
-			<img src={project.logo} alt={`${project.name} logo`} class="logo" />
-			{project.name}
+			<img src={project.projects.logo} alt={`${project.projects.name} logo`} class="logo" />
+			{project.projects.name}
 		</a>
 	</td>
 	<td>
@@ -72,7 +71,7 @@
 	<td>
 		<Currency
 			amount={project.total_supply}
-			currency={project.token_symbol}
+			currency={project.projects.token_symbol}
 			color="heading"
 			fontSize="var(--font-size-1)"
 		/>
@@ -81,7 +80,7 @@
 		{#if project.max_supply}
 			<Currency
 				amount={project.max_supply}
-				currency={project.token_symbol}
+				currency={project.projects.token_symbol}
 				color="heading"
 				fontSize="var(--font-size-1)"
 			/>
