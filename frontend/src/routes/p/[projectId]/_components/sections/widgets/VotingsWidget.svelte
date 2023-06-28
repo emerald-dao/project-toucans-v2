@@ -14,7 +14,7 @@
 </script>
 
 <div class="card">
-	<div class="row-space-between align-center card-header">
+	<div class="card-header">
 		<span class="small row-2 align-center">
 			<Icon icon="lucide:vote" />
 			Active votations
@@ -77,6 +77,14 @@
 			background-color: var(--clr-surface-primary);
 			padding-block: var(--space-5) var(--space-3);
 			border-bottom: 1px solid var(--clr-neutral-badge);
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-3);
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
 
 			.pagination {
 				.next-button,

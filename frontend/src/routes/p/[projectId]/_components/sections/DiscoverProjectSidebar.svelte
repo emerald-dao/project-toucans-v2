@@ -106,7 +106,7 @@
 				<p class="small description">{daoData.generalInfo.description}</p>
 			</div>
 			<div class="column-5">
-				<div class="row-4">
+				<div class="payment-buttons-wrapper">
 					{#if daoData.hasToken}
 						<PaymentModal {daoData} paymentType="fund" />
 					{/if}
@@ -178,6 +178,16 @@
 
 			p.description {
 				margin-bottom: var(--space-11);
+			}
+
+			.payment-buttons-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-4);
+
+				@include mq('small') {
+					flex-direction: row;
+				}
 			}
 
 			.payment-explanation {

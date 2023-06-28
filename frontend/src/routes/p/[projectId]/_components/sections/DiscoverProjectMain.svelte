@@ -61,8 +61,12 @@
 
 		.secondary-wrapper {
 			display: flex;
-			flex-direction: row;
 			gap: var(--space-7);
+			flex-direction: column;
+
+			@include mq('medium') {
+				flex-direction: row;
+			}
 		}
 	}
 </style>

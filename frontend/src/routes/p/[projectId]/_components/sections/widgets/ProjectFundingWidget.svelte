@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { include } from 'vest';
 	import RecentFundingChart from '$lib/components/dao-data-blocks/recent-funding/chart/RecentFundingChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
@@ -27,8 +28,11 @@
 		display: flex;
 		flex-direction: column;
 		padding: 0;
-		max-width: 250px;
 		overflow: hidden;
+
+		@include mq('medium') {
+			max-width: 250px;
+		}
 
 		.primary-wrapper,
 		.secondary-wrapper {

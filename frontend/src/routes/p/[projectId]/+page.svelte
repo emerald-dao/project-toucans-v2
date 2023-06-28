@@ -85,16 +85,18 @@
 		</div>
 	</div>
 	{#if data.generalInfo.long_description}
-		<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
-			<Icon icon="tabler:arrow-left" />
-			<p class="xsmall w-medium">About us</p>
+		<div class="hide-on-mobile">
+			<div class="button" on:click={() => (seeMore = !seeMore)} on:keydown>
+				<Icon icon="tabler:arrow-left" />
+				<p class="xsmall w-medium">About us</p>
+			</div>
+			{#if seeMore}
+				<SeeMoreSidebar
+					longDescription={data.generalInfo.long_description}
+					on:closeModal={() => (seeMore = !seeMore)}
+				/>
+			{/if}
 		</div>
-		{#if seeMore}
-			<SeeMoreSidebar
-				longDescription={data.generalInfo.long_description}
-				on:closeModal={() => (seeMore = !seeMore)}
-			/>
-		{/if}
 	{/if}
 </section>
 
