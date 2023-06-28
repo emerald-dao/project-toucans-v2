@@ -27,7 +27,12 @@
 	{#if daoData.votes.length > 0}
 		{#each daoData.votes as vote, i}
 			<div class="activity-wrapper">
-				<VotesListElement {vote} {i} status={getVoteStatus(vote)} />
+				<VotesListElement
+					{vote}
+					{i}
+					status={getVoteStatus(vote)}
+					discordLink={daoData.generalInfo.discord}
+				/>
 			</div>
 		{/each}
 	{:else}

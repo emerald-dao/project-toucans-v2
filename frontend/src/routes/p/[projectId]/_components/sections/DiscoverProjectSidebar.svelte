@@ -12,7 +12,7 @@
 	export let daoData: DAOProject;
 </script>
 
-<aside class="column-7">
+<aside class="column-8">
 	<div class="card-primary column">
 		{#if daoData.generalInfo.banner_image}
 			<img

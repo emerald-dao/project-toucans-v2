@@ -12,6 +12,8 @@
 
 	export let daoData: DAOProject;
 
+	$: activeVotings = daoData.votes.filter((vote) => vote.pending === true);
+
 	$: currentFundingCycleData =
 		daoData.hasToken && daoData.onChainData.currentFundingCycle && daoData.events
 			? getFundingCycleData(
@@ -23,18 +25,22 @@
 </script>
 
 {#if daoData}
-	<div class="column-7">
+	<div class="column-8">
 		<div class="main-wrapper">
-			{#if $user.addr}
+			{#if daoData.hasToken && $user.addr}
 				<UserBalanceWidget {daoData} />
 			{/if}
 			<div class="secondary-wrapper">
 				<ProjectFundingWidget {daoData} />
-				<TokenAnalysisWidget {daoData} />
+				{#if daoData.hasToken}
+					<TokenAnalysisWidget {daoData} />
+				{/if}
 			</div>
 		</div>
-		<VotingsWidget votingData={daoData.votes} />
-		{#if currentFundingCycleData}
+		{#if activeVotings.length > 0}
+			<VotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
+		{/if}
+		{#if daoData.hasToken && currentFundingCycleData}
 			<RoundsWidget
 				round={currentFundingCycleData}
 				projectId={daoData.generalInfo.project_id}

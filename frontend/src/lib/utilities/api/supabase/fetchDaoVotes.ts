@@ -15,7 +15,7 @@ export const fetchDaoVotes = async (projectId: string) => {
     toucans_action_id
   `
 		)
-		.eq('contract_name', 'SloppyStakes')
+		.eq('contract_name', projectId)
 		.order('created_at', { ascending: false });
 
 	return data || [];

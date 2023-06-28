@@ -54,6 +54,7 @@
 			gap: var(--space-1);
 			position: relative;
 			border-top: 0.5px solid var(--clr-border-primary);
+			min-height: var(--space-18);
 
 			span {
 				background-color: var(--clr-neutral-badge);

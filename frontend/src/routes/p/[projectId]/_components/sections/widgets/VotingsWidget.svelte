@@ -1,64 +1,74 @@
 <script lang="ts">
-	import VotingBar from '$components/atoms/VotingBar.svelte';
+	import VotingStatusCard from '$components/atoms/voting/VotingStatusCard.svelte';
 	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 
 	export let votingData: Vote[];
-
-	console.log(votingData[0]);
-
-	$: pendingVotations = votingData.filter((v) => v.pending === true);
+	export let transparent = false;
+	export let title = 'Active votations';
+	export let discordLink: string | null = null;
 
 	let activeVotation = 0;
 </script>
 
-<div class="card">
-	<div class="card-header">
+<div class="card" class:transparent>
+	<div class="card-header" class:transparent>
 		<span class="small row-2 align-center">
 			<Icon icon="lucide:vote" />
-			Active votations
+			{title}
 		</span>
 
-		<div class="pagination row-8">
-			<div
-				class="previous-button"
-				class:disabled={activeVotation === 0}
-				on:click={() => {
-					if (activeVotation > 0) activeVotation--;
-				}}
-			>
-				<Icon icon="tabler:chevron-left" />
+		{#if votingData.length > 1}
+			<div class="pagination row-8">
+				<div
+					class="previous-button"
+					class:disabled={activeVotation === 0}
+					on:click={() => {
+						if (activeVotation > 0) activeVotation--;
+					}}
+				>
+					<Icon icon="tabler:chevron-left" />
+				</div>
+
+				<span class="xsmall">
+					{activeVotation + 1} / {votingData.length}
+				</span>
+
+				<div
+					class="next-button"
+					class:disabled={activeVotation === votingData.length - 1}
+					on:click={() => {
+						if (activeVotation !== votingData.length - 1) activeVotation++;
+					}}
+				>
+					<Icon icon="tabler:chevron-right" />
+				</div>
 			</div>
+		{/if}
 
-			<span class="xsmall">
-				{activeVotation + 1} / {pendingVotations.length}
-			</span>
-
-			<div
-				class="next-button"
-				class:disabled={activeVotation === pendingVotations.length - 1}
-				on:click={() => {
-					if (activeVotation !== pendingVotations.length - 1) activeVotation++;
-				}}
+		{#if discordLink && votingData[activeVotation].pending === true}
+			<Button
+				size="small"
+				color="neutral"
+				width="extended"
+				type="ghost"
+				href={`https://discord.gg/${discordLink}`}
+				target="_blank"
 			>
-				<Icon icon="tabler:chevron-right" />
-			</div>
-		</div>
-
-		<Button size="small" color="neutral" width="extended" type="ghost">
-			<Icon icon="tabler:brand-discord" />
-			Vote
-		</Button>
+				<Icon icon="tabler:brand-discord" />
+				Vote
+			</Button>
+		{/if}
 	</div>
 
 	<div class="card-body column-7">
 		<div class="column-2">
-			<h4>{pendingVotations[activeVotation].title}</h4>
-			<p class="small">{pendingVotations[activeVotation].description}</p>
+			<h4>{votingData[activeVotation].title}</h4>
+			<p class="small">{votingData[activeVotation].description}</p>
 		</div>
 
-		<VotingBar votingData={votingData[activeVotation]} />
+		<VotingStatusCard votingData={votingData[activeVotation]} />
 	</div>
 </div>
 
@@ -86,6 +96,10 @@
 			align-items: center;
 			flex-wrap: wrap;
 
+			&.transparent {
+				background-color: transparent;
+			}
+
 			.pagination {
 				.next-button,
 				.previous-button {
@@ -111,5 +125,10 @@
 			max-width: 55ch;
 			word-break: break-word;
 		}
+	}
+
+	.transparent {
+		background-color: transparent;
+		border: none;
 	}
 </style>

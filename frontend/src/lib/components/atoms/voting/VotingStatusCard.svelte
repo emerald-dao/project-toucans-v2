@@ -1,14 +1,16 @@
 <script lang="ts">
 	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
-	import { ProgressBar } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
+	import VotingBar from './VotingBar.svelte';
 
 	export let votingData: Vote;
 </script>
 
 <div class="card column-4">
 	<div class="row-2 align-center">
-		<p class="small">Current result</p>
+		{#if votingData.pending === true}
+			<p class="small">Current result</p>
+		{/if}
 		<div
 			class="label row-1 align-center"
 			class:success={votingData.for_total > votingData.against_total}
@@ -25,23 +27,7 @@
 			{/if}
 		</div>
 	</div>
-	<div>
-		<div class="row-space-between">
-			<div class="row-3">
-				<span class="xsmall success">{votingData.for_total} votes</span>
-			</div>
-			<div class="row-3">
-				<span class="xsmall alert">{votingData.against_total} votes</span>
-			</div>
-		</div>
-		<ProgressBar
-			value={votingData.for_total}
-			max={votingData.for_total + votingData.against_total}
-			verticalLine={(votingData.for_total + votingData.against_total) / 2}
-			backgroundColor="var(--clr-alert-main)"
-			size="small"
-		/>
-	</div>
+	<VotingBar {votingData} />
 </div>
 
 <style lang="scss">
