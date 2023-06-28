@@ -8,6 +8,7 @@
 	import UserBalanceWidget from './widgets/UserBalanceWidget.svelte';
 	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
+	import VotingsWidget from './widgets/VotingsWidget.svelte';
 
 	export let daoData: DAOProject;
 
@@ -22,7 +23,7 @@
 </script>
 
 {#if daoData}
-	<div class="column-6">
+	<div class="column-7">
 		<div class="main-wrapper">
 			{#if $user.addr}
 				<UserBalanceWidget {daoData} />
@@ -32,6 +33,7 @@
 				<TokenAnalysisWidget {daoData} />
 			</div>
 		</div>
+		<VotingsWidget votingData={daoData.votes} />
 		{#if currentFundingCycleData}
 			<RoundsWidget
 				round={currentFundingCycleData}

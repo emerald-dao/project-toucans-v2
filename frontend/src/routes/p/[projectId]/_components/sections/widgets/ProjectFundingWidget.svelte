@@ -43,7 +43,7 @@
 		}
 
 		.secondary-wrapper {
-			background-color: var(--clr-neutral-badge);
+			background-color: var(--clr-background-secondary);
 			display: flex;
 			flex-direction: column;
 			align-items: center;
