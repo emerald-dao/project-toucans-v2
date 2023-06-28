@@ -1,11 +1,13 @@
 <script type="ts">
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import TokenStats from './widgets/TokenStats.svelte';
-	import ProjectCharts from './widgets/PrimaryTabsWidget/PrimaryTabsWidget.svelte';
-	import ProjectLists from './widgets/SecondaryTabsWidget/SecondaryTabsWidget.svelte';
+	import ProjectCharts from './widgets/PrimaryTabsWidget.svelte';
+	import ProjectLists from './widgets/SecondaryTabsWidget.svelte';
 	import { user } from '$stores/flow/FlowStore';
 	import RoundsWidget from '$lib/components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
+	import UserBalanceWidget from './widgets/UserBalanceWidget.svelte';
+	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
+	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
 
 	export let daoData: DAOProject;
 
@@ -21,7 +23,15 @@
 
 {#if daoData}
 	<div class="column-6">
-		<TokenStats {daoData} />
+		<div class="main-wrapper">
+			{#if $user.addr}
+				<UserBalanceWidget {daoData} />
+			{/if}
+			<div class="secondary-wrapper">
+				<ProjectFundingWidget {daoData} />
+				<TokenAnalysisWidget {daoData} />
+			</div>
+		</div>
 		{#if currentFundingCycleData}
 			<RoundsWidget
 				round={currentFundingCycleData}
@@ -40,3 +50,17 @@
 		<ProjectLists {daoData} />
 	</div>
 {/if}
+
+<style lang="scss">
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+
+		.secondary-wrapper {
+			display: flex;
+			flex-direction: row;
+			gap: var(--space-7);
+		}
+	}
+</style>
