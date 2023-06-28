@@ -1,6 +1,6 @@
 <script lang="ts">
+	import LineChart from '$components/charts/LineChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import LineChart from './../../charts/LineChart.svelte';
 
 	export let daoData: DAOProject;
 

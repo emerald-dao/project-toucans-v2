@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { user } from '$stores/flow/FlowStore';
-	import UserBalance from '../atoms/UserBalance.svelte';
-	import ProjectSupply from '../atoms/ProjectSupply.svelte';
-	import ProjectFunding from '../atoms/ProjectFunding.svelte';
+	import UserBalance from './UserBalance.svelte';
+	import ProjectSupply from './ProjectSupply.svelte';
+	import ProjectFunding from './ProjectFunding.svelte';
 
 	export let daoData: DAOProject;
 

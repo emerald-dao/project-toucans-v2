@@ -1,11 +1,11 @@
 <script type="ts">
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import TokenStats from './discover-project-blocks/TokenStats.svelte';
-	import ProjectCharts from './discover-project-blocks/ProjectCharts.svelte';
-	import ProjectLists from './discover-project-blocks/ProjectLists.svelte';
-	import { RoundsCard } from '$components/dao-data-blocks';
+	import TokenStats from './widgets/TokenStats.svelte';
+	import ProjectCharts from './widgets/PrimaryTabsWidget/PrimaryTabsWidget.svelte';
+	import ProjectLists from './widgets/SecondaryTabsWidget/SecondaryTabsWidget.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import RoundsWidget from '$lib/components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
 
 	export let daoData: DAOProject;
 
@@ -23,7 +23,7 @@
 	<div class="column-6">
 		<TokenStats {daoData} />
 		{#if currentFundingCycleData}
-			<RoundsCard
+			<RoundsWidget
 				round={currentFundingCycleData}
 				projectId={daoData.generalInfo.project_id}
 				projectToken={daoData.generalInfo.token_symbol}

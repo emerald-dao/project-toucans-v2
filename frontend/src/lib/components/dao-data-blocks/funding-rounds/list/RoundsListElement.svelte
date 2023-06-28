@@ -1,15 +1,15 @@
 <script type="ts">
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import FundingNumbers from './atoms/FundingNumbers.svelte';
+	import FundingNumbers from '../atoms/FundingNumbers.svelte';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
-	import SeeRoundDetailsModal from './atoms/SeeRoundDetailsModal.svelte';
+	import SeeRoundDetailsModal from '../atoms/SeeRoundDetailsModal.svelte';
 	import GoalReached from '$components/atoms/GoalReached.svelte';
 	import type { ECurrencies } from '$lib/types/common/enums';
-	import RoundStatusLabel from './atoms/RoundStatusLabel.svelte';
+	import RoundStatusLabel from '../atoms/RoundStatusLabel.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { getRoundTiming } from './helpers/getRoundTiming';
-	import { getRoundStatus } from './helpers/getRoundStatus';
+	import { getRoundTiming } from '../helpers/getRoundTiming';
+	import { getRoundStatus } from '../helpers/getRoundStatus';
 	import { togglePurchasingExecution } from '$flow/actions';
 	import EditRoundModal from '$lib/features/edit-round/components/EditRoundModal.svelte';
 

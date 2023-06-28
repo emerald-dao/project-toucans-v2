@@ -1,7 +1,8 @@
 <script lang="ts">
+	import MainHoldersList from '$lib/components/dao-data-blocks/holders/list/MainHoldersList.svelte';
+	import MainFundersList from '$lib/components/dao-data-blocks/funders/list/MainFundersList.svelte';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { RoundsList, MainFundersList, MainHoldersList } from '$components/dao-data-blocks';
 
 	export let daoData: DAOProject;
 </script>

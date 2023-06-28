@@ -107,12 +107,12 @@
 			</div>
 			<div class="column-5">
 				<div class="row-4">
-					{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
+					{#if daoData.hasToken}
 						<PaymentModal {daoData} paymentType="fund" />
 					{/if}
 					<PaymentModal {daoData} paymentType="donate" />
 				</div>
-				{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
+				{#if daoData.hasToken}
 					<p class="payment-explanation">
 						{`By purchasing this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
 					</p>

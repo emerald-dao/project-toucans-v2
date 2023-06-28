@@ -1,11 +1,11 @@
 <script type="ts">
+	import EventsListElement from './EventsListElement.svelte';
 	import { getFindNamesBatch } from '$flow/utils';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Button } from '@emerald-dao/component-library';
-	import EventsListElement from './EventsListElement.svelte';
-	import { getUsersFromEvents } from './functions/getUsersFromEvents';
 	import Icon from '@iconify/svelte';
-	import AddEventModal from './addEvent/AddEventModal.svelte';
+	import AddEventModal from '../addEvent/AddEventModal.svelte';
+	import { getUsersFromEvents } from '../functions/getUsersFromEvents';
 
 	export let daoData: DAOProject;
 	export let pageSize = 6;

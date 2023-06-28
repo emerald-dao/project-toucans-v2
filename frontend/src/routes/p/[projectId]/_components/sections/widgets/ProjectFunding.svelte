@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RecentFundingChart from '$components/dao-data-blocks/recentFundingChart/RecentFundingChart.svelte';
+	import RecentFundingChart from '$lib/components/dao-data-blocks/recent-funding/chart/RecentFundingChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
 

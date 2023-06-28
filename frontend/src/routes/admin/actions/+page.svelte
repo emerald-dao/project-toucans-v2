@@ -1,9 +1,9 @@
 <script type="ts">
-	import { PendingActionsList } from '$components/dao-data-blocks';
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import PendingActionsList from '$lib/components/dao-data-blocks/pending-actions/list/PendingActionsList.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;

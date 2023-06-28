@@ -2,7 +2,7 @@
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import Icon from '@iconify/svelte';
 	import { Modal, getModal } from '@emerald-dao/component-library';
-	import RoundsCard from '../RoundsCard.svelte';
+	import RoundsCard from '../widget/RoundsWidget.svelte';
 	import type { ECurrencies } from '$lib/types/common/enums';
 
 	export let round: FundingCycle;

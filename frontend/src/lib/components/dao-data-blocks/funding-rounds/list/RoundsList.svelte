@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { user } from './../../../stores/flow/FlowStore';
-	import { RoundsListElement } from '$components/dao-data-blocks';
+	import { user } from '../../../../stores/flow/FlowStore';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import RoundsListElement from './RoundsListElement.svelte';
 
 	export let daoData: DAOProject;
 	export let finishedFilter = true;

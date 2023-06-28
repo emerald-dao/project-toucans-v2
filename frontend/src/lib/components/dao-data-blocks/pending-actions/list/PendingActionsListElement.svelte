@@ -6,7 +6,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import { voteOnActionExecution, getBatchAmounts } from '$flow/actions';
 	import { Label, Modal, getModal } from '@emerald-dao/component-library';
-	import BatchMintingList from './atoms/BatchMintingList.svelte';
+	import BatchMintingList from '../atoms/BatchMintingList.svelte';
 
 	export let action: ActionData;
 	export let threshold: string;
