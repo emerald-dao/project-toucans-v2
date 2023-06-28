@@ -14,7 +14,7 @@
 			? '1.1rem'
 			: '1.2rem';
 
-	$: veticalLineHeight =
+	$: verticalLineHeight =
 		size === 'x-small'
 			? '1.1rem'
 			: size === 'small'
@@ -33,7 +33,7 @@
 		value={votingData.for_total}
 		max={votingData.for_total + votingData.against_total}
 		verticalLine={(votingData.for_total + votingData.against_total) / 2}
-		vergicalLineHeight={veticalLineHeight}
+		{verticalLineHeight}
 		backgroundColor="var(--clr-alert-main)"
 		{size}
 	/>
