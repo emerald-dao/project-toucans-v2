@@ -1,6 +1,11 @@
 <script type="ts">
-	import { daoGeneratorSteps } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { ProgressSteps } from '@emerald-dao/component-library';
+	import { getContext } from 'svelte';
+	import type { createSteps } from '$stores/custom/steps/Steps';
+
+	const daoGeneratorSteps: ReturnType<typeof createSteps> = getContext('daoGeneratorSteps');
+
+	console.log(daoGeneratorSteps);
 </script>
 
 <nav>

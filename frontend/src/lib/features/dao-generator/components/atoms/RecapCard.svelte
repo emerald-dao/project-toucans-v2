@@ -1,6 +1,5 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 
 	export let title: string;
 	export let onEdit: (() => void) | undefined = undefined;

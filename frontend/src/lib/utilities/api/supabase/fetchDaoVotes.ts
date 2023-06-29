@@ -1,8 +1,10 @@
 import { botSupabase } from '$lib/supabaseClient';
 
 export const fetchDaoVotes = async (projectId: string) => {
-  const { data } = await botSupabase.from('proposals')
-    .select(`
+  const { data } = await botSupabase
+    .from('proposals')
+    .select(
+      `
     for_total,
     against_total,
     title,
@@ -12,7 +14,8 @@ export const fetchDaoVotes = async (projectId: string) => {
     type,
     toucans_action_id,
     discord_message_link
-  `)
+  `
+    )
     .eq('contract_name', projectId)
     .order('created_at', { ascending: false });
 

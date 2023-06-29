@@ -1,10 +1,10 @@
 <script type="ts">
+	import RoundsList from '$lib/components/dao-data-blocks/funding-rounds/list/RoundsList.svelte';
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import RoundGeneratorModal from '$lib/features/round-generator/components/RoundGeneratorModal.svelte';
-	import { RoundsList } from '$components/dao-data-blocks';
 
 	const adminData: {
 		activeDao: Writable<number>;

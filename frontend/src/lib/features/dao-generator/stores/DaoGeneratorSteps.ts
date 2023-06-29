@@ -7,10 +7,14 @@ import {
 	Socials,
 	Tokenomics,
 	ReviewAndDeploy,
-	EditDelay
+	EditDelay,
+	PreferredCurrency
 } from '../components/steps';
+import { get } from 'svelte/store';
+import { daoAndTokenGeneratorData } from './DaoAndTokenGeneratorData';
+import { daoGeneratorData } from './DaoGeneratorData';
 
-export const daoGeneratorSteps = createSteps([
+export const daoAndTokenGeneratorSteps = createSteps([
 	{
 		name: 'General Data',
 		slug: 'generalData',
@@ -55,9 +59,54 @@ export const daoGeneratorSteps = createSteps([
 		name: 'Review & Deploy',
 		slug: 'review',
 		component: ReviewAndDeploy,
-		action: deployDao,
+		action: () => deployDao(get(daoAndTokenGeneratorData)),
 		form: false,
 		state: 'inactive'
 	}
 ]);
-export const generatorActiveStep = createActiveStep(daoGeneratorSteps);
+
+export const daoGeneratorSteps = createSteps([
+	{
+		name: 'General Data',
+		slug: 'generalData',
+		component: GeneralData,
+		action: null,
+		form: true,
+		state: 'active'
+	},
+	{
+		name: 'Description',
+		slug: 'description',
+		component: Description,
+		action: null,
+		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'Socials',
+		slug: 'socials',
+		component: Socials,
+		action: null,
+		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'Preferred Currency',
+		slug: 'preferred-currency',
+		component: PreferredCurrency,
+		action: null,
+		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'Review & Deploy',
+		slug: 'review',
+		component: ReviewAndDeploy,
+		action: () => deployDao(get(daoGeneratorData)),
+		form: false,
+		state: 'inactive'
+	}
+]);
+
+export const daoAndTokenGeneratorActiveStep = createActiveStep(daoAndTokenGeneratorSteps);
+export const daoGeneratorActiveStep = createActiveStep(daoGeneratorSteps);

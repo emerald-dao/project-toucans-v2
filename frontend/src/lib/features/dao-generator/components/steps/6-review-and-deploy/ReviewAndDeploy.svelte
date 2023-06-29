@@ -1,12 +1,19 @@
 <script type="ts">
-	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import { generatorActiveStep } from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { RecapCard, StepButtons, RecapElement } from '../../index';
 	import { editDelayOptions } from '../5-edit-delay/editDelayOptions';
 	import { getFlowBalance } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
+	import { getContext } from 'svelte';
+	import type { createActiveStep } from '$stores/custom/steps/ActiveStep';
+	import type { daoGeneratorData as TdaoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
+	import type { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
+
+	const daoGeneratorData: typeof TdaoGeneratorData | typeof daoAndTokenGeneratorData =
+		getContext('daoGeneratorData');
+	const generatorActiveStep: ReturnType<typeof createActiveStep> =
+		getContext('daoGeneratorActiveStep');
 
 	onMount(() => {
 		if ($daoGeneratorData.daoDetails.logo) {
@@ -14,14 +21,14 @@
 		}
 	});
 
-	let logoElement;
+	let logoElement: string;
 
 	const displayLogo = (file: File) => {
 		let reader = new FileReader();
 		reader.readAsDataURL(file); // base 64 format
 
 		reader.onload = (e) => {
-			logoElement = e.target.result;
+			logoElement = e.target?.result as string;
 		};
 	};
 
@@ -29,7 +36,7 @@
 	let confirmCost: boolean = false;
 
 	async function getUserBalance() {
-		const balance = await getFlowBalance($user.addr);
+		const balance = await getFlowBalance($user?.addr as string);
 		return Math.round(Number(balance) * 100) / 100;
 	}
 </script>
@@ -43,7 +50,9 @@
 				{/if}
 				<div class="column">
 					<RecapElement title="DAO Name" data={$daoGeneratorData.daoDetails.name} />
-					<RecapElement title="Token Name" data={$daoGeneratorData.daoDetails.tokenName} />
+					{#if $daoGeneratorData.daoDetails.daoType === 'daoAndToken'}
+						<RecapElement title="Token Name" data={$daoGeneratorData.daoDetails.tokenName} />
+					{/if}
 				</div>
 			</div>
 			<RecapElement title="Description" data={$daoGeneratorData.daoDetails.description} />
@@ -59,13 +68,15 @@
 					data={'https://discord.gg/' + $daoGeneratorData.daoDetails.discord}
 				/>
 			{/if}
-			<RecapElement
-				title="Edit Delay"
-				data={editDelayOptions.filter(
-					(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
-				)[0].title}
-			/>
-			<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
+			{#if $daoGeneratorData.daoDetails.daoType === 'daoAndToken'}
+				<RecapElement
+					title="Edit Delay"
+					data={editDelayOptions.filter(
+						(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
+					)[0].title}
+				/>
+				<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
+			{/if}
 		</RecapCard>
 		<div class="column-2">
 			<label for="confirm-cost" class="switch">

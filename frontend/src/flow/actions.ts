@@ -8,6 +8,7 @@ import { executeTransaction, formatFix, replaceWithProperValues, splitList, swit
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
+import deployDAOTx from './cadence/transactions/deploy_dao.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
 import transferProjectTokenToTreasuryTx from './cadence/transactions/transfer_project_token_to_treasury.cdc?raw';
@@ -30,6 +31,7 @@ import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
+import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?raw';
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
@@ -155,8 +157,40 @@ const deployContract = async (data: DaoGeneratorData) => {
 };
 
 export const deployContractExecution = (
-	data: DaoGeneratorData
-) => executeTransaction(() => deployContract(data));
+	data: DaoGeneratorData,
+	actionAfterSucceed: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
+) => executeTransaction(() => deployContract(data), actionAfterSucceed);
+
+const deployDAONoToken = async (data: DaoGeneratorData) => {
+	console.log(data);
+	const paymentCurrency = data.tokenomics.paymentCurrency;
+	const paymentCurrencyInfo = currencies[paymentCurrency];
+	const projectId = data.daoDetails.name.replace(
+		/[^\w\s]|\s/gi,
+		''
+	);
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(deployDAOTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(paymentCurrencyInfo.contractName, t.String),
+			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
+			arg(paymentCurrencyInfo.symbol, t.String),
+			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
+			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
+			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const deployDAONoTokenExecution = (
+	data: DaoGeneratorData,
+	actionAfterSucceed: (res: TransactionStatusObject) => Promise<ActionExecutionResult>
+) => executeTransaction(() => deployDAONoToken(data), actionAfterSucceed);
 
 const fundProject = async (
 	projectOwner: string,
@@ -662,6 +696,18 @@ export const setUpVaultExecution = (projectId: string, contractAddress: string) 
 //                     |_|
 
 export const getProjectInfo: (
+	contractAddress: string | null,
+	owner: string,
+	projectId: string
+) => Promise<DaoBlockchainData> = async (contractAddress, owner, projectId) => {
+	if (contractAddress) {
+		return await getProjectWithTokenInfo(contractAddress, owner, projectId)
+	} else {
+		return await getProjectNoTokenInfo(owner, projectId);
+	}
+};
+
+export const getProjectWithTokenInfo: (
 	contractAddress: string,
 	owner: string,
 	projectId: string
@@ -669,6 +715,23 @@ export const getProjectInfo: (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectScript, projectId, contractAddress),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		response.actions = await getProjectActions(owner, projectId);;
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectInfo');
+		console.log(e);
+	}
+};
+
+const getProjectNoTokenInfo: (
+	owner: string,
+	projectId: string
+) => Promise<DaoBlockchainData> = async (owner, projectId) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectNoTokenScript),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
 		response.actions = await getProjectActions(owner, projectId);;
@@ -695,14 +758,14 @@ export const getProjectActions: (
 	}
 };
 
-export const getTokenBalance = async (projectId: string, contractAddress: string, user: string) => {
+export const getTokenBalance = async (projectId: string, projectOwner: string, user: string) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(getTokenBalanceScript),
 			args: (arg, t) => [
 				arg(user, t.Address),
 				arg(projectId, t.String),
-				arg(contractAddress, t.Address)
+				arg(projectOwner, t.Address)
 			]
 		});
 		return response;

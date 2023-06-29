@@ -35,10 +35,9 @@ transaction(
     /**************************************************************************************/
     /************************************ 200 $FLOW Fee ***********************************/
     /**************************************************************************************/
-    let fee: @FlowToken.Vault <- deployer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: 200.0) as! @FlowToken.Vault
+    let payment <- deployer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: 200.0) as! @FlowToken.Vault
     let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
                               .borrow<&{FungibleToken.Receiver}>()!
-    emeraldCityTreasury.deposit(from: <- fee)
 
     // Blank empty for now
     let extra: {String: AnyStruct} = {}
@@ -51,7 +50,8 @@ transaction(
       _minting: minting,
       _initialTreasurySupply: initialTreasurySupply,
       _maxSupply: maxSupply,
-      _extra: extra
+      _extra: extra,
+      _payment: <- payment
     )
   }
 

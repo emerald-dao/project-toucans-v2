@@ -1,14 +1,20 @@
 <script type="ts">
 	import { InputWrapper } from '@emerald-dao/component-library';
-	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
-	import {
-		daoGeneratorSteps,
-		generatorActiveStep
-	} from '$lib/features/dao-generator/stores/DaoGeneratorSteps';
 	import { fly } from 'svelte/transition';
 	import validationSuite from './validation';
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 	import { onMount } from 'svelte';
+	import { getContext } from 'svelte';
+	import type { createSteps } from '$stores/custom/steps/Steps';
+	import type { createActiveStep } from '$stores/custom/steps/ActiveStep';
+	import type { daoGeneratorData as TdaoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
+	import type { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
+
+	const daoGeneratorData: typeof TdaoGeneratorData | typeof daoAndTokenGeneratorData =
+		getContext('daoGeneratorData');
+	const generatorActiveStep: ReturnType<typeof createActiveStep> =
+		getContext('daoGeneratorActiveStep');
+	const daoGeneratorSteps: ReturnType<typeof createSteps> = getContext('daoGeneratorSteps');
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;

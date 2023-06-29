@@ -1,5 +1,29 @@
 {
 	"contracts": {
+		"EmeraldIdentity": {
+			"source": "./src/flow/cadence/utility/EmeraldIdentity.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "87d0c9cd424434be",
+				"mainnet": "39e42c67cc851cfb"
+			}
+		},
+		"EmeraldIdentityDapper": {
+			"source": "./src/flow/cadence/utility/EmeraldIdentityDapper.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "87d0c9cd424434be",
+				"mainnet": "39e42c67cc851cfb"
+			}
+		},
+		"EmeraldIdentityLilico": {
+			"source": "./src/flow/cadence/utility/EmeraldIdentityLilico.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "87d0c9cd424434be",
+				"mainnet": "39e42c67cc851cfb"
+			}
+		},
 		"ExampleNFT": {
 			"source": "./src/flow/cadence/utility/ExampleNFT.cdc",
 			"aliases": {
@@ -100,6 +124,40 @@
 				"testnet": "5a5b0a73a29e83f1"
 			}
 		},
+		"SwapConfig": {
+			"source": "./src/flow/cadence/utility/SwapConfig.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "b78ef7afa52ff906",
+				"testnet": "ddb929038d45d4b3"
+			}
+		},
+		"SwapError": {
+			"source": "./src/flow/cadence/utility/SwapError.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "b78ef7afa52ff906",
+				"testnet": "ddb929038d45d4b3"
+			}
+		},
+		"SwapFactory": {
+			"source": "./src/flow/cadence/utility/SwapFactory.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "b063c16cac85dbd1",
+				"testnet": "cbed4c301441ded2"
+			}
+		},
+		"SwapInterfaces": {
+			"source": "./src/flow/cadence/utility/SwapInterfaces.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "b78ef7afa52ff906",
+				"testnet": "ddb929038d45d4b3"
+			}
+		},
+		"Test": "./src/flow/cadence/Test.cdc",
+		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc",
 		"Toucans": {
 			"source": "./src/flow/cadence/Toucans.cdc",
 			"aliases": {
@@ -127,61 +185,7 @@
 				"emulator": "f8d6e0586b0a20c7",
 				"mainnet": "577a3c409c5dcb5e"
 			}
-		},
-		"SwapError": {
-			"source": "./src/flow/cadence/utility/SwapError.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "ddb929038d45d4b3",
-				"mainnet": "b78ef7afa52ff906"
-			}
-		},
-		"SwapConfig": {
-			"source": "./src/flow/cadence/utility/SwapConfig.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "ddb929038d45d4b3",
-				"mainnet": "b78ef7afa52ff906"
-			}
-		},
-		"SwapFactory": {
-			"source": "./src/flow/cadence/utility/SwapFactory.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "cbed4c301441ded2",
-				"mainnet": "b063c16cac85dbd1"
-			}
-		},
-		"SwapInterfaces": {
-			"source": "./src/flow/cadence/utility/SwapInterfaces.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "ddb929038d45d4b3",
-				"mainnet": "b78ef7afa52ff906"
-			}
-		},
-		"EmeraldIdentity": {
-			"source": "./src/flow/cadence/utility/EmeraldIdentity.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "39e42c67cc851cfb"
-			}
-		},
-		"EmeraldIdentityDapper": {
-			"source": "./src/flow/cadence/utility/EmeraldIdentityDapper.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "39e42c67cc851cfb"
-			}
-		},
-		"EmeraldIdentityLilico": {
-			"source": "./src/flow/cadence/utility/EmeraldIdentityLilico.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "39e42c67cc851cfb"
-			}
-		},
-		"TestingDAO": "./src/flow/cadence/TestingDAO.cdc"
+		}
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -201,7 +205,7 @@
 			}
 		},
 		"testnet-account": {
-			"address": "539bc2a7045acbab",
+			"address": "93fc837134ab4e92",
 			"key": {
 				"type": "file",
 				"location": "testnet-account.pkey"

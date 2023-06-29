@@ -1,8 +1,9 @@
 <script lang="ts">
+	import RoundsList from '$lib/components/dao-data-blocks/funding-rounds/list/RoundsList.svelte';
+	import EventsList from '$lib/components/dao-data-blocks/events/list/EventsList.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
-	import { EventsList, RoundsList } from '$components/dao-data-blocks';
-	import RoundsCard from '$components/dao-data-blocks/funding-rounds/RoundsCard.svelte';
+	import RoundsCard from '$components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -14,7 +15,9 @@
 			{#if daoData.onChainData.currentFundingCycle}
 				<Tab>Active Round</Tab>
 			{/if}
-			<Tab>Rounds</Tab>
+			{#if daoData.onChainData.fundingCycles.length > 0}
+				<Tab>Rounds</Tab>
+			{/if}
 		</TabList>
 		<TabPanel>
 			<EventsList {daoData} />
@@ -33,9 +36,11 @@
 				</div>
 			</TabPanel>
 		{/if}
-		<TabPanel>
-			<RoundsList {daoData} finishedFilter={false} />
-		</TabPanel>
+		{#if daoData.onChainData.fundingCycles.length > 0}
+			<TabPanel>
+				<RoundsList {daoData} finishedFilter={false} />
+			</TabPanel>
+		{/if}
 	</Tabs>
 </div>
 

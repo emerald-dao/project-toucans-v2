@@ -3,6 +3,7 @@ import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc
 import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
 import ToucansTokens from "./ToucansTokens.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
  
 pub contract ExampleToken: FungibleToken {
 
@@ -184,7 +185,8 @@ pub contract ExampleToken: FungibleToken {
       _minting: Bool,
       _initialTreasurySupply: UFix64,
       _maxSupply: UFix64?,
-      _extra: {String: AnyStruct}
+      _extra: {String: AnyStruct},
+      _payment: @FlowToken.Vault
     ) {
 
       // Contract Variables
@@ -225,7 +227,8 @@ pub contract ExampleToken: FungibleToken {
         editDelay: _editDelay,
         minting: _minting,
         initialTreasurySupply: _initialTreasurySupply,
-        extra: _extra
+        extra: _extra,
+        payment: <- _payment
       )
 
       self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)

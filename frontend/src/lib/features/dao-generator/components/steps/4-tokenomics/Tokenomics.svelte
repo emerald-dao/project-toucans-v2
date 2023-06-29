@@ -1,13 +1,16 @@
 <script type="ts">
 	import CurrencySelect from '$lib/components/atoms/CurrencySelect.svelte';
 	import { fly } from 'svelte/transition';
-	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 	import StepButtons from '../../../components/atoms/StepButtons.svelte';
 	import validationSuite from './validation';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import { TooltipIcon } from '@emerald-dao/component-library';
 	import GLOSSARY from '$lib/config/glossary';
+	import type { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
+	import { getContext } from 'svelte';
+
+	const daoGeneratorData: typeof daoAndTokenGeneratorData = getContext('daoGeneratorData');
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;

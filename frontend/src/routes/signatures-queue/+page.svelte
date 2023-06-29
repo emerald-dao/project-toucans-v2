@@ -1,8 +1,8 @@
 <script type="ts">
+	import PendingActionsListElement from '$lib/components/dao-data-blocks/pending-actions/list/PendingActionsListElement.svelte';
 	import { user } from '$lib/stores/flow/FlowStore';
 	import { fly } from 'svelte/transition';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
-	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/PendingActionsListElement.svelte';
 	import { notifications } from '$lib/features/notifications/stores/NotificationsStore';
 	import { supabase } from '$lib/supabaseClient';
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
