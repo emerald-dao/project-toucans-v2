@@ -651,12 +651,14 @@ export const mintTokensToTreasuryExecution = (projectId: string, amount: string)
 	executeTransaction(() => mintTokensToTreasury(projectId, amount));
 
 const burnTokens = async (
+	tokenSymbol: string,
 	projectId: string,
 	amount: string
 ) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(burnTokensTx, projectId),
 		args: (arg, t) => [
+			arg(tokenSymbol, t.String),
 			arg(projectId, t.String),
 			arg(formatFix(amount), t.UFix64)
 		],
@@ -668,9 +670,10 @@ const burnTokens = async (
 };
 
 export const burnTokensExecution = (
+	tokenSymbol: string,
 	projectId: string,
 	amount: string
-) => executeTransaction(() => burnTokens(projectId, amount));
+) => executeTransaction(() => burnTokens(tokenSymbol, projectId, amount));
 
 const setUpVault = async (projectId: string, contractAddress: string) => {
 	return await fcl.mutate({
