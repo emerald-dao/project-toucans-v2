@@ -132,11 +132,10 @@ async function gatherTrendingProjects() {
   console.log('Error inserting rankings', error);
 }
 
-gatherTrendingProjects();
-// cron.schedule('*/30 * * * *', () => {
-//   gatherTrendingProjects();
-//   console.log('executing ranking task');
-// });
+cron.schedule('*/10 * * * *', () => {
+  gatherTrendingProjects();
+  console.log('executing ranking task');
+});
 
 // const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
 
