@@ -5,9 +5,6 @@ import ToucansUtils from "./ToucansUtils.cdc"
 import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 
-// TOOD: CHANGE Toucans.account.address to 0x5643fd47a29770e7
-// TODO: CHANGE paths back to normal
-
 pub contract Toucans {
 
   pub let CollectionStoragePath: StoragePath
@@ -222,7 +219,7 @@ pub contract Toucans {
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
-    pub fun proposeBurn(amount: UFix64)
+    pub fun proposeBurn(tokenType: Type, amount: UFix64)
     pub fun proposeAddSigner(signer: Address)
     pub fun proposeRemoveSigner(signer: Address)
     pub fun proposeUpdateThreshold(threshold: UInt64)
@@ -328,8 +325,10 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun proposeBurn(amount: UFix64) {
-      let action = ToucansActions.BurnTokens(amount, self.projectTokenInfo.symbol)
+    pub fun proposeBurn(tokenType: Type, amount: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: tokenType) 
+                ?? panic("Unsupported token type for burning.")
+      let action = ToucansActions.BurnTokens(amount, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -401,7 +400,11 @@ pub contract Toucans {
             self.batchMint(vaults: mint.recipientVaults, amounts: mint.amounts)
           case Type<ToucansActions.BurnTokens>():
             let burn = action as! ToucansActions.BurnTokens
-            self.burn(amount: burn.amount)
+            if burn.tokenSymbol == self.projectTokenInfo.symbol {
+              self.burn(tokenType: self.projectTokenInfo.tokenType, tokenSymbol: burn.tokenSymbol, amount: burn.amount)
+            } else {
+              self.burn(tokenType: ToucansTokens.getTokenInfoFromSymbol(symbol: burn.tokenSymbol)!.tokenType, tokenSymbol: burn.tokenSymbol, amount: burn.amount)
+            }
           case Type<ToucansActions.MintTokensToTreasury>():
             let mint = action as! ToucansActions.MintTokensToTreasury
             let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
@@ -548,7 +551,7 @@ pub contract Toucans {
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(Toucans.account.address).getCapability(self.paymentTokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
@@ -710,7 +713,7 @@ pub contract Toucans {
                 ?? panic("Unsupported token type for donating.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(Toucans.account.address).getCapability(tokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
@@ -825,15 +828,15 @@ pub contract Toucans {
     //  |____/ \__,_|_|  |_| |_|
                          
 
-    access(account) fun burn(amount: UFix64) {
-      let tokens <- self.treasury[self.projectTokenInfo.tokenType]?.withdraw!(amount: amount)
+    access(account) fun burn(tokenType: Type, tokenSymbol: String, amount: UFix64) {
+      let tokens <- self.treasury[tokenType]?.withdraw!(amount: amount)
       destroy tokens
 
       emit Burn(
         projectId: self.projectId,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleId(),
-        tokenSymbol: self.projectTokenInfo.symbol,
+        tokenSymbol: tokenSymbol,
         amount: amount
       )
     }
@@ -1066,7 +1069,7 @@ pub contract Toucans {
     ) {
       let project: @Project <- create Project(
         projectId: projectId,
-        projectTokenInfo: ToucansTokens.dummyFlowTokenInfo(), 
+        projectTokenInfo: paymentTokenInfo, // use the payment token, or "preferred currency", for this 
         paymentTokenInfo: paymentTokenInfo, 
         minter: <- create DummyMinter(), 
         editDelay: 0.0, 
@@ -1079,7 +1082,7 @@ pub contract Toucans {
       self.projects[projectId] <-! project
 
       // payment
-      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(Toucans.account.address).getCapability(/public/flowTokenReceiver)
+      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
                               .borrow<&{FungibleToken.Receiver}>()!
       emeraldCityTreasury.deposit(from: <- payment)
 
@@ -1116,7 +1119,7 @@ pub contract Toucans {
       self.projects[projectId] <-! project
 
       // payment
-      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(Toucans.account.address).getCapability(/public/flowTokenReceiver)
+      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
                               .borrow<&{FungibleToken.Receiver}>()!
       emeraldCityTreasury.deposit(from: <- payment)
 
@@ -1378,8 +1381,8 @@ pub contract Toucans {
   }
 
   init() {
-    self.CollectionStoragePath = /storage/ToucansCollection006
-    self.CollectionPublicPath = /public/ToucansCollection006
+    self.CollectionStoragePath = /storage/ToucansCollection
+    self.CollectionPublicPath = /public/ToucansCollection
   }
 
 }

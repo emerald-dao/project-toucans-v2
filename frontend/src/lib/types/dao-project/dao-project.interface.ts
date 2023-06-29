@@ -30,7 +30,7 @@ export interface DaoDatabaseData {
 	name: string;
 	owner: string;
 	project_id: string;
-	token_symbol: string;
+	token_symbol: string | null;
 	twitter: string | null;
 	website: string | null;
 }

@@ -1,7 +1,8 @@
 import FungibleToken from "../../utility/FungibleToken.cdc"
 import Toucans from "../../Toucans.cdc"
+import ToucansTokens from "../../ToucansTokens.cdc"
 
-transaction(projectId: String, amount: UFix64) {
+transaction(tokenSymbol: String, projectId: String, amount: UFix64) {
 
   let Project: &Toucans.Project
 
@@ -13,7 +14,13 @@ transaction(projectId: String, amount: UFix64) {
   }
 
   execute {
-    self.Project.proposeBurn(amount: amount)
+    if let tokenInfo = ToucansTokens.getTokenInfoFromSymbol(symbol: tokenSymbol) {
+      self.Project.proposeBurn(tokenType: tokenInfo.tokenType, amount: amount)
+    } else if tokenSymbol == self.Project.projectTokenInfo.symbol {
+      self.Project.proposeBurn(tokenType: self.Project.projectTokenInfo.tokenType, amount: amount)
+    } else {
+      panic("Not a correct token type for burning.")
+    }
   }
 }
  
