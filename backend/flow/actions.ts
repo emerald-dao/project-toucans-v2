@@ -81,11 +81,12 @@ function getQuoteToUSDCPriceFromDex(info) {
 
 export const getTrendingDatav2 = async (
   projectIds: string[],
-  contractAddresses: string[]
+  contractAddresses: string[],
+  projectOwners: string[]
 ) => {
   try {
     const response = await fcl.query({
-      cadence: replaceWithProperValues(generateGetTrendingDataScript(projectIds, contractAddresses), undefined, undefined),
+      cadence: replaceWithProperValues(generateGetTrendingDataScript(projectIds, contractAddresses, projectOwners), undefined, undefined),
       args: (arg, t) => []
     });
     return response;
@@ -95,40 +96,59 @@ export const getTrendingDatav2 = async (
   }
 };
 
-function generateGetTrendingDataScript(contractNames: string[], contractAddresses: string[]) {
-  let imports = contractNames.map((v, i) => `\nimport ${v} from ${contractAddresses[i]}`).join('');
-  let mainCode = contractNames.map((v, i) => {
-    return `\n
-    let projectCollection${i} = getAccount(${contractAddresses[i]}).getCapability(Toucans.CollectionPublicPath)
-                .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
-                ?? panic("User does not have a Toucans Collection")
+function generateGetTrendingDataScript(projectIds: string[], contractAddresses: (string | undefined)[], projectOwners: string[]) {
+  let imports = projectIds.filter((projectId, i) => contractAddresses[i] !== undefined).map((v, i) => `\nimport ${v} from ${contractAddresses[i]}`).join('');
+  let mainCode = projectIds.map((v, i) => {
+    if (contractAddresses[i] !== undefined) {
+      return `\n
+      let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
+                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+                  ?? panic("User does not have a Toucans Collection")
+  
+      let project${i} = projectCollection${i}.borrowProjectPublic(projectId: "${v}")!
+  
+      let projectCurrencyIdentifier${i}: String = project${i}.projectTokenInfo.tokenType.identifier
+      let paymentCurrencyIdentifier${i}: String = project${i}.paymentTokenInfo.tokenType.identifier
+      var pairInfo${i}: [AnyStruct]? = nil
+      if let pairAddress: Address = SwapFactory.getPairAddress(
+        token0Key: projectCurrencyIdentifier${i}.slice(from: 0, upTo: projectCurrencyIdentifier${i}.length - 6), 
+        token1Key: paymentCurrencyIdentifier${i}.slice(from: 0, upTo: paymentCurrencyIdentifier${i}.length - 6)
+      ) {
+        // GET PRICE
+        let pairPublicRef = getAccount(pairAddress)
+              .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
+              .borrow()
+              ?? panic("cannot borrow reference to PairPublic resource")
+  
+        pairInfo${i} = pairPublicRef.getPairInfo()
+      }
+  
+      let treasuryBalances${i} = {
+        "FLOW": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
+        "USDC": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
+        project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0,
+        project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${v}.Vault>()) ?? 0.0
+      }
+      answer["${v}"] = Info(${v}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, ${v}.maxSupply, project${i}.totalFunding, project${i}.getFunders().keys, ${v}.getBalances().keys)
+      `
+    } else {
+      return `\n
+      let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
+                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+                  ?? panic("User does not have a Toucans Collection")
 
-    let project${i} = projectCollection${i}.borrowProjectPublic(projectId: "${v}")!
+      let project${i} = projectCollection${i}.borrowProjectPublic(projectId: "${v}")!
 
-    let projectCurrencyIdentifier${i}: String = project${i}.projectTokenInfo.tokenType.identifier
-    let paymentCurrencyIdentifier${i}: String = project${i}.paymentTokenInfo.tokenType.identifier
-    var pairInfo${i}: [AnyStruct]? = nil
-    if let pairAddress: Address = SwapFactory.getPairAddress(
-      token0Key: projectCurrencyIdentifier${i}.slice(from: 0, upTo: projectCurrencyIdentifier${i}.length - 6), 
-      token1Key: paymentCurrencyIdentifier${i}.slice(from: 0, upTo: paymentCurrencyIdentifier${i}.length - 6)
-    ) {
-      // GET PRICE
-      let pairPublicRef = getAccount(pairAddress)
-            .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
-            .borrow()
-            ?? panic("cannot borrow reference to PairPublic resource")
+      let paymentCurrencyIdentifier${i}: String = project${i}.paymentTokenInfo.tokenType.identifier
 
-      pairInfo${i} = pairPublicRef.getPairInfo()
+      let treasuryBalances${i} = {
+        "FLOW": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
+        "USDC": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
+        project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0
+      }
+      answer["${v}"] = Info(nil, nil, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, nil, project${i}.totalFunding, project${i}.getFunders().keys, [])
+      `
     }
-
-    let treasuryBalances${i} = {
-      "FLOW": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
-      "USDC": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
-      project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0,
-      project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${v}.Vault>()) ?? 0.0
-    }
-    answer["${v}"] = Info(${v}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, ${v}.maxSupply, project${i}.totalFunding, project${i}.getFunders().keys, ${v}.getBalances().keys)
-    `
   }).join('')
   let script = `
   import FungibleToken from "../utility/FungibleToken.cdc"
@@ -147,7 +167,7 @@ function generateGetTrendingDataScript(contractNames: string[], contractAddresse
   }
 
   pub struct Info {
-    pub let totalSupply: UFix64
+    pub let totalSupply: UFix64?
     pub let pairInfo: [AnyStruct]?
     pub let paymentCurrency: String
     pub let numProposals: Int
@@ -157,7 +177,7 @@ function generateGetTrendingDataScript(contractNames: string[], contractAddresse
     pub let funders: [Address]
     pub let holders: [Address]
   
-    init(_ ts: UFix64, _ pi: [AnyStruct]?, _ pc: String, _ np: Int, _ tb: {String: UFix64}, _ ms: UFix64?, _ tf: UFix64, _ f: [Address], _ h: [Address]) {
+    init(_ ts: UFix64?, _ pi: [AnyStruct]?, _ pc: String, _ np: Int, _ tb: {String: UFix64}, _ ms: UFix64?, _ tf: UFix64, _ f: [Address], _ h: [Address]) {
       self.totalSupply = ts
       self.pairInfo = pi
       self.paymentCurrency = pc

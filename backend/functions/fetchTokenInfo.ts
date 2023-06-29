@@ -5,6 +5,6 @@ export async function fetchTokenInfo(contractName: string, contractAddress: stri
     return await response.json();
   } catch (e) {
     console.log(e);
-    return null;
+    return {};
   }
 }
