@@ -6,5 +6,5 @@ export async function fetchDaoRecentFunding(projectId: string) {
 	if (!data || !data.length) {
 		return [];
 	}
-	return data;
+	return data[0].numbers;
 }

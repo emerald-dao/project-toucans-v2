@@ -32,13 +32,13 @@ export const load: PageLoad = async ({ params, depends }) => {
 				: null,
 			vaultSetup: userAddress
 				? await hasProjectVaultSetup(
-						generalInfo.contract_address,
-						generalInfo.project_id,
-						userAddress
-				  )
+					generalInfo.contract_address,
+					generalInfo.project_id,
+					userAddress
+				)
 				: true,
 			hasToken,
-			recentFunding: fetchDaoRecentFunding(generalInfo.project_id)
+			recentFunding: await fetchDaoRecentFunding(generalInfo.project_id)
 		};
 	} else {
 		return {
