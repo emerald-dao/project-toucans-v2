@@ -122,7 +122,7 @@ async function gatherTrendingProjects() {
     // figure out treasury balance
     let mainBalances = Number(treasuryBalances["USDC"]) + Number((treasuryBalances["FLOW"]) * flowPrice);
     if (projects[projectId].price) {
-      mainBalances += Number(treasuryBalances[tokenSymbolList[projectId]]) * projects[projectId].price;
+      mainBalances += Number(treasuryBalances[addressList[projectId].token_symbol]) * projects[projectId].price;
     }
     projects[projectId].treasury_value = Math.round(mainBalances * 100) / 100;
   }
@@ -132,6 +132,7 @@ async function gatherTrendingProjects() {
   console.log('Error inserting rankings', error);
 }
 
+// gatherTrendingProjects();
 cron.schedule('*/10 * * * *', () => {
   gatherTrendingProjects();
   console.log('executing ranking task');
