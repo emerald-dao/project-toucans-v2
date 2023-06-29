@@ -9,6 +9,7 @@
 	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
 	import VotingsWidget from './widgets/VotingsWidget.svelte';
+	import MainFundersWidget from './widgets/MainFundersWidget.svelte';
 
 	export let daoData: DAOProject;
 
@@ -34,6 +35,8 @@
 				<ProjectFundingWidget {daoData} />
 				{#if daoData.hasToken}
 					<TokenAnalysisWidget {daoData} />
+				{:else}
+					<MainFundersWidget {daoData} />
 				{/if}
 			</div>
 		</div>
@@ -54,7 +57,9 @@
 					: null}
 			/>
 		{/if}
-		<ProjectCharts {daoData} />
+		{#if daoData.hasToken}
+			<ProjectCharts {daoData} />
+		{/if}
 		<ProjectLists {daoData} />
 	</div>
 {/if}
