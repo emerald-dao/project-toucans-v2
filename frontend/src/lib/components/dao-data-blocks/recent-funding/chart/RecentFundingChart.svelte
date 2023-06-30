@@ -5,7 +5,7 @@
 	export let daoData: DAOProject;
 </script>
 
-{#if daoData.recentFunding.length > 0}
+{#if daoData.recentFunding.length > 1}
 	<LineChart
 		title={`${daoData.generalInfo.name}-chart`}
 		chartData={daoData.recentFunding}
