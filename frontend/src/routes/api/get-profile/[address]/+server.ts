@@ -11,13 +11,17 @@ export async function GET({ params, setHeaders }) {
 		const findProfile: Profile | null = await getFindProfile(address);
 
 		if (findProfile) {
-			return findProfile;
+			return {
+				...findProfile,
+				type: 'find'
+			};
 		} else {
 			const profileNumber = getRandomUserNumber(address, RANDOM_USERS.length);
 
 			return {
 				address,
-				...RANDOM_USERS[profileNumber]
+				...RANDOM_USERS[profileNumber],
+				type: 'random'
 			};
 		}
 	};

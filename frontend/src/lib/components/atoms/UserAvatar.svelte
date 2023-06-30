@@ -11,6 +11,12 @@
 	let getProfile: Promise<Profile> = fetch(`/api/get-profile/${address}`).then((data) =>
 		data.json()
 	);
+
+	const handleImageError = (event: Event) => {
+		if (event.target && event.target instanceof HTMLImageElement) {
+			event.target.src = '/avatars/lost-toucan.png';
+		}
+	};
 </script>
 
 {#await getProfile}
@@ -32,11 +38,21 @@
 	</div>
 {:then profile}
 	<a class="row-3 align-center header-link" href={`u/${profile.address}`}>
-		<img src={profile.avatar} alt="avatar" style={`width: ${size}; height: ${size}`} />
+		<img
+			src={profile.avatar}
+			alt="avatar"
+			style={`width: ${size}; height: ${size}`}
+			on:error={handleImageError}
+		/>
 		<div class="column">
 			{#if profile.name}
-				<div class="row-2">
+				<div class="row-1 align-center">
 					<span class="username">{profile.name}</span>
+					{#if profile.type === 'find'}
+						<div class="row align-end verified-wrapper">
+							<Icon icon="tabler:discount-check-filled" color="var(--clr-primary-main)" />
+						</div>
+					{/if}
 					{#if twitter}
 						<a href={`twitter.com/${twitter}`} class="center">
 							<Icon icon="tabler:brand-twitter" class="header-link center" />
@@ -60,6 +76,10 @@
 		color: var(--clr-heading-main);
 		font-size: var(--font-size-1);
 		margin-bottom: -3px;
+	}
+
+	.verified-wrapper {
+		margin-top: 2.7px;
 	}
 
 	span {
