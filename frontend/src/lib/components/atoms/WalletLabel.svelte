@@ -3,22 +3,31 @@
 
 	export let address: string;
 	export let find: string | undefined = undefined;
+	export let withBorder = true;
+	export let color = 'var(--clr-text-main)';
 </script>
 
-<a href={`/u/${address}`} class="header-link">
+<a href={`/u/${address}`} class="header-link" class:withBorder style={`color: ${color}`}>
 	<Icon icon="tabler:wallet" />{find ? find : address}
 </a>
 
 <style lang="scss">
 	a {
-		border: 0.5px solid var(--clr-border-primary);
-		padding: 1px var(--space-3);
-		border-radius: 99px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: var(--space-1);
 		width: fit-content;
 		font-size: var(--font-size-0);
+	}
+
+	a:hover {
+		color: var(--clr-heading-main);
+	}
+
+	.withBorder {
+		border: 0.5px solid var(--clr-border-primary);
+		padding: 1px var(--space-3);
+		border-radius: 99px;
 	}
 </style>
