@@ -31,16 +31,16 @@ async function gatherTrendingProjects() {
   const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
   const proposalEvents = (await fetchAllProposals());
   const allProjects = await fetchAllProjects();
+  // project_id => { contract_address, owner, token_symbol }
   const addressList = {}
-  const tokenSymbolList = {}
   const projects: { [projectId: string]: DaoRankingData } = {}
-  for (const { project_id, contract_address, token_symbol } of allProjects) {
+  for (const { project_id, contract_address, token_symbol, owner } of allProjects) {
     const { tokenInfo } = await fetchTokenInfo(project_id, contract_address);
     projects[project_id] = {
       project_id,
       week_funding: 0,
       total_funding: 0,
-      total_supply: 0,
+      total_supply: null,
       payment_currency: '',
       num_holders: 0,
       max_supply: null,
@@ -54,19 +54,24 @@ async function gatherTrendingProjects() {
       // chart data
       numbers: []
     }
-    addressList[project_id] = contract_address;
-    tokenSymbolList[project_id] = token_symbol;
+    if (contract_address && token_symbol) {
+      addressList[project_id] = { owner, contract_address, token_symbol };
+    } else {
+      addressList[project_id] = { owner }
+    }
   }
 
   const projectIds = Object.keys(projects);
   const projectAddresses = [];
+  const projectOwners = [];
   for (const projectId of projectIds) {
-    projectAddresses.push(addressList[projectId]);
+    projectAddresses.push(addressList[projectId].contract_address);
+    projectOwners.push(addressList[projectId].owner)
   }
   let projectBlockchainData = {};
   const CHUNK_SIZE = 5;
   for (var i = 0; i < projectIds.length; i += CHUNK_SIZE) {
-    const x = await getTrendingDatav2(projectIds.slice(i, i + CHUNK_SIZE), projectAddresses.slice(i, i + CHUNK_SIZE));
+    const x = await getTrendingDatav2(projectIds.slice(i, i + CHUNK_SIZE), projectAddresses.slice(i, i + CHUNK_SIZE), projectOwners.slice(i, i + CHUNK_SIZE));
     projectBlockchainData = { ...projectBlockchainData, ...x }
   }
   if (!projectBlockchainData) {
@@ -117,18 +122,18 @@ async function gatherTrendingProjects() {
     // figure out treasury balance
     let mainBalances = Number(treasuryBalances["USDC"]) + Number((treasuryBalances["FLOW"]) * flowPrice);
     if (projects[projectId].price) {
-      mainBalances += Number(treasuryBalances[tokenSymbolList[projectId]]) * projects[projectId].price;
+      mainBalances += Number(treasuryBalances[addressList[projectId].token_symbol]) * projects[projectId].price;
     }
     projects[projectId].treasury_value = Math.round(mainBalances * 100) / 100;
   }
-  console.log(projects)
 
   // 4. return
   const { error } = await supabase.from('rankings').upsert(Object.values(projects), { ignoreDuplicates: false, onConflict: 'project_id' });
   console.log('Error inserting rankings', error);
 }
 
-cron.schedule('*/30 * * * *', () => {
+// gatherTrendingProjects();
+cron.schedule('*/10 * * * *', () => {
   gatherTrendingProjects();
   console.log('executing ranking task');
 });

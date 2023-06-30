@@ -1,13 +1,16 @@
 <script type="ts">
 	import Icon from '@iconify/svelte';
-	import { Label, Modal, getModal } from '@emerald-dao/component-library';
+	import { Modal, getModal } from '@emerald-dao/component-library';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
+	import VotingBar from '$components/atoms/voting/VotingBar.svelte';
+	import VotingsWidget from '../../../../../routes/p/[projectId]/_components/sections/widgets/VotingsWidget.svelte';
 
 	export let vote: Vote;
 	export let i: number;
 	export let status: 'PENDING' | 'ACCEPTED' | 'DECLINED';
+	export let discordLink: string | null = null;
 
 	const total = vote.for_total + vote.against_total;
 </script>
@@ -27,23 +30,17 @@
 			<span class="date">{formatDate(new Date(vote.created_at))}</span>
 		</div>
 	</div>
-	<div class="row-3">
+	<div class="row-3 align-center">
 		<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
-			<Icon icon="tabler:message" />
+			<Icon icon="tabler:info-circle" />
 		</div>
 		<Modal background="var(--clr-background-secondary)" id={`message-${i}`}>
-			<span class="special-message-heading">Description</span>
-			<p class="special-message">{vote.description}</p>
+			<VotingsWidget votingData={[vote]} transparent={true} title="Votation" {discordLink} />
 		</Modal>
 		{#if total}
-			<Label size="xx-small" hasBorder={false}>
-				<Icon icon="tabler:check" />
-				{Math.round((vote.for_total / total) * 100)}%
-			</Label>
-			<Label size="xx-small" hasBorder={false} color="alert">
-				<Icon icon="tabler:x" />
-				{Math.round((vote.against_total / total) * 100)}%
-			</Label>
+			<div class="voting-bar-wrapper">
+				<VotingBar votingData={vote} size="x-small" />
+			</div>
 		{:else}
 			<span class="xsmall">No votes yet</span>
 		{/if}
@@ -54,10 +51,12 @@
 	.main-wrapper {
 		display: flex;
 		flex-direction: row;
-		align-items: center;
 		justify-content: space-between;
+		align-items: center;
+		gap: var(--space-4);
 		width: 100%;
-		padding-block: var(--space-1);
+		flex-wrap: wrap;
+		padding-bottom: var(--space-1);
 
 		.timestamp {
 			display: unset;
@@ -69,16 +68,12 @@
 		.vote-name {
 			color: var(--clr-heading-main);
 			font-size: var(--font-size-0);
-			max-width: 40%;
+			max-width: 140px;
+			line-height: 1.6;
 		}
 
 		.info-wrapper {
 			margin-right: var(--space-3);
-
-			// .address {
-			// 	font-size: var(--font-size-0);
-			// 	margin-bottom: -2px;
-			// }
 
 			.date {
 				font-size: var(--font-size-0);
@@ -88,16 +83,12 @@
 		}
 	}
 
-	.special-message-heading {
-		color: var(--clr-heading-main);
-	}
+	.voting-bar-wrapper {
+		display: none;
 
-	.special-message {
-		max-width: 40ch;
-		margin-top: var(--space-2);
-	}
-
-	.row-3 {
-		align-items: center;
+		@include mq('small') {
+			width: 140px;
+			display: block;
+		}
 	}
 </style>

@@ -63,10 +63,12 @@ const contractData = {
     mainnet: process.env.TOUCANS_CONTRACT_ADDRESS
   },
   SwapUtils: {
+    emulator: '0xf8d6e0586b0a20c7',
     testnet: '0xddb929038d45d4b3',
     mainnet: '0xb78ef7afa52ff906'
   },
   SwapFactory: {
+    emulator: '0xf8d6e0586b0a20c7',
     testnet: '0xcbed4c301441ded2',
     mainnet: '0xb063c16cac85dbd1'
   }

@@ -12,7 +12,7 @@
 	export let daoData: DAOProject;
 </script>
 
-<aside class="column-7">
+<aside class="column-8">
 	<div class="card-primary column">
 		{#if daoData.generalInfo.banner_image}
 			<img
@@ -106,15 +106,15 @@
 				<p class="small description">{daoData.generalInfo.description}</p>
 			</div>
 			<div class="column-5">
-				<div class="row-4">
-					{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
+				<div class="payment-buttons-wrapper">
+					{#if daoData.hasToken}
 						<PaymentModal {daoData} paymentType="fund" />
 					{/if}
 					<PaymentModal {daoData} paymentType="donate" />
 				</div>
-				{#if daoData.hasToken && daoData.onChainData.currentFundingCycle}
+				{#if daoData.hasToken}
 					<p class="payment-explanation">
-						{`By funding this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
+						{`By purchasing this project you will get $${daoData.generalInfo.token_symbol} tokens in the rate specified in the current funding cycle.`}
 					</p>
 				{/if}
 				{#if daoData.onChainData.requiredNft != null}
@@ -137,7 +137,6 @@
 			width: 100%;
 			height: 120px;
 			object-fit: cover;
-			opacity: 0.7;
 			border-bottom: 1px var(--clr-border-primary) solid;
 			border-radius: var(--radius-4) var(--radius-4) 0 0;
 		}
@@ -179,6 +178,16 @@
 
 			p.description {
 				margin-bottom: var(--space-11);
+			}
+
+			.payment-buttons-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-4);
+
+				@include mq('small') {
+					flex-direction: row;
+				}
 			}
 
 			.payment-explanation {

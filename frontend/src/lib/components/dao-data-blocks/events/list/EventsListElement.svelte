@@ -5,7 +5,7 @@
 	import type { DaoEvent, DaoEventName } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
-	import SeeRoundDetailsModal from '../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
+	import SeeRoundDetailsModal from '../../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
 	import WalletLabel from '$components/atoms/WalletLabel.svelte';
 	import type { FindMap } from '$lib/types/common/find.interface';
 

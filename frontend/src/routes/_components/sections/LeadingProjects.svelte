@@ -1,9 +1,10 @@
 <script type="ts">
 	import { AdaptableGrid } from '@mateoroldos/svelte.bones';
 	import { LeadingProjectCard } from '$components/cards/index';
-	import type { LeadingProjectData } from '$lib/types/dao-project/leading-project.interface';
+	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
 
-	export let projects: LeadingProjectData[] = [];
+	export let projects: DaoRankingData[] = [];
+	const topProjects = projects.sort((a, b) => b.treasury_value - a.treasury_value).slice(0, 4);
 </script>
 
 <section class="section-large">
@@ -14,7 +15,7 @@
 		</div>
 		<div class="projects-wrapper">
 			<AdaptableGrid gap="small">
-				{#each projects as daoData, i}
+				{#each topProjects as daoData, i}
 					<LeadingProjectCard {daoData} number={i + 1} />
 				{/each}
 			</AdaptableGrid>

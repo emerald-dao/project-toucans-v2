@@ -185,8 +185,7 @@ pub contract ExampleToken: FungibleToken {
       _minting: Bool,
       _initialTreasurySupply: UFix64,
       _maxSupply: UFix64?,
-      _extra: {String: AnyStruct},
-      _payment: @FlowToken.Vault
+      _extra: {String: AnyStruct}
     ) {
 
       // Contract Variables
@@ -227,8 +226,7 @@ pub contract ExampleToken: FungibleToken {
         editDelay: _editDelay,
         minting: _minting,
         initialTreasurySupply: _initialTreasurySupply,
-        extra: _extra,
-        payment: <- _payment
+        extra: _extra
       )
 
       self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)

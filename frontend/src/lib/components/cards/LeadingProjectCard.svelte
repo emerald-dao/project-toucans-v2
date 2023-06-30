@@ -1,43 +1,34 @@
 <script type="ts">
-	import { formatFix } from '$flow/utils';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import type { LeadingProjectData } from '$lib/types/dao-project/leading-project.interface';
+	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
 	import { Currency, Label } from '@emerald-dao/component-library';
-	import Icon from '@iconify/svelte';
 
-	export let daoData: LeadingProjectData;
+	export let daoData: DaoRankingData;
 	export let number: number;
 </script>
 
-<a class="card" id="no-style" href={`/p/${daoData.projectId}`}>
+<a class="card" id="no-style" href={`/p/${daoData.project_id}`}>
 	<div class="logo-container">
 		<div class="circle center">
 			<span class="number">
 				{number}
 			</span>
 		</div>
-		<img src={daoData.logo} alt={`${daoData.name} logo`} />
+		<img src={daoData.projects.logo} alt={`${daoData.projects.name} logo`} />
 	</div>
 	<div class="column align-start">
-		<h4>{daoData.name}</h4>
-		<div class="row-0">
-			<span
-				class="variation"
-				class:positive={daoData.totalAmount > 0}
-				class:negative={daoData.totalAmount < 0}
-			>
-				{#if daoData.totalAmount > 0}
-					<Icon icon="tabler:trending-up" color="#38e8c6" width="17" />
-					{`${Math.round(daoData.totalAmount * 100) / 100}`}
-				{:else}
-					<Icon icon="tabler:trending-down" color="##f07575" width="17" />
-					{`${Math.round(daoData.totalAmount * 100) / 100}%`}
-				{/if}
-			</span>
-			<Label size="small" color="tertiary" hasBorder={false}>{`$${daoData.currency}`}</Label>
-			<!-- <Currency amount={daoData.totalInvested} currency={daoData.currency} /> -->
+		<h4>{daoData.projects.name}</h4>
+		<div class="row-2">
+			Treasury Value:
+			<Currency amount={daoData.treasury_value} moneyPrefix color="heading" decimalNumbers={2} />
 		</div>
-		<p>{daoData.description}</p>
+		{#if daoData.price && daoData.price >= 0.01}
+			<div class="row-0">
+				<Label size="small" color="tertiary" hasBorder={false}>
+					{`$${daoData.projects.token_symbol}`}
+				</Label>
+				<Currency amount={daoData.price} moneyPrefix color="heading" decimalNumbers={2} />
+			</div>
+		{/if}
 	</div>
 </a>
 

@@ -1,13 +1,19 @@
 <script type="ts">
 	import { getFundingCycleData } from '$lib/utilities/projects/getFundingCycleData';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import TokenStats from './discover-project-blocks/TokenStats.svelte';
-	import ProjectCharts from './discover-project-blocks/ProjectCharts.svelte';
-	import ProjectLists from './discover-project-blocks/ProjectLists.svelte';
-	import { RoundsCard } from '$components/dao-data-blocks';
+	import ProjectCharts from './widgets/PrimaryTabsWidget.svelte';
+	import ProjectLists from './widgets/SecondaryTabsWidget.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import RoundsWidget from '$lib/components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
+	import UserBalanceWidget from './widgets/UserBalanceWidget.svelte';
+	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
+	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
+	import VotingsWidget from './widgets/VotingsWidget.svelte';
+	import MainFundersWidget from './widgets/MainFundersWidget.svelte';
 
 	export let daoData: DAOProject;
+
+	$: activeVotings = daoData.votes.filter((vote) => vote.pending === true);
 
 	$: currentFundingCycleData =
 		daoData.hasToken && daoData.onChainData.currentFundingCycle && daoData.events
@@ -20,10 +26,25 @@
 </script>
 
 {#if daoData}
-	<div class="column-6">
-		<TokenStats {daoData} />
-		{#if currentFundingCycleData}
-			<RoundsCard
+	<div class="column-8">
+		<div class="main-wrapper">
+			{#if daoData.hasToken && $user.addr}
+				<UserBalanceWidget {daoData} />
+			{/if}
+			<div class="secondary-wrapper">
+				<ProjectFundingWidget {daoData} />
+				{#if daoData.hasToken}
+					<TokenAnalysisWidget {daoData} />
+				{:else}
+					<MainFundersWidget {daoData} />
+				{/if}
+			</div>
+		</div>
+		{#if activeVotings.length > 0}
+			<VotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
+		{/if}
+		{#if daoData.hasToken && currentFundingCycleData}
+			<RoundsWidget
 				round={currentFundingCycleData}
 				projectId={daoData.generalInfo.project_id}
 				projectToken={daoData.generalInfo.token_symbol}
@@ -36,7 +57,27 @@
 					: null}
 			/>
 		{/if}
-		<ProjectCharts {daoData} />
+		{#if daoData.hasToken}
+			<ProjectCharts {daoData} />
+		{/if}
 		<ProjectLists {daoData} />
 	</div>
 {/if}
+
+<style lang="scss">
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+
+		.secondary-wrapper {
+			display: flex;
+			gap: var(--space-7);
+			flex-direction: column;
+
+			@include mq('medium') {
+				flex-direction: row;
+			}
+		}
+	}
+</style>

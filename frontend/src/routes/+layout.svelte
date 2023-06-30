@@ -29,6 +29,15 @@
 	} from '$lib/features/notifications/stores/NotificationsStore';
 	import getRandomUserNumber from './u/[address]/_features/userNames/getRandomUserNumber';
 	import RANDOM_USERS from './u/[address]/_features/userNames/randomUsers';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		let html = document.querySelector('html');
+
+		if (html) {
+			html.setAttribute('data-theme', $theme);
+		}
+	});
 
 	const connect = async () => {
 		logIn().then(async () => {

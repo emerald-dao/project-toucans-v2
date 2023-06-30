@@ -1,5 +1,5 @@
 <script type="ts">
-	import RoundStatusLabel from './atoms/RoundStatusLabel.svelte';
+	import RoundStatusLabel from '../atoms/RoundStatusLabel.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
 	import {
 		Currency,
@@ -10,13 +10,13 @@
 	} from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import FundingNumbers from './atoms/FundingNumbers.svelte';
-	import GoalReached from '../../atoms/GoalReached.svelte';
-	import OverflowCard from './atoms/OverflowCard.svelte';
+	import FundingNumbers from '../atoms/FundingNumbers.svelte';
+	import GoalReached from '../../../atoms/GoalReached.svelte';
+	import OverflowCard from '../atoms/OverflowCard.svelte';
 	import type { ECurrencies } from '$lib/types/common/enums';
-	import { getRoundTiming } from './helpers/getRoundTiming';
-	import { getRoundStatus } from './helpers/getRoundStatus';
-	import PayoutsList from './atoms/PayoutsList.svelte';
+	import { getRoundTiming } from '../helpers/getRoundTiming';
+	import { getRoundStatus } from '../helpers/getRoundStatus';
+	import PayoutsList from '../atoms/PayoutsList.svelte';
 
 	export let round: FundingCycle;
 	export let title = 'Active Funding Round';

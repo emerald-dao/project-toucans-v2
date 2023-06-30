@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
-	import { MainFundersList, EventsList, RoundsList } from '$components/dao-data-blocks';
+	import EventsList from '$lib/components/dao-data-blocks/events/list/EventsList.svelte';
+	import MainFundersList from '$lib/components/dao-data-blocks/funders/list/MainFundersList.svelte';
+	import RoundsList from '$lib/components/dao-data-blocks/funding-rounds/list/RoundsList.svelte';
 	import SignersListElement from '$lib/features/multisig-manager/components/atoms/signers-list-element/SignersListElement.svelte';
-	import PendingActionsList from '$components/dao-data-blocks/pending-actions/PendingActionsList.svelte';
-	import VotesList from '$components/dao-data-blocks/votes/VotesList.svelte';
+	import PendingActionsList from '$components/dao-data-blocks/pending-actions/list/PendingActionsList.svelte';
+	import VotesList from '$components/dao-data-blocks/votes/list/VotesList.svelte';
 
 	export let daoData: DAOProject;
 
