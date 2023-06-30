@@ -1,15 +1,14 @@
 <script lang="ts">
 	import UserAvatar from '$components/atoms/UserAvatar.svelte';
-	import type { Profile } from '$lib/types/common/profile.interface';
 
 	export let rank: number;
-	export let profile: Profile;
+	export let address: string;
 </script>
 
 <div class="main-wrapper row-5 row-space-between align-center">
 	<div class="row-3 align-center">
 		<span class="rank small w-medium">{rank}</span>
-		<UserAvatar {profile} />
+		<UserAvatar {address} />
 	</div>
 	<slot />
 </div>

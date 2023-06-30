@@ -4,29 +4,52 @@
 	import type { Profile } from '$lib/types/common/profile.interface';
 
 	export let size: string = '47px';
-	export let profile: Profile;
+	export let address: string;
 	export let twitter: string | undefined = undefined;
 	export let showWallet = true;
+
+	let getProfile: Promise<Profile> = fetch(`/api/get-profile/${address}`).then((data) =>
+		data.json()
+	);
 </script>
 
-<a class="row-3 align-center header-link" href={`u/${profile.address}`}>
-	<img src={profile.avatar} alt="avatar" style={`width: ${size}; height: ${size}`} />
-	<div class="column">
-		{#if profile.name}
+{#await getProfile}
+	<div class="row-3 align-center header-link change-opacity">
+		<img src="/avatar-2.png" alt="avatar" style={`width: ${size}; height: ${size}`} />
+		<div class="column">
 			<div class="row-2">
-				<span class="username">{profile.name}</span>
+				<span class="username">Searching Toucan...</span>
 				{#if twitter}
 					<a href={`twitter.com/${twitter}`} class="center">
 						<Icon icon="tabler:brand-twitter" class="header-link center" />
 					</a>
 				{/if}
 			</div>
-		{/if}
-		{#if showWallet}
-			<WalletLabel address={profile.address} withBorder={false} color="var(--clr-text-off)" />
-		{/if}
+			{#if showWallet}
+				<WalletLabel address="0xf8d6e0586b0a20c7" withBorder={false} color="var(--clr-text-off)" />
+			{/if}
+		</div>
 	</div>
-</a>
+{:then profile}
+	<a class="row-3 align-center header-link" href={`u/${profile.address}`}>
+		<img src={profile.avatar} alt="avatar" style={`width: ${size}; height: ${size}`} />
+		<div class="column">
+			{#if profile.name}
+				<div class="row-2">
+					<span class="username">{profile.name}</span>
+					{#if twitter}
+						<a href={`twitter.com/${twitter}`} class="center">
+							<Icon icon="tabler:brand-twitter" class="header-link center" />
+						</a>
+					{/if}
+				</div>
+			{/if}
+			{#if showWallet}
+				<WalletLabel address={profile.address} withBorder={false} color="var(--clr-text-off)" />
+			{/if}
+		</div>
+	</a>
+{/await}
 
 <style lang="scss">
 	img {
@@ -41,5 +64,24 @@
 
 	span {
 		font-size: var(--font-size-0);
+	}
+
+	.change-opacity {
+		animation-name: change-opacity;
+		animation-duration: 1.7s;
+		animation-iteration-count: infinite;
+	}
+
+	// change opacity effect
+	@keyframes change-opacity {
+		0% {
+			opacity: 0.08;
+		}
+		50% {
+			opacity: 0.14;
+		}
+		100% {
+			opacity: 0.08;
+		}
 	}
 </style>
