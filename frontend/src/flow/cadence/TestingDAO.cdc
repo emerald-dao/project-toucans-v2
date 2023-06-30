@@ -217,8 +217,7 @@ pub contract TestingDAO: FungibleToken {
         editDelay: 0.0,
         minting: true,
         initialTreasurySupply: 100.0,
-        extra: {},
-        payment: <- (self.account.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: 200.0) as! @FlowToken.Vault)
+        extra: {}
       )
 
       self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)
