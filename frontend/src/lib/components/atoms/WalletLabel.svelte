@@ -5,9 +5,15 @@
 	export let find: string | undefined = undefined;
 	export let withBorder = true;
 	export let color = 'var(--clr-text-main)';
+	export let fontSize = 'var(--font-size-0)';
 </script>
 
-<a href={`/u/${address}`} class="header-link" class:withBorder style={`color: ${color}`}>
+<a
+	href={`/u/${address}`}
+	class="header-link"
+	class:withBorder
+	style={`color: ${color}; font-size: ${fontSize}`}
+>
 	<Icon icon="tabler:wallet" />{find ? find : address}
 </a>
 
@@ -18,7 +24,6 @@
 		align-items: center;
 		gap: var(--space-1);
 		width: fit-content;
-		font-size: var(--font-size-0);
 	}
 
 	a:hover {

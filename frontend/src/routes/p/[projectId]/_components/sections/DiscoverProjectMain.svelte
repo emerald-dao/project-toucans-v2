@@ -10,7 +10,7 @@
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
 	import VotingsWidget from './widgets/VotingsWidget.svelte';
 	import MainFundersWidget from './widgets/MainFundersWidget.svelte';
-	import MainHoldersLeaderboard from '$components/dao-data-blocks/holders/leaderboard/MainHoldersLeaderboard.svelte';
+	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
 
 	export let daoData: DAOProject;
 
@@ -41,6 +41,7 @@
 				{/if}
 			</div>
 		</div>
+		<NotableMembersWidget {daoData} />
 		{#if activeVotings.length > 0}
 			<VotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
 		{/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import UserAvatar from '$components/atoms/UserAvatar.svelte';
+	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
 	export let rank: number;
 	export let address: string;

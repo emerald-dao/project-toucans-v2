@@ -30,7 +30,5 @@ export async function GET({ params, setHeaders }) {
 
 	const profile = await fetchProfile();
 
-	console.log('profile', profile);
-
 	return new Response(JSON.stringify(profile));
 }
