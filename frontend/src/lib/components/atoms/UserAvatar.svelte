@@ -2,6 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import WalletLabel from './WalletLabel.svelte';
 	import type { Profile } from '$lib/types/common/profile.interface';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let size: string = '47px';
 	export let address: string;
@@ -37,13 +38,21 @@
 		</div>
 	</div>
 {:then profile}
-	<a class="row-3 align-center header-link" href={`u/${profile.address}`}>
-		<img
-			src={profile.avatar}
-			alt="avatar"
-			style={`width: ${size}; height: ${size}`}
-			on:error={handleImageError}
-		/>
+	<a class="row-3 align-center header-link" href={`/u/${profile.address}`}>
+		<div class="image-wrapper">
+			<img
+				src={profile.avatar}
+				alt="avatar"
+				style={`width: ${size}; height: ${size}`}
+				on:error={handleImageError}
+			/>
+			{#if profile.address === $user.addr}
+				<div class="icon-wrapper">
+					<Icon icon="tabler:accessible-off-filled" color="var(--clr-primary-main)" width="16px" />
+				</div>
+			{/if}
+		</div>
+
 		<div class="column">
 			{#if profile.name}
 				<div class="row-1 align-center">
@@ -58,6 +67,11 @@
 							<Icon icon="tabler:brand-twitter" class="header-link center" />
 						</a>
 					{/if}
+					{#if profile.type === 'random' && profile.address === $user.addr}
+						<a class="create-profile" href="https://find.xyz/" target="_blank" rel="noreferrer"
+							>Create profile</a
+						>
+					{/if}
 				</div>
 			{/if}
 			{#if showWallet}
@@ -68,8 +82,25 @@
 {/await}
 
 <style lang="scss">
-	img {
-		border-radius: 50%;
+	.image-wrapper {
+		position: relative;
+
+		img {
+			border-radius: 50%;
+		}
+
+		.icon-wrapper {
+			position: absolute;
+			bottom: -2px;
+			right: -2px;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background-color: var(--clr-background-primary);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 	}
 
 	.username {
@@ -84,6 +115,18 @@
 
 	span {
 		font-size: var(--font-size-0);
+	}
+
+	.create-profile {
+		background-color: var(--clr-primary-main);
+		color: var(--clr-heading-inverse);
+		font-size: 11px;
+		padding: 1px 7px;
+		line-height: 1.2;
+		border-radius: var(--radius-0);
+		text-decoration: none;
+		margin-left: var(--space-1);
+		margin-top: 2px;
 	}
 
 	.change-opacity {
