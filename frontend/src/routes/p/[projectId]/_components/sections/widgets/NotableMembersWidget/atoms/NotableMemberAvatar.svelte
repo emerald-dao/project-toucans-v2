@@ -3,6 +3,7 @@
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 	import type { Profile } from '$lib/types/common/profile.interface';
 	import UserName from '$components/atoms/user/UserName.svelte';
+	import { Modal } from '@emerald-dao/component-library';
 
 	export let address: string;
 	export let position: number;
@@ -13,6 +14,7 @@
 	let hover = false;
 
 	$: imageWidth = position === 1 ? '100px' : '55px';
+	$: modalMargin = `${Number(imageWidth.replace('px', '')) / 2 + 18}px`;
 </script>
 
 <div
@@ -29,7 +31,11 @@
 		<span class="position w-medium">{position}</span>
 	</div>
 	{#if hover}
-		<div class="modal-wrapper" transition:fly|local={{ y: 10, duration: 400 }}>
+		<div
+			class="modal-wrapper"
+			transition:fly|local={{ y: 10, duration: 400 }}
+			style={`--right-distance: ${modalMargin}`}
+		>
 			<span class="small">
 				{#if position === 1}
 					🥇 1st place
@@ -106,7 +112,7 @@
 	.modal-wrapper:after {
 		position: absolute;
 		bottom: 100%;
-		right: 25%;
+		right: var(--right-distance);
 		width: 0;
 		border-bottom: 5px var(--clr-surface-secondary) solid;
 		border-right: 5px solid transparent;
@@ -127,7 +133,7 @@
 		gap: var(--space-2);
 		z-index: 10;
 		margin-top: 10px;
-		right: -20px;
+		right: -25px;
 
 		.prize-wrapper {
 			margin-top: 3px;
