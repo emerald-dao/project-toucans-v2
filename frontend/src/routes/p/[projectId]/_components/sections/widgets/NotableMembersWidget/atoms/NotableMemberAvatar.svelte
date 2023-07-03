@@ -3,17 +3,15 @@
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 	import type { Profile } from '$lib/types/common/profile.interface';
 	import UserName from '$components/atoms/user/UserName.svelte';
-	import { Modal } from '@emerald-dao/component-library';
 
 	export let address: string;
 	export let position: number;
-	export let prizeText: string;
 
 	let userProfile: Profile;
 
 	let hover = false;
 
-	$: imageWidth = position === 1 ? '100px' : '55px';
+	$: imageWidth = position === 1 ? '120px' : '55px';
 	$: modalMargin = `${Number(imageWidth.replace('px', '')) / 2 + 18}px`;
 </script>
 
@@ -52,9 +50,7 @@
 				showCreateProfile={false}
 			/>
 			<div class="prize-wrapper">
-				<p class="xsmall">
-					{prizeText}
-				</p>
+				<slot />
 			</div>
 		</div>
 	{/if}
@@ -83,28 +79,36 @@
 
 		&.gold {
 			.position-wrapper {
-				background-color: #94821d;
+				background-color: #cbb222;
 				width: 1.4rem;
 				height: 1.4rem;
 				top: 0.2rem;
 				left: 0.2rem;
-			}
 
-			.position {
-				font-size: 0.8rem;
-				color: var(--clr-heading-inverse);
+				.position {
+					font-size: 0.7rem;
+					color: var(--clr-heading-inverse);
+				}
 			}
 		}
 
 		&.silver {
 			.position-wrapper {
-				background-color: #5f5f5f;
+				background-color: #818181;
+
+				.position {
+					color: var(--clr-heading-inverse);
+				}
 			}
 		}
 
 		&.bronze {
 			.position-wrapper {
-				background-color: #864f19;
+				background-color: #a46425;
+
+				.position {
+					color: var(--clr-heading-inverse);
+				}
 			}
 		}
 	}

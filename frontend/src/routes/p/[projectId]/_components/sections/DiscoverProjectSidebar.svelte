@@ -153,7 +153,7 @@
 				border-radius: var(--radius-2);
 				border: 1px var(--clr-border-primary) solid;
 				margin-top: -70px;
-				background-color: var(--clr-surface-secondary);
+				background-color: var(--clr-surface-primary);
 			}
 
 			.commands-wrapper {

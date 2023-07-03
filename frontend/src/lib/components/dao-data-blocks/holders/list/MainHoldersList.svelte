@@ -19,7 +19,7 @@
 </script>
 
 <div class="column-2 align-start">
-	{#if mainHoldersEntries.length > 0}
+	{#if mainHoldersEntries.length > 0 && daoData.generalInfo.token_symbol}
 		{#await fetchFindProfiles()}
 			{#each holdersEntries as [address, balance]}
 				<UserBalanceListElement
