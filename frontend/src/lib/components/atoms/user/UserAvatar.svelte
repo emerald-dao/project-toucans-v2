@@ -11,6 +11,7 @@
 	export let address: string | undefined = undefined;
 	export let showWallet = true;
 	export let showName = true;
+	export let showCreateProfile = false;
 
 	export let userProfile: Profile | undefined = undefined;
 
@@ -74,7 +75,13 @@
 			{/if}
 		</div>
 		{#if showName}
-			<UserName profile={userProfile} {fontSize} {showWallet} {walletFontSize} />
+			<UserName
+				profile={userProfile}
+				{fontSize}
+				{showWallet}
+				{walletFontSize}
+				{showCreateProfile}
+			/>
 		{/if}
 	</a>
 {/if}
