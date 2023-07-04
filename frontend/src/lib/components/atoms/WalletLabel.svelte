@@ -24,6 +24,7 @@
 		align-items: center;
 		gap: var(--space-1);
 		width: fit-content;
+		line-height: 1;
 	}
 
 	a:hover {
@@ -32,7 +33,7 @@
 
 	.withBorder {
 		border: 0.5px solid var(--clr-border-primary);
-		padding: 1px var(--space-3);
+		padding: 6px var(--space-3);
 		border-radius: 99px;
 	}
 </style>

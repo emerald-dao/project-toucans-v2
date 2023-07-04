@@ -16,7 +16,7 @@
 		<div class="username-wrapper align-center">
 			<span class="username">{profile.name}</span>
 			{#if profile.type === 'find'}
-				<Icon icon="tabler:discount-check-filled" color="var(--clr-primary-main)" />
+				<Icon icon="tabler:discount-check-filled" color="var(--clr-primary-main)" width="0.9em" />
 			{/if}
 			{#if profile.type === 'random' && profile.address === $user.addr && showCreateProfile}
 				<a class="create-profile" href="https://find.xyz/" target="_blank" rel="noreferrer"
@@ -44,13 +44,13 @@
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			gap: 0.2em;
-			margin-bottom: 0.1em;
+			gap: 0.3em;
+			margin-bottom: 0.3em;
 
 			.username {
 				color: var(--clr-heading-main);
 				font-size: 1em;
-				line-height: 1.2;
+				line-height: 1.1;
 			}
 
 			.create-profile {

@@ -5,6 +5,7 @@
 	import { fly } from 'svelte/transition';
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import type { SuiteResult } from 'vest';
+	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
 	export let address: string;
 	export let i: number;
@@ -21,10 +22,10 @@
 
 <div class="main-wrapper" in:fly|local={{ x: 10, duration: 400 }}>
 	<div class="row-4 align-center">
-		<div class="avatar-wrapper">
+		<!-- <div class="avatar-wrapper">
 			<img src="/avatar-2.png" alt="" />
 			<span class="number">{i + 1}</span>
-		</div>
+		</div> -->
 		{#if editable && !owner && id && res}
 			<InputWrapper
 				name={id}
@@ -47,7 +48,7 @@
 				/>
 			</InputWrapper>
 		{:else}
-			<span class="small address">{address}</span>
+			<UserAvatar {address} imageSize="44px" />
 		{/if}
 	</div>
 	{#if owner}
