@@ -14,6 +14,7 @@
 		imageSize="130px"
 		fontSize="var(--font-size-6)"
 		walletFontSize="var(--font-size-2)"
+		userLink={false}
 	/>
 	<div class="column-6 secondary-wrapper">
 		<UserBadges {userData} />

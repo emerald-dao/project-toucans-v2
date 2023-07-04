@@ -12,6 +12,7 @@
 	export let showWallet = true;
 	export let showName = true;
 	export let showCreateProfile = false;
+	export let userLink = true;
 
 	export let userProfile: Profile | undefined = undefined;
 
@@ -56,6 +57,7 @@
 		class="row-3 align-center header-link"
 		href={`/u/${userProfile.address}`}
 		style={`font-size: ${fontSize}`}
+		class:disabled={!userLink}
 	>
 		<div class="image-wrapper">
 			<img
@@ -87,6 +89,10 @@
 {/if}
 
 <style lang="scss">
+	a.disabled {
+		pointer-events: none;
+	}
+
 	img {
 		border-radius: 50%;
 	}
