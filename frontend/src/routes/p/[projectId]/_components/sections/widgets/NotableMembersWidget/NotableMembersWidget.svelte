@@ -116,7 +116,7 @@
 			}
 
 			.prize-wrapper {
-				background-color: var(--clr-background-secondary);
+				// background-color: var(--clr-background-secondary);
 				border-radius: var(--radius-3);
 
 				.avatars-wrapper {
