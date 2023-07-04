@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte';
 	import NotableMemberAvatar from './atoms/NotableMemberAvatar.svelte';
 	import { Currency } from '@emerald-dao/component-library';
+	import { getAccountFromDiscordBatch } from '$flow/utils';
 
 	export let daoData: DAOProject;
 
@@ -25,9 +26,15 @@
 			voterLeaderboard[voter.voter] = (voterLeaderboard[voter.voter] || 0) + 1;
 		}
 	}
+
 	const mainVoters = Object.entries(voterLeaderboard)
 		.sort((a, b) => Number(b[1]) - Number(a[1]))
 		.slice(0, 5);
+
+	const mainVotersDiscordIds = mainVoters.map((voter) => voter[0]);
+	const mainVotersAmountOfVotes = mainVoters.map((voter) => voter[1]);
+
+	const mainVotersAddresses = getAccountFromDiscordBatch(mainVotersDiscordIds);
 </script>
 
 {#if mainFunderEntries.length > 0 || (daoData.generalInfo.token_symbol && holdersEntries.length > 0) || mainVoters.length > 0}
@@ -72,20 +79,26 @@
 				</div>
 			{/if}
 			{#if mainVoters.length > 0}
-				<div class="card prize-wrapper">
-					<div class="column-4 align-center">
-						<span class="small title">Decision makers</span>
-						<div class="avatars-wrapper">
-							{#each mainVoters as voter, i}
-								<div class={`member-${i + 1} center`}>
-									<NotableMemberAvatar address={voter[0]} position={i + 1}>
-										<p class="xsmall">Has particpated in {voter[1]} votations</p>
-									</NotableMemberAvatar>
+				{#await mainVotersAddresses then addresses}
+					{#if addresses != null}
+						<div class="card prize-wrapper">
+							<div class="column-4 align-center">
+								<span class="small title">Decision makers</span>
+								<div class="avatars-wrapper">
+									{#each Object.values(addresses) as voter, i}
+										<div class={`member-${i + 1} center`}>
+											<NotableMemberAvatar address={voter} position={i + 1}>
+												<p class="xsmall">
+													Has particpated in {mainVotersAmountOfVotes[i]} votations
+												</p>
+											</NotableMemberAvatar>
+										</div>
+									{/each}
 								</div>
-							{/each}
+							</div>
 						</div>
-					</div>
-				</div>
+					{/if}
+				{/await}
 			{/if}
 		</div>
 	</div>

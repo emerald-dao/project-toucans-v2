@@ -64,12 +64,10 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 
 export function switchToToken(script: string, currency: ECurrencies) {
 	if (currency === ECurrencies.USDC) {
-		return (
-			script
-				.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
-				.replaceAll('flowTokenVault', 'USDCVault')
-				.replaceAll('FlowToken', 'FiatToken')
-		);
+		return script
+			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
+			.replaceAll('flowTokenVault', 'USDCVault')
+			.replaceAll('FlowToken', 'FiatToken');
 	}
 	return script;
 }
@@ -183,7 +181,7 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 	try {
 		let cadence = '';
 		let args;
-		console.log(input)
+		console.log(input);
 		if (input.length === 18 && input.substring(0, 2) === '0x') {
 			cadence = `
 			import FIND from ${addresses.FIND}
@@ -208,8 +206,8 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 					self.avatar = _avatar
 				}
 			}
-			`
-			args = (arg, t) => [arg(input, t.Address)]
+			`;
+			args = (arg, t) => [arg(input, t.Address)];
 		} else {
 			cadence = `
 			import FIND from ${addresses.FIND}
@@ -232,8 +230,8 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 					self.avatar = _avatar
 				}
 			}
-			`
-			args = (arg, t) => [arg(input, t.String)]
+			`;
+			args = (arg, t) => [arg(input, t.String)];
 		}
 		return await fcl.query({
 			cadence,
@@ -242,7 +240,7 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 	} catch (e) {
 		return null;
 	}
-}
+};
 
 export const getFindNamesBatch = async (addressList: string[]) => {
 	try {
@@ -299,7 +297,11 @@ export const getFindProfilesBatch = async (addressList: string[]) => {
 	}
 };
 
-export const getAccountFromDiscordBatch = async (discordIds: string[]) => {
+export const getAccountFromDiscordBatch = async (
+	discordIds: string[]
+): Promise<{
+	[key: string]: string;
+} | null> => {
 	try {
 		return await fcl.query({
 			cadence: replaceWithProperValues(getAccountFromDiscordBatchScript),
@@ -332,16 +334,16 @@ export const formatFix = (value) => {
 };
 
 export const splitList = (list: string[], chunkSize: number) => {
-	const groups = []
-	let currentGroup = []
+	const groups = [];
+	let currentGroup = [];
 	for (let i = 0; i < list.length; i++) {
-		const collectionID = list[i]
+		const collectionID = list[i];
 		if (currentGroup.length >= chunkSize) {
-			groups.push([...currentGroup])
-			currentGroup = []
+			groups.push([...currentGroup]);
+			currentGroup = [];
 		}
-		currentGroup.push(collectionID)
+		currentGroup.push(collectionID);
 	}
-	groups.push([...currentGroup])
-	return groups
-}
+	groups.push([...currentGroup]);
+	return groups;
+};
