@@ -19,6 +19,7 @@
 		.slice(0, 5);
 
 	let voterLeaderboard: { [key: string]: number } = {};
+
 	for (const proposal of daoData.votes) {
 		for (const voter of proposal.votes) {
 			voterLeaderboard[voter.voter] = (voterLeaderboard[voter.voter] || 0) + 1;
