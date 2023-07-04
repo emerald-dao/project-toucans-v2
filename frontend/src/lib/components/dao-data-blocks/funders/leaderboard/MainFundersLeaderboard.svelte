@@ -11,9 +11,9 @@
 
 	let pageMove: 'next' | 'previous' = 'next';
 
-	const mainFundersEntries = Object.entries(daoData.onChainData.funders)
-		.sort((a, b) => Number(b[1]) - Number(a[1]))
-		.slice(0, 18);
+	const mainFundersEntries = Object.entries(daoData.onChainData.funders).sort(
+		(a, b) => Number(b[1]) - Number(a[1])
+	);
 </script>
 
 <div>
