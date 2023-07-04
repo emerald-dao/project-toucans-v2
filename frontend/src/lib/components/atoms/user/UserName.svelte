@@ -10,14 +10,12 @@
 	export let showCreateProfile = true;
 </script>
 
-<div class="column" style={`font-size: ${fontSize}`}>
+<div class="main-wrapper" style={`font-size: ${fontSize}`}>
 	{#if profile.name}
-		<div class="row-1 align-center">
+		<div class="username-wrapper align-center">
 			<span class="username">{profile.name}</span>
 			{#if profile.type === 'find'}
-				<div class="row align-end verified-wrapper">
-					<Icon icon="tabler:discount-check-filled" color="var(--clr-primary-main)" />
-				</div>
+				<Icon icon="tabler:discount-check-filled" color="var(--clr-primary-main)" />
 			{/if}
 			{#if profile.type === 'random' && profile.address === $user.addr && showCreateProfile}
 				<a class="create-profile" href="https://find.xyz/" target="_blank" rel="noreferrer"
@@ -37,26 +35,33 @@
 </div>
 
 <style lang="scss">
-	.username {
-		color: var(--clr-heading-main);
-		font-size: 1em;
-		margin-bottom: -3px;
-		line-height: 1.2;
-	}
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
 
-	.verified-wrapper {
-		margin-top: 2.7px;
-	}
+		.username-wrapper {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 0.2em;
 
-	.create-profile {
-		background-color: var(--clr-primary-main);
-		color: var(--clr-heading-inverse);
-		font-size: 11px;
-		padding: 1px 7px;
-		line-height: 1.2;
-		border-radius: var(--radius-0);
-		text-decoration: none;
-		margin-left: var(--space-1);
-		margin-top: 2px;
+			.username {
+				color: var(--clr-heading-main);
+				font-size: 1em;
+				line-height: 1.2;
+			}
+
+			.create-profile {
+				background-color: var(--clr-primary-main);
+				color: var(--clr-heading-inverse);
+				font-size: 11px;
+				padding: 1px 7px;
+				line-height: 1.2;
+				border-radius: var(--radius-0);
+				text-decoration: none;
+				margin-left: var(--space-1);
+				margin-top: 2px;
+			}
+		}
 	}
 </style>

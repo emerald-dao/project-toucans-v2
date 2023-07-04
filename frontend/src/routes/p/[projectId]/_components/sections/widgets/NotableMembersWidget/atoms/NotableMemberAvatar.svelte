@@ -41,14 +41,13 @@
 					🥈 2nd place
 				{:else if position === 3}
 					🥉 3rd place
+				{:else if position === 4}
+					4th place
+				{:else if position === 5}
+					5th place
 				{/if}
 			</span>
-			<UserName
-				profile={userProfile}
-				fontSize="1rem"
-				showWallet={false}
-				showCreateProfile={false}
-			/>
+			<UserName profile={userProfile} fontSize="1rem" showWallet={true} showCreateProfile={false} />
 			<div class="prize-wrapper">
 				<slot />
 			</div>
@@ -131,7 +130,7 @@
 		background-color: var(--clr-surface-secondary);
 		padding: var(--space-4);
 		border-radius: var(--radius-1);
-		width: 200px;
+		width: 210px;
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
