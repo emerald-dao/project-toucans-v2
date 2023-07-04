@@ -1,4 +1,4 @@
-import { getFindProfile } from '$flow/utils.js';
+import { getFindProfileFromAddressOrName } from '$flow/utils.js';
 import type { Profile } from '$lib/types/common/profile.interface.js';
 import getRandomUserNumber from '../../../u/[address]/_features/userNames/getRandomUserNumber.js';
 import RANDOM_USERS from '../../../u/[address]/_features/userNames/randomUsers.js';
@@ -8,7 +8,7 @@ export async function GET({ params, setHeaders }) {
 	const fetchProfile = async () => {
 		const address = params.address;
 
-		const findProfile: Profile | null = await getFindProfile(address);
+		const findProfile: Profile | null = await getFindProfileFromAddressOrName(address);
 
 		if (findProfile) {
 			return {

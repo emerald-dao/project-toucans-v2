@@ -7,19 +7,22 @@
 
 	export let imageSize = '47px';
 	export let fontSize = 'var(--font-size-1)';
-	export let address: string;
-	export let twitter: string | undefined = undefined;
+	export let walletFontSize = '0.85em';
+	export let address: string | undefined = undefined;
 	export let showWallet = true;
 	export let showName = true;
 
-	export let userProfile: Profile;
+	export let userProfile: Profile | undefined = undefined;
 
-	let getProfile: Promise<Profile> = fetch(`/api/get-profile/${address}`).then(async (data) => {
-		const profile = (await data.json()) as Profile;
-		userProfile = profile;
+	if (userProfile === undefined) {
+		const getProfile = async () => {
+			userProfile = await fetch(`/api/get-profile/${address}`).then(
+				async (data) => (await data.json()) as Profile
+			);
+		};
 
-		return profile;
-	});
+		getProfile();
+	}
 
 	const handleImageError = (event: Event) => {
 		if (event.target && event.target instanceof HTMLImageElement) {
@@ -28,43 +31,39 @@
 	};
 </script>
 
-{#await getProfile}
+{#if !userProfile}
 	<div class="row-3 align-center header-link change-opacity" style={`font-size: ${fontSize}`}>
 		<img src="/avatar-2.png" alt="avatar" style={`width: ${imageSize}; height: ${imageSize}`} />
 		{#if showName}
 			<div class="column">
 				<div class="row-2">
 					<span class="username">Searching Toucan...</span>
-					{#if twitter}
-						<a href={`twitter.com/${twitter}`} class="center">
-							<Icon icon="tabler:brand-twitter" class="header-link center" />
-						</a>
-					{/if}
 				</div>
 				{#if showWallet}
 					<WalletLabel
 						address="0xf8d6e0586b0a20c7"
 						withBorder={false}
 						color="var(--clr-text-off)"
+						fontSize={walletFontSize}
 					/>
 				{/if}
 			</div>
 		{/if}
 	</div>
-{:then profile}
+{:else}
 	<a
 		class="row-3 align-center header-link"
-		href={`/u/${profile.address}`}
+		href={`/u/${userProfile.address}`}
 		style={`font-size: ${fontSize}`}
 	>
 		<div class="image-wrapper">
 			<img
-				src={profile.avatar}
+				src={userProfile.avatar}
 				alt="avatar"
 				style={`width: ${imageSize}; height: ${imageSize}`}
 				on:error={handleImageError}
 			/>
-			{#if profile.address === $user.addr}
+			{#if userProfile.address === $user.addr}
 				<div class="icon-wrapper" style={`font-size: ${imageSize}`}>
 					<Icon
 						icon="tabler:accessible-off-filled"
@@ -75,20 +74,20 @@
 			{/if}
 		</div>
 		{#if showName}
-			<UserName {profile} {fontSize} {showWallet} />
+			<UserName profile={userProfile} {fontSize} {showWallet} {walletFontSize} />
 		{/if}
 	</a>
-{/await}
+{/if}
 
 <style lang="scss">
+	img {
+		border-radius: 50%;
+	}
+
 	.image-wrapper {
 		position: relative;
 		background-color: var(--clr-surface-primary);
 		border-radius: 50%;
-
-		img {
-			border-radius: 50%;
-		}
 
 		.icon-wrapper {
 			position: absolute;

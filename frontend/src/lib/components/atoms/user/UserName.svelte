@@ -6,6 +6,7 @@
 
 	export let profile: Profile;
 	export let fontSize = 'var(--font-size-1)';
+	export let walletFontSize = '0.85em';
 	export let showWallet = true;
 	export let showCreateProfile = true;
 </script>
@@ -29,7 +30,7 @@
 			address={profile.address}
 			withBorder={false}
 			color="var(--clr-text-off)"
-			fontSize="0.85em"
+			fontSize={walletFontSize}
 		/>
 	{/if}
 </div>
@@ -44,6 +45,7 @@
 			flex-direction: row;
 			align-items: center;
 			gap: 0.2em;
+			margin-bottom: 0.1em;
 
 			.username {
 				color: var(--clr-heading-main);
