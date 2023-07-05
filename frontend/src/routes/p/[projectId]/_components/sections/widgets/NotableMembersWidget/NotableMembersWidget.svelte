@@ -64,7 +64,7 @@
 			{#if daoData.generalInfo.token_symbol && holdersEntries.length > 0}
 				<div class="card prize-wrapper">
 					<div class="column-4 align-center">
-						<span class="small title">Project holders</span>
+						<span class="small title">Token holders</span>
 						<div class="avatars-wrapper">
 							{#each mainHoldersEntries as holder, i}
 								<div class={`member-${i + 1} center`}>

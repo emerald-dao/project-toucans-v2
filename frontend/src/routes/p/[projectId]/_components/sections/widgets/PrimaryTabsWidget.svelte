@@ -1,7 +1,5 @@
 <script lang="ts">
 	import LiquidityPoolsChart from '$lib/components/dao-data-blocks/pools/chart/LiquidityPoolsChart.svelte';
-	import MainFundersChart from '$lib/components/dao-data-blocks/funders/chart/MainFundersChart.svelte';
-	import MainHoldersChart from '$lib/components/dao-data-blocks/holders/chart/MainHoldersChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
 	import MainHoldersLeaderboard from '$components/dao-data-blocks/holders/leaderboard/MainHoldersLeaderboard.svelte';
@@ -13,18 +11,22 @@
 <div class="card">
 	<Tabs>
 		<TabList>
-			<Tab>Main holders</Tab>
-			<Tab>Main funders</Tab>
-			<Tab>Liquidity pools</Tab>
+			<Tab>Main Funders</Tab>
+			{#if daoData.hasToken}
+				<Tab>Main Holders</Tab>
+				<Tab>Liquidity Pools</Tab>
+			{/if}
 		</TabList>
-		<TabPanel>
-			<MainHoldersLeaderboard {daoData} />
-		</TabPanel>
 		<TabPanel>
 			<MainFundersLeaderboard {daoData} />
 		</TabPanel>
-		<TabPanel>
-			<LiquidityPoolsChart {daoData} />
-		</TabPanel>
+		{#if daoData.hasToken}
+			<TabPanel>
+				<MainHoldersLeaderboard {daoData} />
+			</TabPanel>
+			<TabPanel>
+				<LiquidityPoolsChart {daoData} />
+			</TabPanel>
+		{/if}
 	</Tabs>
 </div>

@@ -17,32 +17,30 @@
 </script>
 
 <div>
-	{#if daoData.generalInfo.token_symbol}
-		<ListWrapper
-			itemsPerPage={6}
-			totalItems={mainFundersEntries.length}
-			noItemsMessage="This DAO has no funders yet"
-			bind:paginationMax
-			bind:paginationMin
-			on:nextPage={() => (pageMove = 'next')}
-			on:previousPage={() => (pageMove = 'previous')}
-		>
-			{#each mainFundersEntries as [address, funding], i}
-				{#if i < paginationMax && i >= paginationMin}
-					<LeaderboardListElement
-						rank={i + 1}
-						{address}
-						bind:pageMove
-						pagePosition={i - paginationMin}
-					>
-						<Currency
-							amount={funding}
-							currency={daoData.onChainData.paymentCurrency}
-							color="heading"
-						/>
-					</LeaderboardListElement>
-				{/if}
-			{/each}
-		</ListWrapper>
-	{/if}
+	<ListWrapper
+		itemsPerPage={6}
+		totalItems={mainFundersEntries.length}
+		noItemsMessage="This DAO has no funders yet"
+		bind:paginationMax
+		bind:paginationMin
+		on:nextPage={() => (pageMove = 'next')}
+		on:previousPage={() => (pageMove = 'previous')}
+	>
+		{#each mainFundersEntries as [address, funding], i}
+			{#if i < paginationMax && i >= paginationMin}
+				<LeaderboardListElement
+					rank={i + 1}
+					{address}
+					bind:pageMove
+					pagePosition={i - paginationMin}
+				>
+					<Currency
+						amount={funding}
+						currency={daoData.onChainData.paymentCurrency}
+						color="heading"
+					/>
+				</LeaderboardListElement>
+			{/if}
+		{/each}
+	</ListWrapper>
 </div>

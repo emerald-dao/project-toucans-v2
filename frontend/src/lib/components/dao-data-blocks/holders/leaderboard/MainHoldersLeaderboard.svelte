@@ -19,32 +19,26 @@
 </script>
 
 <div>
-	{#if daoData.generalInfo.token_symbol}
-		<ListWrapper
-			itemsPerPage={6}
-			totalItems={mainHoldersEntries.length}
-			noItemsMessage="This DAO has no holders yet"
-			bind:paginationMax
-			bind:paginationMin
-			on:nextPage={() => (pageMove = 'next')}
-			on:previousPage={() => (pageMove = 'previous')}
-		>
-			{#each mainHoldersEntries as [address, holdings], i}
-				{#if i < paginationMax && i >= paginationMin}
-					<LeaderboardListElement
-						rank={i + 1}
-						{address}
-						bind:pageMove
-						pagePosition={i - paginationMin}
-					>
-						<Currency
-							amount={holdings}
-							currency={daoData.generalInfo.token_symbol}
-							color="heading"
-						/>
-					</LeaderboardListElement>
-				{/if}
-			{/each}
-		</ListWrapper>
-	{/if}
+	<ListWrapper
+		itemsPerPage={6}
+		totalItems={mainHoldersEntries.length}
+		noItemsMessage="This DAO has no holders yet"
+		bind:paginationMax
+		bind:paginationMin
+		on:nextPage={() => (pageMove = 'next')}
+		on:previousPage={() => (pageMove = 'previous')}
+	>
+		{#each mainHoldersEntries as [address, holdings], i}
+			{#if i < paginationMax && i >= paginationMin}
+				<LeaderboardListElement
+					rank={i + 1}
+					{address}
+					bind:pageMove
+					pagePosition={i - paginationMin}
+				>
+					<Currency amount={holdings} currency={daoData.generalInfo.token_symbol} color="heading" />
+				</LeaderboardListElement>
+			{/if}
+		{/each}
+	</ListWrapper>
 </div>
