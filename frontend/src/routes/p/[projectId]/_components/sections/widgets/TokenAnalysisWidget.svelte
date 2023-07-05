@@ -56,39 +56,41 @@
 
 <div class="card column-5 align-start">
 	<div class="secondary-wrapper">
-		<div class="row-6">
-			<div class="column-1 align-start">
-				<div class="row-2 align-center">
-					<p class="xsmall">Total Supply</p>
-					<TooltipIcon width={0.6} tooltip="The total amount of minted tokens." />
-				</div>
-				<Currency
-					amount={daoData.onChainData.totalSupply}
-					currency={daoData.generalInfo.token_symbol}
-					color="heading"
-					fontSize="var(--font-size-3)"
-				/>
-			</div>
-			<div class="column-1 align-start">
-				<div class="row-2 align-center">
-					<p class="xsmall">Max Supply</p>
-					<TooltipIcon
-						width={0.6}
-						tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
-					/>
-				</div>
-				{#if daoData.onChainData.maxSupply}
+		{#if daoData.generalInfo.token_symbol}
+			<div class="supply-wrapper">
+				<div class="column-1 align-start">
+					<div class="row-2 align-center">
+						<p class="xsmall">Total Supply</p>
+						<TooltipIcon width={0.6} tooltip="The total amount of minted tokens." />
+					</div>
 					<Currency
-						amount={daoData.onChainData.maxSupply}
+						amount={daoData.onChainData.totalSupply}
 						currency={daoData.generalInfo.token_symbol}
 						color="heading"
 						fontSize="var(--font-size-3)"
 					/>
-				{:else}
-					<p class="unlimited">∞</p>
-				{/if}
+				</div>
+				<div class="column-1 align-start">
+					<div class="row-2 align-center">
+						<p class="xsmall">Max Supply</p>
+						<TooltipIcon
+							width={0.6}
+							tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
+						/>
+					</div>
+					{#if daoData.onChainData.maxSupply}
+						<Currency
+							amount={daoData.onChainData.maxSupply}
+							currency={daoData.generalInfo.token_symbol}
+							color="heading"
+							fontSize="var(--font-size-3)"
+						/>
+					{:else}
+						<p class="unlimited">∞</p>
+					{/if}
+				</div>
 			</div>
-		</div>
+		{/if}
 		{#if daoData.onChainData.maxSupply}
 			<ProgressBar
 				labelText="Circulating ratio"
@@ -99,36 +101,38 @@
 		{/if}
 	</div>
 	<div class="tertiary-wrapper">
-		{#await calculateHoldingData() then tokenData}
-			<div>
-				<p class="xsmall">Unique Holders</p>
-				<Currency amount={tokenData.numHolders} color="heading" fontSize="var(--font-size-1)" />
-			</div>
-			<div>
-				<p class="xsmall">Average Holding</p>
-				<Currency
-					amount={tokenData.averageHolding}
-					color="heading"
-					currency={daoData.generalInfo.token_symbol}
-					fontSize="var(--font-size-1)"
-				/>
-			</div>
-		{/await}
-		{#await calculateFundingData() then tokenData}
-			<div>
-				<p class="xsmall">Unique Funders</p>
-				<Currency amount={tokenData.numFunders} color="heading" fontSize="var(--font-size-1)" />
-			</div>
-			<div>
-				<p class="xsmall">Average Funding</p>
-				<Currency
-					amount={tokenData.averageFunding}
-					color="heading"
-					currency={daoData.onChainData.paymentCurrency}
-					fontSize="var(--font-size-1)"
-				/>
-			</div>
-		{/await}
+		{#if daoData.generalInfo.token_symbol}
+			{#await calculateHoldingData() then tokenData}
+				<div>
+					<p class="xsmall">Unique Holders</p>
+					<Currency amount={tokenData.numHolders} color="heading" fontSize="var(--font-size-1)" />
+				</div>
+				<div>
+					<p class="xsmall">Average Holding</p>
+					<Currency
+						amount={tokenData.averageHolding}
+						color="heading"
+						currency={daoData.generalInfo.token_symbol}
+						fontSize="var(--font-size-1)"
+					/>
+				</div>
+			{/await}
+			{#await calculateFundingData() then tokenData}
+				<div>
+					<p class="xsmall">Unique Funders</p>
+					<Currency amount={tokenData.numFunders} color="heading" fontSize="var(--font-size-1)" />
+				</div>
+				<div>
+					<p class="xsmall">Average Funding</p>
+					<Currency
+						amount={tokenData.averageFunding}
+						color="heading"
+						currency={daoData.onChainData.paymentCurrency}
+						fontSize="var(--font-size-1)"
+					/>
+				</div>
+			{/await}
+		{/if}
 	</div>
 </div>
 
@@ -157,11 +161,17 @@
 			padding-bottom: var(--space-6);
 			display: grid;
 			grid-template-columns: 1fr 1fr;
-			gap: var(--space-4);
+			gap: var(--space-3);
 
 			p {
 				color: var(--clr-text-off);
 			}
+		}
+
+		.supply-wrapper {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-3);
 		}
 
 		.tertiary-wrapper,

@@ -11,9 +11,8 @@
 		.slice(0, 10);
 
 	async function fetchFindProfiles() {
-		console.log(fundersEntries);
-		console.log(mainFunderEntries);
 		const addressList = mainFunderEntries.map((entry) => entry[0]);
+
 		return await getFindProfilesBatch(addressList);
 	}
 </script>

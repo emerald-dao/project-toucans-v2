@@ -1,48 +1,22 @@
 import { getProjectBalances } from '$flow/actions';
-import { getFindProfileFromAddressOrName } from '$flow/utils';
+import type { Profile } from '$lib/types/common/profile.interface';
 import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
-import getRandomUserNumber from './_features/userNames/getRandomUserNumber';
-import RANDOM_USERS from './_features/userNames/randomUsers';
 import type { UserData, Vault } from './_types/user-data.interface';
 
-export const load = async ({ params }): Promise<UserData> => {
-	const { address, name, avatar } = await getUserProfile(params.address);
+export const load = async ({ params, fetch }): Promise<UserData> => {
+	const profile = await fetch(`/api/get-profile/${params.address}`).then(
+		async (data) => (await data.json()) as Profile
+	);
 
 	return {
-		name,
-		avatar,
-		address,
-		vaults: await getUserVaults(address),
-		transactions: (await fetchAllProjectRecentDonateOrPurchaseEventsByUser(address)) as DaoEvent[]
+		profile,
+		vaults: await getUserVaults(profile.address),
+		transactions: (await fetchAllProjectRecentDonateOrPurchaseEventsByUser(
+			profile.address
+		)) as DaoEvent[]
 	};
-};
-
-const getUserProfile = async (
-	address: string
-): Promise<{
-	address: string;
-	name: string;
-	avatar: string;
-}> => {
-	const findProfile = await getFindProfileFromAddressOrName(address);
-
-	if (findProfile) {
-		return {
-			address: findProfile.address,
-			name: findProfile.name,
-			avatar: findProfile.avatar
-		};
-	} else {
-		const userNumber = getRandomUserNumber(address, RANDOM_USERS.length);
-
-		return {
-			address,
-			name: RANDOM_USERS[userNumber].name,
-			avatar: RANDOM_USERS[userNumber].avatar
-		};
-	}
 };
 
 const getUserVaults = async (address: string): Promise<Vault[]> => {

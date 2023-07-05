@@ -1,9 +1,8 @@
+import type { Profile } from '$lib/types/common/profile.interface';
 import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 
 export interface UserData {
-	name: string;
-	avatar: string;
-	address: string;
+	profile: Profile;
 	vaults: Vault[];
 	transactions: DaoEvent[];
 }

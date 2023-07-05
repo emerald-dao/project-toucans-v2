@@ -1,4 +1,5 @@
-<script type="ts">
+<script lang="ts">
+	import type { Profile } from '$lib/types/common/profile.interface';
 	import { network } from '$flow/config';
 	import '../app.postcss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
@@ -27,8 +28,6 @@
 		notifications,
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
-	import getRandomUserNumber from './u/[address]/_features/userNames/getRandomUserNumber';
-	import RANDOM_USERS from './u/[address]/_features/userNames/randomUsers';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
@@ -51,31 +50,25 @@
 		});
 	};
 
+	let userProfile: Profile | null;
+
+	$: if ($user.addr) getProfile($user.addr);
+
+	const getProfile = async (address: string) => {
+		userProfile = await fetch(`/api/get-profile/${address}`).then(
+			async (data) => (await data.json()) as Profile
+		);
+	};
+
 	$: $user.addr && setNotifications($user.addr);
 	$: !$user.addr && ($notifications = null);
 
 	$: notificationsNumber = getNotificationsNumber($notifications);
 	$: if (notificationsNumber > 0) avatarDropdownNav[2].notifications = notificationsNumber;
 
-	let userNumber: number;
-
-	$: if ($user.addr) {
-		userNumber = getRandomUserNumber($user.addr, RANDOM_USERS.length);
-	}
-	$: userAvatar = userNumber ? RANDOM_USERS[userNumber].avatar : undefined;
-	$: userName = userNumber ? RANDOM_USERS[userNumber].name : undefined;
-
-	const setFindProfile = async (userAddr: string) => {
-		const findProfile = await getFindProfile(userAddr);
-		if (findProfile) {
-			avatarDropdownNav[0].url = `/u/${findProfile.name}`;
-		}
-	};
-
 	$: if ($user.addr) {
 		console.log('hi!');
 		avatarDropdownNav[0].url = `/u/${$user.addr}`;
-		setFindProfile($user.addr);
 	}
 </script>
 
@@ -99,8 +92,8 @@
 	logoUrl="/toucans-logo.png"
 	{notificationsNumber}
 	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
-	{userAvatar}
-	{userName}
+	userAvatar={userProfile?.avatar}
+	userName={userProfile?.name}
 />
 <main>
 	<slot />

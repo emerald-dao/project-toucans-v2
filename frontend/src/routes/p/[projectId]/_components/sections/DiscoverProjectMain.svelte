@@ -10,6 +10,7 @@
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
 	import VotingsWidget from './widgets/VotingsWidget.svelte';
 	import MainFundersWidget from './widgets/MainFundersWidget.svelte';
+	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
 
 	export let daoData: DAOProject;
 
@@ -40,10 +41,11 @@
 				{/if}
 			</div>
 		</div>
+		<NotableMembersWidget {daoData} />
 		{#if activeVotings.length > 0}
 			<VotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
 		{/if}
-		{#if daoData.hasToken && currentFundingCycleData}
+		{#if daoData.hasToken && currentFundingCycleData && daoData.generalInfo.token_symbol}
 			<RoundsWidget
 				round={currentFundingCycleData}
 				projectId={daoData.generalInfo.project_id}

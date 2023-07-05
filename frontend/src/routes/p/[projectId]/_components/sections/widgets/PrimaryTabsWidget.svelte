@@ -4,6 +4,8 @@
 	import MainHoldersChart from '$lib/components/dao-data-blocks/holders/chart/MainHoldersChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
+	import MainHoldersLeaderboard from '$components/dao-data-blocks/holders/leaderboard/MainHoldersLeaderboard.svelte';
+	import MainFundersLeaderboard from '$components/dao-data-blocks/funders/leaderboard/MainFundersLeaderboard.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -15,12 +17,11 @@
 			<Tab>Main funders</Tab>
 			<Tab>Liquidity pools</Tab>
 		</TabList>
-
 		<TabPanel>
-			<MainHoldersChart {daoData} />
+			<MainHoldersLeaderboard {daoData} />
 		</TabPanel>
 		<TabPanel>
-			<MainFundersChart {daoData} />
+			<MainFundersLeaderboard {daoData} />
 		</TabPanel>
 		<TabPanel>
 			<LiquidityPoolsChart {daoData} />
