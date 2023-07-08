@@ -59,8 +59,8 @@ const contractData = {
   },
   Toucans: {
     emulator: '0xf8d6e0586b0a20c7',
-    testnet: process.env.TOUCANS_CONTRACT_ADDRESS,
-    mainnet: process.env.TOUCANS_CONTRACT_ADDRESS
+    testnet: '0x93fc837134ab4e92',
+    mainnet: '0x577a3c409c5dcb5e'
   },
   SwapUtils: {
     emulator: '0xf8d6e0586b0a20c7',
