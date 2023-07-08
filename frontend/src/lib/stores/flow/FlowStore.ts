@@ -76,7 +76,7 @@ const contractData = {
 	},
 	EmeraldIdentity: {
 		emulator: '0xf8d6e0586b0a20c7',
-		testnet: '',
+		testnet: '0x87d0c9cd424434be',
 		mainnet: '0x39e42c67cc851cfb'
 	}
 };
