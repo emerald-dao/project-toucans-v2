@@ -13,7 +13,7 @@
 		.slice(0, 5);
 
 	const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
-	$: holdersEntries = Object.entries(daoData.onChainData.balances);
+	$: holdersEntries = daoData.hasToken ? Object.entries(daoData.onChainData.balances) : [];
 	$: mainHoldersEntries = holdersEntries
 		.filter((entry) => entry[0] !== daoData.generalInfo.owner && !lpAddresses.includes(entry[0]))
 		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
@@ -37,7 +37,7 @@
 	const mainVotersAddresses = getAccountFromDiscordBatch(mainVotersDiscordIds);
 </script>
 
-{#if mainFunderEntries.length > 0 || (daoData.generalInfo.token_symbol && holdersEntries.length > 0) || mainVoters.length > 0}
+{#if mainFunderEntries.length > 0 || (daoData.hasToken && holdersEntries.length > 0) || mainVoters.length > 0}
 	<div class="main-wrapper">
 		<span class="title">
 			<Icon icon="tabler:medal" />
