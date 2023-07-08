@@ -4,24 +4,24 @@
 			"source": "./src/flow/cadence/utility/EmeraldIdentity.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "87d0c9cd424434be",
-				"mainnet": "39e42c67cc851cfb"
+				"mainnet": "39e42c67cc851cfb",
+				"testnet": "87d0c9cd424434be"
 			}
 		},
 		"EmeraldIdentityDapper": {
 			"source": "./src/flow/cadence/utility/EmeraldIdentityDapper.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "87d0c9cd424434be",
-				"mainnet": "39e42c67cc851cfb"
+				"mainnet": "39e42c67cc851cfb",
+				"testnet": "87d0c9cd424434be"
 			}
 		},
 		"EmeraldIdentityLilico": {
 			"source": "./src/flow/cadence/utility/EmeraldIdentityLilico.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "87d0c9cd424434be",
-				"mainnet": "39e42c67cc851cfb"
+				"mainnet": "39e42c67cc851cfb",
+				"testnet": "87d0c9cd424434be"
 			}
 		},
 		"ExampleNFT": {
@@ -205,7 +205,7 @@
 			}
 		},
 		"testnet-account": {
-			"address": "93fc837134ab4e92",
+			"address": "aba4ef9fe3cbc7d0",
 			"key": {
 				"type": "file",
 				"location": "testnet-account.pkey"
