@@ -991,7 +991,7 @@ pub contract Toucans {
       if index == nil {
         return nil
       }
-      return &self.fundingCycles[index!] as &FundingCycle?
+      return &self.fundingCycles[index!] as &FundingCycle
     }
 
     pub fun borrowManagerPublic(): &Manager{ManagerPublic} {
