@@ -12,3 +12,7 @@ https://toucans.ecdao.org
 - ToucansUtils: `0x577a3c409c5dcb5e`
 - ToucansActions: `0x577a3c409c5dcb5e`
 - ToucansTokens: `0x577a3c409c5dcb5e`
+
+**Testnet**
+
+Soon...
