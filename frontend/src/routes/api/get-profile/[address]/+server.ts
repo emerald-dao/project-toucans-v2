@@ -26,7 +26,7 @@ export async function GET({ params, setHeaders }) {
 		}
 	};
 
-	setHeaders({ 'cache-control': 'max-age=600' });
+	setHeaders({ 'cache-control': 'max-age=86400, public' });
 
 	const profile = await fetchProfile();
 
