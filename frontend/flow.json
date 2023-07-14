@@ -84,6 +84,14 @@
 				"testnet": "9a0766d93b6608b7"
 			}
 		},
+		"ViewResolver": {
+			"source": "./src/flow/cadence/utility/ViewResolver.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "0x1d7e57aa55817448",
+				"testnet": "9a0766d93b6608b7"
+			}
+		},
 		"MetadataViews": {
 			"source": "./src/flow/cadence/utility/MetadataViews.cdc",
 			"aliases": {
@@ -215,6 +223,7 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
+				"ViewResolver",
 				"FCLCrypto",
 				"NonFungibleToken",
 				"MetadataViews",

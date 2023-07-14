@@ -50,6 +50,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"./utility/MetadataViews.cdc"', addresses.MetadataViews)
 			.replace('"./utility/FungibleToken.cdc"', addresses.FungibleToken)
 			.replace('"./utility/FungibleTokenMetadataViews.cdc"', addresses.FungibleTokenMetadataViews)
+			.replace('"./utility/ViewResolver.cdc"', addresses.ViewResolver)
 			.replace('"./utility/FlowToken.cdc"', addresses.FlowToken)
 			.replace('"./utility/FiatToken.cdc"', addresses.FiatToken)
 			.replace('"./Toucans.cdc"', addresses.Toucans)

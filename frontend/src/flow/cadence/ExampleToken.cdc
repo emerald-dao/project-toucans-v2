@@ -4,8 +4,9 @@ import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
 import ToucansTokens from "./ToucansTokens.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
+import ViewResolver from "./utility/ViewResolver.cdc"
  
-pub contract ExampleToken: FungibleToken {
+pub contract ExampleToken: FungibleToken, ViewResolver {
 
     // The amount of tokens in existance
     pub var totalSupply: UFix64
@@ -56,9 +57,11 @@ pub contract ExampleToken: FungibleToken {
         }
 
         pub fun getViews(): [Type]{
-            return [Type<FungibleTokenMetadataViews.FTView>(),
-                    Type<FungibleTokenMetadataViews.FTDisplay>(),
-                    Type<FungibleTokenMetadataViews.FTVaultData>()]
+            return [
+                Type<FungibleTokenMetadataViews.FTView>(),
+                Type<FungibleTokenMetadataViews.FTDisplay>(),
+                Type<FungibleTokenMetadataViews.FTVaultData>()
+            ]
         }
 
         pub fun resolveView(_ view: Type): AnyStruct? {
@@ -177,6 +180,63 @@ pub contract ExampleToken: FungibleToken {
     pub fun getBalances(): {Address: UFix64} {
         let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
         return admin.getBalances()
+    }
+
+    pub fun getViews(): [Type] {
+        return [
+            Type<FungibleTokenMetadataViews.FTView>(),
+            Type<FungibleTokenMetadataViews.FTDisplay>(),
+            Type<FungibleTokenMetadataViews.FTVaultData>()
+        ]
+    }
+
+    pub fun resolveView(_ view: Type): AnyStruct? {
+        switch view {
+            case Type<FungibleTokenMetadataViews.FTView>():
+                return FungibleTokenMetadataViews.FTView(
+                    ftDisplay: self.resolveView(Type<FungibleTokenMetadataViews.FTDisplay>()) as! FungibleTokenMetadataViews.FTDisplay?,
+                    ftVaultData: self.resolveView(Type<FungibleTokenMetadataViews.FTVaultData>()) as! FungibleTokenMetadataViews.FTVaultData?
+                )
+            case Type<FungibleTokenMetadataViews.FTDisplay>():
+                let media = MetadataViews.Media(
+                        file: MetadataViews.HTTPFile(
+                        url: "INSERT LOGO"
+                    ),
+                    mediaType: "image"
+                )
+                let bannerMedia = MetadataViews.Media(
+                        file: MetadataViews.HTTPFile(
+                        url: "INSERT BANNER LOGO"
+                    ),
+                    mediaType: "image"
+                )
+                let medias = MetadataViews.Medias([media, bannerMedia])
+                return FungibleTokenMetadataViews.FTDisplay(
+                    name: "INSERT NAME",
+                    symbol: "INSERT SYMBOL",
+                    description: "INSERT DESCRIPTION",
+                    externalURL: MetadataViews.ExternalURL("INSERT URL"),
+                    logos: medias,
+                    socials: {
+                        "twitter": MetadataViews.ExternalURL("INSERT TWITTER"),
+                        "discord": MetadataViews.ExternalURL("INSERT DISCORD")
+                    }
+                )
+            case Type<FungibleTokenMetadataViews.FTVaultData>():
+                return FungibleTokenMetadataViews.FTVaultData(
+                    storagePath: ExampleToken.VaultStoragePath,
+                    receiverPath: ExampleToken.ReceiverPublicPath,
+                    metadataPath: ExampleToken.VaultPublicPath,
+                    providerPath: /private/ExampleTokenVault,
+                    receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
+                    metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
+                    providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
+                    createEmptyVaultFunction: (fun (): @Vault {
+                        return <- ExampleToken.createEmptyVault()
+                    })
+                )
+        }
+        return nil
     }
 
     init(
