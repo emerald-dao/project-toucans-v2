@@ -67,48 +67,11 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
         pub fun resolveView(_ view: Type): AnyStruct? {
             switch view {
                 case Type<FungibleTokenMetadataViews.FTView>():
-                    return FungibleTokenMetadataViews.FTView(
-                        ftDisplay: self.resolveView(Type<FungibleTokenMetadataViews.FTDisplay>()) as! FungibleTokenMetadataViews.FTDisplay?,
-                        ftVaultData: self.resolveView(Type<FungibleTokenMetadataViews.FTVaultData>()) as! FungibleTokenMetadataViews.FTVaultData?
-                    )
+                    return ExampleToken.resolveView(view)
                 case Type<FungibleTokenMetadataViews.FTDisplay>():
-                    let media = MetadataViews.Media(
-                            file: MetadataViews.HTTPFile(
-                            url: "INSERT LOGO"
-                        ),
-                        mediaType: "image"
-                    )
-                    let bannerMedia = MetadataViews.Media(
-                            file: MetadataViews.HTTPFile(
-                            url: "INSERT BANNER LOGO"
-                        ),
-                        mediaType: "image"
-                    )
-                    let medias = MetadataViews.Medias([media, bannerMedia])
-                    return FungibleTokenMetadataViews.FTDisplay(
-                        name: "INSERT NAME",
-                        symbol: "INSERT SYMBOL",
-                        description: "INSERT DESCRIPTION",
-                        externalURL: MetadataViews.ExternalURL("INSERT URL"),
-                        logos: medias,
-                        socials: {
-                            "twitter": MetadataViews.ExternalURL("INSERT TWITTER"),
-                            "discord": MetadataViews.ExternalURL("INSERT DISCORD")
-                        }
-                    )
+                    return ExampleToken.resolveView(view)
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
-                    return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: ExampleToken.VaultStoragePath,
-                        receiverPath: ExampleToken.ReceiverPublicPath,
-                        metadataPath: ExampleToken.VaultPublicPath,
-                        providerPath: /private/ExampleTokenVault,
-                        receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
-                        metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
-                        providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
-                        createEmptyVaultFunction: (fun (): @Vault {
-                            return <- ExampleToken.createEmptyVault()
-                        })
-                    )
+                    return ExampleToken.resolveView(view)
             }
             return nil
         }
