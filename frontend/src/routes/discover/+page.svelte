@@ -12,7 +12,12 @@
 	const projects: DaoDatabaseData[] = data.allProjects as DaoDatabaseData[];
 
 	const DOMInfo = {
-		projectId: PUBLIC_FLOW_NETWORK === 'emulator' ? 'TestingDAO' : 'BallerzFC',
+		projectId:
+			PUBLIC_FLOW_NETWORK === 'emulator'
+				? 'TestingDAO'
+				: PUBLIC_FLOW_NETWORK === 'testnet'
+				? 'MetaPharmacyDAO'
+				: 'BallerzFC',
 		story:
 			'One of the first DAOs created on the platform, Ballerz FC has formed a strong community of Ballerz FC and broader MFL lovers.'
 	};
@@ -21,7 +26,12 @@
 	) as DaoDatabaseData;
 
 	const ECDAOInfo = {
-		projectId: PUBLIC_FLOW_NETWORK === 'emulator' ? 'TestingDAO' : 'EmeraldCity',
+		projectId:
+			PUBLIC_FLOW_NETWORK === 'emulator'
+				? 'TestingDAO'
+				: PUBLIC_FLOW_NETWORK === 'testnet'
+				? 'MetaPharmacyDAO'
+				: 'EmeraldCity',
 		story:
 			'Toucans was created by the members of Emerald City DAO, the first DAO built #onFlow. We are a group of passionate builders crafting the future of Flow, the blockchain made for scalable and secure mainstream usage.'
 	};
