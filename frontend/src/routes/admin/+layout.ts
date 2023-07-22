@@ -35,7 +35,8 @@ export const load: LayoutLoad = async ({ depends }) => {
 					return {
 						generalInfo: project,
 						onChainData,
-						events: events.reverse()
+						events: events.reverse(),
+						hasToken: project.contract_address !== null
 					};
 				})
 			)
