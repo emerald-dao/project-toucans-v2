@@ -10,6 +10,7 @@
 	import { currencies } from '$stores/flow/TokenStore';
 
 	export let daoData: DAOProject;
+	console.log(daoData);
 </script>
 
 <aside class="column-8">
@@ -44,7 +45,7 @@
 					{/if}
 				</div>
 				<h1 class="h3 w-medium">{daoData.generalInfo.name}</h1>
-				{#if daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
+				{#if daoData.hasToken || daoData.generalInfo.twitter || daoData.generalInfo.discord || daoData.generalInfo.website}
 					<div class="row-3 align-end">
 						{#if daoData.hasToken}
 							<Label size="small" color="tertiary" hasBorder={false}
