@@ -12,6 +12,7 @@ import { roundToUSDPrice } from './flow/utils';
 import { fetchAllProposals } from './supabase/fetchAllProposals';
 import { fetchTokenInfo } from './functions/fetchTokenInfo';
 import cron from "node-cron";
+import { fetchAllRankings } from './supabase/fetchAllRankings';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,7 +36,13 @@ async function gatherTrendingProjects() {
   const addressList = {}
   const projects: { [projectId: string]: DaoRankingData } = {}
   for (const { project_id, contract_address, token_symbol, owner } of allProjects) {
-    const { tokenInfo } = await fetchTokenInfo(project_id, contract_address);
+    let volume_24h = null;
+    let tvl = null;
+    if (contract_address && token_symbol) {
+      const { tokenInfo } = await fetchTokenInfo(project_id, contract_address);
+      volume_24h = tokenInfo && tokenInfo[2] || null;
+      tvl = tokenInfo && tokenInfo[1] || null;
+    }
     projects[project_id] = {
       project_id,
       week_funding: 0,
@@ -49,8 +56,8 @@ async function gatherTrendingProjects() {
       // price stuff
       price: null,
       treasury_value: null,
-      volume_24h: tokenInfo && tokenInfo[2] || null,
-      tvl: tokenInfo && tokenInfo[1] || null,
+      volume_24h,
+      tvl,
       // chart data
       numbers: []
     }
@@ -128,8 +135,16 @@ async function gatherTrendingProjects() {
   }
 
   // 4. return
-  const { error } = await supabase.from('rankings').upsert(Object.values(projects), { ignoreDuplicates: false, onConflict: 'project_id' });
-  console.log('Error inserting rankings', error);
+  const uploadData = Object.values(projects);
+  // const currentRankings = await fetchAllRankings();
+  // const dataToUpsert = uploadData.filter(data => currentRankings.some(r => r.project_id === data.project_id))
+  // const dataToInsert = uploadData.filter(data => !currentRankings.some(r => r.project_id === data.project_id))
+
+  const { error: UpsertError } = await supabase.from('rankings').upsert(uploadData, { ignoreDuplicates: false, onConflict: 'project_id' });
+  console.log('Error upserting rankings', UpsertError);
+
+  // const { error: InsertError } = await supabase.from('rankings').insert(dataToInsert);
+  // console.log('Error inserting rankings', InsertError);
 }
 
 // gatherTrendingProjects();

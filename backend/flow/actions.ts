@@ -97,7 +97,12 @@ export const getTrendingDatav2 = async (
 };
 
 function generateGetTrendingDataScript(projectIds: string[], contractAddresses: (string | undefined)[], projectOwners: string[]) {
-  let imports = projectIds.filter((projectId, i) => contractAddresses[i] !== undefined).map((v, i) => `\nimport ${v} from ${contractAddresses[i]}`).join('');
+  let imports = '';
+  for (let i = 0; i < projectIds.length; i++) {
+    if (contractAddresses[i] !== undefined) {
+      imports += `\nimport ${projectIds[i]} from ${contractAddresses[i]}`
+    }
+  }
   let mainCode = projectIds.map((v, i) => {
     if (contractAddresses[i] !== undefined) {
       return `\n
