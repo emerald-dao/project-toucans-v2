@@ -11,9 +11,9 @@
 <div class="card">
 	<Tabs>
 		<TabList>
-			<Tab>Main Funders</Tab>
+			<Tab>Funders</Tab>
 			{#if daoData.hasToken}
-				<Tab>Main Holders</Tab>
+				<Tab>Holders</Tab>
 				<Tab>Liquidity Pools</Tab>
 			{/if}
 		</TabList>
