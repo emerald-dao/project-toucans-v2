@@ -11,7 +11,7 @@
 
 	let pageMove: 'next' | 'previous' = 'next';
 
-	const mainFundersEntries = Object.entries(daoData.onChainData.funders).sort(
+	const mainFundersEntries = Object.entries(daoData.funding.funders).sort(
 		(a, b) => Number(b[1]) - Number(a[1])
 	);
 </script>
@@ -34,11 +34,7 @@
 					bind:pageMove
 					pagePosition={i - paginationMin}
 				>
-					<Currency
-						amount={funding}
-						currency={daoData.onChainData.paymentCurrency}
-						color="heading"
-					/>
+					<Currency amount={funding} moneyPrefix={true} decimalNumbers={2} color="heading" />
 				</LeaderboardListElement>
 			{/if}
 		{/each}

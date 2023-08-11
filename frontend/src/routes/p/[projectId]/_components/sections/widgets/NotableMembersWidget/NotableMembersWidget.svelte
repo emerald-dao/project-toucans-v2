@@ -7,7 +7,7 @@
 
 	export let daoData: DAOProject;
 
-	$: fundersEntries = Object.entries(daoData.onChainData.funders);
+	$: fundersEntries = Object.entries(daoData.funding.funders);
 	$: mainFunderEntries = fundersEntries
 		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
 		.slice(0, 5);
@@ -47,13 +47,8 @@
 			{#if mainFunderEntries.length > 0}
 				<div class="card prize-wrapper">
 					<div class="column-4 align-center">
-						<div class="flex">
-							<span class="small title">Project investors</span>
-							<TooltipIcon
-								width={0.7}
-								tooltip={`This DAO is tracking $${daoData.onChainData.paymentCurrency}.`}
-							/>
-						</div>
+						<span class="small title">Project investors</span>
+
 						<div class="avatars-wrapper">
 							{#each mainFunderEntries as funder, i}
 								<div class={`member-${i + 1} center`}>

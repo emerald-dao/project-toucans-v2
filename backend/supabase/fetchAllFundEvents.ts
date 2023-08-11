@@ -8,6 +8,8 @@ export async function fetchAllFundEvents() {
       project_id,
       data,
       timestamp,
+      type,
+      transaction_id,
       projects!inner (
         contract_address,
         name,

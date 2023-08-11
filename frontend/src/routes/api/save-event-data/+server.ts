@@ -4,6 +4,7 @@ import { env as PrivateEnv } from '$env/dynamic/private';
 import { env as PublicEnv } from '$env/dynamic/public';
 import type { TransactionStatusObject } from '@onflow/fcl';
 import * as fcl from '@onflow/fcl';
+import { fetchFlowPrice } from '$lib/utilities/fetchFlowPrice';
 
 const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
 
@@ -53,16 +54,41 @@ export async function POST({ request }) {
 		}
 
 		const { projectId, amounts, ...rest } = event.data;
+		const eventType = event.type.substring(27);
 
-		const { error } = await supabase.from('events').insert({
-			project_id: projectId,
-			type: event.type.substring(27),
-			data: rest,
-			transaction_id: transactionId
-		});
+		// if its a donate or purchase event, save it differently
+		if (eventType === 'Donate' || eventType === 'Purchase') {
+			let amount = 0;
+			if (rest.tokenSymbol === 'FLOW') {
+				const flowPrice = await fetchFlowPrice();
+				amount = Math.round(Number(rest.amount) * flowPrice * 100) / 100
+			} else if (rest.tokenSymbol === 'USDC') {
+				amount = Math.round(Number(rest.amount) * 100) / 100
+			}
 
-		if (error) {
-			return json({ success: false, error: 'This transaction has already been added.' });
+			const { error } = await supabase.rpc('save_fund', {
+				_project_id: projectId,
+				_type: eventType,
+				_data: rest,
+				_transaction_id: transactionId,
+				_funder: rest.by,
+				_usd_amount: amount
+			});
+
+			if (error) {
+				return json({ success: false, error: 'This transaction has already been added.' });
+			}
+		} else {
+			const { error } = await supabase.from('events').insert({
+				project_id: projectId,
+				type: eventType,
+				data: rest,
+				transaction_id: transactionId
+			});
+
+			if (error) {
+				return json({ success: false, error: 'This transaction has already been added.' });
+			}
 		}
 
 		return json({ success: true });

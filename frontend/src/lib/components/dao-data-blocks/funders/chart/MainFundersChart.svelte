@@ -6,7 +6,7 @@
 
 	export let daoData: DAOProject;
 
-	const mainFunders = Object.entries(daoData.onChainData.funders)
+	const mainFunders = Object.entries(daoData.funding.funders)
 		.sort((a, b) => Number(b[1]) - Number(a[1]))
 		.slice(0, 6);
 	const mainFundersAccounts = mainFunders.map((holder) => holder[0]);

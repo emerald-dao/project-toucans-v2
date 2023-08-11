@@ -5,7 +5,7 @@
 
 	export let address: string;
 	export let balance: string;
-	export let tokenSymbol: string;
+	export let tokenSymbol: string | null = null;
 	export let findProfile: FindProfile | undefined = undefined;
 </script>
 
@@ -27,13 +27,23 @@
 			<span class="holder-name">{address}</span>
 		{/if}
 	</div>
-	<Currency
-		amount={Number(balance)}
-		currency={tokenSymbol}
-		color="heading"
-		fontSize="var(--font-size-0)"
-		decimalNumbers={2}
-	/>
+	{#if tokenSymbol}
+		<Currency
+			amount={Number(balance)}
+			currency={tokenSymbol}
+			color="heading"
+			fontSize="var(--font-size-0)"
+			decimalNumbers={2}
+		/>
+	{:else}
+		<Currency
+			amount={Number(balance)}
+			moneyPrefix={true}
+			color="heading"
+			fontSize="var(--font-size-0)"
+			decimalNumbers={2}
+		/>
+	{/if}
 </div>
 
 <style type="scss">

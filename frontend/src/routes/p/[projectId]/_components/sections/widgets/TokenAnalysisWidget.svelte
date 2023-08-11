@@ -17,16 +17,15 @@
 	async function calculateFundingData(): Promise<FundingData> {
 		const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
 
-		let numFunders, totalFunding;
+		let numFunders;
 
-		numFunders = totalFunding = 0;
+		numFunders = 0;
 
-		for (const funder in daoData.onChainData.funders) {
+		for (const funder in daoData.funding.funders) {
 			numFunders++;
-			totalFunding += Number(daoData.onChainData.funders[funder]);
 		}
 
-		let averageFunding = totalFunding / numFunders;
+		let averageFunding = daoData.funding.total_funding / numFunders;
 
 		isNaN(averageFunding) ? (averageFunding = 0) : null;
 

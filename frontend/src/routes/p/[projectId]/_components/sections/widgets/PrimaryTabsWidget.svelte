@@ -11,15 +11,7 @@
 <div class="card">
 	<Tabs>
 		<TabList>
-			<Tab>
-				<div class="flex">
-					Main Funders
-					<TooltipIcon
-						width={0.7}
-						tooltip={`This DAO is tracking $${daoData.onChainData.paymentCurrency}.`}
-					/>
-				</div>
-			</Tab>
+			<Tab>Main Funders</Tab>
 			{#if daoData.hasToken}
 				<Tab>Main Holders</Tab>
 				<Tab>Liquidity Pools</Tab>

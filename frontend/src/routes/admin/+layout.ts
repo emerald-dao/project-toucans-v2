@@ -7,6 +7,8 @@ import { get } from 'svelte/store';
 import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 import { network } from '$flow/config';
+import { fetchDaoFundingStats } from '$lib/utilities/api/supabase/fetchDaoFundingStats';
+import { fetchDaoFunders } from '$lib/utilities/api/supabase/fetchDaoFunders';
 
 export const ssr = false;
 
@@ -31,12 +33,18 @@ export const load: LayoutLoad = async ({ depends }) => {
 						project.owner,
 						project.project_id
 					);
+					const funding = await fetchDaoFundingStats(project.project_id);
+					const funders = (await fetchDaoFunders(project.project_id)).reduce(
+						(obj, item) => Object.assign(obj, { [item.address]: item.amount }),
+						{}
+					);
 
 					return {
 						generalInfo: project,
 						onChainData,
 						events: events.reverse(),
-						hasToken: project.contract_address !== null
+						hasToken: project.contract_address !== null,
+						funding: { ...funding, funders }
 					};
 				})
 			)

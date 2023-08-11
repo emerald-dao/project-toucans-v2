@@ -30,8 +30,7 @@ async function gatherTrendingProjects() {
   const WEEK_AGO = new Date(new Date().setDate((new Date()).getDate() - 7));
 
   // shows activity on the platform
-  // const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
-  const fundEvents = await fetchAllFundEvents();
+  const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
   const proposalEvents = (await fetchAllProposals());
   const allProjects = await fetchAllProjects();
   // project_id => { contract_address, owner, token_symbol }
@@ -48,7 +47,6 @@ async function gatherTrendingProjects() {
     projects[project_id] = {
       project_id,
       week_funding: 0,
-      total_funding: 0,
       total_supply: null,
       payment_currency: '',
       num_holders: 0,
@@ -59,9 +57,7 @@ async function gatherTrendingProjects() {
       price: null,
       treasury_value: null,
       volume_24h,
-      tvl,
-      // chart data
-      numbers: []
+      tvl
     }
     if (contract_address && token_symbol) {
       addressList[project_id] = { owner, contract_address, token_symbol };
@@ -95,6 +91,7 @@ async function gatherTrendingProjects() {
     return null;
   }
 
+  // for last weeks funding
   for (const event of fundEvents) {
     const usdAmount = event.data.tokenSymbol === 'USDC'
       ? Number(event.data.amount)
@@ -102,13 +99,8 @@ async function gatherTrendingProjects() {
         ? Number(event.data.amount * flowPrice)
         : 0;
 
-    if (usdAmount > 0) {
-      projects[event.project_id].total_funding += usdAmount;
-      projects[event.project_id].numbers.push(projects[event.project_id].total_funding);
-
-      if (new Date(event.timestamp) > WEEK_AGO) {
-        projects[event.project_id].week_funding += usdAmount;
-      }
+    if (usdAmount > 0 && (new Date(event.timestamp) > WEEK_AGO)) {
+      projects[event.project_id].week_funding += usdAmount;
     }
   }
 
@@ -129,7 +121,6 @@ async function gatherTrendingProjects() {
       projects[projectId].price = roundToUSDPrice(calcTokenPrice[paymentCurrency](pairInfo));
     }
 
-    projects[projectId].total_funding = roundToUSDPrice(projects[projectId].total_funding);
     projects[projectId].week_funding = roundToUSDPrice(projects[projectId].week_funding);
 
     if (paymentCurrency === 'FLOW') {
@@ -159,75 +150,41 @@ async function gatherTrendingProjects() {
   // console.log('Error inserting rankings', InsertError);
 }
 
+// async function testing() {
+//   const { data, error } = await supabase.rpc('save_fund', { _project_id: 'EmeraldCity', _usd_amount: '10.0', _transaction_id: '12345', _data: { by: '0x01', amount: '20.0' }, _type: 'Donate', _funder: '0x01' })
+//   console.log(error)
+//   console.log(data)
+// }
+
+// testing();
+
+async function refillUserFunding() {
+  const allFundEvents = await fetchAllFundEvents();
+  const flowPrice = await fetchFlowPrice();
+
+  for (const fundEvent of allFundEvents) {
+    if (fundEvent.project_id === 'LahainaRelief') {
+      console.log(fundEvent)
+    }
+    let amount = 0;
+    if (fundEvent.data.tokenSymbol === 'FLOW') {
+      amount = Math.round(Number(fundEvent.data.amount) * flowPrice * 100) / 100
+    } else if (fundEvent.data.tokenSymbol === 'USDC') {
+      amount = Math.round(Number(fundEvent.data.amount) * 100) / 100
+    }
+    const { error } = await supabase.rpc('save_fund_without_event', {
+      _project_id: fundEvent.project_id,
+      _funder: fundEvent.data.by,
+      _usd_amount: amount
+    });
+    console.log(error);
+  }
+}
+
+// refillUserFunding();
+
 // gatherTrendingProjects();
 cron.schedule('*/10 * * * *', () => {
   gatherTrendingProjects();
   console.log('executing ranking task');
 });
-
-// const eventIdentifierPrefix = `A.${process.env.TOUCANS_CONTRACT_ADDRESS.slice(2)}.Toucans.`;
-
-// fcl.events(`${eventIdentifierPrefix}NewFundingCycle`).subscribe((event) => {
-//   const { projectId, ...rest } = event;
-//   appendAction(projectId, rest, 'NewFundingCycle');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}Purchase`).subscribe((event) => {
-//   const { projectId, ...rest } = event;
-//   appendAction(projectId, rest, 'Purchase');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}Mint`).subscribe((event) => {
-//   const { projectId, ...rest } = event;
-//   appendAction(projectId, rest, 'Mint');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}BatchMint`).subscribe((event) => {
-//   const { projectId, amounts, ...rest } = event;
-//   appendAction(projectId, rest, 'BatchMint');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}Donate`).subscribe((event) => {
-//   const { projectId, ...rest } = event;
-//   appendAction(projectId, rest, 'Donate');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}Withdraw`).subscribe((event) => {
-//   const { projectId, ...rest } = event;
-//   appendAction(projectId, rest, 'Withdraw');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}BatchWithdraw`).subscribe((event) => {
-//   const { projectId, amounts, ...rest } = event;
-//   appendAction(projectId, rest, 'BatchWithdraw');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}UpdateThreshold`).subscribe((event) => {
-//   const { projectId, ...rest } = event;
-
-//   appendAction(projectId, rest, 'UpdateThreshold');
-// });
-
-// fcl.events(`${eventIdentifierPrefix}AddSigner`).subscribe(async (event) => {
-//   const { projectId, signer } = event;
-
-//   appendAction(projectId, { signer }, 'AddSigner')
-// });
-
-// fcl.events(`${eventIdentifierPrefix}RemoveSigner`).subscribe((event) => {
-//   const { projectId, signer } = event;
-
-//   appendAction(projectId, { signer }, 'RemoveSigner')
-// });
-
-// async function appendAction(projectId, data, type) {
-//   console.log(type + ' Action: ', data);
-//   const result = await supabase.from('events').insert({
-//     project_id: projectId,
-//     type,
-//     data
-//   });
-//   if (result.error) {
-//     console.log('Result Error:', result);
-//   }
-// }

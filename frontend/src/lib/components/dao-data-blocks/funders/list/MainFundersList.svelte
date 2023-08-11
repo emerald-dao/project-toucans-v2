@@ -5,7 +5,7 @@
 
 	export let daoData: DAOProject;
 
-	$: fundersEntries = Object.entries(daoData.onChainData.funders);
+	$: fundersEntries = Object.entries(daoData.funding.funders);
 	$: mainFunderEntries = fundersEntries
 		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
 		.slice(0, 10);
@@ -21,20 +21,11 @@
 	{#if mainFunderEntries.length > 0}
 		{#await fetchFindProfiles()}
 			{#each fundersEntries as [address, balance]}
-				<UserBalanceListElement
-					{address}
-					{balance}
-					tokenSymbol={daoData.onChainData.paymentCurrency}
-				/>
+				<UserBalanceListElement {address} {balance} />
 			{/each}
 		{:then findProfiles}
 			{#each fundersEntries as [address, balance]}
-				<UserBalanceListElement
-					findProfile={findProfiles[address]}
-					{address}
-					{balance}
-					tokenSymbol={daoData.onChainData.paymentCurrency}
-				/>
+				<UserBalanceListElement findProfile={findProfiles[address]} {address} {balance} />
 			{/each}
 		{/await}
 	{:else}
