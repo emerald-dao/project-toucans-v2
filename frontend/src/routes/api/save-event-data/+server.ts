@@ -57,7 +57,7 @@ export async function POST({ request }) {
 		const eventType = event.type.substring(27);
 
 		// if its a donate or purchase event, save it differently
-		if (eventType === 'Donate' || eventType === 'Purchase') {
+		if ((eventType === 'Donate' || eventType === 'Purchase') && (rest.tokenSymbol === 'FLOW' || rest.tokenSymbol === 'USDC')) {
 			let amount = 0;
 			if (rest.tokenSymbol === 'FLOW') {
 				const flowPrice = await fetchFlowPrice();
