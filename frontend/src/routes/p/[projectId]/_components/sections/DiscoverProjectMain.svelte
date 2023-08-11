@@ -36,8 +36,8 @@
 				<ProjectFundingWidget {daoData} />
 				{#if daoData.hasToken}
 					<TokenAnalysisWidget {daoData} />
-				{:else}
-					<MainFundersWidget {daoData} />
+					<!-- {:else}
+					<MainFundersWidget {daoData} /> -->
 				{/if}
 			</div>
 		</div>
@@ -59,9 +59,7 @@
 					: null}
 			/>
 		{/if}
-		{#if daoData.hasToken}
-			<ProjectCharts {daoData} />
-		{/if}
+		<ProjectCharts {daoData} />
 		<ProjectLists {daoData} />
 	</div>
 {/if}
