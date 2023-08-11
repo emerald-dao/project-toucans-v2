@@ -13,6 +13,7 @@ import { fetchAllProposals } from './supabase/fetchAllProposals';
 import { fetchTokenInfo } from './functions/fetchTokenInfo';
 import cron from "node-cron";
 import { fetchAllRankings } from './supabase/fetchAllRankings';
+import { fetchAllFundEvents } from './supabase/fetchAllFundEvents';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,7 +30,8 @@ async function gatherTrendingProjects() {
   const WEEK_AGO = new Date(new Date().setDate((new Date()).getDate() - 7));
 
   // shows activity on the platform
-  const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
+  // const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
+  const fundEvents = await fetchAllFundEvents();
   const proposalEvents = (await fetchAllProposals());
   const allProjects = await fetchAllProjects();
   // project_id => { contract_address, owner, token_symbol }
@@ -86,11 +88,27 @@ async function gatherTrendingProjects() {
     return null;
   }
 
+  // fetch flow price
+  const flowPrice = await fetchFlowPrice();
+  if (!flowPrice) {
+    console.log('Invalid flow price.')
+    return null;
+  }
+
   for (const event of fundEvents) {
-    if (event.data.tokenSymbol === projectBlockchainData[event.project_id].paymentCurrency) {
-      const addedTotal = (projects[event.project_id].week_funding) + Number(event.data.amount)
-      projects[event.project_id].numbers.push(addedTotal);
-      projects[event.project_id].week_funding = addedTotal;
+    const usdAmount = event.data.tokenSymbol === 'USDC'
+      ? Number(event.data.amount)
+      : event.data.tokenSymbol === 'FLOW'
+        ? Number(event.data.amount * flowPrice)
+        : 0;
+
+    if (usdAmount > 0) {
+      projects[event.project_id].total_funding += usdAmount;
+      projects[event.project_id].numbers.push(projects[event.project_id].total_funding);
+
+      if (new Date(event.timestamp) > WEEK_AGO) {
+        projects[event.project_id].week_funding += usdAmount;
+      }
     }
   }
 
@@ -98,17 +116,10 @@ async function gatherTrendingProjects() {
     projects[event.project_id].num_proposals++;
   }
 
-  // fetch flow price
-  const flowPrice = await fetchFlowPrice();
-  if (!flowPrice) {
-    console.log('Invalid flow price.')
-    return null;
-  }
   for (const projectId in projectBlockchainData) {
     const { paymentCurrency, maxSupply, holders, funders, numProposals, totalSupply, pairInfo, treasuryBalances, totalFunding } = projectBlockchainData[projectId];
     projects[projectId].total_supply = totalSupply;
     projects[projectId].max_supply = maxSupply;
-    projects[projectId].total_funding = totalFunding;
     projects[projectId].payment_currency = paymentCurrency;
     projects[projectId].num_holders = holders.length;
     projects[projectId].num_participants = holders.concat(funders.filter((item) => holders.indexOf(item) < 0)).length;
@@ -118,9 +129,10 @@ async function gatherTrendingProjects() {
       projects[projectId].price = roundToUSDPrice(calcTokenPrice[paymentCurrency](pairInfo));
     }
 
+    projects[projectId].total_funding = roundToUSDPrice(projects[projectId].total_funding);
+    projects[projectId].week_funding = roundToUSDPrice(projects[projectId].week_funding);
+
     if (paymentCurrency === 'FLOW') {
-      projects[projectId].total_funding = roundToUSDPrice(projects[projectId].total_funding * flowPrice);
-      projects[projectId].week_funding = roundToUSDPrice(projects[projectId].week_funding * flowPrice);
       if (projects[projectId].price) {
         projects[projectId].price = roundToUSDPrice(projects[projectId].price * flowPrice);
       }

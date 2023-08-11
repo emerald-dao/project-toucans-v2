@@ -11,15 +11,16 @@
 	<div class="column-1 primary-wrapper">
 		<p class="xsmall">Project Total Funding</p>
 		<Currency
-			amount={daoData.onChainData.totalFunding}
-			currency={daoData.onChainData.paymentCurrency}
+			amount={daoData.funding.total_funding}
+			moneyPrefix={true}
 			fontSize="var(--font-size-5)"
 			color="heading"
+			decimalNumbers={2}
 		/>
 	</div>
 	<div class="secondary-wrapper">
 		<RecentFundingChart {daoData} />
-		<span class="w-medium">7D Funding</span>
+		<span class="w-medium">Funding</span>
 	</div>
 </div>
 

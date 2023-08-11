@@ -7,6 +7,7 @@ import { fetchProjectDatabaseData } from '$lib/utilities/api/supabase/fetchProje
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 import { fetchDaoVotes } from '$lib/utilities/api/supabase/fetchDaoVotes';
 import { fetchDaoRecentFunding } from '$lib/utilities/api/supabase/fetchDaoRecentFunding';
+import { fetchDaoFundingStats } from '$lib/utilities/api/supabase/fetchDaoFundingStats';
 
 export const ssr = false;
 
@@ -16,6 +17,7 @@ export const load: PageLoad = async ({ params, depends }) => {
 	const generalInfo = await fetchProjectDatabaseData(params.projectId);
 	const userAddress = get(user).addr;
 	const hasToken = generalInfo.contract_address !== null;
+	const funding = await fetchDaoFundingStats(generalInfo.project_id);
 
 	if (hasToken) {
 		return {
@@ -38,7 +40,7 @@ export const load: PageLoad = async ({ params, depends }) => {
 				)
 				: true,
 			hasToken,
-			recentFunding: await fetchDaoRecentFunding(generalInfo.project_id)
+			funding
 		};
 	} else {
 		return {
@@ -51,7 +53,7 @@ export const load: PageLoad = async ({ params, depends }) => {
 			events: (await fetchProjectEvents(generalInfo.project_id)).reverse(),
 			votes: await fetchDaoVotes(generalInfo.project_id),
 			hasToken,
-			recentFunding: fetchDaoRecentFunding(generalInfo.project_id)
+			funding
 		};
 	}
 };

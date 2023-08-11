@@ -5,16 +5,16 @@
 	export let daoData: DAOProject;
 </script>
 
-{#if daoData.recentFunding.length > 1}
+{#if daoData.funding.numbers.length > 1}
 	<LineChart
 		title={`${daoData.generalInfo.name}-chart`}
-		chartData={daoData.recentFunding}
-		labels={Array(daoData.recentFunding.length).fill('')}
+		chartData={daoData.funding.numbers}
+		labels={Array(daoData.funding.numbers.length).fill('')}
 	/>
 {:else}
 	<div class="no-funding-wrapper center">
 		<span class="xsmall">
-			<em> No funding received in the last 7 days </em>
+			<em> No funding received </em>
 		</span>
 	</div>
 {/if}

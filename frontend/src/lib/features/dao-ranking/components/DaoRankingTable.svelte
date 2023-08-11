@@ -15,7 +15,7 @@
 				<th>Total Funding</th>
 				<th># Proposals</th>
 				<th># Participants</th>
-				<th>7d Funding</th>
+				<th>Funding</th>
 			</tr>
 		</thead>
 		<tbody>

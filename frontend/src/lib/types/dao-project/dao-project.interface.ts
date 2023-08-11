@@ -16,7 +16,10 @@ export interface DAOProject {
 	userBalance?: number;
 	vaultSetup: boolean;
 	hasToken: boolean;
-	recentFunding: number[];
+	funding: {
+		numbers: number[];
+		total_funding: number;
+	}
 }
 
 export interface DaoDatabaseData {
@@ -39,7 +42,6 @@ export interface DaoBlockchainData {
 	projectId: string;
 	tokenType: TokenInfo;
 	currentFundingCycle: FundingCycle | null;
-	totalFunding: string;
 	editDelay: string;
 	extra: {
 		[key: string]: string;
