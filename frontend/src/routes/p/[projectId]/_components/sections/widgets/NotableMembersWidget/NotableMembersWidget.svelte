@@ -2,7 +2,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import NotableMemberAvatar from './atoms/NotableMemberAvatar.svelte';
-	import { Currency } from '@emerald-dao/component-library';
+	import { Currency, TooltipIcon } from '@emerald-dao/component-library';
 	import { getAccountFromDiscordBatch } from '$flow/utils';
 
 	export let daoData: DAOProject;
@@ -47,7 +47,13 @@
 			{#if mainFunderEntries.length > 0}
 				<div class="card prize-wrapper">
 					<div class="column-4 align-center">
-						<span class="small title">Project investors</span>
+						<div class="flex">
+							<span class="small title">Project investors</span>
+							<TooltipIcon
+								width={0.7}
+								tooltip={`This DAO is tracking $${daoData.onChainData.paymentCurrency}.`}
+							/>
+						</div>
 						<div class="avatars-wrapper">
 							{#each mainFunderEntries as funder, i}
 								<div class={`member-${i + 1} center`}>
@@ -105,6 +111,12 @@
 {/if}
 
 <style lang="scss">
+	.flex {
+		display: flex;
+		gap: 5px;
+		justify-content: center;
+		align-items: center;
+	}
 	.main-wrapper {
 		display: flex;
 		flex-direction: column;
