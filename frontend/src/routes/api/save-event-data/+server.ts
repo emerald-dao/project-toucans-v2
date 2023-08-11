@@ -5,6 +5,7 @@ import { env as PublicEnv } from '$env/dynamic/public';
 import type { TransactionStatusObject } from '@onflow/fcl';
 import * as fcl from '@onflow/fcl';
 import { fetchFlowPrice } from '$lib/utilities/fetchFlowPrice';
+import { ECurrencies } from '$lib/types/common/enums';
 
 const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
 
@@ -57,7 +58,7 @@ export async function POST({ request }) {
 		const eventType = event.type.substring(27);
 
 		// if its a donate or purchase event, save it differently
-		if ((eventType === 'Donate' || eventType === 'Purchase') && (rest.tokenSymbol === 'FLOW' || rest.tokenSymbol === 'USDC')) {
+		if ((eventType === 'Donate' || eventType === 'Purchase') && (rest.tokenSymbol === ECurrencies.FLOW || rest.tokenSymbol === ECurrencies.USDC)) {
 			let amount = 0;
 			if (rest.tokenSymbol === 'FLOW') {
 				const flowPrice = await fetchFlowPrice();
