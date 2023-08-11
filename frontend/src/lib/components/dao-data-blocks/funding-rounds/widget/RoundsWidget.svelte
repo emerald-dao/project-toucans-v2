@@ -126,11 +126,6 @@
 </div>
 
 <style type="scss">
-	.flex {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
 	.card {
 		background-color: var(--clr-background-secondary);
 	}

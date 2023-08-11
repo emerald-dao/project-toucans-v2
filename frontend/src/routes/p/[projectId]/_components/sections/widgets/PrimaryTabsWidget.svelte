@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LiquidityPoolsChart from '$lib/components/dao-data-blocks/pools/chart/LiquidityPoolsChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
+	import { Tab, TabList, TabPanel, Tabs, TooltipIcon } from '@emerald-dao/component-library';
 	import MainHoldersLeaderboard from '$components/dao-data-blocks/holders/leaderboard/MainHoldersLeaderboard.svelte';
 	import MainFundersLeaderboard from '$components/dao-data-blocks/funders/leaderboard/MainFundersLeaderboard.svelte';
 
@@ -11,7 +11,15 @@
 <div class="card">
 	<Tabs>
 		<TabList>
-			<Tab>Main Funders</Tab>
+			<Tab>
+				<div class="flex">
+					Main Funders
+					<TooltipIcon
+						width={0.7}
+						tooltip={`This DAO is tracking $${daoData.onChainData.paymentCurrency}.`}
+					/>
+				</div>
+			</Tab>
 			{#if daoData.hasToken}
 				<Tab>Main Holders</Tab>
 				<Tab>Liquidity Pools</Tab>

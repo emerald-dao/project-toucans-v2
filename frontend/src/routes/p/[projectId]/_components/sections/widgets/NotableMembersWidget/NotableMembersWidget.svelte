@@ -111,12 +111,6 @@
 {/if}
 
 <style lang="scss">
-	.flex {
-		display: flex;
-		gap: 5px;
-		justify-content: center;
-		align-items: center;
-	}
 	.main-wrapper {
 		display: flex;
 		flex-direction: column;
