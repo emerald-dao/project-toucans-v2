@@ -54,7 +54,7 @@
 								<div class={`member-${i + 1} center`}>
 									<NotableMemberAvatar address={funder[0]} position={i + 1}>
 										<span class="xsmall"> Total invested </span>
-										<Currency amount={funder[1]} currency={daoData.onChainData.paymentCurrency} />
+										<Currency amount={funder[1]} moneyPrefix={true} decimalNumbers={2} />
 									</NotableMemberAvatar>
 								</div>
 							{/each}
