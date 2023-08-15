@@ -18,7 +18,9 @@
 			<h3>{project.name}</h3>
 		</div>
 		<div class="row-3 align-end">
-			<Label size="small" color="tertiary" hasBorder={false}>{`$${project.token_symbol}`}</Label>
+			{#if project.token_symbol}
+				<Label size="small" color="tertiary" hasBorder={false}>{`$${project.token_symbol}`}</Label>
+			{/if}
 			<div class="row-2 align-end">
 				{#if project.twitter}
 					<a
