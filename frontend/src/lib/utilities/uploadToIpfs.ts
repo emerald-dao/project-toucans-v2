@@ -8,7 +8,7 @@ const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 const uploadToIPFS = async (file: File) => {
 	try {
 		const cid = await client.storeBlob(file);
-		return `https://nftstorage.link/ipfs/${cid}`;
+		return `https://ipfs.io/ipfs/${cid}`;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Error uploading image to IPFS');
