@@ -37,7 +37,8 @@ import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasProjectVaultSetupScript from './cadence/scripts/has_project_vault_setup.cdc?raw';
-import canReceiveTokenScript from './cadence/scripts/can_receive_token.cdc?raw';
+import canReceiveToucansTokenScript from './cadence/scripts/can_receive__toucans_token.cdc?raw';
+import canReceiveProjectTokenScript from './cadence/scripts/can_receive__project_token.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
@@ -845,15 +846,13 @@ export const hasProjectVaultSetup = async (
 	}
 };
 
-export const canReceiveToken = async (
-	contractAddress: string,
-	projectId: string,
+const canReceiveToucansToken = async (
 	userAddress: string,
 	tokenSymbol: ECurrencies | string
 ) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(canReceiveTokenScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(canReceiveToucansTokenScript),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
 				arg(tokenSymbol, t.String)
@@ -861,9 +860,39 @@ export const canReceiveToken = async (
 		});
 		return response;
 	} catch (e) {
-		console.log('Error in canReceiveToken');
-		console.log(e);
+		return false;
 	}
+};
+
+const canReceiveProjectToken = async (
+	contractAddress: string,
+	projectId: string,
+	userAddress: string,
+	tokenSymbol: ECurrencies | string
+) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(canReceiveProjectTokenScript, projectId, contractAddress),
+			args: (arg, t) => [
+				arg(userAddress, t.Address),
+				arg(tokenSymbol, t.String)
+			]
+		});
+		return response;
+	} catch (e) {
+		return false;
+	}
+};
+
+export const canReceiveToken = async (
+	contractAddress: string,
+	projectId: string,
+	userAddress: string,
+	tokenSymbol: ECurrencies | string
+) => {
+	const pT = await canReceiveProjectToken(contractAddress, projectId, userAddress, tokenSymbol);
+	const tT = await canReceiveToucansToken(userAddress, tokenSymbol);
+	return pT || tT;
 };
 
 const getCatalogByCollectionIDs = async (group: string[]) => {
