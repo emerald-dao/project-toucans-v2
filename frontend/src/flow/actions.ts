@@ -846,7 +846,7 @@ export const hasProjectVaultSetup = async (
 	}
 };
 
-const canReceiveToucansToken = async (
+export const canReceiveToucansToken = async (
 	userAddress: string,
 	tokenSymbol: ECurrencies | string
 ) => {
@@ -864,7 +864,7 @@ const canReceiveToucansToken = async (
 	}
 };
 
-const canReceiveProjectToken = async (
+export const canReceiveProjectToken = async (
 	contractAddress: string,
 	projectId: string,
 	userAddress: string,
@@ -882,17 +882,6 @@ const canReceiveProjectToken = async (
 	} catch (e) {
 		return false;
 	}
-};
-
-export const canReceiveToken = async (
-	contractAddress: string,
-	projectId: string,
-	userAddress: string,
-	tokenSymbol: ECurrencies | string
-) => {
-	const pT = await canReceiveProjectToken(contractAddress, projectId, userAddress, tokenSymbol);
-	const tT = await canReceiveToucansToken(userAddress, tokenSymbol);
-	return pT || tT;
 };
 
 const getCatalogByCollectionIDs = async (group: string[]) => {

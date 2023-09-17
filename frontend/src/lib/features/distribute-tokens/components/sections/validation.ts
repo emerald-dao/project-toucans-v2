@@ -1,5 +1,5 @@
-import { canReceiveToken } from '$flow/actions';
-import type { ECurrencies } from '$lib/types/common/enums';
+import { canReceiveProjectToken, canReceiveToken, canReceiveToucansToken } from '$flow/actions';
+import { ECurrencies } from '$lib/types/common/enums';
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
 
@@ -32,10 +32,16 @@ const validationSuite = create((data: Distribution, currentField, availableBalan
 	});
 });
 
-const checkAddress = async (address: string, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string) => {
+const checkAddress = async (address: string, projectOwner: string, projectId: string, currencyToDistribute: ECurrencies | string,) => {
 	return new Promise((resolve, reject) => {
 		setTimeout(async () => {
-			const success = await canReceiveToken(projectOwner, projectId, address, currencyToDistribute)
+			let success;
+			if (currencyToDistribute == ECurrencies.FLOW || currencyToDistribute == ECurrencies.USDC) {
+				success = await canReceiveToucansToken(address, currencyToDistribute)
+			} else {
+				success = await canReceiveProjectToken(projectOwner, projectId, address, currencyToDistribute)
+			}
+
 			if (success) {
 				resolve(true);
 			} else {
