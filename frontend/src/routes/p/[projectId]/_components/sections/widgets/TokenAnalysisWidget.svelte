@@ -60,7 +60,9 @@
 				<div class="column-1 align-start">
 					<div class="row-2 align-center">
 						<p class="xsmall">Total Supply</p>
-						<TooltipIcon width={0.6} tooltip="The total amount of minted tokens." />
+						<div class="tooltip-mobile-display">
+							<TooltipIcon width={0.6} tooltip="The total amount of minted tokens." />
+						</div>
 					</div>
 					<Currency
 						amount={daoData.onChainData.totalSupply}
@@ -72,10 +74,12 @@
 				<div class="column-1 align-start">
 					<div class="row-2 align-center">
 						<p class="xsmall">Max Supply</p>
-						<TooltipIcon
-							width={0.6}
-							tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
-						/>
+						<div class="tooltip-mobile-display">
+							<TooltipIcon
+								width={0.6}
+								tooltip="The maximum # of tokens allowed. Please note that the project owner could edit this if they wish."
+							/>
+						</div>
 					</div>
 					{#if daoData.onChainData.maxSupply}
 						<Currency
@@ -136,6 +140,13 @@
 </div>
 
 <style lang="scss">
+	.tooltip-mobile-display {
+		display: none;
+		@include mq('small') {
+			display: block;
+		}
+	}
+
 	.card {
 		padding: 0;
 		flex: 1;
