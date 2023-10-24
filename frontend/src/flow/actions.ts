@@ -26,6 +26,7 @@ import updateMultiSigTx from './cadence/transactions/treasury-actions/update_mul
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
 import batchMintTokensTx from './cadence/transactions/treasury-actions/batch_mint_tokens.cdc?raw';
 import burnTokensTx from './cadence/transactions/treasury-actions/burn_tokens.cdc?raw';
+import lockTokensTx from './cadence/transactions/treasury-actions/lock_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
 import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
 
@@ -33,6 +34,7 @@ import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?raw';
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
+import getProjectLockedTokensScript from './cadence/scripts/get_project_locked_tokens.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
@@ -57,6 +59,7 @@ import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-gen
 import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
+import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -676,6 +679,37 @@ export const burnTokensExecution = (
 	amount: string
 ) => executeTransaction(() => burnTokens(tokenSymbol, projectId, amount));
 
+const lockTokens = async (
+	tokenSymbol: string,
+	projectId: string,
+	amount: string,
+	recipient: string,
+	unlockTimeInUnixSeconds: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(lockTokensTx, projectId),
+		args: (arg, t) => [
+			arg(tokenSymbol, t.String),
+			arg(projectId, t.String),
+			arg(formatFix(amount), t.UFix64),
+			arg(recipient, t.Address),
+			arg(formatFix(unlockTimeInUnixSeconds), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const lockTokensExecution = (
+	tokenSymbol: string,
+	projectId: string,
+	amount: string,
+	recipient: string,
+	unlockTimeInUnixSeconds: string
+) => executeTransaction(() => lockTokens(tokenSymbol, projectId, amount, recipient, unlockTimeInUnixSeconds));
+
 const setUpVault = async (projectId: string, contractAddress: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(setUpVaultTx, projectId, contractAddress),
@@ -746,10 +780,7 @@ const getProjectNoTokenInfo: (
 	}
 };
 
-export const getProjectActions: (
-	owner: string,
-	projectId: string
-) => Promise<DaoBlockchainData> = async (owner, projectId) => {
+export const getProjectActions = async (owner: string, projectId: string) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectActionsScript),
@@ -758,6 +789,19 @@ export const getProjectActions: (
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectActions');
+		console.log(e);
+	}
+};
+
+export const getProjectLockedTokens: (owner: string, projectId: string) => Promise<LockedVaultDetails[]> = async (owner, projectId) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectLockedTokensScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectLockedTokensScript');
 		console.log(e);
 	}
 };
@@ -867,15 +911,13 @@ export const canReceiveToucansToken = async (
 export const canReceiveProjectToken = async (
 	contractAddress: string,
 	projectId: string,
-	userAddress: string,
-	tokenSymbol: ECurrencies | string
+	userAddress: string
 ) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(canReceiveProjectTokenScript, projectId, contractAddress),
 			args: (arg, t) => [
-				arg(userAddress, t.Address),
-				arg(tokenSymbol, t.String)
+				arg(userAddress, t.Address)
 			]
 		});
 		return response;

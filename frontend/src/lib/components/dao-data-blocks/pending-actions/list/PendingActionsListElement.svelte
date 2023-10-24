@@ -32,7 +32,8 @@
 		Mint: 'tabler:coin',
 		BatchMint: 'tabler:coin',
 		MintToTreasury: 'tabler:pig-money',
-		Burn: 'tabler:flame'
+		Burn: 'tabler:flame',
+		LockTokens: 'tabler:lock-square'
 	};
 
 	const actionTypeToText: {
@@ -46,7 +47,8 @@
 		Mint: 'Mint',
 		BatchMint: 'Batch Mint',
 		MintToTreasury: 'Mint to Treasury',
-		Burn: 'Burn'
+		Burn: 'Burn',
+		LockTokens: 'Locked Tokens'
 	};
 </script>
 

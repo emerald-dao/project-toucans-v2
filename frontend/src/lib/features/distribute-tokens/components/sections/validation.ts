@@ -39,7 +39,7 @@ const checkAddress = async (address: string, projectOwner: string, projectId: st
 			if (currencyToDistribute == ECurrencies.FLOW || currencyToDistribute == ECurrencies.USDC) {
 				success = await canReceiveToucansToken(address, currencyToDistribute)
 			} else {
-				success = await canReceiveProjectToken(projectOwner, projectId, address, currencyToDistribute)
+				success = await canReceiveProjectToken(projectOwner, projectId, address)
 			}
 
 			if (success) {
