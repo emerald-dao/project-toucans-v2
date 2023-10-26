@@ -193,6 +193,12 @@
 				"emulator": "f8d6e0586b0a20c7",
 				"mainnet": "577a3c409c5dcb5e"
 			}
+		},
+		"ToucansLockTokens": {
+			"source": "./src/flow/cadence/ToucansLockTokens.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
 		}
 	},
 	"networks": {
@@ -223,10 +229,7 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
-				"ViewResolver",
 				"FCLCrypto",
-				"NonFungibleToken",
-				"MetadataViews",
 				"FungibleTokenMetadataViews",
 				"FUSD",
 				"FIND",
@@ -240,6 +243,7 @@
 				"EmeraldIdentity",
 				"ToucansUtils",
 				"ToucansTokens",
+				"ToucansLockTokens",
 				"Toucans",
 				"ToucansActions",
 				"TestingDAO",
