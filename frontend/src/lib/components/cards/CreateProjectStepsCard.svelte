@@ -33,7 +33,7 @@
 	<h5 class="w-medium">Launch your DAO</h5>
 	<ProgressSteps {steps} direction="column-reverse" gap={1.4} />
 	<div>
-		<Button width="full-width" href="/dao-generator/generate">Create DAO</Button>
+		<Button width="full-width" href="/dao-generator">Create DAO</Button>
 		<span>By clicking above you are agreeing to our Terms & Conditions</span>
 	</div>
 </div>

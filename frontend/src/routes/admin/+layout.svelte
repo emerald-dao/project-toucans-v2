@@ -92,7 +92,7 @@
 	<section class="centered">
 		<div class="card-primary column-7 align-center">
 			<span>You don't have any DAO yet</span>
-			<Button size="large" href="/dao-generator/generate">Create DAO</Button>
+			<Button size="large" href="/dao-generator">Create DAO</Button>
 		</div>
 	</section>
 {:else}
