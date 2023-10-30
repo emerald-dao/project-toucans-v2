@@ -8,5 +8,5 @@ pub fun main(projectOwner: Address, projectId: String): [ToucansLockTokens.Locke
   
   let info = projectCollection.borrowProjectPublic(projectId: projectId)!
 
-  return info.borrowLockTokensManagerPublic()!.getLockedVaultInfos()
+  return info.borrowLockTokensManagerPublic()?.getLockedVaultInfos() ?? []
 }

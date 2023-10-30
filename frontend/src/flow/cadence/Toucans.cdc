@@ -1051,14 +1051,14 @@ pub contract Toucans {
     }
 
     access(self) fun borrowLockTokensManager(): &ToucansLockTokens.Manager? {
-      if let lockTokensManager = &self.additions["lockTokensManager"] as auth &AnyResource? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
         return lockTokensManager as! &ToucansLockTokens.Manager
       }
       return nil
     }
 
     pub fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}? {
-      if let lockTokensManager = &self.additions["lockTokensManager"] as auth &AnyResource? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
         return lockTokensManager as! &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}
       }
       return nil
