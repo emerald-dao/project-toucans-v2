@@ -43,6 +43,15 @@ const validationSuite = create(
 				enforce(data.amount).lessThan(availableBalance);
 			});
 		});
+
+		if (data.date) {
+			let currentDateToUnixTimeStamp = Math.floor(new Date().getTime() / 1000);
+			let datePickedToUnixTimeStamp = new Date(data.date).getTime() / 1000;
+
+			test('date', 'Date must be later than today', () => {
+				enforce(datePickedToUnixTimeStamp).greaterThan(currentDateToUnixTimeStamp);
+			});
+		}
 	}
 );
 

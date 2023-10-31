@@ -18,6 +18,8 @@
 	export let addToStaging: (validForm: boolean) => void;
 	export let projectOwner: string;
 	export let projectId: string;
+	export let forLockTokens: boolean = false;
+	export let lockInputsAreValid: boolean = false;
 
 	let csvFile: File[] = [];
 
@@ -45,6 +47,7 @@
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;
+
 		res = validationSuite(
 			formDist,
 			target.name,
@@ -58,11 +61,21 @@
 			addressPending = true;
 		}
 
+		if (forLockTokens) {
+			if (res.isValid()) {
+				lockInputsAreValid = true;
+			} else {
+				lockInputsAreValid = false;
+			}
+		}
+
 		(res as SuiteRunResult).done((result) => {
 			res = result;
 			addressPending = false;
 		});
 	};
+
+	let currentDate = new Date().toISOString().split('T')[0];
 </script>
 
 <div transition:fly|local={{ duration: 200, y: 30 }}>
@@ -71,7 +84,9 @@
 			<Tab>
 				<span class="xsmall"> Manual distribution </span>
 			</Tab>
-			<Tab><span class="xsmall">Bulk distribution (CSV)</span></Tab>
+			{#if !forLockTokens}
+				<Tab><span class="xsmall">Bulk distribution (CSV)</span></Tab>
+			{/if}
 		</TabList>
 		<TabPanel>
 			<form
@@ -105,14 +120,33 @@
 				>
 					<input name="amount" type="text" bind:value={formDist.amount} on:input={handleChange} />
 				</InputWrapper>
-				<Button
-					form="dist-form"
-					type="ghost"
-					color="neutral"
-					width="full-width"
-					state={res.isValid() ? 'active' : 'disabled'}
-					>Add <Icon icon="tabler:arrow-narrow-right" /></Button
-				>
+				{#if forLockTokens}
+					<InputWrapper
+						name="date"
+						label="Date"
+						errors={res.getErrors('date')}
+						isValid={res.isValid('date')}
+						><div class="date-picker-wrapper">
+							<input
+								type="date"
+								name="date"
+								bind:value={formDist.date}
+								on:change={handleChange}
+								min={currentDate}
+							/>
+						</div>
+					</InputWrapper>
+				{/if}
+				{#if !forLockTokens}
+					<Button
+						form="dist-form"
+						type="ghost"
+						color="neutral"
+						width="full-width"
+						state={res.isValid() ? 'active' : 'disabled'}
+						>Add <Icon icon="tabler:arrow-narrow-right" /></Button
+					>
+				{/if}
 			</form>
 		</TabPanel>
 		<TabPanel>
@@ -157,5 +191,16 @@
 
 	span {
 		color: inherit;
+	}
+
+	.date-picker-wrapper {
+		width: 100%;
+		input[type='date'] {
+			color: var(--clr-text-main);
+		}
+
+		input[type='date']::-webkit-calendar-picker-indicator {
+			filter: invert(50%);
+		}
 	}
 </style>

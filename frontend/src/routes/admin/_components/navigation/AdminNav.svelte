@@ -150,6 +150,18 @@
 					Overflow
 				</a>
 			{/if}
+			{#if activeDaoData.hasToken}
+				<a
+					href="/admin/lock"
+					class="sidebar-link distribute-display"
+					class:active={$page.url.pathname.includes('lock')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:lock-dollar" />
+					</div>
+					Lock
+				</a>
+			{/if}
 		</div>
 	</div>
 	<div class="column-6">
@@ -204,6 +216,7 @@
 			border-radius: var(--radius-1);
 			background-color: var(--clr-background-secondary);
 			position: relative;
+			margin-top: var(--space-4);
 
 			.icon-wrapper {
 				position: absolute;
