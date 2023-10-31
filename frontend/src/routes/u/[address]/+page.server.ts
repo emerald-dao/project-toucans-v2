@@ -44,7 +44,13 @@ const getUserVaults = async (address: string): Promise<Vault[]> => {
 			});
 		}
 	}
-
+	vaults.push({daoData:{name: "Testing DAO",
+						logoUrl: "https://nftstorage.link/ipfs/bafkreiersm3huyrmo3iv5twp64r7avhlvvd4m3ybdndhjohpnxzmhrphnq",
+						tokenSymbol:"TEST",
+						contractName:"TestingDAO"},
+				balance:100.00000000,
+				tokenValue:1.000
+	})
 	// sort daos by highest value
 	vaults.sort((a, b) => {
 		return b.balance * b.tokenValue - a.balance * a.tokenValue;
