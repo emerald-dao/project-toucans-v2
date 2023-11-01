@@ -6,47 +6,33 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import TransactionsList from '../../atoms/TransactionsList.svelte';
-	import { getLockedTokens } from '../../../actions/getLockedTokens'
+	import { getLockedTokens } from '../../../actions/getLockedTokens';
 	import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
 	import { onMount } from 'svelte';
-	import LockedTransactionList from '../../atoms/ProjectLockTokens.svelte';
-	
+	import ProjectLockTokens from '../../atoms/ProjectLockTokens.svelte';
+	import { page } from '$app/stores';
+
 	const userData: UserData = getContext('userData');
 	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
+
 	let projectLockTokens: LockedVaultDetails[] = [];
-	const fechaObjetivo = new Date('2023-10-31T18:23:00');
-	const tiempoUnixObjetivo = Math.floor(fechaObjetivo.getTime() / 1000) + "";
 
 	$: vault = $selectedVaultStore !== null ? userData.vaults[$selectedVaultStore] : null;
-	
+
 	$: transactions =
 		$selectedVaultStore !== null
 			? userData.transactions.filter(
 					(transaction) => transaction.project_id === vault?.daoData.contractName
 			  )
 			: null;
-		
-			projectLockTokens = [{recipient:"Hola", 
-							unlockTime:tiempoUnixObjetivo,
-							tokenInfo:{
-								contractName: 'no se',
-								contractAddress: 'no se',
-								tokenType: "FLOW",
-								receiverPath: "NOSE",
-								symbol: "TEST",
-								publicPath: "SDSD",
-								storagePath: "SDS",
-								image: "SD"
-						}}
-					]
+
 	onMount(async () => {
-		if(vault)
-		{
-    		// const response = await getLockedTokens(vault)
-			// projectLockTokens = response;
-			// console.log("locked:",response);
+		if (vault) {
+			const response = await getLockedTokens(vault);
+			projectLockTokens = response.filter((obj) => obj.recipient === $page.params.address);
 		}
-  	});
+	});
+
 	const handleCloseVault = () => {
 		selectedVaultStore.set(null);
 	};
@@ -120,14 +106,17 @@
 				</div>
 			</div>
 			<div class="events-wrapper">
-			{#if transactions}
+				{#if transactions}
 					<TransactionsList events={transactions} />
-			{/if}
-			{#if projectLockTokens}
-				<div style="padding-top:20px;">
-					<LockedTransactionList lockedTransactions={projectLockTokens} projectId={vault?.daoData.contractName}/>
-				</div>
-			{/if}
+				{/if}
+				{#if projectLockTokens}
+					<div style="padding-top:20px;">
+						<ProjectLockTokens
+							lockedTransactions={projectLockTokens}
+							projectId={vault?.daoData.contractName}
+						/>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -182,8 +171,8 @@
 
 			.events-wrapper {
 				padding-inline: var(--space-7);
-				overflow: hidden; 
-				max-height: 300px; 
+				overflow: hidden;
+				max-height: 300px;
 				overflow-y: auto;
 			}
 		}

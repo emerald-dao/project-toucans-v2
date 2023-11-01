@@ -19,12 +19,12 @@
 	setContext('daoData', daoData);
 
 	let currencyToDistribute: ECurrencies | string =
-		distributionType === 'mint' || 'lock'
+		distributionType === 'mint'
 			? daoData.generalInfo.token_symbol
 			: Object.entries(daoData.onChainData.treasuryBalances)[0][0];
 
 	$: availableBalance =
-		distributionType === 'mint' || 'lock'
+		distributionType === 'mint'
 			? undefined
 			: Number(daoData.onChainData.treasuryBalances[currencyToDistribute]);
 
@@ -88,11 +88,11 @@
 				<p class="small">Withdraw tokens from your treasury to external wallets.</p>
 			{:else if distributionType === 'lock'}
 				<h5>Create Lock Action</h5>
-				{`Lock $${daoData.generalInfo.token_symbol} tokens to external wallets so they can claim later`}
+				{`Lock $${daoData.generalInfo.token_symbol} tokens from your treasury to external wallets so they can claim later`}
 			{/if}
 		</div>
 		<slot />
-		{#if distributionType === 'withdraw'}
+		{#if distributionType === 'withdraw' || 'lock'}
 			<div class="radio-tabs" id="currencies">
 				{#each Object.entries(daoData.onChainData.treasuryBalances) as [currency], i}
 					<label>
@@ -107,7 +107,7 @@
 					</label>
 				{/each}
 			</div>
-			{#if distributionType === 'withdraw' && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
+			{#if (distributionType === 'withdraw' || 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
 				<div class="row-2 align-center">
 					<span class="small">Available balance:</span>
 					<Currency
@@ -118,7 +118,7 @@
 				</div>
 			{/if}
 		{/if}
-		{#if (distributionType === 'withdraw' && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint' || distributionType === 'lock'}
+		{#if ((distributionType === 'withdraw' || 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint'}
 			<DistributionForms
 				bind:formDist
 				bind:csvDist
@@ -130,18 +130,18 @@
 				{addToStaging}
 				forLockTokens={distributionType === 'lock' ? true : false}
 			/>
+			{#if distributionType === 'lock'}
+				<Button
+					width="full-width"
+					on:click={distributeTokens}
+					state={lockInputsAreValid && formDist.date ? 'active' : 'disabled'}
+					>Create Lock Action <Icon icon="tabler:arrow-narrow-right" /></Button
+				>
+			{/if}
 		{:else}
 			<div class="row-2 align-center">
 				<span class="small no-tokens-message"><em>No tokens available to distribute.</em></span>
 			</div>
-		{/if}
-		{#if distributionType === 'lock'}
-			<Button
-				width="full-width"
-				on:click={distributeTokens}
-				state={lockInputsAreValid && formDist.date ? 'active' : 'disabled'}
-				>Create Lock Action <Icon icon="tabler:arrow-narrow-right" /></Button
-			>
 		{/if}
 	</div>
 	{#if distributionType !== 'lock'}
