@@ -1,9 +1,10 @@
 <script lang="ts">
 	import DashboardHeading from './DashboardHeading.svelte';
-	import LockedTransactionListElement from './LockedTransactionListElement.svelte';
+	import LockedVaultListElement from './LockedVaultListElement.svelte';
 	import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
 
-	export let lockedTransactions: LockedVaultDetails[];
+	export let lockedVaults: LockedVaultDetails[];
+	export let projectOwner: string;
 	export let projectId: string;
 </script>
 
@@ -11,13 +12,13 @@
 	<div class="header-wrapper">
 		<DashboardHeading icon="tabler:lock-dollar">Locked Tokens</DashboardHeading>
 	</div>
-	{#if lockedTransactions.length === 0}
+	{#if lockedVaults.length === 0}
 		<p><em>This user has no locked transactions</em></p>
 	{:else}
 		<div>
-			{#each lockedTransactions as transaction, i}
+			{#each lockedVaults as lockedVault, i}
 				<div class="activity-wrapper">
-					<LockedTransactionListElement {transaction} {i} {projectId} />
+					<LockedVaultListElement {lockedVault} {i} {projectId} {projectOwner} />
 				</div>
 			{/each}
 		</div>

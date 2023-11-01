@@ -44,7 +44,7 @@ export interface DaoDatabaseData {
 
 export interface DaoBlockchainData {
 	projectId: string;
-	tokenType: TokenInfo;
+	tokenType: string;
 	currentFundingCycle: FundingCycle | null;
 	editDelay: string;
 	extra: {
@@ -82,10 +82,19 @@ export interface TokenInfo {
 	contractName: string;
 	contractAddress: string;
 	tokenType: string;
-	receiverPath: string;
+	receiverPath: {
+		domain: "public",
+		identifier: string;
+	};
 	symbol: string;
-	publicPath: string;
-	storagePath: string;
+	publicPath: {
+		domain: "public",
+		identifier: string;
+	};
+	storagePath: {
+		domain: "storage",
+		identifier: string;
+	};
 	image: string;
 }
 

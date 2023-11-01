@@ -1,15 +1,17 @@
 <script type="ts">
-	import { Button } from '@emerald-dao/component-library';
+	import { Button, Currency, Label } from '@emerald-dao/component-library';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
 	import { daysOfDifference } from '$lib/utilities/formatDate';
+	import { claimLockedTokensExecution } from '$flow/actions';
 
-	export let transaction: LockedVaultDetails;
+	export let lockedVault: LockedVaultDetails;
 	export let i: number;
 	export let projectId: string;
+	export let projectOwner: string;
 
 	let currentDate = new Date();
-	let unlockTime = new Date(parseInt(transaction.unlockTime) * 1000);
+	let unlockTime = new Date(parseInt(lockedVault.unlockTime) * 1000);
 	let daysToUnlock = daysOfDifference(currentDate, unlockTime);
 	let timeRemaining: string;
 	let availableToClaim = false;
@@ -22,8 +24,13 @@
 		availableToClaim = true;
 	}
 
-	function handleTokenClaim() {
-		alert('Add code to execute the claim function');
+	async function handleTokenClaim() {
+		await claimLockedTokensExecution(
+			projectOwner,
+			projectId,
+			lockedVault.lockedVaultUuid,
+			lockedVault.tokenInfo.receiverPath.identifier
+		);
 	}
 </script>
 
@@ -31,11 +38,18 @@
 	<div class="row-3 align-center">
 		<IconCircle icon="tabler:lock-square" color="alert" />
 		<span class="event-name">Locked tokens</span>
+		<Currency
+			amount={lockedVault.amount}
+			currency={lockedVault.tokenInfo.symbol}
+			fontSize="var(--font-size-2)"
+			decimalNumbers={2}
+			color="heading"
+		/>
+		<!-- <Label color="tertiary" size="x-small" hasBorder={false}>
+			{`$${lockedVault.tokenInfo.symbol}`}
+		</Label> -->
 	</div>
 	<div class="row-3 align-center">
-		<div class="dao-label">
-			<a class="header-link" href={`/p/${projectId}`}>{projectId}</a>
-		</div>
 		{#if availableToClaim}
 			<Button on:click={handleTokenClaim} size="x-small">Claim</Button>
 		{:else}

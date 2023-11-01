@@ -238,6 +238,7 @@ pub contract Toucans {
     pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
+    pub fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver})
     
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64?
@@ -873,6 +874,15 @@ pub contract Toucans {
         unlockTime: unlockTime
       )
     }
+
+    pub fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver}) {
+      if self.additions["lockedTokensManager"] == nil {
+        self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
+      }
+
+      let tokenLockManager: &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic} = self.borrowLockTokensManagerPublic()!
+      tokenLockManager.claim(lockedVaultUuid: lockedVaultUuid, receiver: recipientVault)
+    } 
 
 
     //   ____                   

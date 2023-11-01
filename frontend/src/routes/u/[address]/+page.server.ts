@@ -1,6 +1,7 @@
 import { getProjectBalances } from '$flow/actions';
 import type { Profile } from '$lib/types/common/profile.interface';
 import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
+import { fetchAllToucansProjects } from '$lib/utilities/api/supabase/fetchAllToucansProjects';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
 import type { UserData, Vault } from './_types/user-data.interface';
@@ -20,10 +21,11 @@ export const load = async ({ params, fetch }): Promise<UserData> => {
 };
 
 const getUserVaults = async (address: string): Promise<Vault[]> => {
-	const projects = await fetchDaoRankings();
+	const rankedProjects = await fetchDaoRankings();
+	const projects = await fetchAllToucansProjects();
 
 	const y = projects.map((x) => {
-		return { key: x.project_id, value: x.projects.owner };
+		return { key: x.project_id, value: x.owner };
 	});
 
 	const balances = await getProjectBalances(address, y);
@@ -34,13 +36,14 @@ const getUserVaults = async (address: string): Promise<Vault[]> => {
 		if (balances[project.project_id]) {
 			vaults.push({
 				daoData: {
-					name: project.projects.name,
-					logoUrl: project.projects.logo,
-					tokenSymbol: project.projects.token_symbol,
-					contractName: project.project_id
+					name: project.name,
+					logoUrl: project.logo,
+					tokenSymbol: project.token_symbol as string,
+					projectId: project.project_id,
+					owner: project.owner
 				},
 				balance: balances[project.project_id],
-				tokenValue: project.price || 0
+				tokenValue: rankedProjects.find(x => x.project_id == project.project_id)?.price || 0
 			});
 		}
 	}

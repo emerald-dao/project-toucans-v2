@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { include } from 'vest';
 	import RecentFundingChart from '$lib/components/dao-data-blocks/recent-funding/chart/RecentFundingChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
@@ -11,7 +10,7 @@
 	<div class="column-1 primary-wrapper">
 		<p class="xsmall">Project Total Funding</p>
 		<Currency
-			amount={daoData.funding.total_funding}
+			amount={daoData.funding.total_funding || 0}
 			moneyPrefix={true}
 			fontSize="var(--font-size-5)"
 			color="heading"

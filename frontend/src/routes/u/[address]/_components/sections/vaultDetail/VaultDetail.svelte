@@ -22,14 +22,13 @@
 	$: transactions =
 		$selectedVaultStore !== null
 			? userData.transactions.filter(
-					(transaction) => transaction.project_id === vault?.daoData.contractName
+					(transaction) => transaction.project_id === vault?.daoData.projectId
 			  )
 			: null;
 
 	onMount(async () => {
 		if (vault) {
-			const response = await getLockedTokens(vault);
-			projectLockTokens = response.filter((obj) => obj.recipient === $page.params.address);
+			projectLockTokens = await getLockedTokens(vault, $page.params.address);
 		}
 	});
 
@@ -112,8 +111,9 @@
 				{#if projectLockTokens}
 					<div style="padding-top:20px;">
 						<ProjectLockTokens
-							lockedTransactions={projectLockTokens}
-							projectId={vault?.daoData.contractName}
+							lockedVaults={projectLockTokens}
+							projectOwner={vault?.daoData.owner}
+							projectId={vault?.daoData.projectId}
 						/>
 					</div>
 				{/if}

@@ -16,6 +16,7 @@ import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import editRoundTx from './cadence/transactions/edit_round.cdc?raw';
 import voteOnActionTx from './cadence/transactions/vote_on_action.cdc?raw';
 import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
+import claimLockedTokensTx from './cadence/transactions/claim_locked_tokens.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
 import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
 
@@ -35,6 +36,7 @@ import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?raw';
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getProjectLockedTokensScript from './cadence/scripts/get_project_locked_tokens.cdc?raw';
+import getProjectLockedTokensForUserScript from './cadence/scripts/get_project_locked_tokens_for_user.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
 import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
@@ -143,9 +145,9 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
 			arg(paymentCurrencyInfo.symbol, t.String),
-			arg({ domain: 'public', identifier: paymentCurrencyInfo.receiverPath }, t.Path),
-			arg({ domain: 'public', identifier: paymentCurrencyInfo.publicPath }, t.Path),
-			arg({ domain: 'storage', identifier: paymentCurrencyInfo.storagePath }, t.Path),
+			arg(paymentCurrencyInfo.receiverPath, t.Path),
+			arg(paymentCurrencyInfo.publicPath.identifier, t.Path),
+			arg(paymentCurrencyInfo.storagePath.identifier, t.Path),
 			arg(data.tokenomics.mintTokens, t.Bool),
 			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
 			arg(
@@ -269,6 +271,34 @@ export const claimOverflowExecution = (
 	currency: ECurrencies,
 	expectedAmount: string
 ) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency, expectedAmount));
+
+const claimLockedTokens = async (
+	projectOwner: string,
+	projectId: string,
+	lockedVaultUuid: string,
+	receiverPublicPath: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(claimLockedTokensTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(lockedVaultUuid, t.UInt64),
+			arg({ domain: 'public', identifier: receiverPublicPath }, t.Path)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const claimLockedTokensExecution = (
+	projectOwner: string,
+	projectId: string,
+	lockedVaultUuid: string,
+	receiverPublicPath: string
+) => executeTransaction(() => claimLockedTokens(projectOwner, projectId, lockedVaultUuid, receiverPublicPath));
 
 const transferOverflow = async (projectOwner: string, projectId: string, amount: string) => {
 	return await fcl.mutate({
@@ -802,6 +832,23 @@ export const getProjectLockedTokens: (owner: string, projectId: string) => Promi
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectLockedTokensScript');
+		console.log(e);
+	}
+};
+
+export const getProjectLockedTokensForUser: (owner: string, projectId: string, forUser: string) => Promise<LockedVaultDetails[]> = async (owner, projectId, forUser) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectLockedTokensForUserScript),
+			args: (arg, t) => [
+				arg(owner, t.Address),
+				arg(projectId, t.String),
+				arg(forUser, t.Address)
+			]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectLockedTokensForUser');
 		console.log(e);
 	}
 };

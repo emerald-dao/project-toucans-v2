@@ -4,17 +4,28 @@ import ToucansTokens from "./ToucansTokens.cdc"
 pub contract ToucansLockTokens {
 
     pub struct LockedVaultDetails {
+        pub let lockedVaultUuid: UInt64
         pub let recipient: Address
         pub let vaultType: Type
         pub let unlockTime: UFix64
         pub let tokenInfo: ToucansTokens.TokenInfo
+        pub let amount: UFix64
         pub let extra: {String: AnyStruct}
 
-        init(recipient: Address, vaultType: Type, unlockTime: UFix64, tokenInfo: ToucansTokens.TokenInfo) {
+        init(
+            lockedVaultUuid: UInt64,
+            recipient: Address, 
+            vaultType: Type, 
+            unlockTime: UFix64, 
+            tokenInfo: ToucansTokens.TokenInfo, 
+            amount: UFix64
+        ) {
+            self.lockedVaultUuid = lockedVaultUuid
             self.recipient = recipient
             self.vaultType = vaultType
             self.unlockTime = unlockTime
             self.tokenInfo = tokenInfo
+            self.amount = amount
             self.extra = {}
         }
     }
@@ -35,7 +46,14 @@ pub contract ToucansLockTokens {
         }
 
         init(recipient: Address, unlockTime: UFix64, vault: @FungibleToken.Vault, tokenInfo: ToucansTokens.TokenInfo) {
-            self.details = LockedVaultDetails(recipient: recipient, vaultType: vault.getType(), unlockTime: unlockTime, tokenInfo: tokenInfo)
+            self.details = LockedVaultDetails(
+                lockedVaultUuid: self.uuid,
+                recipient: recipient, 
+                vaultType: vault.getType(), 
+                unlockTime: unlockTime, 
+                tokenInfo: tokenInfo, 
+                amount: vault.balance
+            )
             self.vault <- vault
             self.additions <- {}
         }
@@ -61,6 +79,9 @@ pub contract ToucansLockTokens {
         access(self) var additions: @{String: AnyResource}
 
         pub fun deposit(recipient: Address, unlockTime: UFix64, vault: @FungibleToken.Vault, tokenInfo: ToucansTokens.TokenInfo) {
+            pre {
+                tokenInfo.tokenType == vault.getType(): "Types are not the same"
+            }
             let lockedVault: @LockedVault <- create LockedVault(recipient: recipient, unlockTime: unlockTime, vault: <- vault, tokenInfo: tokenInfo)
             let recipient: Address = lockedVault.details.recipient
             if self.addressMap[recipient] == nil {
@@ -74,6 +95,7 @@ pub contract ToucansLockTokens {
 
         pub fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver}) {
             let lockedVault: @LockedVault <- self.lockedVaults.remove(key: lockedVaultUuid) ?? panic("This LockedVault does not exist.")
+            assert(lockedVault.details.recipient == receiver.owner!.address, message: "These locked tokens are meant for a different user.")
             lockedVault.withdrawVault(receiver: receiver)
             assert(lockedVault.vault == nil, message: "The withdraw did not execute correctly.")
             destroy lockedVault
