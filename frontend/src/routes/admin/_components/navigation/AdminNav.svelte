@@ -75,6 +75,19 @@
 				</div>
 				Home
 			</a>
+			<a
+				href="/admin/actions"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('actions')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:layout-list" />
+				</div>
+				Actions Queue
+				{#if Number(activeDaoData.onChainData.actions.length) > 0}
+					<AlertNumber number={Number(activeDaoData.onChainData.actions.length)} />
+				{/if}
+			</a>
 			{#if activeDaoData.hasToken}
 				<a
 					href="/admin/rounds"
@@ -114,19 +127,6 @@
 					<Icon icon="tabler:outbound" />
 				</div>
 				Withdraw
-			</a>
-			<a
-				href="/admin/actions"
-				class="sidebar-link distribute-display"
-				class:active={$page.url.pathname.includes('actions')}
-			>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:layout-list" />
-				</div>
-				Actions Queue
-				{#if Number(activeDaoData.onChainData.actions.length) > 0}
-					<AlertNumber number={Number(activeDaoData.onChainData.actions.length)} />
-				{/if}
 			</a>
 			<a
 				href="/admin/multisig"

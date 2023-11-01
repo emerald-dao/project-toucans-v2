@@ -6,6 +6,11 @@
 	export let lockedVaults: LockedVaultDetails[];
 	export let projectOwner: string;
 	export let projectId: string;
+
+	function removeClaimedVault(i: number) {
+		lockedVaults.splice(i, 1);
+		lockedVaults = lockedVaults;
+	}
 </script>
 
 <div class="column transactions-wrapper">
@@ -16,9 +21,15 @@
 		<p><em>This user has no locked transactions</em></p>
 	{:else}
 		<div>
-			{#each lockedVaults as lockedVault, i}
+			{#each lockedVaults as lockedVault, i (lockedVault.lockedVaultUuid)}
 				<div class="activity-wrapper">
-					<LockedVaultListElement {lockedVault} {i} {projectId} {projectOwner} />
+					<LockedVaultListElement
+						{lockedVault}
+						{i}
+						{projectId}
+						{projectOwner}
+						{removeClaimedVault}
+					/>
 				</div>
 			{/each}
 		</div>

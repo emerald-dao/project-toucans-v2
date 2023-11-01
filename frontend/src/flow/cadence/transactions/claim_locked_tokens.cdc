@@ -22,7 +22,8 @@ transaction(
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
 
-    self.Receiver = signer.getCapability(vaultReceiverPath).borrow<&{FungibleToken.Receiver}>()
+    self.Receiver = signer.getCapability(vaultReceiverPath)
+                      .borrow<&{FungibleToken.Receiver}>()
                       ?? panic("User does not have receiver set up.")
   }
   

@@ -9,6 +9,7 @@
 	export let i: number;
 	export let projectId: string;
 	export let projectOwner: string;
+	export let removeClaimedVault: (i: number) => void;
 
 	let currentDate = new Date();
 	let unlockTime = new Date(parseInt(lockedVault.unlockTime) * 1000);
@@ -31,6 +32,7 @@
 			lockedVault.lockedVaultUuid,
 			lockedVault.tokenInfo.receiverPath.identifier
 		);
+		removeClaimedVault(i);
 	}
 </script>
 
@@ -53,7 +55,8 @@
 		{#if availableToClaim}
 			<Button on:click={handleTokenClaim} size="x-small">Claim</Button>
 		{:else}
-			<span class="days-left">{timeRemaining}</span>
+			<Button on:click={handleTokenClaim} size="x-small">Claim</Button>
+			<!-- <span class="days-left">{timeRemaining}</span> -->
 		{/if}
 	</div>
 </div>
