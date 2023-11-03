@@ -15,24 +15,24 @@
 	let unlockTime = new Date(parseInt(lockedVault.unlockTime) * 1000);
 	let daysToUnlock = daysOfDifference(currentDate, unlockTime);
 	let timeRemaining: string;
-	let availableToClaim = false;
+	let availableToClaim = Date.now() >= parseInt(lockedVault.unlockTime) * 1000;
 
 	if (daysToUnlock > 1) {
 		timeRemaining = `${daysToUnlock} days until you can claim`;
-	} else if (daysToUnlock === 1 || daysToUnlock === 0) {
+	} else {
 		timeRemaining = `1 day until you can claim`;
-	} else if (daysToUnlock < 0) {
-		availableToClaim = true;
 	}
 
 	async function handleTokenClaim() {
-		await claimLockedTokensExecution(
+		const result = await claimLockedTokensExecution(
 			projectOwner,
 			projectId,
 			lockedVault.lockedVaultUuid,
 			lockedVault.tokenInfo.receiverPath.identifier
 		);
-		removeClaimedVault(i);
+		if (result.state === 'success') {
+			removeClaimedVault(i);
+		}
 	}
 </script>
 
@@ -47,16 +47,12 @@
 			decimalNumbers={2}
 			color="heading"
 		/>
-		<!-- <Label color="tertiary" size="x-small" hasBorder={false}>
-			{`$${lockedVault.tokenInfo.symbol}`}
-		</Label> -->
 	</div>
 	<div class="row-3 align-center">
 		{#if availableToClaim}
 			<Button on:click={handleTokenClaim} size="x-small">Claim</Button>
 		{:else}
-			<Button on:click={handleTokenClaim} size="x-small">Claim</Button>
-			<!-- <span class="days-left">{timeRemaining}</span> -->
+			<span class="days-left">{timeRemaining}</span>
 		{/if}
 	</div>
 </div>

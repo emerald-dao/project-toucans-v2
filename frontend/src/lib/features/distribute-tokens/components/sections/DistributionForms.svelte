@@ -1,11 +1,9 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import Papa from 'papaparse';
 	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { getContext } from 'svelte';
 	import { InputWrapper, Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 	import type { SuiteRunResult } from 'vest';
@@ -128,7 +126,7 @@
 						isValid={res.isValid('date')}
 						><div class="date-picker-wrapper">
 							<input
-								type="date"
+								type="datetime-local"
 								name="date"
 								bind:value={formDist.date}
 								on:change={handleChange}

@@ -95,10 +95,11 @@ pub contract ToucansLockTokens {
 
         pub fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver}) {
             let lockedVault: @LockedVault <- self.lockedVaults.remove(key: lockedVaultUuid) ?? panic("This LockedVault does not exist.")
-            assert(lockedVault.details.recipient == receiver.owner!.address, message: "These locked tokens are meant for a different user.")
             lockedVault.withdrawVault(receiver: receiver)
             assert(lockedVault.vault == nil, message: "The withdraw did not execute correctly.")
             destroy lockedVault
+            let indexOfUuid: Int = self.addressMap[receiver.owner!.address]!.firstIndex(of: lockedVaultUuid)!
+            self.addressMap[receiver.owner!.address]!.remove(at: indexOfUuid)
         }
 
         pub fun getIDs(): [UInt64] {

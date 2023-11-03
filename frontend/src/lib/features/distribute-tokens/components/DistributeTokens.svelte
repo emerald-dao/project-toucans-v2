@@ -88,7 +88,7 @@
 				<p class="small">Withdraw tokens from your treasury to external wallets.</p>
 			{:else if distributionType === 'lock'}
 				<h5>Create Lock Action</h5>
-				{`Lock $${daoData.generalInfo.token_symbol} tokens from your treasury to external wallets so they can claim later`}
+				{`Lock tokens from your treasury to external wallets so they can claim later`}
 			{/if}
 		</div>
 		<slot />

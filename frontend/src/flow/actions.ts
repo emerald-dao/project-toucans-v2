@@ -146,8 +146,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
 			arg(paymentCurrencyInfo.symbol, t.String),
 			arg(paymentCurrencyInfo.receiverPath, t.Path),
-			arg(paymentCurrencyInfo.publicPath.identifier, t.Path),
-			arg(paymentCurrencyInfo.storagePath.identifier, t.Path),
+			arg(paymentCurrencyInfo.publicPath, t.Path),
+			arg(paymentCurrencyInfo.storagePath, t.Path),
 			arg(data.tokenomics.mintTokens, t.Bool),
 			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
 			arg(

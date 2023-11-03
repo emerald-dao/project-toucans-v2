@@ -7,6 +7,7 @@
 	import { voteOnActionExecution, getBatchAmounts } from '$flow/actions';
 	import { Label, Modal, getModal } from '@emerald-dao/component-library';
 	import BatchMintingList from '../atoms/BatchMintingList.svelte';
+	import { formatDate } from '$lib/utilities/formatDate';
 
 	export let action: ActionData;
 	export let threshold: string;
@@ -50,6 +51,15 @@
 		Burn: 'Burn',
 		LockTokens: 'Locked Tokens'
 	};
+
+	function translateIntent(action: MultisigActions, intent: string) {
+		if (action === 'LockTokens') {
+			const date = intent.substring(intent.search('until') + 6);
+			const readableDate = formatDate(new Date(Number(date) * 1000));
+			return intent.replace(date, readableDate);
+		}
+		return intent;
+	}
 </script>
 
 <div class="main-wrapper">
@@ -71,7 +81,7 @@
 			<span class="xsmall">{action.id}</span>
 		</div>
 		{#if showDetail}
-			<span class="action-message xsmall">{action.intent}</span>
+			<span class="action-message xsmall">{translateIntent(action.title, action.intent)}</span>
 		{/if}
 	</div>
 	<div class="row-4 align-center">
