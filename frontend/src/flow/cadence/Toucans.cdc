@@ -106,6 +106,7 @@ pub contract Toucans {
   pub event LockTokens(
     projectId: String,
     by: Address, 
+    to: Address,
     currentCycle: UInt64?,
     tokenSymbol: String,
     amount: UFix64,
@@ -868,6 +869,7 @@ pub contract Toucans {
       emit LockTokens(
         projectId: self.projectId,
         by: self.owner!.address, 
+        to: recipient,
         currentCycle: self.getCurrentFundingCycleId(),
         tokenSymbol: tokenInfo.symbol,
         amount: amount,

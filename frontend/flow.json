@@ -263,6 +263,8 @@
 		},
 		"mainnet": {
 			"mainnet-account": [
+				"ToucansLockTokens",
+				"ToucansActions",
 				"Toucans"
 			]
 		}
