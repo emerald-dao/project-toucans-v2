@@ -7,9 +7,18 @@ export const currencies: { [key: string]: TokenInfo } = {
 		contractAddress: addresses.FlowToken,
 		symbol: 'FLOW',
 		tokenType: '',
-		receiverPath: 'flowTokenReceiver',
-		publicPath: 'flowTokenBalance',
-		storagePath: 'flowTokenVault',
+		receiverPath: {
+			domain: "public",
+			identifier: 'flowTokenReceiver'
+		},
+		publicPath: {
+			domain: "public",
+			identifier: 'flowTokenBalance'
+		},
+		storagePath: {
+			domain: "storage",
+			identifier: 'flowTokenVault'
+		},
 		image: '/flow-logo.png'
 	},
 	USDC: {
@@ -17,9 +26,18 @@ export const currencies: { [key: string]: TokenInfo } = {
 		contractAddress: addresses.FiatToken,
 		symbol: 'USDC',
 		tokenType: '',
-		receiverPath: 'USDCVaultReceiver',
-		publicPath: 'USDCVaultBalance',
-		storagePath: 'USDCVault',
+		receiverPath: {
+			domain: "public",
+			identifier: 'USDCVaultReceiver'
+		},
+		publicPath: {
+			domain: "public",
+			identifier: 'USDCVaultBalance'
+		},
+		storagePath: {
+			domain: "storage",
+			identifier: 'USDCVault'
+		},
 		image: '/usdc-logo.png'
 	}
 };

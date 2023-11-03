@@ -58,6 +58,11 @@
 			text: 'Mint',
 			color: 'alert'
 		},
+		LockTokens: {
+			icon: 'tabler:lock-square',
+			text: 'Locked tokens',
+			color: 'alert'
+		},
 		Burn: {
 			icon: 'tabler:flame',
 			text: 'Burn',

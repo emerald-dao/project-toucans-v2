@@ -8,9 +8,10 @@ export interface UserData {
 }
 
 interface DaoProfile {
+	owner: string;
 	name: string;
 	logoUrl: string;
-	contractName: string;
+	projectId: string;
 	tokenSymbol: string;
 }
 

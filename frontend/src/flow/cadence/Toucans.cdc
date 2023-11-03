@@ -4,6 +4,7 @@ import ToucansTokens from "./ToucansTokens.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
 import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
+import ToucansLockTokens from "./ToucansLockTokens.cdc"
 
 pub contract Toucans {
 
@@ -101,6 +102,15 @@ pub contract Toucans {
     currentCycle: UInt64?,
     tokenSymbol: String,
     amount: UFix64
+  )
+  pub event LockTokens(
+    projectId: String,
+    by: Address, 
+    to: Address,
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    amount: UFix64,
+    unlockTime: UFix64
   )
   pub event AddSigner(projectId: String, signer: Address)
   pub event RemoveSigner(projectId: String, signer: Address)
@@ -229,6 +239,7 @@ pub contract Toucans {
     pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
+    pub fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver})
     
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64?
@@ -243,6 +254,7 @@ pub contract Toucans {
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
     pub fun borrowManagerPublic(): &Manager{ManagerPublic}
+    pub fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}?
     pub fun hasTokenContract(): Bool
   }
 
@@ -379,6 +391,13 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    pub fun proposeLockTokens(recipient: Address, tokenType: Type, amount: UFix64, unlockTime: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: tokenType) 
+                ?? panic("Unsupported token type for locking tokens.")
+      let action = ToucansActions.LockTokens(recipient, amount, tokenInfo.symbol, unlockTime)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     pub fun finalizeAction(actionUUID: UInt64) {
       let actionState: ActionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
       assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
@@ -389,41 +408,48 @@ pub contract Toucans {
         let action: {ToucansActions.Action} = actionWrapper.action
         switch action.getType() {
           case Type<ToucansActions.WithdrawToken>():
-            let withdraw = action as! ToucansActions.WithdrawToken
+            let withdraw: ToucansActions.WithdrawToken = action as! ToucansActions.WithdrawToken
             let recipientVault: &{FungibleToken.Receiver} = withdraw.recipientVault.borrow()!
             self.withdrawFromTreasury(vaultType: withdraw.vaultType, vault: recipientVault, amount: withdraw.amount, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.BatchWithdrawToken>():
-            let withdraw = action as! ToucansActions.BatchWithdrawToken
+            let withdraw: ToucansActions.BatchWithdrawToken = action as! ToucansActions.BatchWithdrawToken
             self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.MintTokens>():
-            let mint = action as! ToucansActions.MintTokens
+            let mint: ToucansActions.MintTokens = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
           case Type<ToucansActions.BatchMintTokens>():
-            let mint = action as! ToucansActions.BatchMintTokens
+            let mint: ToucansActions.BatchMintTokens = action as! ToucansActions.BatchMintTokens
             self.batchMint(vaults: mint.recipientVaults, amounts: mint.amounts)
           case Type<ToucansActions.BurnTokens>():
-            let burn = action as! ToucansActions.BurnTokens
+            let burn: ToucansActions.BurnTokens = action as! ToucansActions.BurnTokens
             if burn.tokenSymbol == self.projectTokenInfo.symbol {
               self.burn(tokenType: self.projectTokenInfo.tokenType, tokenSymbol: burn.tokenSymbol, amount: burn.amount)
             } else {
               self.burn(tokenType: ToucansTokens.getTokenInfoFromSymbol(symbol: burn.tokenSymbol)!.tokenType, tokenSymbol: burn.tokenSymbol, amount: burn.amount)
             }
           case Type<ToucansActions.MintTokensToTreasury>():
-            let mint = action as! ToucansActions.MintTokensToTreasury
+            let mint: ToucansActions.MintTokensToTreasury = action as! ToucansActions.MintTokensToTreasury
             let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
             self.mint(recipientVault: ref, amount: mint.amount)
           case Type<ToucansActions.AddOneSigner>():
-            let addSigner = action as! ToucansActions.AddOneSigner
+            let addSigner: ToucansActions.AddOneSigner = action as! ToucansActions.AddOneSigner
             self.multiSignManager.addSigner(signer: addSigner.signer)
             emit AddSigner(projectId: self.projectId, signer: addSigner.signer)
           case Type<ToucansActions.RemoveOneSigner>():
-            let removeSigner = action as! ToucansActions.RemoveOneSigner
+            let removeSigner: ToucansActions.RemoveOneSigner = action as! ToucansActions.RemoveOneSigner
             self.multiSignManager.removeSigner(signer: removeSigner.signer)
             emit RemoveSigner(projectId: self.projectId, signer: removeSigner.signer)
           case Type<ToucansActions.UpdateTreasuryThreshold>():
-            let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
+            let updateThreshold: ToucansActions.UpdateTreasuryThreshold = action as! ToucansActions.UpdateTreasuryThreshold
             self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
             emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
+          case Type<ToucansActions.LockTokens>():
+            let tokenLock: ToucansActions.LockTokens = action as! ToucansActions.LockTokens
+            if tokenLock.tokenSymbol == self.projectTokenInfo.symbol {
+              self.sendToLock(recipient: tokenLock.recipient, tokenInfo: self.projectTokenInfo, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
+            } else {
+              self.sendToLock(recipient: tokenLock.recipient, tokenInfo: ToucansTokens.getTokenInfoFromSymbol(symbol: tokenLock.tokenSymbol)!, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
+            }
         }
       }
       if actionState == ActionState.DECLINED {
@@ -823,6 +849,44 @@ pub contract Toucans {
     }
 
 
+    //   _______    _                _                _    
+    //  |__   __|  | |              | |              | |   
+    //     | | ___ | | _____ _ __   | |     ___   ___| | __
+    //     | |/ _ \| |/ / _ \ '_ \  | |    / _ \ / __| |/ /
+    //     | | (_) |   <  __/ | | | | |___| (_) | (__|   < 
+    //     |_|\___/|_|\_\___|_| |_| |______\___/ \___|_|\_\
+                                                                                           
+
+    access(account) fun sendToLock(recipient: Address, tokenInfo: ToucansTokens.TokenInfo, amount: UFix64, unlockTime: UFix64) {
+      if self.additions["lockedTokensManager"] == nil {
+        self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
+      }
+
+      let tokenLockManager: &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
+      let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw!(amount: amount)
+      tokenLockManager.deposit(recipient: recipient, unlockTime: unlockTime, vault: <- vaultToLock, tokenInfo: tokenInfo)
+
+      emit LockTokens(
+        projectId: self.projectId,
+        by: self.owner!.address, 
+        to: recipient,
+        currentCycle: self.getCurrentFundingCycleId(),
+        tokenSymbol: tokenInfo.symbol,
+        amount: amount,
+        unlockTime: unlockTime
+      )
+    }
+
+    pub fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver}) {
+      if self.additions["lockedTokensManager"] == nil {
+        self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
+      }
+
+      let tokenLockManager: &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic} = self.borrowLockTokensManagerPublic()!
+      tokenLockManager.claim(lockedVaultUuid: lockedVaultUuid, receiver: recipientVault)
+    } 
+
+
     //   ____                   
     //  |  _ \                  
     //  | |_) |_   _ _ __ _ __  
@@ -998,6 +1062,20 @@ pub contract Toucans {
       return &self.multiSignManager as &Manager{ManagerPublic}
     }
 
+    access(self) fun borrowLockTokensManager(): &ToucansLockTokens.Manager? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
+        return lockTokensManager as! &ToucansLockTokens.Manager
+      }
+      return nil
+    }
+
+    pub fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
+        return lockTokensManager as! &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}
+      }
+      return nil
+    }
+
     init(
       projectId: String,
       projectTokenInfo: ToucansTokens.TokenInfo,
@@ -1039,7 +1117,9 @@ pub contract Toucans {
       self.paymentTokenInfo = paymentTokenInfo
       self.minting = minting
       self.purchasing = true
-      self.additions <- {}
+      self.additions <- {
+        "lockedTokensManager": <- ToucansLockTokens.createManager()
+      }
       self.overflow <- paymentContract.createEmptyVault()
       self.multiSignManager <- create Manager(_initialSigners: initialSigners, _initialThreshold: initialThreshold)
     }

@@ -220,5 +220,30 @@ pub contract ToucansActions {
       self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
     }
   }
+
+  // burn your DAOs token from the treasury
+  pub struct LockTokens: Action {
+    pub let recipient: Address
+    pub let amount: UFix64
+    pub let tokenSymbol: String
+    pub let readableAmount: String
+    pub let unlockTime: UFix64
+
+    pub fun getIntent(): String {
+      return "Lock ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens for ").concat(ToucansUtils.getFind(self.recipient)).concat(" until ").concat(self.unlockTime.toString())
+    }
+
+    pub fun getTitle(): String {
+      return "LockTokens"
+    }
+
+    init(_ recipient: Address, _ amount: UFix64, _ tokenSymbol: String, _ unlockTime: UFix64) {
+      self.amount = amount
+      self.tokenSymbol = tokenSymbol
+      self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
+      self.unlockTime = unlockTime
+      self.recipient = recipient
+    }
+  }
 }
  

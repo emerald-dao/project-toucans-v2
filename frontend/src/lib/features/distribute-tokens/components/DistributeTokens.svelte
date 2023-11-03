@@ -10,8 +10,11 @@
 	import { withdrawTokens } from '../functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
 
+	import { lockTokens } from '../functions/lockTokens';
+	import Icon from '@iconify/svelte';
+
 	export let daoData: DAOProject;
-	export let distributionType: 'mint' | 'withdraw';
+	export let distributionType: 'mint' | 'withdraw' | 'lock';
 
 	setContext('daoData', daoData);
 
@@ -19,6 +22,7 @@
 		distributionType === 'mint'
 			? daoData.generalInfo.token_symbol
 			: Object.entries(daoData.onChainData.treasuryBalances)[0][0];
+
 	$: availableBalance =
 		distributionType === 'mint'
 			? undefined
@@ -49,8 +53,26 @@
 			mintTokens(daoData, distStaging);
 		} else if (distributionType === 'withdraw') {
 			withdrawTokens(daoData, distStaging, currencyToDistribute as ECurrencies);
+		} else if (distributionType === 'lock') {
+			let inputDate;
+
+			if (formDist.date) {
+				inputDate = new Date(formDist.date).getTime() / 1000;
+			}
+
+			if (inputDate) {
+				lockTokens(
+					daoData,
+					formDist.address,
+					currencyToDistribute as ECurrencies,
+					inputDate,
+					formDist.amount
+				);
+			}
 		}
 	};
+
+	let lockInputsAreValid: boolean;
 </script>
 
 <div class="main-wrapper">
@@ -61,13 +83,16 @@
 				<p class="small">
 					{`Mint $${daoData.generalInfo.token_symbol} tokens to external wallets.`}
 				</p>
-			{:else}
+			{:else if distributionType === 'withdraw'}
 				<h5>Create Withdraw Action</h5>
 				<p class="small">Withdraw tokens from your treasury to external wallets.</p>
+			{:else if distributionType === 'lock'}
+				<h5>Create Lock Action</h5>
+				{`Lock tokens from your treasury to external wallets so they can claim later`}
 			{/if}
 		</div>
 		<slot />
-		{#if distributionType === 'withdraw'}
+		{#if distributionType === 'withdraw' || 'lock'}
 			<div class="radio-tabs" id="currencies">
 				{#each Object.entries(daoData.onChainData.treasuryBalances) as [currency], i}
 					<label>
@@ -82,7 +107,7 @@
 					</label>
 				{/each}
 			</div>
-			{#if distributionType === 'withdraw' && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
+			{#if (distributionType === 'withdraw' || 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
 				<div class="row-2 align-center">
 					<span class="small">Available balance:</span>
 					<Currency
@@ -93,32 +118,44 @@
 				</div>
 			{/if}
 		{/if}
-		{#if (distributionType === 'withdraw' && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint'}
+		{#if ((distributionType === 'withdraw' || 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint'}
 			<DistributionForms
 				bind:formDist
 				bind:csvDist
 				bind:currencyToDistribute
 				bind:availableBalance
+				bind:lockInputsAreValid
 				projectOwner={daoData.generalInfo.owner}
 				projectId={daoData.generalInfo.project_id}
 				{addToStaging}
+				forLockTokens={distributionType === 'lock' ? true : false}
 			/>
+			{#if distributionType === 'lock'}
+				<Button
+					width="full-width"
+					on:click={distributeTokens}
+					state={lockInputsAreValid && formDist.date ? 'active' : 'disabled'}
+					>Create Lock Action <Icon icon="tabler:arrow-narrow-right" /></Button
+				>
+			{/if}
 		{:else}
 			<div class="row-2 align-center">
 				<span class="small no-tokens-message"><em>No tokens available to distribute.</em></span>
 			</div>
 		{/if}
 	</div>
-	<div class="dist-wrapper sub-wrapper card">
-		<DistributionStaging bind:distStaging tokenName={currencyToDistribute} />
-		{#if distStaging.length > 0}
-			<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
-				<Button width="full-width" on:click={distributeTokens}>
-					{distributionType === 'withdraw' ? 'Create Withdraw Action' : 'Create Mint Action'}
-				</Button>
-			</div>
-		{/if}
-	</div>
+	{#if distributionType !== 'lock'}
+		<div class="dist-wrapper sub-wrapper card">
+			<DistributionStaging bind:distStaging tokenName={currencyToDistribute} />
+			{#if distStaging.length > 0}
+				<div transition:fly|local={{ y: 10, duration: 500, delay: 100 }}>
+					<Button width="full-width" on:click={distributeTokens}>
+						{distributionType === 'withdraw' ? 'Create Withdraw Action' : 'Create Mint Action'}
+					</Button>
+				</div>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style type="scss">

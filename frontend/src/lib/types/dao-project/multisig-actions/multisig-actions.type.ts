@@ -7,4 +7,5 @@ export type MultisigActions =
 	| 'Mint'
 	| 'BatchMint'
 	| 'MintToTreasury'
-	| 'Burn';
+	| 'Burn'
+	| 'LockTokens';

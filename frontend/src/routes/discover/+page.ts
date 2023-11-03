@@ -1,11 +1,11 @@
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
-import { getAllToucansProjects } from '$lib/utilities/api/supabase/getAllToucansProjects';
+import { fetchAllToucansProjects } from '$lib/utilities/api/supabase/fetchAllToucansProjects';
 import type { PageLoad } from './$types';
 
 export const ssr = false;
 
 export const load: PageLoad = async () => {
-	const allProjects = await getAllToucansProjects();
+	const allProjects = await fetchAllToucansProjects();
 	const rankings = await fetchDaoRankings();
 
 	const daoRankings = rankings.sort((a, b) => b.treasury_value - a.treasury_value);

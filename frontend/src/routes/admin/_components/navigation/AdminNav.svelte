@@ -75,6 +75,19 @@
 				</div>
 				Home
 			</a>
+			<a
+				href="/admin/actions"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('actions')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:layout-list" />
+				</div>
+				Actions Queue
+				{#if Number(activeDaoData.onChainData.actions.length) > 0}
+					<AlertNumber number={Number(activeDaoData.onChainData.actions.length)} />
+				{/if}
+			</a>
 			{#if activeDaoData.hasToken}
 				<a
 					href="/admin/rounds"
@@ -116,19 +129,6 @@
 				Withdraw
 			</a>
 			<a
-				href="/admin/actions"
-				class="sidebar-link distribute-display"
-				class:active={$page.url.pathname.includes('actions')}
-			>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:layout-list" />
-				</div>
-				Actions Queue
-				{#if Number(activeDaoData.onChainData.actions.length) > 0}
-					<AlertNumber number={Number(activeDaoData.onChainData.actions.length)} />
-				{/if}
-			</a>
-			<a
 				href="/admin/multisig"
 				class="sidebar-link distribute-display"
 				class:active={$page.url.pathname.includes('multisig')}
@@ -148,6 +148,18 @@
 						<Icon icon="tabler:moneybag" />
 					</div>
 					Overflow
+				</a>
+			{/if}
+			{#if activeDaoData.hasToken}
+				<a
+					href="/admin/lock"
+					class="sidebar-link distribute-display"
+					class:active={$page.url.pathname.includes('lock')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:lock-dollar" />
+					</div>
+					Lock
 				</a>
 			{/if}
 		</div>
@@ -204,6 +216,7 @@
 			border-radius: var(--radius-1);
 			background-color: var(--clr-background-secondary);
 			position: relative;
+			margin-top: var(--space-4);
 
 			.icon-wrapper {
 				position: absolute;

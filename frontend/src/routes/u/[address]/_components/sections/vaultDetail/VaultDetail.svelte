@@ -6,18 +6,31 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import TransactionsList from '../../atoms/TransactionsList.svelte';
+	import { getLockedTokens } from '../../../actions/getLockedTokens';
+	import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
+	import { onMount } from 'svelte';
+	import ProjectLockTokens from '../../atoms/ProjectLockTokens.svelte';
+	import { page } from '$app/stores';
 
 	const userData: UserData = getContext('userData');
 	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
+
+	let projectLockTokens: LockedVaultDetails[] = [];
 
 	$: vault = $selectedVaultStore !== null ? userData.vaults[$selectedVaultStore] : null;
 
 	$: transactions =
 		$selectedVaultStore !== null
 			? userData.transactions.filter(
-					(transaction) => transaction.project_id === vault?.daoData.contractName
+					(transaction) => transaction.project_id === vault?.daoData.projectId
 			  )
 			: null;
+
+	onMount(async () => {
+		if (vault) {
+			projectLockTokens = await getLockedTokens(vault, $page.params.address);
+		}
+	});
 
 	const handleCloseVault = () => {
 		selectedVaultStore.set(null);
@@ -91,11 +104,20 @@
 					</div>
 				</div>
 			</div>
-			{#if transactions}
-				<div class="events-wrapper">
+			<div class="events-wrapper">
+				{#if transactions}
 					<TransactionsList events={transactions} />
-				</div>
-			{/if}
+				{/if}
+				{#if projectLockTokens}
+					<div style="padding-top:20px;">
+						<ProjectLockTokens
+							lockedVaults={projectLockTokens}
+							projectOwner={vault?.daoData.owner}
+							projectId={vault?.daoData.projectId}
+						/>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
@@ -149,6 +171,9 @@
 
 			.events-wrapper {
 				padding-inline: var(--space-7);
+				overflow: hidden;
+				max-height: 300px;
+				overflow-y: auto;
 			}
 		}
 

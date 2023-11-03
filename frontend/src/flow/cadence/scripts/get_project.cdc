@@ -26,7 +26,6 @@ pub struct Info {
   pub let overflowBalance: UFix64
   pub let balances: {Address: UFix64}
   pub let treasuryBalances: {String: UFix64}
-  pub let funders: {Address: UFix64}
   pub let signers: [Address]
   pub let threshold: UInt64
   pub let minting: Bool
@@ -47,7 +46,6 @@ pub struct Info {
     self.fundingCycles = info.getFundingCycles()
     self.totalSupply = ExampleToken.totalSupply
     self.balances = ExampleToken.getBalances()
-    self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
     self.minting = info.minting
     self.treasuryBalances = {
