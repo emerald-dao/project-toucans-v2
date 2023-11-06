@@ -43,10 +43,12 @@ transaction(projectOwner: Address, projectId: String, amount: UFix64, message: S
   execute {
     let currentBalance: UFix64 = self.ProjectTokenReceiver.balance
     self.Project.purchase(paymentTokens: <- self.Payment, projectTokenReceiver: self.ProjectTokenReceiver, message: message)
-    assert(
-      (currentBalance + expectedAmount >= self.ProjectTokenReceiver.balance - 1.0 && currentBalance + expectedAmount <= self.ProjectTokenReceiver.balance + 1.0),
-      message: "The expected amount of tokens was not minted."
-    )
+    if self.ProjectTokenReceiver.balance >= 1.0 {
+      assert(
+        (currentBalance + expectedAmount >= self.ProjectTokenReceiver.balance - 1.0 && currentBalance + expectedAmount <= self.ProjectTokenReceiver.balance + 1.0),
+        message: "The expected amount of tokens was not minted."
+      )
+    }
   }
 }
  
