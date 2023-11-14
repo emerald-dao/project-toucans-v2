@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import ProjectLockTokens from '../../atoms/ProjectLockTokens.svelte';
 	import { page } from '$app/stores';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	const userData: UserData = getContext('userData');
 	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
@@ -60,7 +61,12 @@
 			<div class="card-primary">
 				<div class="column-6">
 					<div class="row-2 align-center">
-						<img src={vault.daoData.logoUrl} alt="Emerald City Logo" class="logo" />
+						<img
+							src={vault.daoData.logoUrl}
+							on:error={(e) => handleLogoImgError(e)}
+							alt="Emerald City Logo"
+							class="logo"
+						/>
 						<h4 class="w-medium">{vault.daoData.name}</h4>
 					</div>
 					<div class="row-5 align-end">

@@ -8,6 +8,7 @@
 	import RequiredNft from './atoms/RequiredNft.svelte';
 	import { user } from '$stores/flow/FlowStore';
 	import { currencies } from '$stores/flow/TokenStore';
+	import { handleBannerImgError, handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let daoData: DAOProject;
 	console.log(daoData);
@@ -18,6 +19,7 @@
 		{#if daoData.generalInfo.banner_image}
 			<img
 				src={daoData.generalInfo.banner_image}
+				on:error={(e) => handleBannerImgError(e)}
 				alt="Background illustration"
 				class="banner-image"
 			/>
@@ -30,7 +32,12 @@
 		{/if}
 		<div class="content-wrapper column">
 			<div class="column-4">
-				<img src={daoData.generalInfo.logo} alt="DAO Logo" class="dao-logo" />
+				<img
+					src={daoData.generalInfo.logo}
+					on:error={(e) => handleLogoImgError(e)}
+					alt="DAO Logo"
+					class="dao-logo"
+				/>
 				<div class="commands-wrapper row-2 align-center">
 					{#if daoData.hasToken && daoData.onChainData.minting}
 						<Label size="xx-small" color="neutral" hasBorder={false} iconRight="tabler:check">

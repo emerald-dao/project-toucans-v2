@@ -2,6 +2,7 @@
 	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let activeDao: number;
 	export let userDaos: DAOProject[];
@@ -52,7 +53,11 @@
 				<ul>
 					{#each userDaos as dao, index}
 						<li>
-							<img src={dao.generalInfo.logo} alt="dao logo" />
+							<img
+								src={dao.generalInfo.logo}
+								on:error={(e) => handleLogoImgError(e)}
+								alt="dao logo"
+							/>
 							<a
 								class="header-link"
 								class:selected={index === activeDao}

@@ -1,5 +1,6 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 	import Icon from '@iconify/svelte';
 
 	export let daoData: DAOProject;
@@ -11,7 +12,7 @@
 		<div class="icon-wrapper center">
 			<Icon icon="tabler:cash-banknote" />
 		</div>
-		<img src={daoData.generalInfo.logo} alt="Toucans" />
+		<img src={daoData.generalInfo.logo} on:error={(e) => handleLogoImgError(e)} alt="Toucans" />
 	</div>
 	<h4>{title}</h4>
 </div>

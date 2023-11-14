@@ -5,6 +5,7 @@
 	import type { Writable } from 'svelte/store';
 	import DashboardHeading from '../../../atoms/DashboardHeading.svelte';
 	import type { UserData } from '../../../../_types/user-data.interface';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	const userData: UserData = getContext('userData');
 
@@ -47,7 +48,12 @@
 					>
 						<div class="row-space-between">
 							<div class="coin-name-wrapper row-2 align-center">
-								<img src={vault.daoData.logoUrl} alt={`${vault.daoData.name} logo`} class="logo" />
+								<img
+									src={vault.daoData.logoUrl}
+									on:error={(e) => handleLogoImgError(e)}
+									alt={`${vault.daoData.name} logo`}
+									class="logo"
+								/>
 								<h4 class:selected={$selectedVaultStore === i + vaultsPerPage * activePage}>
 									{vault.daoData.name}
 								</h4>

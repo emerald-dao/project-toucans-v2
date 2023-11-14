@@ -3,13 +3,14 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import Icon from '@iconify/svelte';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let daoData: DAOProject;
 </script>
 
 <div class="main-wrapper">
 	<div class="row-3 align-center">
-		<img src={daoData.generalInfo.logo} alt="dao-logo" />
+		<img src={daoData.generalInfo.logo} on:error={(e) => handleLogoImgError(e)} alt="dao-logo" />
 		<div class="row-2 name-wrapper">
 			<h2>{daoData.generalInfo.name}</h2>
 			<a

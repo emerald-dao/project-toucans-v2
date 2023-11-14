@@ -1,5 +1,6 @@
 <script type="ts">
 	import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
+	import { handleBannerImgError, handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 	import { Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 
@@ -9,12 +10,13 @@
 <a href={`/p/${project.project_id}`} class="card-primary">
 	<img
 		src={project.banner_image ?? 'toucans-illustration.png'}
+		on:error={(e) => handleBannerImgError(e)}
 		alt={`${name} banner`}
 		class="banner"
 	/>
 	<div class="content-wrapper column-5">
 		<div class="row-3 align-center">
-			<img src={project.logo} alt="DAO logo" class="logo" />
+			<img src={project.logo} on:error={(e) => handleLogoImgError(e)} alt="DAO logo" class="logo" />
 			<h3>{project.name}</h3>
 		</div>
 		<div class="row-3 align-end">

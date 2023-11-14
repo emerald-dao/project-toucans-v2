@@ -8,6 +8,7 @@
 	import { Label, Modal, getModal } from '@emerald-dao/component-library';
 	import BatchMintingList from '../atoms/BatchMintingList.svelte';
 	import { formatDate } from '$lib/utilities/formatDate';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let action: ActionData;
 	export let threshold: string;
@@ -70,7 +71,7 @@
 		</div>
 		{#if daoId && showDao}
 			<div class="dao-project">
-				<img src={daoLogo} alt="dao logo" />
+				<img src={daoLogo} alt="dao logo" on:error={(e) => handleLogoImgError(e)} />
 				<span class="xsmall">
 					{daoId}
 				</span>

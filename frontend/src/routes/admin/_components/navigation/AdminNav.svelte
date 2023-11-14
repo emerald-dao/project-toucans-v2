@@ -8,6 +8,7 @@
 	import type { Writable } from 'svelte/store';
 	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -39,7 +40,11 @@
 <nav>
 	<div class="column-10">
 		<div class="row-3 align-center">
-			<img src={activeDaoData.generalInfo.logo} alt="DAO Logo" />
+			<img
+				src={activeDaoData.generalInfo.logo}
+				on:error={(e) => handleLogoImgError(e)}
+				alt="DAO Logo"
+			/>
 			<DropDownHeading bind:activeDao={$activeDaoStore} userDaos={$userDaosStore}>
 				<div id="clipboard" />
 				<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>

@@ -2,6 +2,7 @@
 	import LineChart from '$components/charts/LineChart.svelte';
 	import { Currency } from '@emerald-dao/component-library';
 	import type { DaoRankingData } from '../../types/dao-ranking-data.interface';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let project: DaoRankingData;
 	export let number: number;
@@ -11,7 +12,12 @@
 	<th scope="row" class="left-align fit-content soft-text">{number + 1}</th>
 	<td>
 		<a href={`/p/${project.project_id}`} class="row-2 align-center left-align fit-content">
-			<img src={project.projects.logo} alt={`${project.projects.name} logo`} class="logo" />
+			<img
+				src={project.projects.logo}
+				on:error={(e) => handleLogoImgError(e)}
+				alt={`${project.projects.name} logo`}
+				class="logo"
+			/>
 			{project.projects.name}
 		</a>
 	</td>

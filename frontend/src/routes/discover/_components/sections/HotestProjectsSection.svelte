@@ -10,7 +10,7 @@
 
 <section>
 	<div class="container-small column-6">
-		<h3 class="w-medium">🔥 Hotest DAOs and Tokens</h3>
+		<h3 class="w-medium">🔥 Hottest DAOs and Tokens</h3>
 		<Tabs>
 			<TabList>
 				<Tab>DAOs</Tab>

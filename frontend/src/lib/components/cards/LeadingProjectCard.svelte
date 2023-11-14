@@ -1,5 +1,6 @@
 <script type="ts">
 	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 	import { Currency, Label } from '@emerald-dao/component-library';
 
 	export let daoData: DaoRankingData;
@@ -13,7 +14,11 @@
 				{number}
 			</span>
 		</div>
-		<img src={daoData.projects.logo} alt={`${daoData.projects.name} logo`} />
+		<img
+			src={daoData.projects.logo}
+			on:error={(e) => handleLogoImgError(e)}
+			alt={`${daoData.projects.name} logo`}
+		/>
 	</div>
 	<div class="column align-start">
 		<h4>{daoData.projects.name}</h4>
