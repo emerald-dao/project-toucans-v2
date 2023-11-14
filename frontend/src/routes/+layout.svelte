@@ -7,7 +7,7 @@
 	import '@emerald-dao/design-system/build/variables.css';
 	import '@emerald-dao/component-library/styles/app.scss';
 	import '../lib/styles/app.scss';
-	import { Header, Footer, TransactionModal } from '@emerald-dao/component-library';
+	import { Header, Footer, TransactionModal, Seo } from '@emerald-dao/component-library';
 	import {
 		navElements,
 		emeraldTools,
@@ -29,6 +29,7 @@
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
 	import { onMount } from 'svelte';
+	import dappInfo from '$lib/config/config';
 
 	onMount(() => {
 		let html = document.querySelector('html');
@@ -102,9 +103,12 @@
 	<slot />
 </main>
 
-<svelte:head>
-	<title>Toucans</title>
-</svelte:head>
+<Seo
+	title={dappInfo.title}
+	description={dappInfo.description}
+	type="WebSite"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
 
 {#if $page.url.pathname === '/' || $page.url.pathname === '/discover' || $page.url.pathname === '/docs'}
 	<Footer
