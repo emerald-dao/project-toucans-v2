@@ -2,7 +2,9 @@
 
 Create a token. Launch a DAO.
 
-https://toucans.ecdao.org
+Production - https://toucans.ecdao.org
+
+Testing - https://dev.toucans.ecdao.org
 
 ## Contract Addresses
 
@@ -15,4 +17,7 @@ https://toucans.ecdao.org
 
 **Testnet**
 
-Soon...
+- Toucans: `0x04525cc647ef7524`
+- ToucansUtils: `0x04525cc647ef7524`
+- ToucansActions: `0x04525cc647ef7524`
+- ToucansTokens: `0x04525cc647ef7524`
