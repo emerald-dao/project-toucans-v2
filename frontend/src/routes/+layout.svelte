@@ -31,13 +31,13 @@
 	import { onMount } from 'svelte';
 	import dappInfo from '$lib/config/config';
 
-	onMount(() => {
-		let html = document.querySelector('html');
+	// onMount(() => {
+	// 	let html = document.querySelector('html');
 
-		if (html) {
-			html.setAttribute('data-theme', $theme);
-		}
-	});
+	// 	if (html) {
+	// 		html.setAttribute('data-theme', $theme);
+	// 	}
+	// });
 
 	const connect = async () => {
 		logIn().then(async () => {
