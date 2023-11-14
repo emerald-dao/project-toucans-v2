@@ -15,9 +15,9 @@
 				</p>
 			</div>
 		</div>
-		<div class="right-wrapper">
+		<!-- <div class="right-wrapper">
 			<CirclesAndBlur />
-		</div>
+		</div> -->
 	</div>
 </section>
 
