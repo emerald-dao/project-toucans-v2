@@ -15,7 +15,7 @@
 			</span>
 		</div>
 		<img
-			src={daoData.projects.logo}
+			src={daoData.projects.logo || '/toucans-logo.png'}
 			on:error={(e) => handleLogoImgError(e)}
 			alt={`${daoData.projects.name} logo`}
 		/>
