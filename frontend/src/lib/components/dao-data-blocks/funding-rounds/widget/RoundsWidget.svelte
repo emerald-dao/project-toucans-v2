@@ -96,22 +96,26 @@
 			<div class="chart-data-card">
 				<div class="row-1">
 					<p class="xsmall">Reserve</p>
-					<TooltipIcon
-						width={0.7}
-						tooltip="The percentage of {projectToken} tokens minted during funding that get reserved in the treasury."
-					/>
+					<div class="tooltip-mobile-display">
+						<TooltipIcon
+							width={0.7}
+							tooltip="The percentage of {projectToken} tokens minted during funding that get reserved in the treasury."
+						/>
+					</div>
 				</div>
 				<span class="xsmall">{Number(round.details.reserveRate) * 100 + '%'}</span>
 			</div>
 			<div class="chart-data-card">
 				<div class="row-1">
 					<p class="xsmall">Issuance</p>
-					<TooltipIcon
-						width={0.7}
-						tooltip="For every 1 {paymentToken} funded, {Number(
-							round.details.issuanceRate
-						)} {projectToken} will be minted."
-					/>
+					<div class="tooltip-mobile-display">
+						<TooltipIcon
+							width={0.7}
+							tooltip="For every 1 {paymentToken} funded, {Number(
+								round.details.issuanceRate
+							)} {projectToken} will be minted."
+						/>
+					</div>
 				</div>
 				<Currency
 					amount={Number(round.details.issuanceRate)}
@@ -126,6 +130,12 @@
 </div>
 
 <style type="scss">
+	.tooltip-mobile-display {
+		display: none;
+		@include mq('small') {
+			display: block;
+		}
+	}
 	.card {
 		background-color: var(--clr-background-secondary);
 	}
