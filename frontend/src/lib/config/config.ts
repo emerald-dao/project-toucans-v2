@@ -1,9 +1,9 @@
 const dappInfo = {
 	title: 'Toucans',
-	description: 'No-code tools for DAOs on the Flow Blockchain',
-	url: 'toucans.ecdao.org',
+	description: 'Create a token. Launch a DAO.',
+	url: 'https://toucans.ecdao.org',
 	author: 'Emerald City DAO',
-	icon: '/toucans-logo.png'
+	icon: 'https://i.imgur.com/cQPEJBg.png'
 };
 
 export default dappInfo;

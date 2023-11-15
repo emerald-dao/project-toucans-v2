@@ -11,7 +11,7 @@
 	<img
 		src={project.banner_image ?? 'toucans-illustration.png'}
 		on:error={(e) => handleBannerImgError(e)}
-		alt={`${name} banner`}
+		alt={`${project.name} banner`}
 		class="banner"
 	/>
 	<div class="content-wrapper column-5">
