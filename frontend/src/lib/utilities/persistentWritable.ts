@@ -1,15 +1,16 @@
 import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import * as devalue from 'devalue';
+import Cookies from 'js-cookie';
 
-function persistentWritable<T>(key: string, defaultValue: T) {
+function persistentWritable<T>(key: string, defaultValue: T, useCookies: boolean) {
 	// Create a writable store.
 	const { subscribe, set, update }: Writable<T> = writable();
 
 	let storedValue: string | undefined | null;
 	// Get stored value.
 	if (browser) {
-		storedValue = localStorage.getItem(key);
+		storedValue = useCookies ? Cookies.get(key) : localStorage.getItem(key);
 	}
 
 	// Determine resolved value.
@@ -25,7 +26,11 @@ function persistentWritable<T>(key: string, defaultValue: T) {
 	subscribe((value) => {
 		// Store the new value.
 		if (browser) {
-			localStorage.setItem(key, devalue.stringify(value));
+			if (useCookies) {
+				Cookies.set(key, value);
+			} else {
+				localStorage.setItem(key, devalue.stringify(value));
+			}
 		}
 	});
 

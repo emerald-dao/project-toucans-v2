@@ -16,8 +16,7 @@
 	} from '$lib/config/navigation';
 	import { theme } from '$stores/ThemeStore';
 	import { logIn, unauthenticate } from '$flow/actions';
-	import { user } from '$stores/flow/FlowStore';
-	import { getFindProfile } from '$flow/utils';
+	import { profile, user } from '$stores/flow/FlowStore';
 	import { transactionStore } from '$stores/flow/TransactionStore';
 	import { page } from '$app/stores';
 	import { checkUser } from '$lib/features/users/functions/checkUser';
@@ -28,16 +27,8 @@
 		notifications,
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
-	import { onMount } from 'svelte';
 	import dappInfo from '$lib/config/config';
-
-	// onMount(() => {
-	// 	let html = document.querySelector('html');
-
-	// 	if (html) {
-	// 		html.setAttribute('data-theme', $theme);
-	// 	}
-	// });
+	import getProfile from '$lib/utilities/api/getProfile';
 
 	const connect = async () => {
 		logIn().then(async () => {
@@ -51,15 +42,15 @@
 		});
 	};
 
-	let userProfile: Profile | null;
-
-	$: if ($user.addr) getProfile($user.addr);
-
-	const getProfile = async (address: string) => {
-		userProfile = await fetch(`/api/get-profile/${address}`).then(
-			async (data) => (await data.json()) as Profile
-		);
+	const connectProfileToStore = async (address: string) => {
+		$profile = await getProfile(address);
 	};
+
+	$: if ($user.addr) {
+		connectProfileToStore($user.addr);
+	} else {
+		$profile = null;
+	}
 
 	$: $user.addr && setNotifications($user.addr);
 	$: !$user.addr && ($notifications = null);
@@ -85,8 +76,8 @@
 	themeStore={theme}
 	logIn={() => connect()}
 	{unauthenticate}
-	{getFindProfile}
 	user={$user}
+	profile={$profile}
 	{navElements}
 	sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
 	avatarDropDownNavigation={$user.addr ? avatarDropdownNav : undefined}
@@ -96,8 +87,6 @@
 	logoUrl="/toucans-logo.png"
 	{notificationsNumber}
 	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
-	userAvatar={userProfile?.avatar}
-	userName={userProfile?.name}
 />
 <main>
 	<slot />
