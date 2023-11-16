@@ -21,7 +21,7 @@
 
 	let screenSize: number;
 
-	const activeDao = persistentWritable('adminActiveDao', 0);
+	const activeDao = persistentWritable('adminActiveDao', 0, false);
 
 	const daosDataStore: Writable<DAOProject[]> = writable(data.projects, (set) => {
 		const getProjectsIds = () => {
