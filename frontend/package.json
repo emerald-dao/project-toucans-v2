@@ -58,6 +58,7 @@
 		"chart.js": "^3.9.1",
 		"nft.storage": "^7.0.0",
 		"svelte-chartjs": "^3.0.1",
-		"svelte-flatpickr": "^3.3.2"
+		"svelte-flatpickr": "^3.3.2",
+		"js-cookie": "^3.0.5"
 	}
 }
