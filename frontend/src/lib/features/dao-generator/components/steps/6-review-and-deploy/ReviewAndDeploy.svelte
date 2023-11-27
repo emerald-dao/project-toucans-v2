@@ -75,7 +75,7 @@
 						(delay) => delay.value === $daoGeneratorData.tokenomics.editDelay
 					)[0].title}
 				/>
-				<RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} />
+				<!-- <RecapElement title="Token minting" data={$daoGeneratorData.tokenomics.mintTokens} /> -->
 			{/if}
 		</RecapCard>
 		<div class="column-2">

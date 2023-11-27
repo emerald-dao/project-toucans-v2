@@ -148,7 +148,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg(paymentCurrencyInfo.receiverPath, t.Path),
 			arg(paymentCurrencyInfo.publicPath, t.Path),
 			arg(paymentCurrencyInfo.storagePath, t.Path),
-			arg(data.tokenomics.mintTokens, t.Bool),
+			arg(true, t.Bool),
 			arg(formatFix(data.tokenomics.initialSupply), t.UFix64),
 			arg(
 				data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null,

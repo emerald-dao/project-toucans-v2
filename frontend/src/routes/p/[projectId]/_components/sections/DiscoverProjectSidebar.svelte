@@ -39,11 +39,11 @@
 					class="dao-logo"
 				/>
 				<div class="commands-wrapper row-2 align-center">
-					{#if daoData.hasToken && daoData.onChainData.minting}
+					<!-- {#if daoData.hasToken && daoData.onChainData.minting}
 						<Label size="xx-small" color="neutral" hasBorder={false} iconRight="tabler:check">
 							Minting
 						</Label>
-					{/if}
+					{/if} -->
 					{#if $user.loggedIn}
 						<SubscribeButton
 							projectId={daoData.generalInfo.project_id}

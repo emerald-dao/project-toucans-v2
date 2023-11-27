@@ -50,10 +50,10 @@
 />
 
 <HeroSection />
+<HotestProjectsSection daoRankings={data.daoRankings} tokenRankings={data.tokenRankings} />
 {#if DOM}
 	<FeaturedDaoSection project={DOM} story={DOMInfo.story} title={`DAO of ${thisMonth}`} />
 {/if}
-<HotestProjectsSection daoRankings={data.daoRankings} tokenRankings={data.tokenRankings} />
 <FeaturedDaoSection
 	project={ECDAO}
 	story={ECDAOInfo.story}
