@@ -10,11 +10,7 @@
 				'This option will launch a DAO. It will set up a multi-sig treasury, the ability to donate, vote, and more. It will not create a token upon deployment.',
 			icon: 'tabler:users',
 			slug: 'dao',
-			estimatedTime: '3 minutes',
-			cost: {
-				amount: 200,
-				currency: 'FLOW'
-			}
+			estimatedTime: '3 minutes'
 		},
 		{
 			title: 'DAO + Token',
@@ -22,11 +18,7 @@
 				'This option will do everything the DAO option does as well as deploy a new fungible token on the Flow blockchain for you to fundraise with, mint, trade, and more.',
 			icon: 'tabler:coin',
 			slug: 'dao-token',
-			estimatedTime: '5 minutes',
-			cost: {
-				amount: 200,
-				currency: 'FLOW'
-			}
+			estimatedTime: '5 minutes'
 		}
 	];
 
@@ -77,9 +69,7 @@
 						</div>
 						<div class="row-2 align-center off">
 							<Icon icon="tabler:cash" />
-							<span class="small off">
-								{`Minting price: ${daoType.cost.amount} ${daoType.cost.currency}`}
-							</span>
+							<span class="small off"> Cost: Free! </span>
 						</div>
 					</div>
 				</div>

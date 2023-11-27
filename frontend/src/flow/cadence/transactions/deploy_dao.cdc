@@ -25,13 +25,6 @@ transaction(
       signer.link<&FiatToken.Vault{FungibleToken.Balance}>(/public/USDCVaultBalance, target: /storage/USDCVault)
     }
 
-    /**************************************************************************************/
-    /************************************ 200 $FLOW Fee ***********************************/
-    /**************************************************************************************/
-    let payment <- signer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: 200.0) as! @FlowToken.Vault
-    let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
-                              .borrow<&{FungibleToken.Receiver}>()!
-
     // Blank empty for now
     let extra: {String: AnyStruct} = {}
 
@@ -44,8 +37,7 @@ transaction(
     toucansProjectCollection.createProjectNoToken(
       projectId: projectId,
       paymentTokenInfo: ToucansTokens.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath), 
-      extra: extra, 
-      payment: <- payment
+      extra: extra
     )
   }
 

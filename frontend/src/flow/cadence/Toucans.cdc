@@ -1147,8 +1147,7 @@ pub contract Toucans {
     pub fun createProjectNoToken(
       projectId: String,
       paymentTokenInfo: ToucansTokens.TokenInfo,
-      extra: {String: AnyStruct},
-      payment: @FlowToken.Vault
+      extra: {String: AnyStruct}
     ) {
       let project: @Project <- create Project(
         projectId: projectId,
@@ -1163,11 +1162,6 @@ pub contract Toucans {
         extra: extra
       )
       self.projects[projectId] <-! project
-
-      // payment
-      let emeraldCityTreasury: &{FungibleToken.Receiver} = getAccount(0x5643fd47a29770e7).getCapability(/public/flowTokenReceiver)
-                              .borrow<&{FungibleToken.Receiver}>()!
-      emeraldCityTreasury.deposit(from: <- payment)
 
       emit ProjectCreated(
         projectId: projectId,
