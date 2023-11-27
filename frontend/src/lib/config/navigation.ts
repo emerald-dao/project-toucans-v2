@@ -34,25 +34,30 @@ export const emeraldTools = [
 		url: 'https://bot.ecdao.org/'
 	},
 	{
-		name: 'Geeft',
-		url: 'https://geeft.ecdao.org/'
+		name: 'Touchstone',
+		url: 'https://touchstone.city/'
 	},
 	{
-		name: 'Drizzle',
-		url: 'https://www.drizzle33.app/'
+		name: 'Toucans',
+		url: 'https://toucans.ecdao.org/'
 	}
 ];
 
 export const socialMedia = [
 	{
-		name: 'Twitter ',
+		name: 'Twitter',
 		url: 'https://twitter.com/emerald_dao',
 		icon: 'ion:logo-twitter'
 	},
 	{
-		name: 'Github ',
+		name: 'Github',
 		url: 'https://github.com/emerald-dao',
 		icon: 'ion:logo-github'
+	},
+	{
+		name: 'Discord',
+		url: 'https://discord.gg/emeraldcity',
+		icon: 'ion:logo-discord'
 	}
 ];
 
