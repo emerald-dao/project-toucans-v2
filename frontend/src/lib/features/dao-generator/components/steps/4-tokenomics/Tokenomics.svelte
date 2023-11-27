@@ -24,7 +24,7 @@
 <form in:fly={{ y: 30, duration: 400 }} class="column-2" autocomplete="off">
 	<div class="payment-currency column-2">
 		<div class="row-2 align-center">
-			<label for="currencies">Payment currency</label>
+			<label for="currencies">Payment Currency</label>
 			<TooltipIcon tooltip={GLOSSARY.paymentCurrency} width={0.75} />
 		</div>
 		<CurrencySelect
@@ -37,7 +37,7 @@
 		class="switch"
 		class:margin-bottom={!$daoGeneratorData.tokenomics.hasMaxSupply}
 	>
-		Max supply
+		Max Supply
 		<TooltipIcon tooltip={GLOSSARY.maxSupply} width={0.75} />
 		<input
 			type="checkbox"
@@ -69,7 +69,7 @@
 		on:input={(input) => handleChange(input.detail)}
 		bind:value={$daoGeneratorData.tokenomics.initialSupply}
 	/>
-	<label for="mint-tokens" class="switch">
+	<!-- <label for="mint-tokens" class="switch">
 		Mint tokens
 		<TooltipIcon tooltip={GLOSSARY.minting} width={0.75} />
 
@@ -81,7 +81,7 @@
 			on:change={handleChange}
 		/>
 		<span class="slider" />
-	</label>
+	</label> -->
 	<StepButtons active={res.isValid()} />
 </form>
 
