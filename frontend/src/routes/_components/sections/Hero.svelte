@@ -50,7 +50,6 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			// text-align: justify;
 
 			@include mq('medium') {
 				display: grid;
@@ -75,16 +74,16 @@
 					}
 
 					p {
-						max-width: 55ch;
+						max-width: 50ch;
 					}
 				}
 			}
 
 			.right-wrapper {
 				display: flex;
-				height: 100%;
 				max-width: 55ch;
 				margin-top: var(--space-12);
+
 				@include mq('medium') {
 					margin-top: 0;
 				}
