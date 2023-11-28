@@ -56,7 +56,7 @@ export const socialMedia = [
 	},
 	{
 		name: 'Discord',
-		url: 'https://discord.gg/emeraldcity',
+		url: 'https://discord.gg/emerald-city-906264258189332541',
 		icon: 'ion:logo-discord'
 	}
 ];
