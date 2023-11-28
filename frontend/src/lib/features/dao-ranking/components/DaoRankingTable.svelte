@@ -1,8 +1,22 @@
 <script type="ts">
+	import { Button } from '@emerald-dao/component-library';
 	import type { DaoRankingData } from '../types/dao-ranking-data.interface';
 	import DaoRankingRow from './atoms/DaoRankingRow.svelte';
+	import Icon from '@iconify/svelte';
 
 	export let projectsData: DaoRankingData[];
+
+	export let pageSize = 10;
+	let currentPage = 1;
+	const nextPage = () => {
+		currentPage += 1;
+	};
+	const prevPage = () => {
+		currentPage -= 1;
+	};
+	$: pageStart = (currentPage - 1) * pageSize;
+	$: pageEnd = pageStart + pageSize;
+	$: currentPageDaos = projectsData.slice(pageStart, pageEnd);
 </script>
 
 <div class="table-wrap">
@@ -19,11 +33,31 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each projectsData as project, i}
-				<DaoRankingRow {project} number={i} />
+			{#each currentPageDaos as project, i}
+				<DaoRankingRow {project} number={i + (currentPage - 1) * pageSize} />
 			{/each}
 		</tbody>
 	</table>
+	<div class="pagination row-space-between">
+		<div class="row-4">
+			<Button
+				on:click={prevPage}
+				state={currentPage === 1 ? 'disabled' : 'active'}
+				type="transparent"
+				color="neutral"
+			>
+				<Icon icon="tabler:arrow-left" />
+			</Button>
+			<Button
+				on:click={nextPage}
+				state={pageEnd >= projectsData.length ? 'disabled' : 'active'}
+				type="transparent"
+				color="neutral"
+			>
+				<Icon icon="tabler:arrow-right" />
+			</Button>
+		</div>
+	</div>
 </div>
 
 <style type="scss">
