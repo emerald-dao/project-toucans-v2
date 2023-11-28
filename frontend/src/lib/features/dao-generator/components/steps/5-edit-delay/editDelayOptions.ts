@@ -2,7 +2,8 @@ export const editDelayOptions = [
   {
     id: 'no-delay',
     title: 'No delay',
-    value: '0.00'
+    value: '0.00',
+    recommended: true
   },
   {
     id: 'one-day',
