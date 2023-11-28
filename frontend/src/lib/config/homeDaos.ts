@@ -6,7 +6,7 @@ const homeDaos: DaoDatabaseData[] = [
     created_at: '',
     description: "The first DAO on the Flow blockchain. The creators of Toucans.",
     long_description: undefined,
-    discord: 'https://discord.gg/emeraldcity',
+    discord: 'https://discord.gg/emerald-city-906264258189332541',
     logo: 'https://i.imgur.com/dsPY3ct.png',
     banner_image: 'https://i.imgur.com/JE5HFpS.jpg',
     name: 'Emerald City DAO',
