@@ -6,6 +6,7 @@
 	import GLOSSARY from '$lib/config/glossary';
 	import type { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
 	import { getContext } from 'svelte';
+	import { Label } from '@emerald-dao/component-library';
 
 	const daoGeneratorData: typeof daoAndTokenGeneratorData = getContext('daoGeneratorData');
 </script>
@@ -31,6 +32,9 @@
 				<Icon icon="tabler:clock" />
 			</div>
 			<h4>{option.title}</h4>
+			{#if option.recommended}
+				<Label color="tertiary" hasBorder={false} size="x-small">Recommended</Label>
+			{/if}
 		</label>
 	{/each}
 	<StepButtons />

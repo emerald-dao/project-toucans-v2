@@ -1,6 +1,6 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Label } from '@emerald-dao/component-library';
+	import { Button, Label } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
@@ -39,6 +39,9 @@
 					class="dao-logo"
 				/>
 				<div class="commands-wrapper row-2 align-center">
+					{#if daoData.generalInfo.owner === $user.addr}
+						<Button size="x-small" color="neutral" type="ghost" href="/admin">Manage DAO</Button>
+					{/if}
 					<!-- {#if daoData.hasToken && daoData.onChainData.minting}
 						<Label size="xx-small" color="neutral" hasBorder={false} iconRight="tabler:check">
 							Minting
