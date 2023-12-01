@@ -92,7 +92,7 @@
 			{/if}
 		</div>
 		<slot />
-		{#if distributionType === 'withdraw' || 'lock'}
+		{#if distributionType === 'withdraw' || distributionType === 'lock'}
 			<div class="radio-tabs" id="currencies">
 				{#each Object.entries(daoData.onChainData.treasuryBalances) as [currency], i}
 					<label>
@@ -107,7 +107,7 @@
 					</label>
 				{/each}
 			</div>
-			{#if (distributionType === 'withdraw' || 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
+			{#if (distributionType === 'withdraw' || distributionType === 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
 				<div class="row-2 align-center">
 					<span class="small">Available balance:</span>
 					<Currency
@@ -118,7 +118,7 @@
 				</div>
 			{/if}
 		{/if}
-		{#if ((distributionType === 'withdraw' || 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint'}
+		{#if ((distributionType === 'withdraw' || distributionType === 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined && Number(daoData.onChainData.treasuryBalances[currencyToDistribute]) > 0) || distributionType === 'mint'}
 			<DistributionForms
 				bind:formDist
 				bind:csvDist
