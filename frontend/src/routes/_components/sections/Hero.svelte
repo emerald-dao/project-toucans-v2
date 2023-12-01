@@ -33,7 +33,7 @@
 		</div>
 	</div>
 	<div class="column-2 center">
-		<Button color="primary" size="large" width="extended" href="/event-generator"
+		<Button color="primary" size="large" width="extended" href="/dao-generator"
 			>Create a DAO - it's free!
 		</Button>
 		<div class="column center">
