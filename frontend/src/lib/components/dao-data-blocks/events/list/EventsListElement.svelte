@@ -105,10 +105,10 @@
 		{#if event.type === 'Purchase' || event.type === 'Donate'}
 			<WalletLabel address={event.data.by} find={findNames[event.data.by]} />
 		{/if}
-		{#if event.type === 'Withdraw' || event.type === 'Mint'}
+		{#if event.type === 'Withdraw' || event.type === 'Mint' || event.type === 'LockTokens'}
 			<WalletLabel address={event.data.to} find={findNames[event.data.to]} />
 		{/if}
-		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn'}
+		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn' || event.type === 'LockTokens'}
 			<Currency
 				amount={event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Burn'
 					? -Number(event.data.amount)
