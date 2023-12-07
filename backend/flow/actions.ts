@@ -52,9 +52,15 @@ function getQuoteToFlowPriceFromDex(info) {
   let numQuote = 0.0
   if (info[0].includes('Flow')) {
     numFlow = parseFloat(info[2])
+    if (numFlow < 1000) {
+      return null;
+    }
     numQuote = parseFloat(info[3])
   } else if (info[1].includes('Flow')) {
     numFlow = parseFloat(info[3])
+    if (numFlow < 1000) {
+      return null;
+    }
     numQuote = parseFloat(info[2])
   } else {
     return null;
@@ -68,9 +74,15 @@ function getQuoteToUSDCPriceFromDex(info) {
   let numQuote = 0.0
   if (info[0].includes('FiatToken')) {
     numUsdc = parseFloat(info[2])
+    if (numUsdc < 1000) {
+      return null;
+    }
     numQuote = parseFloat(info[3])
   } else if (info[1].includes('FiatToken')) {
     numUsdc = parseFloat(info[3])
+    if (numUsdc < 1000) {
+      return null;
+    }
     numQuote = parseFloat(info[2])
   } else {
     return null;
