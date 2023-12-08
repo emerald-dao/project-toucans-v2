@@ -46,7 +46,7 @@
 			{/if}
 		</div>
 	{/if}
-	{#if $paymentData.type === 'fund' || ($paymentData.type === 'donation' && $paymentData.currency !== daoData.generalInfo.token_symbol)}
+	{#if $paymentData.type === 'fund'}
 		<FeeWarning paymentCurrency={$paymentData.currency} />
 	{/if}
 	<CurrencyInput
