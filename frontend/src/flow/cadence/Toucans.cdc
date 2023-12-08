@@ -741,11 +741,12 @@ pub contract Toucans {
       let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType())
                 ?? panic("Unsupported token type for donating.")
 
-      // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
-                                          .borrow<&{FungibleToken.Receiver}>()
-                                          ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
-      emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
+      // remove tax on donations for the time being
+      //
+      // let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
+      //                                     .borrow<&{FungibleToken.Receiver}>()
+      //                                     ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
+      // emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
 
       emit Donate(
         projectId: self.projectId,
