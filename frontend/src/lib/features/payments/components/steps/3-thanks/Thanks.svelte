@@ -45,7 +45,9 @@
 						$paymentData.currency
 					}%20to%20${
 						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
-					}%20on%20Toucans!`}
+					}%20on%20Toucans!%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
+						daoData.generalInfo.project_id
+					}`}
 					target="_blank"
 					type="ghost"
 					color="neutral"
@@ -59,7 +61,7 @@
 						$paymentData.currency
 					}%20on%20Toucans%20and%20got%20${
 						$paymentData.amount * 0.95 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
-					}%20$${$paymentData.tokenName}: https://toucans.ecdao.org/p/${
+					}%20$${$paymentData.tokenName}.%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
 						daoData.generalInfo.project_id
 					}`}
 					target="_blank"
