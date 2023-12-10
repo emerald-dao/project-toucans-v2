@@ -73,4 +73,24 @@ pub contract ToucansUtils {
     let indexOfDot: Int = ToucansUtils.index(numToString, ".", 1)!
     return numToString.slice(from: 0, upTo: indexOfDot + 3)
   }
+
+  // stringAddress DOES NOT include the `0x`
+  pub fun stringToAddress(stringAddress: String): Address {
+    var r: UInt64 = 0
+    var bytes: [UInt8] = stringAddress.decodeHex()
+
+    while bytes.length > 0 {
+      r = r + (UInt64(bytes.removeFirst()) << UInt64(bytes.length * 8))
+    }
+
+    return Address(r)
+  }
+
+  // returns:
+  // [address, contractname]
+  pub fun getAddressAndContractNameFromCollectionIdentifier(identifier: String): [AnyStruct] {
+    let address: Address = self.stringToAddress(stringAddress: identifier.slice(from: 2, upTo: 18))
+    let contractName: String = identifier.slice(from: 19, upTo: identifier.length - 11)
+    return [address, contractName]
+  }
 }

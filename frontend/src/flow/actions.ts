@@ -11,6 +11,7 @@ import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw
 import deployDAOTx from './cadence/transactions/deploy_dao.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
 import donateTx from './cadence/transactions/donate.cdc?raw';
+import donateNFTsTx from './cadence/transactions/donate_nfts.cdc?raw';
 import transferProjectTokenToTreasuryTx from './cadence/transactions/transfer_project_token_to_treasury.cdc?raw';
 import newRoundTx from './cadence/transactions/new_round.cdc?raw';
 import editRoundTx from './cadence/transactions/edit_round.cdc?raw';
@@ -23,6 +24,7 @@ import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
 import batchWithdrawTokensTx from './cadence/transactions/treasury-actions/batch_withdraw_tokens.cdc?raw';
+import withdrawNFTsTx from './cadence/transactions/treasury-actions/withdraw_nfts.cdc?raw';
 import updateMultiSigTx from './cadence/transactions/treasury-actions/update_multisig.cdc?raw';
 import mintTokensTx from './cadence/transactions/treasury-actions/mint_tokens.cdc?raw';
 import batchMintTokensTx from './cadence/transactions/treasury-actions/batch_mint_tokens.cdc?raw';
@@ -355,6 +357,37 @@ export const donateExecution = (
 	currency: ECurrencies
 ) => executeTransaction(() => donate(projectOwner, projectId, amount, message, currency), saveEventAction);
 
+const donateNFTs = async (
+	projectOwner: string,
+	projectId: string,
+	nftIDs: string[],
+	collectionIdentifier: string,
+	message: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(donateNFTsTx, projectId, projectOwner),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(nftIDs, t.Array(t.UInt64)),
+			arg(collectionIdentifier, t.String),
+			arg(message, t.String)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const donateNFTsExecution = (
+	projectOwner: string,
+	projectId: string,
+	nftIDs: string[],
+	collectionIdentifier: string,
+	message: string
+) => executeTransaction(() => donateNFTs(projectOwner, projectId, nftIDs, collectionIdentifier, message), saveEventAction);
+
 const transferProjectTokenToTreasury = async (
 	projectOwner: string,
 	projectId: string,
@@ -537,6 +570,40 @@ export const proposeBatchWithdrawExecution = (
 ) =>
 	executeTransaction(() =>
 		proposeBatchWithdraw(tokenSymbol, amounts, projectOwner, projectId)
+	);
+
+const proposeWithdrawNFTs = async (
+	projectOwner: string,
+	projectId: string,
+	collectionIdentifier: string,
+	nftIDs: string[],
+	recipient: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(withdrawNFTsTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.Address),
+			arg(projectId, t.String),
+			arg(collectionIdentifier, t.String),
+			arg(nftIDs, t.Array(t.UInt64)),
+			arg(recipient, t.Address),
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const proposeWithdrawNFTsExecution = (
+	projectOwner: string,
+	projectId: string,
+	collectionIdentifier: string,
+	nftIDs: string[],
+	recipient: string
+) =>
+	executeTransaction(() =>
+		proposeWithdrawNFTs(projectOwner, projectId, collectionIdentifier, nftIDs, recipient)
 	);
 
 const updateMultisig = async (

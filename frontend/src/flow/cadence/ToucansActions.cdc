@@ -1,4 +1,5 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
+import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
 
 pub contract ToucansActions {
@@ -71,6 +72,35 @@ pub contract ToucansActions {
         totalAmount = totalAmount + amount
       }
       self.totalReadableAmount = ToucansUtils.fixToReadableString(num: totalAmount)
+    }
+  }
+
+  // Withdraws NFTs from the treasury to 1 address
+  pub struct WithdrawNFTs: Action {
+    pub let collectionType: Type
+    pub let recipientCollection: Capability<&{NonFungibleToken.Receiver}>
+    pub let nftIDs: [UInt64]
+    pub let contractAddress: Address
+    pub let contractName: String
+
+    pub fun getIntent(): String {
+      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.contractName).concat(" NFTs from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
+    }
+
+    pub fun getTitle(): String {
+      return "WithdrawNFTs"
+    }
+
+    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>) {
+      pre {
+        recipientCollection.check(): "Invalid recipient capability."
+      }
+      self.collectionType = collectionType
+      self.recipientCollection = recipientCollection
+      self.nftIDs = nftIDs
+      let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collectionType.identifier)
+      self.contractAddress = nameAndAddress[0] as! Address
+      self.contractName = nameAndAddress[1] as! String
     }
   }
 
