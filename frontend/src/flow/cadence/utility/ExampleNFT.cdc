@@ -388,9 +388,14 @@ pub contract ExampleNFT: NonFungibleToken {
             self.CollectionPublicPath,
             target: self.CollectionStoragePath
         )
+        let cap = self.account.getCapability(self.CollectionPublicPath)
+                    .borrow<&{NonFungibleToken.CollectionPublic}>()!
 
         // Create a Minter resource and save it to storage
         let minter <- create NFTMinter()
+        minter.mintNFT(recipient: cap, name: "Test #1", description: "Test #1 Description", thumbnail: "https://i.imgur.com/dsPY3ct.png", royalties: [])
+        minter.mintNFT(recipient: cap, name: "Test #2", description: "Test #2 Description", thumbnail: "https://i.imgur.com/dsPY3ct.png", royalties: [])
+        minter.mintNFT(recipient: cap, name: "Test #3", description: "Test #3 Description", thumbnail: "https://i.imgur.com/dsPY3ct.png", royalties: [])
         self.account.save(<-minter, to: self.MinterStoragePath)
 
         emit ContractInitialized()

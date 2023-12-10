@@ -52,6 +52,7 @@ import getProjectBalancesScript from './cadence/scripts/get_project_balances.cdc
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
+import getCatalogNFTsScript from './cadence/scripts/get_catalog_nfts.cdc?raw';
 import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
 import { get } from 'svelte/store';
@@ -1054,6 +1055,41 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 	}
 };
 
+export const getCatalogNFTs: (collectionIdentifiers: string[], user: string) => Promise<{
+	[key: string]: {
+		id: string;
+		name: string;
+		thumbnail: string
+	}[]
+}> = async (collectionIdentifiers: string[], user: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogNFTsScript),
+			args: (arg, t) => [
+				arg(collectionIdentifiers, t.Array(t.String)),
+				arg(user, t.Address)
+			]
+		});
+
+		return response;
+	} catch (e) {
+		console.log('Error in getCatalogNFTs');
+		console.log(e);
+	}
+};
+
+export const getCatalogKeys = async () => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(getCatalogKeysScript),
+			args: (arg, t) => []
+		});
+	} catch (e) {
+		console.log('Error in getCatalogKeys');
+		console.log(e);
+	}
+}
+
 export const getNFTCatalog: () => Promise<{
 	[key: string]: {
 		identifier: string;
@@ -1062,10 +1098,7 @@ export const getNFTCatalog: () => Promise<{
 	};
 }> = async () => {
 	try {
-		const catalogKeys = await fcl.query({
-			cadence: replaceWithProperValues(getCatalogKeysScript),
-			args: (arg, t) => []
-		});
+		const catalogKeys = await getCatalogKeys();
 		const groups = splitList(catalogKeys, 50);
 		const promises = groups.map((group) => {
 			return getCatalogByCollectionIDs(group);
