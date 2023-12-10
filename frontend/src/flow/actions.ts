@@ -38,6 +38,7 @@ import getProjectScript from './cadence/scripts/get_project.cdc?raw';
 import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?raw';
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getProjectLockedTokensScript from './cadence/scripts/get_project_locked_tokens.cdc?raw';
+import getProjectNFTTreasuryScript from './cadence/scripts/get_project_nft_treasury.cdc?raw';
 import getProjectLockedTokensForUserScript from './cadence/scripts/get_project_locked_tokens_for_user.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
@@ -853,7 +854,7 @@ export const getProjectWithTokenInfo: (
 			cadence: replaceWithProperValues(getProjectScript, projectId, contractAddress),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
-		response.actions = await getProjectActions(owner, projectId);;
+		response.actions = await getProjectActions(owner, projectId);
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectInfo');
@@ -887,6 +888,25 @@ export const getProjectActions = async (owner: string, projectId: string) => {
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectActions');
+		console.log(e);
+	}
+};
+
+export const getProjectNFTTreasury: (owner: string, projectId: string) => Promise<{
+	[collectionIdentifier: string]: {
+		id: string;
+		name: string;
+		thumbnail: string;
+	}[]
+}> = async (owner: string, projectId: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectNFTTreasuryScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectNFTTreasury');
 		console.log(e);
 	}
 };
@@ -1056,7 +1076,7 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 };
 
 export const getCatalogNFTs: (collectionIdentifiers: string[], user: string) => Promise<{
-	[key: string]: {
+	[collectionIdentifier: string]: {
 		id: string;
 		name: string;
 		thumbnail: string
@@ -1091,7 +1111,7 @@ export const getCatalogKeys = async () => {
 }
 
 export const getNFTCatalog: () => Promise<{
-	[key: string]: {
+	[collectionIdentifier: string]: {
 		identifier: string;
 		name: string;
 		image: string;

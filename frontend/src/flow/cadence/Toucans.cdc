@@ -277,6 +277,8 @@ pub contract Toucans {
     pub fun borrowManagerPublic(): &Manager{ManagerPublic}
     pub fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}?
     pub fun hasTokenContract(): Bool
+    pub fun getCollectionTypesInTreasury(): [Type]
+    pub fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT]
   }
 
   pub resource Project: ProjectPublic {
@@ -1055,6 +1057,20 @@ pub contract Toucans {
     // Returns nil if the requested type doesn't exist in the treasury
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64? {
       return self.treasury[vaultType]?.balance
+    }
+
+    pub fun getCollectionTypesInTreasury(): [Type] {
+      return self.borrowNFTTreasury()?.keys ?? []
+    }
+
+    pub fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT] {
+      let ans: [&NonFungibleToken.NFT] = []
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        for id in nftTreasury.getIDs() {
+          ans.append(nftTreasury.borrowNFT(id: id))
+        }
+      }
+      return ans
     }
 
     pub fun getCurrentFundingCycleIndex(): Int? {
