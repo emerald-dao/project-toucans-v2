@@ -36,7 +36,12 @@
 					bind:pageMove
 					pagePosition={i - paginationMin}
 				>
-					<Currency amount={holdings} currency={daoData.generalInfo.token_symbol} color="heading" />
+					<Currency
+						amount={holdings}
+						currency={daoData.generalInfo.token_symbol}
+						decimalNumbers={2}
+						color="heading"
+					/>
 				</LeaderboardListElement>
 			{/if}
 		{/each}
