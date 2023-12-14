@@ -14,6 +14,7 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
                 let nft = userCollection.borrowViewResolver(id: id)
                 let display = nft.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
                 let nftData = NFTData(id, display.name, display.thumbnail.uri())
+                nfts.append(nftData)
             }
             res[collectionID] = nfts
         }
