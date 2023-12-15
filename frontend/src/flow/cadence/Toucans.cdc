@@ -821,12 +821,28 @@ pub contract Toucans {
 
     access(self) fun markCompletedAction(actionUUID: UInt64, mark: Bool) {
       if self.extra["completedActionIds"] == nil {
-        let completedActionIds: {UInt64: Bool} = {}
-        self.extra["completedActionIds"] = completedActionIds
+        self.extra["completedActionIds"] = {} as {UInt64: Bool}
       }
 
       (self.extra["completedActionIds"]! as! {UInt64: Bool}).insert(key: actionUUID, mark)
     }
+
+    pub fun addAllowedNFTCollections(collectionIdentifiers: [String]) {
+      if self.extra["allowedNFTCollections"] == nil {
+        self.extra["allowedNFTCollections"] = {} as {String: Bool}
+      }
+
+      for collectionIdentifier in collectionIdentifiers {
+        (self.extra["allowedNFTCollections"]! as! {String: Bool}).insert(key: collectionIdentifier, true)
+      }
+    }
+
+    pub fun removeAllowedNFTCollections(collectionIdentifiers: [String]) {      
+      for collectionIdentifier in collectionIdentifiers {
+        (self.extra["allowedNFTCollections"]! as! {String: Bool}).remove(key: collectionIdentifier)
+      }
+    }
+
 
 
     //   __  __ _       _   _             
@@ -1231,8 +1247,10 @@ pub contract Toucans {
       self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
-      let completedActionIds: {UInt64: Bool} = {}
-      self.extra["completedActionIds"] = completedActionIds
+      self.extra = {
+        "completedActionIds": {} as {UInt64: Bool},
+        "allowedNFTCollections": {} as {String: Bool}
+      }
       self.fundingCycles = []
       self.minter <- minter
       self.funders = {}

@@ -30,6 +30,7 @@ pub struct Info {
   pub let paymentCurrency: String
   pub let purchasing: Bool
   pub let requiredNft: NFTData?
+  pub let allowedNFTCollections: [String]
   pub var trading: Bool
   pub let lpAddresses: {String: Address}
   pub let completedActionIds: {UInt64: Bool}
@@ -65,6 +66,11 @@ pub struct Info {
       }
     } else {
       self.requiredNft = nil
+    }
+    if let allowedNFTCollections = info.getExtra()["allowedNFTCollections"] {
+      self.allowedNFTCollections = (allowedNFTCollections as! {String: Bool}).keys
+    } else {
+      self.allowedNFTCollections = []
     }
 
     let projectCurrencyIdentifier: String = info.projectTokenInfo.tokenType.identifier

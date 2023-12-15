@@ -20,6 +20,8 @@ import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 import claimLockedTokensTx from './cadence/transactions/claim_locked_tokens.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
 import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
+import addAllowedNFTCollectionsTx from './cadence/transactions/add_allowed_nft_collections.cdc?raw';
+import removeAllowedNFTCollectionsTx from './cadence/transactions/remove_allowed_nft_collections.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -777,6 +779,56 @@ export const burnTokensExecution = (
 	projectId: string,
 	amount: string
 ) => executeTransaction(() => burnTokens(tokenSymbol, projectId, amount));
+
+const addAllowedNFTCollections = async (
+	projectOwner: string,
+	projectId: string,
+	collectionIdentifiers: string[]
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(addAllowedNFTCollectionsTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.String),
+			arg(projectId, t.String),
+			arg(collectionIdentifiers, t.Array(t.String))
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const addAllowedNFTCollectionsExecution = (
+	projectOwner: string,
+	projectId: string,
+	collectionIdentifiers: string[]
+) => executeTransaction(() => addAllowedNFTCollections(projectOwner, projectId, collectionIdentifiers));
+
+const removeAllowedNFTCollections = async (
+	projectOwner: string,
+	projectId: string,
+	collectionIdentifiers: string[]
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(removeAllowedNFTCollectionsTx),
+		args: (arg, t) => [
+			arg(projectOwner, t.String),
+			arg(projectId, t.String),
+			arg(collectionIdentifiers, t.Array(t.String))
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const removeAllowedNFTCollectionsExecution = (
+	projectOwner: string,
+	projectId: string,
+	collectionIdentifiers: string[]
+) => executeTransaction(() => removeAllowedNFTCollections(projectOwner, projectId, collectionIdentifiers));
 
 const lockTokens = async (
 	tokenSymbol: string,
