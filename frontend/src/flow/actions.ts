@@ -788,7 +788,7 @@ const addAllowedNFTCollections = async (
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(addAllowedNFTCollectionsTx),
 		args: (arg, t) => [
-			arg(projectOwner, t.String),
+			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
 			arg(collectionIdentifiers, t.Array(t.String))
 		],
@@ -813,7 +813,7 @@ const removeAllowedNFTCollections = async (
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(removeAllowedNFTCollectionsTx),
 		args: (arg, t) => [
-			arg(projectOwner, t.String),
+			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
 			arg(collectionIdentifiers, t.Array(t.String))
 		],
