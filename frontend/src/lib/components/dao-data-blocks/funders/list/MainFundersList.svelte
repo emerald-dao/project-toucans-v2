@@ -20,11 +20,11 @@
 <div class="column-2 align-start">
 	{#if mainFunderEntries.length > 0}
 		{#await fetchFindProfiles()}
-			{#each fundersEntries as [address, balance]}
+			{#each mainFunderEntries as [address, balance]}
 				<UserBalanceListElement {address} {balance} />
 			{/each}
 		{:then findProfiles}
-			{#each fundersEntries as [address, balance]}
+			{#each mainFunderEntries as [address, balance]}
 				<UserBalanceListElement findProfile={findProfiles[address]} {address} {balance} />
 			{/each}
 		{/await}
