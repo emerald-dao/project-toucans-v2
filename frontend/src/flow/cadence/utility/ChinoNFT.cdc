@@ -12,7 +12,7 @@
 import NonFungibleToken from "./NonFungibleToken.cdc"
 import MetadataViews from "./MetadataViews.cdc"
 
-pub contract ExampleNFT: NonFungibleToken {
+pub contract ChinoNFT: NonFungibleToken {
 
     /// Total supply of ExampleNFTs in existence
     pub var totalSupply: UInt64
@@ -116,14 +116,14 @@ pub contract ExampleNFT: NonFungibleToken {
                     return MetadataViews.ExternalURL("https://example-nft.onflow.org/".concat(self.id.toString()))
                 case Type<MetadataViews.NFTCollectionData>():
                     return MetadataViews.NFTCollectionData(
-                        storagePath: ExampleNFT.CollectionStoragePath,
-                        publicPath: ExampleNFT.CollectionPublicPath,
-                        providerPath: /private/exampleNFTCollection,
-                        publicCollection: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic}>(),
-                        publicLinkedType: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
-                        providerLinkedType: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
+                        storagePath: ChinoNFT.CollectionStoragePath,
+                        publicPath: ChinoNFT.CollectionPublicPath,
+                        providerPath: /private/chinoNFTCollection,
+                        publicCollection: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic}>(),
+                        publicLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+                        providerLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
                         createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
-                            return <-ExampleNFT.createEmptyCollection()
+                            return <-ChinoNFT.createEmptyCollection()
                         })
                     )
                 case Type<MetadataViews.NFTCollectionDisplay>():
@@ -166,14 +166,14 @@ pub contract ExampleNFT: NonFungibleToken {
 
     /// Defines the methods that are particular to this NFT contract collection
     ///
-    pub resource interface ExampleNFTCollectionPublic {
+    pub resource interface ChinoNFTCollectionPublic {
         pub fun deposit(token: @NonFungibleToken.NFT)
         pub fun getIDs(): [UInt64]
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
-        pub fun borrowExampleNFT(id: UInt64): &ExampleNFT.NFT? {
+        pub fun borrowChinoNFT(id: UInt64): &ChinoNFT.NFT? {
             post {
                 (result == nil) || (result?.id == id):
-                    "Cannot borrow ExampleNFT reference: the ID of the returned reference is incorrect"
+                    "Cannot borrow ChinoNFT reference: the ID of the returned reference is incorrect"
             }
         }
     }
@@ -182,7 +182,7 @@ pub contract ExampleNFT: NonFungibleToken {
     /// In order to be able to manage NFTs any account will need to create
     /// an empty collection first
     ///
-    pub resource Collection: ExampleNFTCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
+    pub resource Collection: ChinoNFTCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
         // dictionary of NFT conforming tokens
         // NFT is a resource type with an `UInt64` ID field
         pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
@@ -209,7 +209,7 @@ pub contract ExampleNFT: NonFungibleToken {
         /// @param token: The NFT resource to be included in the collection
         /// 
         pub fun deposit(token: @NonFungibleToken.NFT) {
-            let token <- token as! @ExampleNFT.NFT
+            let token <- token as! @ChinoNFT.NFT
 
             let id: UInt64 = token.id
 
@@ -245,11 +245,11 @@ pub contract ExampleNFT: NonFungibleToken {
         /// @param id: The ID of the wanted NFT
         /// @return A reference to the wanted NFT resource
         ///        
-        pub fun borrowExampleNFT(id: UInt64): &ExampleNFT.NFT? {
+        pub fun borrowChinoNFT(id: UInt64): &ChinoNFT.NFT? {
             if self.ownedNFTs[id] != nil {
                 // Create an authorized reference to allow downcasting
                 let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
-                return ref as! &ExampleNFT.NFT
+                return ref as! &ChinoNFT.NFT
             }
 
             return nil
@@ -264,7 +264,7 @@ pub contract ExampleNFT: NonFungibleToken {
         /// 
         pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
             let nft = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
-            let exampleNFT = nft as! &ExampleNFT.NFT
+            let exampleNFT = nft as! &ChinoNFT.NFT
             return exampleNFT as &AnyResource{MetadataViews.Resolver}
         }
 
@@ -313,7 +313,7 @@ pub contract ExampleNFT: NonFungibleToken {
 
             // create a new NFT
             var newNFT <- create NFT(
-                id: ExampleNFT.totalSupply,
+                id: ChinoNFT.totalSupply,
                 name: name,
                 description: description,
                 thumbnail: thumbnail,
@@ -324,7 +324,7 @@ pub contract ExampleNFT: NonFungibleToken {
             // deposit it in the recipient's account using their reference
             recipient.deposit(token: <-newNFT)
 
-            ExampleNFT.totalSupply = ExampleNFT.totalSupply + UInt64(1)
+            ChinoNFT.totalSupply = ChinoNFT.totalSupply + UInt64(1)
         }
     }
 
@@ -337,14 +337,14 @@ pub contract ExampleNFT: NonFungibleToken {
         switch view {
             case Type<MetadataViews.NFTCollectionData>():
                 return MetadataViews.NFTCollectionData(
-                    storagePath: ExampleNFT.CollectionStoragePath,
-                    publicPath: ExampleNFT.CollectionPublicPath,
-                    providerPath: /private/exampleNFTCollection,
-                    publicCollection: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic}>(),
-                    publicLinkedType: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
-                    providerLinkedType: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
+                    storagePath: ChinoNFT.CollectionStoragePath,
+                    publicPath: ChinoNFT.CollectionPublicPath,
+                    providerPath: /private/chinoNFTCollection,
+                    publicCollection: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic}>(),
+                    publicLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+                    providerLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
                     createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
-                        return <-ExampleNFT.createEmptyCollection()
+                        return <-ChinoNFT.createEmptyCollection()
                     })
                 )
             case Type<MetadataViews.NFTCollectionDisplay>():
@@ -375,16 +375,16 @@ pub contract ExampleNFT: NonFungibleToken {
         self.totalSupply = 0
 
         // Set the named paths
-        self.CollectionStoragePath = /storage/exampleNFTCollection
-        self.CollectionPublicPath = /public/exampleNFTCollection
-        self.MinterStoragePath = /storage/exampleNFTMinter
+        self.CollectionStoragePath = /storage/chinoNFTCollection
+        self.CollectionPublicPath = /public/chinoNFTCollection
+        self.MinterStoragePath = /storage/chinoNFTMinter
 
         // Create a Collection resource and save it to storage
         let collection <- create Collection()
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
         // create a public capability for the collection
-        self.account.link<&ExampleNFT.Collection{NonFungibleToken.CollectionPublic, ExampleNFT.ExampleNFTCollectionPublic, MetadataViews.ResolverCollection}>(
+        self.account.link<&ChinoNFT.Collection{NonFungibleToken.CollectionPublic, ChinoNFT.ChinoNFTCollectionPublic, MetadataViews.ResolverCollection}>(
             self.CollectionPublicPath,
             target: self.CollectionStoragePath
         )
@@ -393,9 +393,9 @@ pub contract ExampleNFT: NonFungibleToken {
 
         // Create a Minter resource and save it to storage
         let minter <- create NFTMinter()
-        minter.mintNFT(recipient: cap, name: "Test #1", description: "Test #1 Description", thumbnail: "https://i.imgur.com/dnwwoOM.png", royalties: [])
-        minter.mintNFT(recipient: cap, name: "Test #2", description: "Test #2 Description", thumbnail: "https://i.imgur.com/5Ee7Wrp.png", royalties: [])
-        minter.mintNFT(recipient: cap, name: "Test #3", description: "Test #3 Description", thumbnail: "https://i.imgur.com/I9x9aPa.png", royalties: [])
+        minter.mintNFT(recipient: cap, name: "Chino Test #1", description: "Chino Test #1 Description", thumbnail: "https://i.imgur.com/mESOuW2.png", royalties: [])
+        minter.mintNFT(recipient: cap, name: "Chino Test #2", description: "Chino Test #2 Description", thumbnail: "https://i.imgur.com/Ac6vztn.png", royalties: [])
+        minter.mintNFT(recipient: cap, name: "Chino Test #3", description: "Chino Test #3 Description", thumbnail: "https://i.imgur.com/QEkYK4a.png", royalties: [])
         self.account.save(<-minter, to: self.MinterStoragePath)
 
         emit ContractInitialized()

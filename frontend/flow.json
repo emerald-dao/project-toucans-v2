@@ -30,6 +30,12 @@
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
+		"ChinoNFT": {
+			"source": "./src/flow/cadence/utility/ChinoNFT.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
 		"FCLCrypto": {
 			"source": "./src/flow/cadence/utility/FCLCrypto.cdc",
 			"aliases": {
@@ -243,6 +249,7 @@
 				"NFTCatalogSnapshot",
 				"NFTCatalog",
 				"ExampleNFT",
+				"ChinoNFT",
 				"FiatToken",
 				"EmeraldIdentityDapper",
 				"EmeraldIdentityLilico",

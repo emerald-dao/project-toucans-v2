@@ -1,6 +1,7 @@
 import MetadataViews from "./MetadataViews.cdc"
 import NFTCatalogSnapshot from "./NFTCatalogSnapshot.cdc"
 import ExampleNFT from "./ExampleNFT.cdc"
+import ChinoNFT from "./ChinoNFT.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
 
 // NFTCatalog
@@ -388,6 +389,28 @@ pub contract NFTCatalog {
             collectionDisplay : MetadataViews.NFTCollectionDisplay(
               name: "The Example Collection",
               description: "This collection is used as an example to help you develop your next Flow NFT.",
+              externalURL: MetadataViews.ExternalURL("https://example-nft.onflow.org"),
+              squareImage: media,
+              bannerImage: media,
+              socials: {
+                "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
+              }
+            )
+          ),
+          "ChinoNFT": NFTCatalogMetadata(
+            contractName: "ChinoNFT", 
+            contractAddress: self.account.address, 
+            nftType: Type<@ChinoNFT.NFT>(), 
+            collectionData: NFTCollectionData(
+              storagePath: ChinoNFT.CollectionStoragePath,
+              publicPath: ChinoNFT.CollectionPublicPath,
+              privatePath: /private/chinoNFTCollection,
+              publicLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+              privateLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>()
+            ), 
+            collectionDisplay : MetadataViews.NFTCollectionDisplay(
+              name: "The Chino Collection",
+              description: "This collection is cool because chino is COOOOL.",
               externalURL: MetadataViews.ExternalURL("https://example-nft.onflow.org"),
               squareImage: media,
               bannerImage: media,
