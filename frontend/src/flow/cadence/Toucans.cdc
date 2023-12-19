@@ -5,6 +5,9 @@ import ToucansUtils from "./ToucansUtils.cdc"
 import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 import ToucansLockTokens from "./ToucansLockTokens.cdc"
+import SwapInterfaces from "./utility/SwapInterfaces.cdc"
+import stFlowToken from "./utility/stFlowToken.cdc"
+import SwapError from "./utility/SwapError.cdc"
 
 pub contract Toucans {
 
@@ -111,6 +114,18 @@ pub contract Toucans {
     tokenSymbol: String,
     amount: UFix64,
     unlockTime: UFix64
+  )
+  pub event StakeFlow(
+    projectId: String,
+    by: Address, 
+    amountIn: UFix64,
+    amountOut: UFix64
+  )
+  pub event UnstakeFlow(
+    projectId: String,
+    by: Address, 
+    amountIn: UFix64,
+    amountOut: UFix64
   )
   pub event AddSigner(projectId: String, signer: Address)
   pub event RemoveSigner(projectId: String, signer: Address)
@@ -398,6 +413,16 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    pub fun proposeStakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
+      let action = ToucansActions.StakeFlow(flowAmount, stFlowAmountOutMin)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    pub fun proposeUnstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
+      let action = ToucansActions.UnstakeFlow(stFlowAmount, flowAmountOutMin)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     pub fun finalizeAction(actionUUID: UInt64) {
       let actionState: ActionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
       assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
@@ -450,6 +475,12 @@ pub contract Toucans {
             } else {
               self.sendToLock(recipient: tokenLock.recipient, tokenInfo: ToucansTokens.getTokenInfoFromSymbol(symbol: tokenLock.tokenSymbol)!, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
             }
+          case Type<ToucansActions.StakeFlow>():
+            let tokenLock: ToucansActions.StakeFlow = action as! ToucansActions.StakeFlow
+            self.stakeFlow(flowAmount: tokenLock.flowAmount, stFlowAmountOutMin: tokenLock.stFlowAmountOutMin)
+          case Type<ToucansActions.UnstakeFlow>():
+            let tokenLock: ToucansActions.UnstakeFlow = action as! ToucansActions.UnstakeFlow
+            self.stakeFlow(flowAmount: tokenLock.stFlowAmount, stFlowAmountOutMin: tokenLock.flowAmountOutMin)
         }
       }
       if actionState == ActionState.DECLINED {
@@ -886,6 +917,57 @@ pub contract Toucans {
       let tokenLockManager: &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic} = self.borrowLockTokensManagerPublic()!
       tokenLockManager.claim(lockedVaultUuid: lockedVaultUuid, receiver: recipientVault)
     } 
+
+
+    //   _____        __ _ 
+    //  |  __ \      / _(_)
+    //  | |  | | ___| |_ _ 
+    //  | |  | |/ _ \  _| |
+    //  | |__| |  __/ | | |
+    //  |_____/ \___|_| |_|
+                        
+    
+    // DISCLAIMER: Only works on Mainnet.
+    access(account) fun stakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
+      // withdraw flow from treasury
+      let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw!(amount: flowAmount)
+      let estimatedSwapPoolCap: &{SwapInterfaces.PairPublic} = ToucansUtils.getEstimatedSwapPoolCap(amountIn: flowAmount, tokenInKey: "A.1654653399040a61.FlowToken")
+      
+      // deposit stFlow to treasury
+      let outVault <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
+      assert(outVault.balance >= stFlowAmountOutMin, message: SwapError.ErrorEncode(
+        msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(stFlowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
+        err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
+      ))
+      emit StakeFlow(
+        projectId: self.projectId,
+        by: self.owner!.address,
+        amountIn: flowAmount,
+        amountOut: outVault.balance
+      )
+      self.depositToTreasury(vault: <-outVault)
+    }
+
+    // DISCLAIMER: Only works on Mainnet.
+    access(account) fun unstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
+      // withdraw stFlow from treasury
+      let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw!(amount: stFlowAmount)
+      let estimatedSwapPoolCap: &{SwapInterfaces.PairPublic} = ToucansUtils.getEstimatedSwapPoolCap(amountIn: stFlowAmount, tokenInKey: "A.d6f80565193ad727.stFlowToken")
+
+      // deposit flow to treasury
+      let outVault <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
+      assert(outVault.balance >= flowAmountOutMin, message: SwapError.ErrorEncode(
+        msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(flowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
+        err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
+      ))
+      emit UnstakeFlow(
+        projectId: self.projectId,
+        by: self.owner!.address,
+        amountIn: stFlowAmount,
+        amountOut: outVault.balance
+      )
+      self.depositToTreasury(vault: <-outVault)
+    }
 
 
     //   ____                   

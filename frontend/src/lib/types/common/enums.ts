@@ -1,4 +1,5 @@
 export enum ECurrencies {
 	FLOW = 'FLOW',
-	USDC = 'USDC'
+	USDC = 'USDC',
+	stFlow = 'stFlow'
 }
