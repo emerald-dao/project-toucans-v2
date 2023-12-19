@@ -6,5 +6,6 @@ export interface BatchWithdrawEvent extends BaseEvent {
 		amount: string;
 		tokenSymbol: string;
 		currentCycle: string | null;
+		amounts: { [address: string]: string }
 	};
 }

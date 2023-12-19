@@ -8,6 +8,7 @@
 	import SeeRoundDetailsModal from '../../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
 	import WalletLabel from '$components/atoms/WalletLabel.svelte';
 	import type { FindMap } from '$lib/types/common/find.interface';
+	import BatchMintingList from '$components/dao-data-blocks/pending-actions/atoms/BatchMintingList.svelte';
 
 	export let event: DaoEvent;
 	export let i: number;
@@ -107,6 +108,14 @@
 		{/if}
 		{#if event.type === 'Withdraw' || event.type === 'Mint' || event.type === 'LockTokens'}
 			<WalletLabel address={event.data.to} find={findNames[event.data.to]} />
+		{/if}
+		{#if (event.type === 'BatchWithdraw' || event.type === 'BatchMint') && event.data.amounts}
+			<div class="header-link" on:click={() => getModal(`batch-withdraw-${i}`).open()} on:keydown>
+				<Icon icon="tabler:message" />
+			</div>
+			<Modal background="var(--clr-background-secondary)" id={`batch-withdraw-${i}`}>
+				<BatchMintingList amounts={event.data.amounts} currency={event.data.tokenSymbol} />
+			</Modal>
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn' || event.type === 'LockTokens'}
 			<Currency
