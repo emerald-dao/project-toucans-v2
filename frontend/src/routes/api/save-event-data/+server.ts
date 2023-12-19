@@ -55,7 +55,7 @@ export async function POST({ request }) {
 			return json({ success: false, error: 'Transaction does not contain any Toucans events.' });
 		}
 
-		const { projectId, amounts, ...rest } = event.data;
+		const { projectId, ...rest } = event.data;
 		const eventType = event.type.substring(27);
 
 		// if its a donate or purchase event, save it differently
