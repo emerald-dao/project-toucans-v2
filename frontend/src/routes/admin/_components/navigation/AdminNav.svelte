@@ -9,6 +9,7 @@
 	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
+	import { network } from '$flow/config';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -167,16 +168,18 @@
 					Lock
 				</a>
 			{/if}
-			<a
-				href="/admin/staking"
-				class="sidebar-link distribute-display"
-				class:active={$page.url.pathname.includes('staking')}
-			>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:coins" />
-				</div>
-				Staking
-			</a>
+			{#if network === 'mainnet'}
+				<a
+					href="/admin/staking"
+					class="sidebar-link distribute-display"
+					class:active={$page.url.pathname.includes('staking')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:coins" />
+					</div>
+					Staking
+				</a>
+			{/if}
 		</div>
 	</div>
 	<div class="column-6">

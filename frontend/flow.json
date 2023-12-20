@@ -4,6 +4,7 @@
 			"source": "./src/flow/cadence/utility/stFlowToken.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "e45c64ecfe31e465",
 				"mainnet": "d6f80565193ad727"
 			}
 		},
@@ -270,8 +271,6 @@
 		"testnet": {
 			"testnet-account": [
 				"ToucansUtils",
-				"ToucansTokens",
-				"ToucansLockTokens",
 				"ToucansActions",
 				"Toucans"
 			]
