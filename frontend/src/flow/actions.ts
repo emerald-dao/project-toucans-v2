@@ -19,6 +19,7 @@ import claimOverflowTx from './cadence/transactions/claim_overflow.cdc?raw';
 import claimLockedTokensTx from './cadence/transactions/claim_locked_tokens.cdc?raw';
 import transferOverflowTx from './cadence/transactions/transfer_overflow.cdc?raw';
 import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
+import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -29,7 +30,8 @@ import batchMintTokensTx from './cadence/transactions/treasury-actions/batch_min
 import burnTokensTx from './cadence/transactions/treasury-actions/burn_tokens.cdc?raw';
 import lockTokensTx from './cadence/transactions/treasury-actions/lock_tokens.cdc?raw';
 import mintTokensToTreasuryTx from './cadence/transactions/treasury-actions/mint_tokens_to_treasury.cdc?raw';
-import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
+import stakeFlowTx from './cadence/transactions/treasury-actions/stake_flow.cdc?raw';
+import unstakeFlowTx from './cadence/transactions/treasury-actions/unstake_flow.cdc?raw';
 
 // Scripts
 import getProjectScript from './cadence/scripts/get_project.cdc?raw';
@@ -47,6 +49,7 @@ import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
 import getProjectBalancesScript from './cadence/scripts/get_project_balances.cdc?raw';
+import getStableSwapPoolInfoScript from './cadence/scripts/get_stable_swap_pool_info.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
@@ -740,6 +743,56 @@ export const lockTokensExecution = (
 	unlockTimeInUnixSeconds: string
 ) => executeTransaction(() => lockTokens(tokenSymbol, projectId, amount, recipient, unlockTimeInUnixSeconds));
 
+const stakeFlow = async (
+	projectId: string,
+	flowAmount: number,
+	stFlowAmountOutMin: number
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(stakeFlowTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(formatFix(flowAmount, 8), t.UFix64),
+			arg(formatFix(stFlowAmountOutMin, 8), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const stakeFlowExecution = (
+	projectId: string,
+	flowAmount: number,
+	stFlowAmountOutMin: number
+) => executeTransaction(() => stakeFlow(projectId, flowAmount, stFlowAmountOutMin));
+
+const unstakeFlow = async (
+	projectId: string,
+	stFlowAmount: number,
+	flowAmountOutMin: number
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(unstakeFlowTx),
+		args: (arg, t) => [
+			arg(projectId, t.String),
+			arg(formatFix(stFlowAmount, 8), t.UFix64),
+			arg(formatFix(flowAmountOutMin, 8), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const unstakeFlowExecution = (
+	projectId: string,
+	stFlowAmount: number,
+	flowAmountOutMin: number
+) => executeTransaction(() => unstakeFlow(projectId, stFlowAmount, flowAmountOutMin));
+
 const setUpVault = async (projectId: string, contractAddress: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(setUpVaultTx, projectId, contractAddress),
@@ -1084,5 +1137,26 @@ export const getProjectBalances = async (
 	} catch (e) {
 		console.log('Error in getProjectBalances', e);
 		throw new Error('Error in getProjectBalances');
+	}
+};
+
+export const getStableSwapPoolInfo = async (amountIn: number, tokenInCurrency: ECurrencies) => {
+	try {
+		let tokenInKey: string;
+		if (tokenInCurrency === ECurrencies.FLOW) {
+			tokenInKey = "A.1654653399040a61.FlowToken"
+		} else {
+			tokenInKey = "A.d6f80565193ad727.stFlowToken"
+		}
+		return await fcl.query({
+			cadence: replaceWithProperValues(getStableSwapPoolInfoScript),
+			args: (arg, t) => [
+				arg(formatFix(amountIn), t.UFix64),
+				arg(tokenInKey, t.String)
+			]
+		});
+	} catch (e) {
+		console.log('Error in getStableSwapPoolInfo', e);
+		throw new Error('Error in getStableSwapPoolInfo');
 	}
 };

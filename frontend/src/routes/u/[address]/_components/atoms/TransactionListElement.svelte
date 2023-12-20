@@ -77,6 +77,16 @@
 			icon: 'tabler:signature',
 			text: 'Added signer',
 			color: 'tertiary'
+		},
+		StakeFlow: {
+			icon: 'tabler:coins',
+			text: 'Staked Flow',
+			color: 'primary'
+		},
+		UnstakeFlow: {
+			icon: 'tabler:coins',
+			text: 'Unstaked Flow',
+			color: 'alert'
 		}
 	};
 </script>

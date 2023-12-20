@@ -8,6 +8,8 @@ import type { BurnEvent } from './events/burn.interface';
 import type { ProjectCreatedEvent } from './events/project-created.interface';
 import type { BatchMintEvent } from './events/batch-mint.interface';
 import type { LockTokensEvent } from './events/lock-tokens.interface';
+import type { StakeFlowEvent } from './events/stake-flow.interface';
+import type { UnstakeFlowEvent } from './events/unstake-flow.interface';
 
 export type DaoEvent =
 	| MintEvent
@@ -19,7 +21,9 @@ export type DaoEvent =
 	| BatchWithdrawEvent
 	| DonateEvent
 	| ProjectCreatedEvent
-	| LockTokensEvent;
+	| LockTokensEvent
+	| StakeFlowEvent
+	| UnstakeFlowEvent;
 
 export type DaoEventName =
 	| 'Mint'
@@ -33,4 +37,6 @@ export type DaoEventName =
 	| 'ProjectCreated'
 	| 'UpdateThreshold'
 	| 'AddSigner'
-	| 'LockTokens';
+	| 'LockTokens'
+	| 'StakeFlow'
+	| 'UnstakeFlow';
