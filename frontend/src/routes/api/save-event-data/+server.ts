@@ -46,7 +46,9 @@ export async function POST({ request }) {
 				event.type.includes('Toucans.AddSigner') ||
 				event.type.includes('Toucans.RemoveSigner') ||
 				event.type.includes('Toucans.UpdateThreshold') ||
-				event.type.includes('Toucans.LockTokens')
+				event.type.includes('Toucans.LockTokens') ||
+				event.type.includes('Toucans.StakeFlow') ||
+				event.type.includes('Toucans.UnstakeFlow')
 		);
 
 		console.log('[SAVING]: Step 3', event);

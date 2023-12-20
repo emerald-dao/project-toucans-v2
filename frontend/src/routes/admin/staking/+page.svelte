@@ -3,7 +3,7 @@
 	import type { Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import BurnTokens from '$lib/features/distribute-tokens/components/BurnTokens.svelte';
+	import Stake from './components/Stake.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -17,7 +17,7 @@
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }}>
-	<BurnTokens daoData={activeDaoData} />
+	<Stake daoData={activeDaoData} />
 </div>
 
 <style lang="scss">
