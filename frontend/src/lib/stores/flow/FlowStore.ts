@@ -86,6 +86,7 @@ const contractData = {
 	},
 	stFlowToken: {
 		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '0xe45c64ecfe31e465',
 		mainnet: '0xd6f80565193ad727'
 	}
 };
