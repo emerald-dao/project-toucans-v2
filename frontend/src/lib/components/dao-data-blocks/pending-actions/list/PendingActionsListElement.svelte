@@ -53,8 +53,8 @@
 		MintToTreasury: 'Mint to Treasury',
 		Burn: 'Burn',
 		LockTokens: 'Locked Tokens',
-		StakeFlow: 'Staked Flow',
-		UnstakeFlow: 'Unstaked Flow'
+		StakeFlow: 'Stake Flow',
+		UnstakeFlow: 'Unstake Flow'
 	};
 
 	function translateIntent(action: MultisigActions, intent: string) {

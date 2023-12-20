@@ -278,6 +278,8 @@
 		},
 		"mainnet": {
 			"mainnet-account": [
+				"ToucansUtils",
+				"ToucansActions",
 				"Toucans"
 			]
 		}

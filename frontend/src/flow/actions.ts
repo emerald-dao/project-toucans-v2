@@ -752,8 +752,8 @@ const stakeFlow = async (
 		cadence: replaceWithProperValues(stakeFlowTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
-			arg(formatFix(flowAmount), t.UFix64),
-			arg(formatFix(stFlowAmountOutMin), t.UFix64)
+			arg(formatFix(flowAmount, 8), t.UFix64),
+			arg(formatFix(stFlowAmountOutMin, 8), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -777,8 +777,8 @@ const unstakeFlow = async (
 		cadence: replaceWithProperValues(unstakeFlowTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
-			arg(formatFix(stFlowAmount), t.UFix64),
-			arg(formatFix(flowAmountOutMin), t.UFix64)
+			arg(formatFix(stFlowAmount, 8), t.UFix64),
+			arg(formatFix(flowAmountOutMin, 8), t.UFix64)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,

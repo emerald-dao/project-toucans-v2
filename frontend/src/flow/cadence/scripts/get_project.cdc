@@ -56,7 +56,9 @@ pub struct Info {
       info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
     if let stFlowBalance = info.getVaultBalanceInTreasury(vaultType: Type<@stFlowToken.Vault>()) {
-      self.treasuryBalances["stFlow"] = stFlowBalance
+      if stFlowBalance > 0.001 {
+        self.treasuryBalances["stFlow"] = stFlowBalance
+      }
     }
     self.paymentCurrency = info.paymentTokenInfo.symbol
     self.maxSupply = ExampleToken.maxSupply

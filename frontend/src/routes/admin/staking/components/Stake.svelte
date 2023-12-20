@@ -12,10 +12,11 @@
 	export let daoData: DAOProject;
 
 	let currencyIn = ECurrencies.FLOW;
-	let amountIn = 0;
+	$: amountIn = 0;
 	let amountOut = 0;
 	let timeout;
 	let price = 0;
+	console.log(daoData.onChainData.treasuryBalances);
 	$: availableBalance = Number(daoData.onChainData.treasuryBalances[currencyIn]);
 
 	let isValid = true;
@@ -36,7 +37,11 @@
 			errors = [];
 		} else {
 			isValid = false;
-			errors = ['Cannot burn more than the available balance.'];
+			errors = [
+				`Cannot ${
+					currencyIn === ECurrencies.FLOW ? 'stake' : 'unstake'
+				} more than the available balance.`
+			];
 		}
 	};
 
@@ -51,7 +56,7 @@
 </script>
 
 <form
-	id="fund-form"
+	id="stake-form"
 	on:submit|preventDefault={runTransaction}
 	autocomplete="off"
 	in:fade={{ duration: 200 }}
@@ -70,7 +75,12 @@
 	{#if daoData.onChainData.treasuryBalances[currencyIn] != undefined}
 		<div class="row-2 align-center">
 			<span class="small">Available balance:</span>
-			<Currency amount={availableBalance} currency={currencyIn} color="heading" />
+			<Currency
+				amount={availableBalance}
+				currency={currencyIn}
+				color="heading"
+				decimalNumbers={8}
+			/>
 		</div>
 	{/if}
 	{#if daoData.onChainData.treasuryBalances[currencyIn] != undefined && availableBalance > 0}
@@ -120,8 +130,8 @@
 					</div>
 				</div>
 			</div>
-			<Button form="dist-form" width="full-width" state={isValid ? 'active' : 'disabled'}>
-				Create Staking Action
+			<Button form="stake-form" width="full-width" state={isValid ? 'active' : 'disabled'}>
+				Create {currencyIn === ECurrencies.FLOW ? 'Staking' : 'Unstaking'} Action
 			</Button>
 		{/if}
 	{:else}
