@@ -254,15 +254,11 @@ pub contract ToucansActions {
     pub let readableMin: String
 
     pub fun getIntent(): String {
-      return "Stake ".concat(self.readableAmount).concat(" FLOW ").concat(" tokens by swapping it for a minimum of ").concat(self.readableMin).concat(" stFlow.")
+      return "Stake ".concat(self.readableAmount).concat(" FLOW ").concat(" tokens by swapping them for a minimum of ").concat(self.readableMin).concat(" stFlow.")
     }
 
     pub fun getTitle(): String {
       return "StakeFlow"
-    }
-
-    pub fun estimateAmountOut(): String {
-      return ToucansUtils.fixToReadableString(num: ToucansUtils.getEstimatedSwapOut(amountIn: self.flowAmount, tokenInKey: "A.1654653399040a61.FlowToken"))
     }
 
     init(_ flowAmount: UFix64, _ stFlowAmountOutMin: UFix64) {

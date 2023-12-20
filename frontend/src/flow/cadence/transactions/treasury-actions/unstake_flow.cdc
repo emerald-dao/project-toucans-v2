@@ -1,4 +1,4 @@
-import Toucans from "../Toucans.cdc"
+import Toucans from "../../Toucans.cdc"
 
 transaction(projectId: String, stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
 
@@ -11,6 +11,6 @@ transaction(projectId: String, stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
     }
 
     execute {
-        self.Project.unstakeFlow(stFlowAmount: stFlowAmount, flowAmountOutMin: flowAmountOutMin)
+        self.Project.proposeUnstakeFlow(stFlowAmount: stFlowAmount, flowAmountOutMin: flowAmountOutMin)
     }
 }

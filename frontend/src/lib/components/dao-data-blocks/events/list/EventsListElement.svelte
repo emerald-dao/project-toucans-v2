@@ -9,6 +9,7 @@
 	import WalletLabel from '$components/atoms/WalletLabel.svelte';
 	import type { FindMap } from '$lib/types/common/find.interface';
 	import BatchMintingList from '$components/dao-data-blocks/pending-actions/atoms/BatchMintingList.svelte';
+	import { ECurrencies } from '$lib/types/common/enums';
 
 	export let event: DaoEvent;
 	export let i: number;
@@ -81,6 +82,16 @@
 			icon: 'tabler:signature',
 			text: 'Added signer',
 			color: 'tertiary'
+		},
+		StakeFlow: {
+			icon: 'tabler:coins',
+			text: 'Staked Flow',
+			color: 'primary'
+		},
+		UnstakeFlow: {
+			icon: 'tabler:coins',
+			text: 'Unstaked Flow',
+			color: 'alert'
 		}
 	};
 </script>
@@ -137,6 +148,16 @@
 				activeRound={daoData.onChainData.currentFundingCycle
 					? Number(daoData.onChainData.currentFundingCycle.details.cycleId)
 					: null}
+			/>
+		{:else if event.type === 'StakeFlow' || event.type === 'UnstakeFlow'}
+			<Currency
+				amount={event.type === 'StakeFlow'
+					? Number(event.data.amountIn)
+					: Number(event.data.amountOut)}
+				currency={ECurrencies.FLOW}
+				color="heading"
+				fontSize="0.85rem"
+				decimalNumbers={2}
 			/>
 		{/if}
 	</div>

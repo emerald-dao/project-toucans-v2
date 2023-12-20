@@ -480,7 +480,7 @@ pub contract Toucans {
             self.stakeFlow(flowAmount: tokenLock.flowAmount, stFlowAmountOutMin: tokenLock.stFlowAmountOutMin)
           case Type<ToucansActions.UnstakeFlow>():
             let tokenLock: ToucansActions.UnstakeFlow = action as! ToucansActions.UnstakeFlow
-            self.stakeFlow(flowAmount: tokenLock.stFlowAmount, stFlowAmountOutMin: tokenLock.flowAmountOutMin)
+            self.unstakeFlow(stFlowAmount: tokenLock.stFlowAmount, flowAmountOutMin: tokenLock.flowAmountOutMin)
         }
       }
       if actionState == ActionState.DECLINED {

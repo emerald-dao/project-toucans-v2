@@ -3,7 +3,6 @@
 	import type { Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import DistributeTokens from '$lib/features/distribute-tokens/components/DistributeTokens.svelte';
 	import BurnTokens from '$lib/features/distribute-tokens/components/BurnTokens.svelte';
 
 	const adminData: {

@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Currency, InputWrapper } from '@emerald-dao/component-library';
+	import { Button, Currency, InputWrapper } from '@emerald-dao/component-library';
 	import { paymentActiveStep } from '$lib/features/payments/stores/PaymentSteps';
 	import { fade } from 'svelte/transition';
 	import { paymentData } from '$lib/features/payments/stores/PaymentData';
@@ -7,109 +7,137 @@
 	import { ECurrencies } from '$lib/types/common/enums';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { getStableSwapPoolInfo, stakeFlowExecution, unstakeFlowExecution } from '$flow/actions';
 
-	export let isValid = false;
 	export let daoData: DAOProject;
 
-	let currency = ECurrencies.FLOW;
-	let amount = 0;
-	let stFlowPrice = 0.95;
+	let currencyIn = ECurrencies.FLOW;
+	let amountIn = 0;
+	let amountOut = 0;
+	let timeout;
+	let price = 0;
+	$: availableBalance = Number(daoData.onChainData.treasuryBalances[currencyIn]);
 
-	// const handleChange = (input: Event) => {
-	// 	const target = input.target as HTMLInputElement;
+	let isValid = true;
+	let errors: string[] = [];
 
-	// 	res = validationSuite($paymentData, target.name);
+	const handleChange = (input: Event) => {
+		clearTimeout(timeout);
+		if (!amountIn) {
+			amountIn = 0;
+		}
+		timeout = setTimeout(async () => {
+			amountOut = await getStableSwapPoolInfo(amountIn, currencyIn);
+			price = amountOut / amountIn;
+		}, 500);
 
-	// 	isValid = res.isValid();
-	// };
+		if (amountIn <= availableBalance) {
+			isValid = true;
+			errors = [];
+		} else {
+			isValid = false;
+			errors = ['Cannot burn more than the available balance.'];
+		}
+	};
 
-	// let res = validationSuite.get();
+	async function runTransaction() {
+		if (currencyIn === ECurrencies.FLOW) {
+			// stake with 1% slippage
+			await stakeFlowExecution(daoData.generalInfo.project_id, amountIn, amountOut * 0.99);
+		} else if (currencyIn === ECurrencies.stFlow) {
+			await unstakeFlowExecution(daoData.generalInfo.project_id, amountIn, amountOut * 0.99);
+		}
+	}
 </script>
 
 <form
 	id="fund-form"
-	on:submit|preventDefault={paymentActiveStep.increment}
+	on:submit|preventDefault={runTransaction}
 	autocomplete="off"
 	in:fade={{ duration: 200 }}
 >
 	<div class="introduction">
 		<h5>Create Staking Action</h5>
-		{#if currency === ECurrencies.FLOW}
+		{#if currencyIn === ECurrencies.FLOW}
 			<span class="small">Stake your $FLOW by swapping to $stFlow.</span>
-		{:else if currency === ECurrencies.stFlow}
+		{:else if currencyIn === ECurrencies.stFlow}
 			<span class="small">Unstake by swapping your $stFlow for $FLOW.</span>
 		{/if}
 	</div>
 	<div>
-		<CurrencySelect currencies={[ECurrencies.FLOW, ECurrencies.stFlow]} bind:value={currency} />
+		<CurrencySelect currencies={[ECurrencies.FLOW, ECurrencies.stFlow]} bind:value={currencyIn} />
 	</div>
-	{#if daoData.onChainData.treasuryBalances[currency] != undefined}
+	{#if daoData.onChainData.treasuryBalances[currencyIn] != undefined}
 		<div class="row-2 align-center">
 			<span class="small">Available balance:</span>
-			<Currency
-				amount={Number(daoData.onChainData.treasuryBalances[currency])}
-				{currency}
-				color="heading"
-			/>
+			<Currency amount={availableBalance} currency={currencyIn} color="heading" />
 		</div>
 	{/if}
-	{#if daoData.onChainData.treasuryBalances[currency] != undefined && Number(daoData.onChainData.treasuryBalances[currency]) > 0}
+	{#if daoData.onChainData.treasuryBalances[currencyIn] != undefined && availableBalance > 0}
 		<CurrencyInput
 			autofocus
-			{currency}
-			isValid={true}
+			currency={currencyIn}
+			{isValid}
+			{errors}
 			fontSize="var(--font-size-7)"
 			hasBorder={false}
-			bind:value={amount}
+			on:input={(input) => handleChange(input.detail)}
+			bind:value={amountIn}
 		/>
-		<div>
-			<div class="row-2 align-center">
-				<span class="small">Price:</span>
-				<div class="surface">
-					<Currency
-						currency={ECurrencies.FLOW}
-						amount={1}
-						color="heading"
-						fontSize="var(--font-size-1)"
-						decimalNumbers={2}
-					/>
-				</div>
-				<span class="small">≈</span>
-				<div class="surface">
-					<Currency
-						currency={ECurrencies.stFlow}
-						amount={stFlowPrice}
-						color="heading"
-						fontSize="var(--font-size-1)"
-						decimalNumbers={2}
-					/>
-				</div>
-			</div>
+		{#if amountIn}
 			<div>
-				<div class="issuance-secondary-wrapper">
-					<span class="small">You will receive</span>
-					<Currency
-						currency={ECurrencies.stFlow}
-						amount={amount * stFlowPrice}
-						color="heading"
-						decimalNumbers={2}
-					/>
+				<div class="row-2 align-center">
+					<span class="small">Price:</span>
+					<div class="surface">
+						<Currency
+							currency={currencyIn}
+							amount={1}
+							color="heading"
+							fontSize="var(--font-size-1)"
+							decimalNumbers={2}
+						/>
+					</div>
+					<span class="small">≈</span>
+					<div class="surface">
+						<Currency
+							currency={currencyIn === ECurrencies.FLOW ? ECurrencies.stFlow : ECurrencies.FLOW}
+							amount={price}
+							color="heading"
+							fontSize="var(--font-size-1)"
+							decimalNumbers={2}
+						/>
+					</div>
+				</div>
+				<div>
+					<div class="issuance-secondary-wrapper">
+						<span class="small">You will receive</span>
+						<Currency
+							currency={currencyIn === ECurrencies.FLOW ? ECurrencies.stFlow : ECurrencies.FLOW}
+							amount={amountOut}
+							color="heading"
+							decimalNumbers={2}
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
+			<Button form="dist-form" width="full-width" state={isValid ? 'active' : 'disabled'}>
+				Create Staking Action
+			</Button>
+		{/if}
 	{:else}
 		<div class="row-2 align-center">
-			<span class="small no-tokens-message"
-				><em>No tokens available to {currency === ECurrencies.FLOW ? 'stake' : 'unstake'}.</em
-				></span
-			>
+			<span class="small no-tokens-message">
+				<em>
+					No tokens available to {currencyIn === ECurrencies.FLOW ? 'stake' : 'unstake'}.
+				</em>
+			</span>
 		</div>
 	{/if}
 </form>
 
 <style type="scss">
 	form {
-		width: 50%;
+		width: 40%;
 		margin-bottom: var(--space-9);
 		display: flex;
 		flex-direction: column;
