@@ -17,7 +17,7 @@
 	<div class="content-wrapper column-5">
 		<div class="row-3 align-center">
 			<img src={project.logo} on:error={(e) => handleLogoImgError(e)} alt="DAO logo" class="logo" />
-			<h3>{project.name}</h3>
+			<h3 style="text-align:left">{project.name}</h3>
 		</div>
 		<div class="row-3 align-end">
 			{#if project.token_symbol}
@@ -56,7 +56,7 @@
 				{/if}
 			</div>
 		</div>
-		<p class="small">{project.description}</p>
+		<p class="small" style="text-align:left">{project.description}</p>
 	</div>
 </a>
 
