@@ -384,7 +384,7 @@ pub contract ChinoNFT: NonFungibleToken {
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
         // create a public capability for the collection
-        self.account.link<&ChinoNFT.Collection{NonFungibleToken.CollectionPublic, ChinoNFT.ChinoNFTCollectionPublic, MetadataViews.ResolverCollection}>(
+        self.account.link<&ChinoNFT.Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, ChinoNFT.ChinoNFTCollectionPublic, MetadataViews.ResolverCollection}>(
             self.CollectionPublicPath,
             target: self.CollectionStoragePath
         )
