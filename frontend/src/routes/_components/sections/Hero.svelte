@@ -2,92 +2,87 @@
 	import ProjectCard from '$components/cards/ProjectCard.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import CirclesAndBlur from './atoms/CirclesAndBlur.svelte';
+	import BorderColoredText from './atoms/BorderColoredText.svelte';
 </script>
 
-<section class="section-large column-12">
+<section class="section-large">
 	<div class="container-medium">
-		<div class="left-wrapper">
-			<div class="title-wrapper">
-				<span class="tagline">No-code dao generator</span>
-				<h1 class="w-medium">Create a token.<br /> Launch a DAO</h1>
-				<p class="large">
-					We make it easy for digital communities to unlock the power of human-centric coordination.
-					Equipped with out-of-the-box voting, treasury management, token creation, and more.
-				</p>
+		<div class="title-wrapper">
+			<div style="padding-bottom: 50px;">
+				<BorderColoredText text={"No-code dao generator"} color={"#FF66C4"} borderRadius={"16px"} backgroundColor={"#FF66C4"}/>
 			</div>
+			<h3>Empower your community</h3>
+			<h1 class="w-medium">Funding and governance redefined</h1>
+			<p class="w-medium">
+				Create a 
+				<BorderColoredText fontSize={"16px"} borderColor={"#808080"} padding={"6px"} text={"Token"} color={"#FFFFFF"} backgroundColor={"#000000"} borderRadius={"8px"} icon={"noto:coin"}/> . 
+				Unlock transparent <BorderColoredText fontSize={"16px"} borderColor={"#808080"} padding={"6px"} text={"Fundraising"} color={"#FFFFFF"} backgroundColor={"#000000"} borderRadius={"8px"} icon={"noto:coin"}/>
+				 and <BorderColoredText fontSize={"16px"} borderColor={"#808080"} padding={"6px"} text={"Voting"} color={"#FFFFFF"} backgroundColor={"#000000"} borderRadius={"8px"} icon={"game-icons:vote"}/> . 
+				 Manage funds thorough a secure <BorderColoredText borderColor={"#808080"} fontSize={"16px"} padding={"6px"} text={"multisig threasury"} color={"#FFFFFF"}  backgroundColor={"#000000"} borderRadius={"8px"} icon={"noto:money-bag"}/> .
+			</p>
 		</div>
-		<div class="right-wrapper">
-			<ProjectCard
-				project={{
-					name: 'Emerald City DAO',
-					logo: '/ec-logo.png',
-					description:
-						'The first DAO on the Flow blockchain. Emerald City is the creator of Toucans and other products/tools in the ecosystem.',
-					token_symbol: 'EMLD',
-					twitter: 'emerald_dao',
-					discord: 'emeraldcity',
-					website: 'ecdao.org'
-				}}
-			/>
-			<!-- <CirclesAndBlur /> -->
-		</div>
-	</div>
-	<div class="column-2 center">
-		<Button color="primary" size="large" width="extended" href="/dao-generator"
-			>Create a DAO - it's free!
-		</Button>
-		<div class="column center">
-			<span class="xsmall">Creation is 100% free</span>
-			<span class="xsmall">We only charge a tiny percentage on funding.</span>
+		<div class="w-medium button-container" style={"padding-top: 50px;"} >
+			<Button color="neutral" type="ghost" size="large" width="extended" href="/discover">
+				Explore
+			</Button>
+			<Button color="primary" size="large" width="extended" href="/dao-generator">
+				Create DAO
+			</Button>
 		</div>
 	</div>
 </section>
-
 <style type="scss">
-	section {
-		border-bottom: 1px solid var(--clr-border-primary);
-		.container-medium {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
+    section {
 
-			@include mq('medium') {
-				display: grid;
-				grid-template-columns: 1.5fr 1fr;
-			}
+        .container-medium {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
 
-			.left-wrapper {
-				@include mq('medium') {
-					margin-right: var(--space-13);
-				}
+            .title-wrapper {
+                text-align: center;
 
-				.title-wrapper {
-					text-align: center;
+                h1 {
+					font-size: 2.5rem;
+                    margin-bottom: var(--space-6) 0;
+                    padding-bottom: 20px;
+                }
 
-					@include mq('medium') {
-						align-items: flex-start;
-						text-align: start;
+                h3 {
+					font-size: 1.8rem;
+                    margin-bottom: var(--space-4) 0;
+                }
+				
+                p {
+                    line-height: 1.6;
+                    font-size: 1.3rem;
+                    max-width: 80ch;
+                }
+				@include mq('small'){
+					h1{
+						font-size: 70px;
 					}
-
-					h1 {
-						margin: var(--space-6) 0;
+					h3{
+						font-size: 45px;
 					}
-
-					p {
-						max-width: 50ch;
+					p{
+						font-size: 27px;
+						line-height: 2;
 					}
 				}
-			}
-
-			.right-wrapper {
-				display: flex;
-				max-width: 55ch;
-				margin-top: var(--space-12);
-
-				@include mq('medium') {
-					margin-top: 0;
+				
+            }
+			.button-container {
+                display: flex;
+				flex-direction: column;
+                align-items: center;
+                gap: var(--space-2);
+				@include mq('small'){
+					flex-direction: row; 
+					gap:10px;
 				}
-			}
-		}
-	}
+            }
+            
+        }
+    }
 </style>
