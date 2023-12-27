@@ -22,4 +22,6 @@ export interface PaymentData {
 	currency: ECurrencies;
 	amount: number;
 	specialMessage: string;
+	NFTs?: string[];
+	NFTCollection?: string;
 }

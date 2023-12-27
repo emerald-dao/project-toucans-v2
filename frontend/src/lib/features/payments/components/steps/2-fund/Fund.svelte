@@ -10,6 +10,10 @@
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import FeeWarning from '../../atoms/FeeWarning.svelte';
+	import { getCatalogNFTs } from '$flow/actions';
+	import { onMount } from 'svelte';
+	import NfTsList from '$components/atoms/NFTsList.svelte';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let isValid = false;
 	export let daoData: DAOProject;
@@ -23,6 +27,36 @@
 	};
 
 	let res = validationSuite.get();
+
+	let projectNFTsCollections = daoData.onChainData.allowedNFTCollections;
+	let currencies: string[];
+
+	if (projectNFTsCollections.length <= 1 && daoData.generalInfo.token_symbol) {
+		currencies =
+			projectNFTsCollections.length === 0 || projectNFTsCollections[0].trim() === ''
+				? [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]
+				: [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol, 'NFTs'];
+	} else if (daoData.generalInfo.token_symbol) {
+		currencies = [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol, 'NFTs'];
+	}
+
+	let userCatalogNFTs: {
+		[collectionIdentifier: string]: { id: string; name: string; thumbnail: string }[];
+	};
+
+	onMount(async () => {
+		if ($user.addr) {
+			userCatalogNFTs = await getCatalogNFTs(projectNFTsCollections, $user.addr);
+		}
+	});
+
+	$: if ($paymentData.NFTs && $paymentData.currency === 'NFTs') {
+		if ($paymentData.NFTs.length > 0) {
+			isValid = true;
+		} else if ($paymentData.NFTs.length === 0) {
+			isValid = false;
+		}
+	}
 </script>
 
 <form
@@ -34,31 +68,43 @@
 	{#if $paymentData.type === 'donation'}
 		<div class="currency-select-wrapper">
 			{#if daoData.hasToken}
-				<CurrencySelect
-					currencies={[ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]}
-					bind:value={$paymentData.currency}
-				/>
+				<CurrencySelect {currencies} bind:value={$paymentData.currency} />
 			{:else}
-				<CurrencySelect
-					currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
-					bind:value={$paymentData.currency}
-				/>
+				<CurrencySelect {currencies} bind:value={$paymentData.currency} />
 			{/if}
 		</div>
 	{/if}
 	{#if $paymentData.type === 'fund'}
 		<FeeWarning paymentCurrency={$paymentData.currency} />
 	{/if}
-	<CurrencyInput
-		autofocus
-		currency={$paymentData.currency}
-		errors={res.getErrors('amount')}
-		isValid={res.isValid('amount')}
-		fontSize="var(--font-size-7)"
-		hasBorder={false}
-		on:input={(input) => handleChange(input.detail)}
-		bind:value={$paymentData.amount}
-	/>
+	{#if $paymentData.currency === 'NFTs'}
+		{#if !$user.addr}
+			<p class="heading" style="padding: var(--space-3) 0;">
+				Please log in to your account to view your NFTs collection!
+			</p>
+		{:else}
+			<NfTsList
+				bind:selectedNFTIds={$paymentData.NFTs}
+				bind:selectedCollection={$paymentData.NFTCollection}
+				NFTs={userCatalogNFTs}
+				userNFTs={true}
+				pageSize={2}
+				clickable={true}
+			/>
+		{/if}
+	{:else}
+		<CurrencyInput
+			autofocus
+			currency={$paymentData.currency}
+			errors={res.getErrors('amount')}
+			isValid={res.isValid('amount')}
+			fontSize="var(--font-size-7)"
+			hasBorder={false}
+			on:input={(input) => handleChange(input.detail)}
+			bind:value={$paymentData.amount}
+		/>
+	{/if}
+
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
 		<div class="funding-data-wrapper">
