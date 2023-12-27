@@ -27,6 +27,7 @@
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'tabler:outbound',
+		WithdrawNFTs: 'tabler:outbound',
 		BatchWithdraw: 'tabler:outbound',
 		RemoveSigner: 'tabler:pencil-off',
 		AddSigner: 'tabler:pencil-plus',
@@ -42,6 +43,7 @@
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'Withdraw',
+		WithdrawNFTs: 'Withdraw',
 		BatchWithdraw: 'Batch Withdraw',
 		RemoveSigner: 'Remove Signer',
 		AddSigner: 'Add Signer',

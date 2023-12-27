@@ -1,5 +1,6 @@
 export type MultisigActions =
 	| 'Withdraw'
+	| 'WithdrawNFTs'
 	| 'BatchWithdraw'
 	| 'AddSigner'
 	| 'RemoveSigner'
