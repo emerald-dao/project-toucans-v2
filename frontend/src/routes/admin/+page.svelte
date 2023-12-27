@@ -11,6 +11,8 @@
 		TreasuryWallet,
 		DaoStatsIntro
 	} from './_components';
+	import NftsCard from '../../lib/components/cards/NftsCard.svelte';
+	import { getProjectNFTTreasury } from '$flow/actions';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -28,6 +30,11 @@
 	<div class="secondary-wrapper">
 		<div class="column-8">
 			<GeneralStats daoData={activeDaoData} />
+			{#await getProjectNFTTreasury(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id) then NFTs}
+				{#if Object.keys(NFTs).length > 0}
+					<NftsCard {NFTs} />
+				{/if}
+			{/await}
 			<PrimaryTabs daoData={activeDaoData} />
 		</div>
 		<div class="column-space-between second-column">
