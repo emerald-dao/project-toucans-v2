@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { RecapCard, StepButtons, RecapElement } from '../../index';
-	import { editDelayOptions } from '../5-edit-delay/editDelayOptions';
+	import { editDelayOptions } from '../6-edit-delay/editDelayOptions';
 	import { getContext } from 'svelte';
 	import type { createActiveStep } from '$stores/custom/steps/ActiveStep';
 	import type { daoGeneratorData as TdaoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';

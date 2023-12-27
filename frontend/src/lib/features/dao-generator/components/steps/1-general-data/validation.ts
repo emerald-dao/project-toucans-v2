@@ -158,6 +158,7 @@ const validationSuite = create((data = {}, daoProjects, currentField?) => {
 			enforce(data.tokenName).notEquals('YFI');
 			enforce(data.tokenName).notEquals('ADA');
 			enforce(data.tokenName).notEquals('CAKE');
+			enforce(data.tokenName).notEquals('NFTs');
 		});
 
 		skipWhen(validationSuite.get().hasErrors('tokenName'), () => {
@@ -198,10 +199,12 @@ const checkDaoContract = async (value: string, daoProjects: DaoProject[]): Promi
 };
 
 const checkDaoToken = async (value: string, daoProjects: DaoProject[]): Promise<boolean> => {
-	console.log(value)
-	console.log(daoProjects)
 	return new Promise((resolve, reject) => {
-		if (daoProjects.some((obj) => obj.token_symbol && obj.token_symbol.toUpperCase() === value.toUpperCase())) {
+		if (
+			daoProjects.some(
+				(obj) => obj.token_symbol && obj.token_symbol.toUpperCase() === value.toUpperCase()
+			)
+		) {
 			reject();
 		} else {
 			resolve(true);
