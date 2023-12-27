@@ -12,6 +12,10 @@
 
 	import { lockTokens } from '../functions/lockTokens';
 	import Icon from '@iconify/svelte';
+	import { getProjectNFTTreasury } from '$flow/actions';
+	import NfTsDistributionForm from './sections/NFTsDistributionForm.svelte';
+	import { withdrawNFTs } from '../functions/withdrawNFTs';
+	import NfTsList from '$components/atoms/NFTsList.svelte';
 
 	export let daoData: DAOProject;
 	export let distributionType: 'mint' | 'withdraw' | 'lock';
@@ -52,7 +56,11 @@
 		if (distributionType === 'mint') {
 			mintTokens(daoData, distStaging);
 		} else if (distributionType === 'withdraw') {
-			withdrawTokens(daoData, distStaging, currencyToDistribute as ECurrencies);
+			if (selectedNFTIds.length > 0) {
+				withdrawNFTs(daoData, selectedCollection, selectedNFTIds, address);
+			} else {
+				withdrawTokens(daoData, distStaging, currencyToDistribute as ECurrencies);
+			}
 		} else if (distributionType === 'lock') {
 			let inputDate;
 
@@ -73,6 +81,11 @@
 	};
 
 	let lockInputsAreValid: boolean;
+
+	let nftInputsAreValid: boolean;
+	let selectedCollection: string;
+	let address: string;
+	let selectedNFTIds: string[] = [];
 </script>
 
 <div class="main-wrapper">
@@ -85,7 +98,7 @@
 				</p>
 			{:else if distributionType === 'withdraw'}
 				<h5>Create Withdraw Action</h5>
-				<p class="small">Withdraw tokens from your treasury to external wallets.</p>
+				<p class="small">Withdraw tokens/NFTs from your treasury to external wallets.</p>
 			{:else if distributionType === 'lock'}
 				<h5>Create Lock Action</h5>
 				{`Lock tokens from your treasury to external wallets so they can claim later`}
@@ -106,6 +119,18 @@
 						/>
 					</label>
 				{/each}
+				{#if distributionType !== 'lock'}
+					<label>
+						NFTs
+						<input
+							type="radio"
+							id="custom"
+							name="currency"
+							value="NFTs"
+							bind:group={currencyToDistribute}
+						/>
+					</label>
+				{/if}
 			</div>
 			{#if (distributionType === 'withdraw' || distributionType === 'lock') && daoData.onChainData.treasuryBalances[currencyToDistribute] != undefined}
 				<div class="row-2 align-center">
@@ -138,13 +163,43 @@
 					>Create Lock Action <Icon icon="tabler:arrow-narrow-right" /></Button
 				>
 			{/if}
+		{:else if currencyToDistribute === 'NFTs'}
+			{#await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id) then NFTs}
+				{#if Object.values(NFTs).every((array) => array.length === 0)}
+					<div class="row-2 align-center">
+						<span class="small no-tokens-message"><em>No NFTs available to distribute.</em></span>
+					</div>
+				{:else}
+					<div class="column">
+						<NfTsDistributionForm
+							bind:address
+							bind:nftInputsAreValid
+							projectOwner={daoData.generalInfo.owner}
+							projectId={daoData.generalInfo.project_id}
+						/>
+						<NfTsList
+							bind:selectedNFTIds
+							bind:selectedCollection
+							{NFTs}
+							clickable={true}
+							pageSize={3}
+						/>
+						<Button
+							width="full-width"
+							on:click={distributeTokens}
+							state={nftInputsAreValid && selectedNFTIds.length > 0 ? 'active' : 'disabled'}
+							>Distribute NFTs <Icon icon="tabler:arrow-narrow-right" /></Button
+						>
+					</div>
+				{/if}
+			{/await}
 		{:else}
 			<div class="row-2 align-center">
 				<span class="small no-tokens-message"><em>No tokens available to distribute.</em></span>
 			</div>
 		{/if}
 	</div>
-	{#if distributionType !== 'lock'}
+	{#if distributionType !== 'lock' && daoData.onChainData.treasuryBalances[currencyToDistribute] !== undefined}
 		<div class="dist-wrapper sub-wrapper card">
 			<DistributionStaging bind:distStaging tokenName={currencyToDistribute} />
 			{#if distStaging.length > 0}
