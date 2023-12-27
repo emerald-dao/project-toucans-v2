@@ -22,24 +22,22 @@
         return `${r},${g},${b}`;
     }
 </script>
-
 {#if icon ==""}
     <span class="tagline coloredBorder" style={`${style}`}>{text}</span>
 {:else}
-    <span class="tagline coloredBorder" style={`${style}  align-items: center; padding:5px;`}>
+    <span class="tagline coloredBorder" style={`${style}  align-items: center; padding:5px; padding-top: 6px;`}>
         <Icon icon={icon} height="22px" style=" vertical-align:text-bottom;"/>
         {text}
     </span>
 {/if}
-
 <style lang="scss">
-    .coloredBorder {
-        align-items: center;
-        border-width: 1px;  
-        border-style: solid;
-        padding: 5px;
-        max-width: fit-content;
-        white-space: nowrap;
-
-    }
+        .coloredBorder {
+            align-items: center;
+            border-width: 1px;  
+            border-style: solid;
+            padding: 5px;
+            max-width: fit-content;
+            white-space: nowrap;
+        }
+    
 </style>

@@ -11,7 +11,7 @@
 	export let projects: DaoRankingData[] = [];
 	export let allProjects: DaoDatabaseData[] = [];
 
-	const tabs = ['All', 'Top Grossing', 'NFT Communities', 'Gaming'];
+	const tabs = ['All', 'Top Funded', 'Most Active'];
 
 	let selectedTab = 'All';
 	let topProjects = projects.sort((a, b) => b.treasury_value - a.treasury_value).slice(0, 3);
@@ -26,9 +26,7 @@
 		}else if(tab == tabs[1]){
 			topProjects = projects.sort((a, b) => b.total_funding - a.total_funding).slice(0, 3);
 		}else if(tab == tabs[2]){
-			topProjects = projects.sort((a, b) => b.treasury_value - a.treasury_value).slice(0, 3);
-		}else if(tab == tabs[3]){
-			topProjects = projects.sort((a, b) => b.treasury_value - a.treasury_value).slice(0, 3);
+			topProjects = projects.sort((a, b) => b.num_participants - a.num_participants).slice(0, 3);
 		}
 		
       handleTopProjectsChange(topProjects);
