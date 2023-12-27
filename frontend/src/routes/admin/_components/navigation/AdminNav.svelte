@@ -167,6 +167,16 @@
 					Lock
 				</a>
 			{/if}
+			<a
+				href="/admin/nft-collections"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('nft-collections')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:hexagon" />
+				</div>
+				NFT Collections
+			</a>
 		</div>
 	</div>
 	<div class="column-6">
