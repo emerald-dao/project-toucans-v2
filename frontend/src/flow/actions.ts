@@ -159,7 +159,8 @@ const deployContract = async (data: DaoGeneratorData) => {
 			arg(
 				data.tokenomics.hasMaxSupply ? formatFix(data.tokenomics.maxSupply) : null,
 				t.Optional(t.UFix64)
-			)
+			),
+			arg(data.daoDetails.allowedNFTCollections, t.Array(t.String))
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -185,6 +186,7 @@ const deployDAONoToken = async (data: DaoGeneratorData) => {
 		cadence: replaceWithProperValues(deployDAOTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
+			arg(data.daoDetails.allowedNFTCollections, t.Array(t.String)),
 			arg(paymentCurrencyInfo.contractName, t.String),
 			arg(addresses[paymentCurrencyInfo.contractName], t.Address),
 			arg(paymentCurrencyInfo.symbol, t.String),

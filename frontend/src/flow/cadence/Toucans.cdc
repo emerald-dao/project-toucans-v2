@@ -1226,6 +1226,7 @@ pub contract Toucans {
       initialThreshold: UInt64,
       minting: Bool,
       initialTreasurySupply: UFix64,
+      initialAllowedNFTCollections: [String],
       extra: {String: AnyStruct}
     ) {
       pre {
@@ -1243,13 +1244,17 @@ pub contract Toucans {
         assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
         self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       }
+      let allowedNFTCollections: {String: Bool} = {}
+      for allowedNFTCollection in initialAllowedNFTCollections {
+        allowedNFTCollections[allowedNFTCollection] = true
+      }
       self.projectId = projectId
       self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
       self.extra = {
         "completedActionIds": {} as {UInt64: Bool},
-        "allowedNFTCollections": {} as {String: Bool}
+        "allowedNFTCollections": allowedNFTCollections
       }
       self.fundingCycles = []
       self.minter <- minter
@@ -1290,6 +1295,7 @@ pub contract Toucans {
     pub fun createProjectNoToken(
       projectId: String,
       paymentTokenInfo: ToucansTokens.TokenInfo,
+      initialAllowedNFTCollections: [String],
       extra: {String: AnyStruct}
     ) {
       let project: @Project <- create Project(
@@ -1302,6 +1308,7 @@ pub contract Toucans {
         initialThreshold: 1, 
         minting: false, 
         initialTreasurySupply: 0.0, 
+        initialAllowedNFTCollections: initialAllowedNFTCollections,
         extra: extra
       )
       self.projects[projectId] <-! project
@@ -1320,6 +1327,7 @@ pub contract Toucans {
       editDelay: UFix64,
       minting: Bool,
       initialTreasurySupply: UFix64,
+      initialAllowedNFTCollections: [String],
       extra: {String: AnyStruct}
     ) {
       let projectId: String = projectTokenInfo.contractName
@@ -1333,6 +1341,7 @@ pub contract Toucans {
         initialThreshold: 1, 
         minting: minting, 
         initialTreasurySupply: initialTreasurySupply, 
+        initialAllowedNFTCollections: initialAllowedNFTCollections,
         extra: extra
       )
       self.projects[projectId] <-! project

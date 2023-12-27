@@ -6,6 +6,7 @@ import ToucansTokens from "../ToucansTokens.cdc"
 
 transaction(
   projectId: String,
+  initialAllowedNFTCollections: [String],
   // PAYMENT TOKEN INFO
   ptContractName: String,
   ptContractAddress: Address,
@@ -37,6 +38,7 @@ transaction(
     toucansProjectCollection.createProjectNoToken(
       projectId: projectId,
       paymentTokenInfo: ToucansTokens.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath), 
+      initialAllowedNFTCollections: initialAllowedNFTCollections,
       extra: extra
     )
   }
