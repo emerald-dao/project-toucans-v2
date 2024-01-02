@@ -33,7 +33,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each currentPageDaos as project, i}
+			{#each currentPageDaos as project, i (project.project_id)}
 				<DaoRankingRow {project} number={i + (currentPage - 1) * pageSize} />
 			{/each}
 		</tbody>
