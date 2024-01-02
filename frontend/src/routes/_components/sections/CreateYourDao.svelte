@@ -1,53 +1,49 @@
 <script lang="ts">
 	import { Button } from '@emerald-dao/component-library';
-
 </script>
 
 <section class="section-large">
-    <div class="container-medium linear-gradient">
-        <h1>Ready to give super powers to your community?</h1>
-        <p>Unlock transparent funding and governance on the <br>Flow Blockchain.</p>
-        <Button color="primary" size="large" width="extended" href="/dao-generator">
-            Create your DAO for free in just 5 minutes!
-        </Button>
-    </div>
+	<div class="container-small linear-gradient">
+		<div class="column-3 align-center">
+			<h2 class="w-medium">Ready to give super powers to your community?</h2>
+			<p>Unlock transparent funding and governance on the Flow Blockchain.</p>
+		</div>
+		<Button color="primary" size="large" width="extended" href="/dao-generator">
+			Create your DAO for free in just 5 minutes!
+		</Button>
+	</div>
 </section>
 
 <style lang="scss">
-    section {
+	section {
+		background-color: var(--clr-background-secondary);
+		border-block: 1px solid var(--clr-neutral-badge);
 
-        .container-medium {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding:60px;
-            gap:22px;
-            border-radius: 20px;
-            border-color: #424242;
-            text-align: center;
-            border:1px;
-            p{
-                font-size: 1.3rem;
-                line-height: 30px;
-            }
-            h1{
-                font-size: 2.5rem;
-            }
-            @include mq('small'){
-					h1{
-						font-size: 70px;
-					}
-					p{
-						font-size: 22px;
-						line-height: 30px;
-					}
-				}
-        }
-        .linear-gradient {
-            background: linear-gradient(180deg, #1E1E1E 50%, #317452 369.36%),
-                linear-gradient(0deg, #424242, #424242);
-            border-radius: 20px;
-            border: 1px solid #424242;
-        }
-     }
+		.container-small {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 60px;
+			gap: var(--space-8);
+			border-radius: 20px;
+			border-color: var(--clr-border-primary);
+			text-align: center;
+			border: 1px;
+
+			p {
+				font-size: var(--font-size-3);
+				line-height: 30px;
+			}
+
+			h2 {
+				font-size: var(--font-size-7);
+			}
+		}
+		.linear-gradient {
+			background: linear-gradient(180deg, #1e1e1e 50%, #317452 369.36%),
+				linear-gradient(0deg, #424242, #424242);
+			border-radius: 20px;
+			border: 1px solid #424242;
+		}
+	}
 </style>

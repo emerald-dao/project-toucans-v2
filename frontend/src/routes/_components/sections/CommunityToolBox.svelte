@@ -1,127 +1,140 @@
 <script lang="ts">
-	import BorderColoredText from "./atoms/BorderColoredText.svelte";
+	import FeautreLabel from './atoms/FeatureLabel.svelte';
 </script>
 
 <section class="section-large">
-    <div class="container-medium">
-        <h1>A complete toolbox for<br> communities and token creators</h1>
-        <p>Unlock transparent funding and governance on the <br>Flow Blockchain.</p>
-        <div class="cards-wrapper">
-			<div class="techincal-card  with-padding" style={`grid-area: card1`}>
-                <BorderColoredText text={"Token"} color={"#FF66C4"} borderRadius={"16px"} backgroundColor={"#FF66C4"} icon={"noto:coin"}/>
-                <h3>Fuel your community or idea with a Token</h3>
-                <img src="/FlowDevelopersCommunity.png" alt="Flow developers">
+	<div class="container">
+		<h2 class="w-medium">
+			<span> The ultimate toolbox </span>
+			for communities and token creators
+		</h2>
+		<div class="cards-wrapper">
+			<div class="techincal-card with-padding" style={`grid-area: card1`}>
+				<FeautreLabel icon="mdi:circle-multiple">Token</FeautreLabel>
+				<h3 class="w-medium">Create a Token</h3>
+				<!-- lorem ipsum -->
+				<p>Flow is a fast, decentralized, and developer-friendly blockchain.</p>
+				<img src="/FlowDevelopersCommunity.png" alt="Flow developers" />
 			</div>
-            <div class="techincal-card with-padding" style={`grid-area: card2`}>
-				<BorderColoredText text={"Fundraising"} color={"#FF66C4"} borderRadius={"16px"} backgroundColor={"#FF66C4"} icon={"noto:coin"}/>
-                <h3>Crowdfund your <br>dreams</h3>
-                <img src="/CrowdfundingYourDreams.png" alt="Flow developers" style="padding-top:50px;">
+			<div class="techincal-card with-padding" style={`grid-area: card2`}>
+				<FeautreLabel icon="mdi:account-cash">Fundrising</FeautreLabel>
+				<h3 class="w-medium">Transparent fundrising</h3>
+				<p>Flow is a fast, decentralized, and developer-friendly blockchain.</p>
+				<img src="/CrowdfundingYourDreams.png" alt="Flow developers" style="padding-top:50px;" />
 			</div>
-            <div class="techincal-card" style={`grid-area: card3;`}>
-				<BorderColoredText text={"Multisig treasury"} color={"#FF66C4"} borderRadius={"16px"} backgroundColor={"#FF66C4"} icon={"noto:money-bag"}/>
-                <h3 style={"padding-left:80px; padding-right:80px"}>Store and manage 
-                    funds securely.</h3>
-                <div class="transaction-image">
-                    <img src="/transactions.png" alt="Flow developers" style="margin:1px; width:35%; height:90%" >
-                    <img src="/treasuryWallet.png" alt="Flow developers" style="padding-top:70px; padding-bottom:10px;margin-right:1px ;width:55%">
-                </div>
+			<div class="techincal-card" style={`grid-area: card3;`}>
+				<FeautreLabel icon="mdi:treasure-chest">Multisig Treasury</FeautreLabel>
+				<h3 class="w-medium">Manage funds securely</h3>
+				<p>Flow is a fast, decentralized, and developer-friendly blockchain.</p>
+				<div class="transaction-image">
+					<img
+						src="/transactions.png"
+						alt="Flow developers"
+						style="margin:1px; width:35%; height:90%"
+					/>
+					<img
+						src="/treasuryWallet.png"
+						alt="Flow developers"
+						style="padding-top:70px; padding-bottom:10px;margin-right:1px ;width:55%"
+					/>
+				</div>
 			</div>
-            <div class="techincal-card with-padding" style={`grid-area: card4;`}>
-				<BorderColoredText text={"Voting"} color={"#FF66C4"} borderRadius={"16px"} backgroundColor={"#FF66C4"} icon={"noto:money-bag"}/>
-                <h3>Engage in inclusive decision-making 
-                    through user-friendly voting.</h3>
-                <img src="/Voting.png" alt="Flow developers">
+			<div class="techincal-card with-padding" style={`grid-area: card4;`}>
+				<FeautreLabel icon="mdi:vote">Voting</FeautreLabel>
+				<h3 class="w-medium">Transparent voting</h3>
+				<p>Flow is a fast, decentralized, and developer-friendly blockchain.</p>
+				<img src="/Voting.png" alt="Flow developers" />
 			</div>
-    </div>
+		</div>
+	</div>
 </section>
 
 <style lang="scss">
-    section{
-        .container-medium{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap:22px;
-            border-radius: 20px;
-            border-color: #424242;
-            text-align: center;
-            border:1px;
-            p{
-                font-size: 1.3rem;
-                line-height: 26px;
-            }
-            h1{
-                font-size: 2.5rem;
-            }
-            @include mq('small'){
-                h1{
-                    font-size: 70px;
-                    }
-                
-                p{
-                font-size: 26px;
-                line-height: 36px;
-                }
-            }
+	section {
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: var(--space-14);
+			border-radius: 20px;
+			text-align: center;
+			border: 1px;
 
-            .cards-wrapper {
-                display: flex;
-                flex-direction: column;
-                gap:60px;
-
-			@include mq('small') {
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				grid-template-rows: repeat(3, auto);
-				grid-template-areas:
-					'card1 card1'
-					'card2 card3'
-                    'card4 card4';
+			p {
+				font-size: var(--font-size-4);
+				line-height: 1.5;
 			}
-            
 
-			.techincal-card {
-                background: linear-gradient(180deg, rgba(255, 102, 196, 0.07) 0%, rgba(18, 18, 18, 0) 100%);
-                gap:21px;
-                padding-top:40px;
-                position: relative;
-                border: 1px solid #484848;
-				border-radius: var(--radius-7);
+			h2 {
+				font-size: var(--font-size-9);
 
-                .transaction-image {
-                    display: flex;
-                    img {
-                        align-items: baseline;
-                        max-width: 100%;
-                        height: auto; 
-                        width: 40%;
-                    }
-                }
-                img {
-                    display: block;
-                    margin: 0 auto;
-                    margin-bottom: 1px; 
-                    max-width: 100%;
-                }
+				span {
+					display: block;
+					white-space: nowrap;
+					background: -webkit-linear-gradient(
+						var(--clr-background-primary),
+						var(--clr-heading-main)
+					);
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent;
+				}
+			}
 
-				h3{
-                    padding-top: 21px;
-                    padding-bottom: 21px;
-					color: #FFFFFF;
-                    font-size: 24px;
+			.cards-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-12);
+
+				@include mq('small') {
+					display: grid;
+					grid-template-columns: repeat(2, 1fr);
+					grid-template-rows: repeat(3, auto);
+					grid-template-areas:
+						'card1 card1'
+						'card2 card3'
+						'card4 card4';
 				}
 
-                @include mq('small'){
-                    h3{
-                        font-size: 36px;
-                    }
-                }
+				.techincal-card {
+					background: linear-gradient(
+						180deg,
+						rgba(255, 102, 196, 0.06) 0%,
+						rgba(18, 18, 18, 0) 100%
+					);
+					padding-top: 40px;
+					position: relative;
+					border: 1px solid var(--clr-border-primary);
+					border-radius: var(--radius-3);
+					display: flex;
+					flex-direction: column;
+					gap: var(--space-5);
+					align-items: center;
+
+					.transaction-image {
+						display: flex;
+						img {
+							align-items: baseline;
+							max-width: 100%;
+							height: auto;
+							width: 40%;
+						}
+					}
+					img {
+						display: block;
+						margin: 0 auto;
+						margin-bottom: 1px;
+						max-width: 100%;
+					}
+
+					h3 {
+						font-size: var(--font-size-6);
+					}
+				}
+				.with-padding {
+					padding-left: 80px;
+					padding-right: 80px;
+				}
 			}
-            .with-padding{
-                padding-left:80px;
-                padding-right: 80px;
-            }
-        }
-        }
-    }
+		}
+	}
 </style>
