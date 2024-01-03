@@ -3,7 +3,13 @@ import * as fcl from '@onflow/fcl';
 import { Buffer } from 'buffer';
 import { browser } from '$app/environment';
 import { addresses, user } from '$stores/flow/FlowStore';
-import { executeTransaction, formatFix, replaceWithProperValues, splitList, switchToToken } from './utils';
+import {
+	executeTransaction,
+	formatFix,
+	replaceWithProperValues,
+	splitList,
+	switchToToken
+} from './utils';
 
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
@@ -68,6 +74,7 @@ import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
+import type { NftCollection } from '$lib/types/common/nft-collection.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -80,9 +87,9 @@ export const unauthenticate = () => fcl.unauthenticate();
 export const logIn = async () => fcl.logIn();
 export const signUp = () => fcl.signUp();
 
-const saveEventAction: (
-	res: TransactionStatusObject
-) => Promise<ActionExecutionResult> = async (executionResult: TransactionStatusObject) => {
+const saveEventAction: (res: TransactionStatusObject) => Promise<ActionExecutionResult> = async (
+	executionResult: TransactionStatusObject
+) => {
 	console.log('[SAVING]: Step 1');
 	const res = await fetch('/api/save-event-data', {
 		method: 'POST',
@@ -100,7 +107,7 @@ const saveEventAction: (
 		state: 'success',
 		errorMessage: response
 	};
-}
+};
 
 //   _______                             _   _
 //  |__   __|                           | | (_)
@@ -130,7 +137,7 @@ const deployContract = async (data: DaoGeneratorData) => {
 	console.log(data);
 	let contractCode = rawExampleTokenCode
 		.replaceAll('INSERT NAME', data.daoDetails.name)
-		.replaceAll('INSERT DESCRIPTION', data.daoDetails.description.replace(/(\r\n|\n|\r)/gm, ""))
+		.replaceAll('INSERT DESCRIPTION', data.daoDetails.description.replace(/(\r\n|\n|\r)/gm, ''))
 		.replaceAll('INSERT SYMBOL', data.daoDetails.tokenName)
 		.replaceAll('INSERT URL', data.daoDetails.website)
 		.replaceAll('INSERT TWITTER', data.daoDetails.twitter)
@@ -178,10 +185,7 @@ const deployDAONoToken = async (data: DaoGeneratorData) => {
 	console.log(data);
 	const paymentCurrency = data.tokenomics.paymentCurrency;
 	const paymentCurrencyInfo = currencies[paymentCurrency];
-	const projectId = data.daoDetails.name.replace(
-		/[^\w\s]|\s/gi,
-		''
-	);
+	const projectId = data.daoDetails.name.replace(/[^\w\s]|\s/gi, '');
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(deployDAOTx),
 		args: (arg, t) => [
@@ -192,7 +196,7 @@ const deployDAONoToken = async (data: DaoGeneratorData) => {
 			arg(paymentCurrencyInfo.symbol, t.String),
 			arg(paymentCurrencyInfo.receiverPath, t.Path),
 			arg(paymentCurrencyInfo.publicPath, t.Path),
-			arg(paymentCurrencyInfo.storagePath, t.Path),
+			arg(paymentCurrencyInfo.storagePath, t.Path)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -242,8 +246,9 @@ export const fundProjectExecution = (
 	currency: ECurrencies,
 	expectedAmount: string
 ) =>
-	executeTransaction(() =>
-		fundProject(projectOwner, projectId, amount, message, currency, expectedAmount), saveEventAction
+	executeTransaction(
+		() => fundProject(projectOwner, projectId, amount, message, currency, expectedAmount),
+		saveEventAction
 	);
 
 const claimOverflow = async (
@@ -278,7 +283,10 @@ export const claimOverflowExecution = (
 	amount: string,
 	currency: ECurrencies,
 	expectedAmount: string
-) => executeTransaction(() => claimOverflow(projectOwner, projectId, amount, currency, expectedAmount));
+) =>
+	executeTransaction(() =>
+		claimOverflow(projectOwner, projectId, amount, currency, expectedAmount)
+	);
 
 const claimLockedTokens = async (
 	projectOwner: string,
@@ -306,7 +314,10 @@ export const claimLockedTokensExecution = (
 	projectId: string,
 	lockedVaultUuid: string,
 	receiverPublicPath: string
-) => executeTransaction(() => claimLockedTokens(projectOwner, projectId, lockedVaultUuid, receiverPublicPath));
+) =>
+	executeTransaction(() =>
+		claimLockedTokens(projectOwner, projectId, lockedVaultUuid, receiverPublicPath)
+	);
 
 const transferOverflow = async (projectOwner: string, projectId: string, amount: string) => {
 	return await fcl.mutate({
@@ -361,7 +372,11 @@ export const donateExecution = (
 	amount: string,
 	message: string,
 	currency: ECurrencies
-) => executeTransaction(() => donate(projectOwner, projectId, amount, message, currency), saveEventAction);
+) =>
+	executeTransaction(
+		() => donate(projectOwner, projectId, amount, message, currency),
+		saveEventAction
+	);
 
 const donateNFTs = async (
 	projectOwner: string,
@@ -392,7 +407,11 @@ export const donateNFTsExecution = (
 	nftIDs: string[],
 	collectionIdentifier: string,
 	message: string
-) => executeTransaction(() => donateNFTs(projectOwner, projectId, nftIDs, collectionIdentifier, message), saveEventAction);
+) =>
+	executeTransaction(
+		() => donateNFTs(projectOwner, projectId, nftIDs, collectionIdentifier, message),
+		saveEventAction
+	);
 
 const transferProjectTokenToTreasury = async (
 	projectOwner: string,
@@ -420,7 +439,11 @@ export const transferProjectTokenToTreasuryExecution = (
 	projectId: string,
 	amount: string,
 	message: string
-) => executeTransaction(() => transferProjectTokenToTreasury(projectOwner, projectId, amount, message), saveEventAction);
+) =>
+	executeTransaction(
+		() => transferProjectTokenToTreasury(projectOwner, projectId, amount, message),
+		saveEventAction
+	);
 
 const newRound = async () => {
 	const newRoundData = get(roundGeneratorData);
@@ -492,7 +515,10 @@ export const editRoundExecution = (
 	reserveRate: number,
 	issuanceRate: string,
 	fundingGoal: string | null
-) => executeTransaction(() => editRound(projectId, cycleIndex, startDate, endDate, reserveRate, issuanceRate, fundingGoal));
+) =>
+	executeTransaction(() =>
+		editRound(projectId, cycleIndex, startDate, endDate, reserveRate, issuanceRate, fundingGoal)
+	);
 
 const togglePurchasing = async (projectId: string) => {
 	return await fcl.mutate({
@@ -549,8 +575,8 @@ const proposeBatchWithdraw = async (
 	projectOwner: string,
 	projectId: string
 ) => {
-	const amountsArg: any = amounts.map(distribution => {
-		return { key: distribution.address, value: formatFix(distribution.amount) }
+	const amountsArg: any = amounts.map((distribution) => {
+		return { key: distribution.address, value: formatFix(distribution.amount) };
 	});
 
 	return await fcl.mutate({
@@ -573,10 +599,7 @@ export const proposeBatchWithdrawExecution = (
 	amounts: Distribution[],
 	projectOwner: string,
 	projectId: string
-) =>
-	executeTransaction(() =>
-		proposeBatchWithdraw(tokenSymbol, amounts, projectOwner, projectId)
-	);
+) => executeTransaction(() => proposeBatchWithdraw(tokenSymbol, amounts, projectOwner, projectId));
 
 const proposeWithdrawNFTs = async (
 	projectOwner: string,
@@ -592,7 +615,7 @@ const proposeWithdrawNFTs = async (
 			arg(projectId, t.String),
 			arg(collectionIdentifier, t.String),
 			arg(nftIDs, t.Array(t.UInt64)),
-			arg(recipient, t.Address),
+			arg(recipient, t.Address)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -655,8 +678,8 @@ const signAction = async (actionMessage: string, actionUUID: string) => {
 	});
 	console.log(keyIds);
 	console.log(signatures);
-	console.log(MSG)
-	console.log(latestBlock.height)
+	console.log(MSG);
+	console.log(latestBlock.height);
 
 	return { keyIds, signatures, MSG, signatureBlock: latestBlock.height };
 };
@@ -687,7 +710,11 @@ export const voteOnActionExecution = (
 	projectId: string,
 	actionUUID: string,
 	vote: boolean
-) => executeTransaction(() => voteOnAction(projectOwner, projectId, actionUUID, vote), saveEventAction);
+) =>
+	executeTransaction(
+		() => voteOnAction(projectOwner, projectId, actionUUID, vote),
+		saveEventAction
+	);
 
 const mintTokens = async (
 	projectOwner: string,
@@ -721,8 +748,8 @@ const batchMintTokens = async (
 	projectId: string,
 	amounts: Distribution[]
 ) => {
-	const amountsArg: any = amounts.map(distribution => {
-		return { key: distribution.address, value: formatFix(distribution.amount) }
+	const amountsArg: any = amounts.map((distribution) => {
+		return { key: distribution.address, value: formatFix(distribution.amount) };
 	});
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(batchMintTokensTx, projectId, projectOwner),
@@ -757,11 +784,7 @@ const mintTokensToTreasury = async (projectId: string, amount: string) => {
 export const mintTokensToTreasuryExecution = (projectId: string, amount: string) =>
 	executeTransaction(() => mintTokensToTreasury(projectId, amount));
 
-const burnTokens = async (
-	tokenSymbol: string,
-	projectId: string,
-	amount: string
-) => {
+const burnTokens = async (tokenSymbol: string, projectId: string, amount: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(burnTokensTx, projectId),
 		args: (arg, t) => [
@@ -776,11 +799,8 @@ const burnTokens = async (
 	});
 };
 
-export const burnTokensExecution = (
-	tokenSymbol: string,
-	projectId: string,
-	amount: string
-) => executeTransaction(() => burnTokens(tokenSymbol, projectId, amount));
+export const burnTokensExecution = (tokenSymbol: string, projectId: string, amount: string) =>
+	executeTransaction(() => burnTokens(tokenSymbol, projectId, amount));
 
 const addAllowedNFTCollections = async (
 	projectOwner: string,
@@ -805,7 +825,10 @@ export const addAllowedNFTCollectionsExecution = (
 	projectOwner: string,
 	projectId: string,
 	collectionIdentifiers: string[]
-) => executeTransaction(() => addAllowedNFTCollections(projectOwner, projectId, collectionIdentifiers));
+) =>
+	executeTransaction(() =>
+		addAllowedNFTCollections(projectOwner, projectId, collectionIdentifiers)
+	);
 
 const removeAllowedNFTCollections = async (
 	projectOwner: string,
@@ -830,7 +853,10 @@ export const removeAllowedNFTCollectionsExecution = (
 	projectOwner: string,
 	projectId: string,
 	collectionIdentifiers: string[]
-) => executeTransaction(() => removeAllowedNFTCollections(projectOwner, projectId, collectionIdentifiers));
+) =>
+	executeTransaction(() =>
+		removeAllowedNFTCollections(projectOwner, projectId, collectionIdentifiers)
+	);
 
 const lockTokens = async (
 	tokenSymbol: string,
@@ -861,7 +887,10 @@ export const lockTokensExecution = (
 	amount: string,
 	recipient: string,
 	unlockTimeInUnixSeconds: string
-) => executeTransaction(() => lockTokens(tokenSymbol, projectId, amount, recipient, unlockTimeInUnixSeconds));
+) =>
+	executeTransaction(() =>
+		lockTokens(tokenSymbol, projectId, amount, recipient, unlockTimeInUnixSeconds)
+	);
 
 const setUpVault = async (projectId: string, contractAddress: string) => {
 	return await fcl.mutate({
@@ -892,7 +921,7 @@ export const getProjectInfo: (
 	projectId: string
 ) => Promise<DaoBlockchainData> = async (contractAddress, owner, projectId) => {
 	if (contractAddress) {
-		return await getProjectWithTokenInfo(contractAddress, owner, projectId)
+		return await getProjectWithTokenInfo(contractAddress, owner, projectId);
 	} else {
 		return await getProjectNoTokenInfo(owner, projectId);
 	}
@@ -925,7 +954,7 @@ const getProjectNoTokenInfo: (
 			cadence: replaceWithProperValues(getProjectNoTokenScript),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
-		response.actions = await getProjectActions(owner, projectId);;
+		response.actions = await getProjectActions(owner, projectId);
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectInfo');
@@ -946,12 +975,15 @@ export const getProjectActions = async (owner: string, projectId: string) => {
 	}
 };
 
-export const getProjectNFTTreasury: (owner: string, projectId: string) => Promise<{
+export const getProjectNFTTreasury: (
+	owner: string,
+	projectId: string
+) => Promise<{
 	[collectionIdentifier: string]: {
 		id: string;
 		name: string;
 		thumbnail: string;
-	}[]
+	}[];
 }> = async (owner: string, projectId: string) => {
 	try {
 		const response = await fcl.query({
@@ -965,7 +997,10 @@ export const getProjectNFTTreasury: (owner: string, projectId: string) => Promis
 	}
 };
 
-export const getProjectLockedTokens: (owner: string, projectId: string) => Promise<LockedVaultDetails[]> = async (owner, projectId) => {
+export const getProjectLockedTokens: (
+	owner: string,
+	projectId: string
+) => Promise<LockedVaultDetails[]> = async (owner, projectId) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectLockedTokensScript),
@@ -978,15 +1013,15 @@ export const getProjectLockedTokens: (owner: string, projectId: string) => Promi
 	}
 };
 
-export const getProjectLockedTokensForUser: (owner: string, projectId: string, forUser: string) => Promise<LockedVaultDetails[]> = async (owner, projectId, forUser) => {
+export const getProjectLockedTokensForUser: (
+	owner: string,
+	projectId: string,
+	forUser: string
+) => Promise<LockedVaultDetails[]> = async (owner, projectId, forUser) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectLockedTokensForUserScript),
-			args: (arg, t) => [
-				arg(owner, t.Address),
-				arg(projectId, t.String),
-				arg(forUser, t.Address)
-			]
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String), arg(forUser, t.Address)]
 		});
 		return response;
 	} catch (e) {
@@ -1068,9 +1103,7 @@ export const hasProjectVaultSetup = async (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(hasProjectVaultSetupScript, projectId, contractAddress),
-			args: (arg, t) => [
-				arg(userAddress, t.Address)
-			]
+			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
 		return response;
 	} catch (e) {
@@ -1086,10 +1119,7 @@ export const canReceiveToucansToken = async (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(canReceiveToucansTokenScript),
-			args: (arg, t) => [
-				arg(userAddress, t.Address),
-				arg(tokenSymbol, t.String)
-			]
+			args: (arg, t) => [arg(userAddress, t.Address), arg(tokenSymbol, t.String)]
 		});
 		return response;
 	} catch (e) {
@@ -1105,9 +1135,7 @@ export const canReceiveProjectToken = async (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(canReceiveProjectTokenScript, projectId, contractAddress),
-			args: (arg, t) => [
-				arg(userAddress, t.Address)
-			]
+			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
 		return response;
 	} catch (e) {
@@ -1129,20 +1157,20 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 	}
 };
 
-export const getCatalogNFTs: (collectionIdentifiers: string[], user: string) => Promise<{
+export const getCatalogNFTs: (
+	collectionIdentifiers: string[],
+	user: string
+) => Promise<{
 	[collectionIdentifier: string]: {
 		id: string;
 		name: string;
-		thumbnail: string
-	}[]
+		thumbnail: string;
+	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogNFTsScript),
-			args: (arg, t) => [
-				arg(collectionIdentifiers, t.Array(t.String)),
-				arg(user, t.Address)
-			]
+			args: (arg, t) => [arg(collectionIdentifiers, t.Array(t.String)), arg(user, t.Address)]
 		});
 
 		return response;
@@ -1162,14 +1190,10 @@ export const getCatalogKeys = async () => {
 		console.log('Error in getCatalogKeys');
 		console.log(e);
 	}
-}
+};
 
 export const getNFTCatalog: () => Promise<{
-	[collectionIdentifier: string]: {
-		identifier: string;
-		name: string;
-		image: string;
-	};
+	[collectionIdentifier: string]: NftCollection;
 }> = async () => {
 	try {
 		const catalogKeys = await getCatalogKeys();
@@ -1194,10 +1218,7 @@ export const ownsNFTFromCatalog = async (userAddress: string, collectionIdentifi
 	try {
 		return await fcl.query({
 			cadence: replaceWithProperValues(ownsNFTFromCatalogScript),
-			args: (arg, t) => [
-				arg(userAddress, t.Address),
-				arg(collectionIdentifier, t.String)
-			]
+			args: (arg, t) => [arg(userAddress, t.Address), arg(collectionIdentifier, t.String)]
 		});
 	} catch (e) {
 		console.log('Error in ownsNFTFromCatalog', e);
@@ -1225,10 +1246,7 @@ export const getBatchAmounts = async (
 	}
 };
 
-export const getTrendingData = async (
-	projectIds: string[],
-	contractAddresses: string[]
-) => {
+export const getTrendingData = async (projectIds: string[], contractAddresses: string[]) => {
 	try {
 		return await fcl.query({
 			cadence: replaceWithProperValues(getTrendingDataScript),
@@ -1252,7 +1270,7 @@ export const getProjectBalances = async (
 			cadence: replaceWithProperValues(getProjectBalancesScript),
 			args: (arg, t) => [
 				arg(userAddress, t.Address),
-				arg(projects, t.Dictionary({ key: t.String, value: t.Address })),
+				arg(projects, t.Dictionary({ key: t.String, value: t.Address }))
 			]
 		});
 	} catch (e) {

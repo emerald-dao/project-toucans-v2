@@ -101,7 +101,9 @@
 				<p class="small">Withdraw tokens/NFTs from your treasury to external wallets.</p>
 			{:else if distributionType === 'lock'}
 				<h5>Create Lock Action</h5>
-				{`Lock tokens from your treasury to external wallets so they can claim later`}
+				<p class="small">
+					{`Lock tokens from your treasury to external wallets so they can claim later`}
+				</p>
 			{/if}
 		</div>
 		<slot />
