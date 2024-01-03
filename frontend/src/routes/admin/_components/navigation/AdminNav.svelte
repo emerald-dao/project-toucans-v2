@@ -2,7 +2,7 @@
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { page } from '$app/stores';
-	import { Currency, Label, AlertNumber } from '@emerald-dao/component-library';
+	import { Label, AlertNumber } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -179,29 +179,16 @@
 			</a>
 		</div>
 	</div>
-	<div class="column-6">
-		<div class="treasury-wallet-card column-2">
-			<div class="icon-wrapper">
-				<Icon icon="tabler:wallet" />
-			</div>
-			<span class="xsmall row-1 align-center"> Treasury funds </span>
-			<div class="column-1">
-				{#each Object.entries(activeDaoData.onChainData.treasuryBalances) as [token, balance]}
-					<Currency amount={Number(balance)} currency={token} color="heading" fontSize="1.1rem" />
-				{/each}
-			</div>
+	<a
+		href="/admin/info"
+		class="sidebar-link small"
+		class:active={$page.url.pathname.includes('info')}
+	>
+		<div class="sidebar-link-icon">
+			<Icon icon="tabler:edit" />
 		</div>
-		<a
-			href="/admin/info"
-			class="sidebar-link small"
-			class:active={$page.url.pathname.includes('info')}
-		>
-			<div class="sidebar-link-icon">
-				<Icon icon="tabler:edit" />
-			</div>
-			Edit Info
-		</a>
-	</div>
+		Edit Info
+	</a>
 </nav>
 
 <style type="scss">
@@ -222,29 +209,6 @@
 
 			@include mq('medium') {
 				display: block;
-			}
-		}
-
-		.treasury-wallet-card {
-			width: fit-content;
-			padding: var(--space-4) var(--space-6);
-			border-radius: var(--radius-1);
-			background-color: var(--clr-background-secondary);
-			position: relative;
-			margin-top: var(--space-4);
-
-			.icon-wrapper {
-				position: absolute;
-				left: -0.6em;
-				top: -0.6em;
-				border-radius: 50%;
-				width: 2em;
-				aspect-ratio: 1/1;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				background-color: var(--clr-surface-primary);
-				border: 0.5px solid var(--clr-border-primary);
 			}
 		}
 

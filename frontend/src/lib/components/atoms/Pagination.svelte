@@ -4,7 +4,7 @@
 
 	export let amountOfItems: number;
 
-	let pageSize = 6;
+	export let pageSize = 6;
 
 	export let pageStart = 0;
 	export let pageEnd = pageSize;
@@ -21,21 +21,39 @@
 	$: pageEnd = pageStart + pageSize;
 </script>
 
-<div class="row-4">
+<div class="row-space-between row-4 align-center">
 	<Button
 		on:click={prevPage}
 		state={currentPage === 1 ? 'disabled' : 'active'}
 		type="transparent"
 		color="neutral"
 	>
-		<Icon icon="tabler:arrow-left" />
+		<Icon
+			icon="tabler:arrow-left"
+			color={currentPage === 1 ? 'var(--clr-text-off)' : 'var(--clr-text-main)'}
+		/>
 	</Button>
+	<p class="xsmall">
+		{currentPage}
+		<span class="off">
+			/ {Math.ceil(amountOfItems / pageSize)}
+		</span>
+	</p>
 	<Button
 		on:click={nextPage}
 		state={pageEnd >= amountOfItems ? 'disabled' : 'active'}
 		type="transparent"
 		color="neutral"
 	>
-		<Icon icon="tabler:arrow-right" />
+		<Icon
+			icon="tabler:arrow-right"
+			color={pageEnd >= amountOfItems ? 'var(--clr-text-off)' : 'var(--clr-text-main)'}
+		/>
 	</Button>
 </div>
+
+<style lang="scss">
+	.off {
+		color: var(--clr-text-off);
+	}
+</style>

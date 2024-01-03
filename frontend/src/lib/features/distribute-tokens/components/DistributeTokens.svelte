@@ -9,13 +9,12 @@
 	import { mintTokens } from '../functions/mintTokens';
 	import { withdrawTokens } from '../functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
-
 	import { lockTokens } from '../functions/lockTokens';
 	import Icon from '@iconify/svelte';
 	import { getProjectNFTTreasury } from '$flow/actions';
 	import NfTsDistributionForm from './sections/NFTsDistributionForm.svelte';
 	import { withdrawNFTs } from '../functions/withdrawNFTs';
-	import NfTsList from '$components/atoms/NFTsList.svelte';
+	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 
 	export let daoData: DAOProject;
 	export let distributionType: 'mint' | 'withdraw' | 'lock';
@@ -179,13 +178,7 @@
 							projectOwner={daoData.generalInfo.owner}
 							projectId={daoData.generalInfo.project_id}
 						/>
-						<NfTsList
-							bind:selectedNFTIds
-							bind:selectedCollection
-							{NFTs}
-							clickable={true}
-							pageSize={3}
-						/>
+						<NFTsList bind:selectedNFTIds bind:selectedCollection {NFTs} clickable={true} />
 						<Button
 							width="full-width"
 							on:click={distributeTokens}

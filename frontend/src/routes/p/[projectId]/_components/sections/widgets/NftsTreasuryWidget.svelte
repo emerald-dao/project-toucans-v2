@@ -1,16 +1,12 @@
 <script lang="ts">
-	import NFTsList from '$components/atoms/NFTsList.svelte';
+	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
+	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 	import Icon from '@iconify/svelte';
 
 	export let NFTs: {
-		[collectionIdentifier: string]: {
-			id: string;
-			name: string;
-			thumbnail: string;
-		}[];
+		[collectionIdentifier: string]: Nft[];
 	};
-
-	export let pageSize = 2;
+	export let pageSize = 5;
 </script>
 
 {#if Object.values(NFTs).some((array) => array.length > 0)}
@@ -19,7 +15,7 @@
 			<Icon icon="tabler:hexagon" />
 			NFTs Treasury
 		</span>
-		<div class="card" style="padding: var(--space-8) var(--space-8) var(--space-5);">
+		<div class="card">
 			<NFTsList {NFTs} {pageSize} />
 		</div>
 	</div>

@@ -11,7 +11,6 @@
 	import { handleBannerImgError, handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let daoData: DAOProject;
-	console.log(daoData);
 </script>
 
 <aside class="column-8">

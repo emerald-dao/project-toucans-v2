@@ -74,7 +74,7 @@ import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
-import type { NftCollection } from '$lib/types/common/nft-collection.interface';
+import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,

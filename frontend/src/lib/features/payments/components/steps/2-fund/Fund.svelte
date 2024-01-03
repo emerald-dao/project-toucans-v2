@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Currency, InputWrapper } from '@emerald-dao/component-library';
+	import { Currency } from '@emerald-dao/component-library';
 	import { paymentActiveStep } from '$lib/features/payments/stores/PaymentSteps';
 	import validationSuite from './validation';
 	import { fade } from 'svelte/transition';
@@ -12,7 +12,7 @@
 	import FeeWarning from '../../atoms/FeeWarning.svelte';
 	import { getCatalogNFTs } from '$flow/actions';
 	import { onMount } from 'svelte';
-	import NfTsList from '$components/atoms/NFTsList.svelte';
+	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import { user } from '$stores/flow/FlowStore';
 
 	export let isValid = false;
@@ -66,29 +66,26 @@
 	in:fade={{ duration: 200 }}
 >
 	{#if $paymentData.type === 'donation'}
-		<div class="currency-select-wrapper">
-			{#if daoData.hasToken}
-				<CurrencySelect {currencies} bind:value={$paymentData.currency} />
-			{:else}
-				<CurrencySelect {currencies} bind:value={$paymentData.currency} />
-			{/if}
-		</div>
+		{#if daoData.hasToken}
+			<CurrencySelect {currencies} bind:value={$paymentData.currency} />
+		{:else}
+			<CurrencySelect {currencies} bind:value={$paymentData.currency} />
+		{/if}
 	{/if}
 	{#if $paymentData.type === 'fund'}
 		<FeeWarning paymentCurrency={$paymentData.currency} />
 	{/if}
 	{#if $paymentData.currency === 'NFTs'}
 		{#if !$user.addr}
-			<p class="heading" style="padding: var(--space-3) 0;">
-				Please log in to your account to view your NFTs collection!
+			<p class="small" style="padding: var(--space-7) 0;">
+				<em> Please log in to your account to view your NFTs collections! </em>
 			</p>
 		{:else}
-			<NfTsList
+			<NFTsList
 				bind:selectedNFTIds={$paymentData.NFTs}
 				bind:selectedCollection={$paymentData.NFTCollection}
 				NFTs={userCatalogNFTs}
 				userNFTs={true}
-				pageSize={2}
 				clickable={true}
 			/>
 		{/if}
@@ -104,7 +101,6 @@
 			bind:value={$paymentData.amount}
 		/>
 	{/if}
-
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
 		<div class="funding-data-wrapper">
@@ -172,10 +168,9 @@
 	form {
 		width: 100%;
 		margin-bottom: var(--space-9);
-
-		.currency-select-wrapper {
-			margin-bottom: var(--space-4);
-		}
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
 
 		.funding-data-wrapper {
 			margin-top: var(--space-8);

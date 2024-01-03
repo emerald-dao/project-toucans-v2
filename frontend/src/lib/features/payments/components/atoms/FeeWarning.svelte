@@ -1,7 +1,7 @@
 <script type="ts">
 	import type { ECurrencies } from '$lib/types/common/enums';
 
-	export let paymentCurrency: ECurrencies;
+	export let paymentCurrency: ECurrencies | 'NFTs';
 </script>
 
 <p class="xsmall">

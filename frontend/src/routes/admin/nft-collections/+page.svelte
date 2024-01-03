@@ -1,12 +1,13 @@
 <script lang="ts">
+	import NFTCollectionSelectedCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectedCard.svelte';
 	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
 	import { Button } from '@emerald-dao/component-library';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import { addAllowedNFTCollections } from './_actions/addAllowedNFTCollections.js';
-	import NftCollectionSelect from './_components/NFTCollectionSelect.svelte';
-	import Pagination from './_components/Pagination.svelte';
+	import NFTCollectionSelectCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectCard.svelte';
+	import Pagination from '$lib/components/atoms/Pagination.svelte';
 
 	export let data;
 
@@ -20,12 +21,12 @@
 
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
-	let nftsArray = Object.values(data.projectNFTs);
+	let collectionsList = Object.values(data.projectNFTs);
 
 	let pageStart: number;
 	let pageEnd: number;
 
-	$: currentPageCollections = nftsArray.slice(pageStart, pageEnd);
+	$: currentPageCollections = collectionsList.slice(pageStart, pageEnd);
 
 	let selectedCollections: string[] = [];
 </script>
@@ -35,13 +36,17 @@
 		<h5>NFT Treasury</h5>
 		<p class="small">Please select the collections from which you would like to receive NFTs</p>
 	</div>
-	<div class="nfts-wrapper">
+	<div class="collections-wrapper">
 		{#each currentPageCollections as collection (collection.identifier)}
-			<NftCollectionSelect nftCollection={collection} bind:selectedCollections />
+			{#if activeDaoData.onChainData.allowedNFTCollections.includes(collection.identifier)}
+				<NFTCollectionSelectedCard nftCollection={collection} bind:selectedCollections />
+			{:else}
+				<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
+			{/if}
 		{/each}
 	</div>
 	<div class="bottom-wrapper row-space-between">
-		<Pagination amountOfItems={nftsArray.length} bind:pageStart bind:pageEnd />
+		<Pagination amountOfItems={collectionsList.length} bind:pageStart bind:pageEnd />
 		<Button
 			state={selectedCollections.length === 0 ? 'disabled' : 'active'}
 			on:click={() =>
@@ -66,7 +71,7 @@
 		}
 	}
 
-	.nfts-wrapper {
+	.collections-wrapper {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: var(--space-10) var(--space-8);

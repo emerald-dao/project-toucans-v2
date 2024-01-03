@@ -11,7 +11,7 @@
 		TreasuryWallet,
 		DaoStatsIntro
 	} from './_components';
-	import NftsCard from '../../lib/components/cards/NftsCard.svelte';
+	import NftsTreasuryWidget from '../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
 	import { getProjectNFTTreasury } from '$flow/actions';
 
 	const adminData: {
@@ -32,7 +32,7 @@
 			<GeneralStats daoData={activeDaoData} />
 			{#await getProjectNFTTreasury(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id) then NFTs}
 				{#if Object.keys(NFTs).length > 0}
-					<NftsCard {NFTs} />
+					<NftsTreasuryWidget {NFTs} pageSize={4} />
 				{/if}
 			{/await}
 			<PrimaryTabs daoData={activeDaoData} />
