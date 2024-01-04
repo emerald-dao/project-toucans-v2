@@ -1,12 +1,19 @@
 <script lang="ts">
 	import Pagination from '$components/atoms/Pagination.svelte';
-	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 	import { onMount } from 'svelte';
 	import NFTCard from './atoms/NFTCard.svelte';
+	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 
 	export let NFTs: {
 		[collectionIdentifier: string]: Nft[];
 	};
+
+	// // Add 20 sample NFTs to the first collection
+	// NFTs['A.f8d6e0586b0a20c7.ChinoNFT.Collection'] = Array.from({ length: 20 }, (_, i) => ({
+	// 	id: `A.f8d6e0586b0a20c7.ChinoNFT.${i}`,
+	// 	name: `Chino NFT ${i}`,
+	// 	thumbnail: 'https://picsum.photos/200/300'
+	// }));
 
 	export let pageSize = 5;
 	export let userNFTs = false;
@@ -61,31 +68,39 @@
 </script>
 
 <div class="column-3">
-	<select bind:value={selectedCollection} on:change={handleCollectionChange}>
-		<option value="" disabled selected hidden>Select one collection...</option>
-		{#each collectionIdentifiers as collection}
-			<option value={collection}>{collection}</option>
-		{/each}
-	</select>
+	<div class="column-1">
+		<label for="collection">Collection</label>
+		<select bind:value={selectedCollection} on:change={handleCollectionChange} name="collection">
+			<option value="" disabled selected hidden>Select one collection...</option>
+			{#each collectionIdentifiers as collection}
+				<option value={collection}>{collection}</option>
+			{/each}
+		</select>
+	</div>
 	{#if currentPageNFTs.length === 0}
 		<p class="small">
 			<em> Sorry! You don't have NFTs from this collection. </em>
 		</p>
+	{:else}
+		<div class="nfts-grid" style={`grid-template-columns: repeat(${pageSize}, 1fr)`}>
+			{#each currentPageNFTs as nft (nft.id)}
+				<NFTCard
+					{nft}
+					{clickable}
+					on:click={() => handleNFTClick(nft.id)}
+					isSelected={selectedNFTIds.includes(nft.id)}
+				/>
+			{/each}
+		</div>
+		<Pagination bind:pageStart bind:pageEnd amountOfItems={displayedNfts.length} {pageSize} />
 	{/if}
-	<div class="nfts-grid" style={`grid-template-columns: repeat(${pageSize}, 1fr)`}>
-		{#each currentPageNFTs as nft (nft.id)}
-			<NFTCard
-				{nft}
-				{clickable}
-				on:click={() => handleNFTClick(nft.id)}
-				isSelected={selectedNFTIds.includes(nft.id)}
-			/>
-		{/each}
-	</div>
-	<Pagination bind:pageStart bind:pageEnd amountOfItems={displayedNfts.length} {pageSize} />
 </div>
 
 <style lang="scss">
+	select {
+		max-width: 250px;
+	}
+
 	.nfts-grid {
 		display: grid;
 		grid-gap: var(--space-3);

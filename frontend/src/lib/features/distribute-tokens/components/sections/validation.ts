@@ -8,6 +8,7 @@ const validationSuite = create(
 		data: Distribution,
 		currentField,
 		availableBalance: number | undefined,
+		amountOfTokensInStaging: number,
 		projectOwner: string,
 		projectId: string,
 		currencyToDistribute: ECurrencies | string
@@ -39,8 +40,8 @@ const validationSuite = create(
 		});
 
 		omitWhen(availableBalance === undefined, () => {
-			test('amount', 'Amount should be less than your available balance', () => {
-				enforce(data.amount).lessThan(availableBalance);
+			test('amount', `Treasury doesn't have enough tokens`, () => {
+				enforce(data.amount).lessThan((availableBalance as number) - amountOfTokensInStaging);
 			});
 		});
 

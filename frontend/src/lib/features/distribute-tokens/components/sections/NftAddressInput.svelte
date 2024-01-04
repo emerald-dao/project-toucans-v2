@@ -3,11 +3,13 @@
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import type { SuiteRunResult } from 'vest';
 	import nftsValidationSuite from './validateNFTs';
+	import { onMount } from 'svelte';
+	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
 	export let address: string;
 	export let projectOwner: string;
 	export let projectId: string;
-	export let nftInputsAreValid: boolean = false;
+	export let isValid: boolean = false;
 
 	let res = nftsValidationSuite.get();
 	let addressPending: boolean;
@@ -31,11 +33,16 @@
 
 	const handleValidation = () => {
 		if (!res.hasErrors('address') && res.getErrors('address').length === 0) {
-			nftInputsAreValid = true;
+			isValid = true;
 		} else {
-			nftInputsAreValid = false;
+			isValid = false;
 		}
 	};
+
+	onMount(() => {
+		nftsValidationSuite.reset();
+		res = nftsValidationSuite.get();
+	});
 </script>
 
 <div transition:fly|local={{ duration: 200, y: 30 }}>
@@ -57,4 +64,17 @@
 			/>
 		</InputWrapper>
 	</form>
+	{#if res.isValid() && address}
+		<div in:fly|local={{ duration: 400, x: -5 }}>
+			<UserAvatar {address} fontSize="var(--font-size-0)" />
+		</div>
+	{/if}
 </div>
+
+<style lang="scss">
+	div {
+		display: grid;
+		gap: var(--space-4);
+		grid-template-columns: 250px 1fr;
+	}
+</style>

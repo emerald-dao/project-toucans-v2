@@ -1,8 +1,8 @@
 <script type="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
-	import DistributionStaging from './sections/DistributionStaging.svelte';
-	import DistributionForms from './sections/DistributionForms.svelte';
+	import DistributionStaging from './DistributeTokensStaging.svelte';
+	import DistributionForms from './DistributeTokensForm.svelte';
 	import { Button, Currency } from '@emerald-dao/component-library';
 	import { fly } from 'svelte/transition';
 	import { setContext } from 'svelte';
@@ -12,7 +12,7 @@
 	import { lockTokens } from '../functions/lockTokens';
 	import Icon from '@iconify/svelte';
 	import { getProjectNFTTreasury } from '$flow/actions';
-	import NfTsDistributionForm from './sections/NFTsDistributionForm.svelte';
+	import NfTsDistributionForm from './sections/NftAddressInput.svelte';
 	import { withdrawNFTs } from '../functions/withdrawNFTs';
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 

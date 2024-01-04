@@ -8,7 +8,9 @@
 
 <div class="nft-wrapper" class:clickable class:selected={isSelected} on:click>
 	<img src={nft.thumbnail} alt="NFT" />
-	<p class="heading">{nft.name}</p>
+	<div class="content-wrapper">
+		<p class="heading">{nft.name}</p>
+	</div>
 </div>
 
 <style lang="scss">
@@ -18,19 +20,27 @@
 		align-items: center;
 		border: 1px solid var(--clr-border-primary);
 		border-radius: var(--radius-2);
-		padding: var(--space-4);
-		gap: var(--space-3);
 		text-align: center;
 		background-color: var(--clr-surface-primary);
+		overflow: hidden;
 
-		.heading {
-			font-size: var(--font-size-1);
+		.content-wrapper {
+			padding: var(--space-4) var(--space-2);
+
+			.heading {
+				font-size: var(--font-size-1);
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 1;
+				-webkit-box-orient: vertical;
+				word-break: break-word;
+			}
 		}
 
 		img {
-			border-radius: var(--radius-1);
-			width: 60px;
-			height: 60px;
+			width: 100%;
+			height: 120px;
 			object-fit: cover;
 		}
 
