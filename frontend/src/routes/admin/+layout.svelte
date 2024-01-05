@@ -89,9 +89,9 @@
 {:else if !$user.addr}
 	<ConnectPage />
 {:else if $daosDataStore.length < 1}
-	<section class="centered">
+	<section class="container flex centered">
 		<div class="card-primary column-7 align-center">
-			<span>You don't have any DAO yet</span>
+			<span>You don't have any DAO.</span>
 			<Button size="large" href="/dao-generator">Create DAO</Button>
 		</div>
 	</section>

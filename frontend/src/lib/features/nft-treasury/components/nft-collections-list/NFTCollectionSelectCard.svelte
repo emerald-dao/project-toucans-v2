@@ -32,9 +32,11 @@
 	on:click={handleSelectCollection}
 	on:keydown={handleSelectCollection}
 >
-	<object data={profileImg} type="image/png">
-		<img src="/flow-logo.png" alt="NFT" />
-	</object>
+	<div class="image-wrapper">
+		<object data={profileImg} type="image/png">
+			<img src="/flow-logo.png" alt="NFT" />
+		</object>
+	</div>
 	<div class="column-2 align-center">
 		<p class="heading w-medium">{nftCollection.identifier}</p>
 	</div>
@@ -57,7 +59,8 @@
 		transition: all 0.1s ease-in-out;
 
 		img,
-		object {
+		object,
+		.image-wrapper {
 			width: 150px;
 			height: 100px;
 			border-radius: var(--radius-2);
