@@ -7,8 +7,7 @@
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
 	export let address: string;
-	export let projectOwner: string;
-	export let projectId: string;
+	export let collectionId: string;
 	export let isValid: boolean = false;
 
 	let res = nftDistributionValidation.get();
@@ -16,7 +15,7 @@
 	let addressPendingMessage = ['Checking if address has collection vault...'];
 
 	export const handleChange = () => {
-		res = nftDistributionValidation(address, projectOwner, projectId);
+		res = nftDistributionValidation(address, collectionId);
 
 		addressPending = true;
 

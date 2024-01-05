@@ -1,14 +1,15 @@
 <script type="ts">
+	import NFTDistributionForm from './_components/NFTDistributionForm.svelte';
 	import type { Writable } from 'svelte/store';
 	import { getContext, onMount } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import * as DistributeTokens from '$lib/features/distribute-tokens/components';
 	import * as AdminPage from '../_components/admin-page';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
-	import NftDistributionForm from './_components/NFTDistributionForm.svelte';
 	import { withdrawTokens } from '$lib/features/distribute-tokens/functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
 	import FungibleTokensDistributionForm from './_components/FungibleTokensDistributionForm.svelte';
+	import { getProjectNFTTreasury } from '$flow/actions';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -94,7 +95,15 @@
 					</DistributeTokens.NoTokensMessage>
 				{/if}
 			{:else if activeCurrency === 'NFTs'}
-				<NftDistributionForm {activeDaoData} />
+				{#await getProjectNFTTreasury(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id) then NFTs}
+					{#if !NFTs || Object.values(NFTs).every((array) => array.length === 0)}
+						<DistributeTokens.NoTokensMessage>
+							{`We didn't find any NFT on this treasury.`}
+						</DistributeTokens.NoTokensMessage>
+					{:else}
+						<NFTDistributionForm {activeDaoData} {NFTs} />
+					{/if}
+				{/await}
 			{/if}
 		</AdminPage.Content>
 		{#if activeCurrency != 'NFTs'}

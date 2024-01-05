@@ -3,12 +3,16 @@
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import NftAddressInput from './atoms/NftAddressInput.svelte';
-	import { canReceiveNFTCollection, getProjectNFTTreasury } from '$flow/actions';
 	import { Button } from '@emerald-dao/component-library';
+	import { canReceiveNFTCollection } from '$flow/actions';
 	import Icon from '@iconify/svelte';
 	import { withdrawNFTs } from '$lib/features/distribute-tokens/functions/withdrawNFTs';
+	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 
 	export let activeDaoData: DAOProject;
+	export let NFTs: {
+		[collectionIdentifier: string]: Nft[];
+	};
 
 	let address: string;
 	let isAddressValid: boolean;
@@ -22,11 +26,13 @@
 
 	const handleCreateWithdrawNftsAction = async () => {
 		const canReceiveNFT = await canReceiveNFTCollection(address, selectedCollection);
+
 		if (!canReceiveNFT) {
 			alert(
 				"The user cannot receive this type of NFT because they don't have a collection set up."
 			);
 		}
+
 		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address);
 		resetDistributionForm();
 	};
@@ -35,44 +41,35 @@
 </script>
 
 <div in:fade|local={{ duration: 200 }} class="main-wrapper">
-	{#await getProjectNFTTreasury(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id) then NFTs}
-		{#if Object.values(NFTs).every((array) => array.length === 0)}
-			<div class="row-2 align-center">
-				<span class="small no-tokens-message"><em>No NFTs available to distribute.</em></span>
-			</div>
+	<div class="content-wrapper">
+		<NftAddressInput
+			bind:address
+			bind:isValid={isAddressValid}
+			bind:handleChange={resetAddressValidation}
+			collectionId={selectedCollection}
+		/>
+		<NFTsList
+			bind:selectedNFTIds
+			bind:selectedCollection
+			{NFTs}
+			clickable={true}
+			on:collectionChange={resetAddressValidation}
+		/>
+	</div>
+	<Button
+		on:click={handleCreateWithdrawNftsAction}
+		width="extended"
+		state={isAddressValid && selectedNFTIds.length > 0 ? 'active' : 'disabled'}
+	>
+		{#if selectedNFTIds.length === 1}
+			{`Distribute 1 NFT`}
+		{:else if selectedNFTIds.length === 0}
+			{`Distribute NFTs`}
 		{:else}
-			<div class="content-wrapper">
-				<NftAddressInput
-					bind:address
-					projectOwner={activeDaoData.generalInfo.owner}
-					projectId={activeDaoData.generalInfo.project_id}
-					bind:isValid={isAddressValid}
-					bind:handleChange={resetAddressValidation}
-				/>
-				<NFTsList
-					bind:selectedNFTIds
-					bind:selectedCollection
-					{NFTs}
-					clickable={true}
-					on:collectionChange={resetAddressValidation}
-				/>
-			</div>
-			<Button
-				on:click={handleCreateWithdrawNftsAction}
-				width="extended"
-				state={isAddressValid && selectedNFTIds.length > 0 ? 'active' : 'disabled'}
-			>
-				{#if selectedNFTIds.length === 1}
-					{`Distribute 1 NFT`}
-				{:else if selectedNFTIds.length === 0}
-					{`Distribute NFTs`}
-				{:else}
-					{`Distribute ${selectedNFTIds.length} NFTs`}
-				{/if}
-				<Icon icon="tabler:arrow-narrow-right" />
-			</Button>
+			{`Distribute ${selectedNFTIds.length} NFTs`}
 		{/if}
-	{/await}
+		<Icon icon="tabler:arrow-narrow-right" />
+	</Button>
 </div>
 
 <style lang="scss">
