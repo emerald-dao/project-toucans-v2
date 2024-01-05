@@ -33,7 +33,7 @@
 	on:keydown={handleSelectCollection}
 >
 	<object data={profileImg} type="image/png">
-		<img src="/toucans-illustration.png" alt="NFT" />
+		<img src="/flow-logo.png" alt="NFT" />
 	</object>
 	<div class="column-2 align-center">
 		<p class="heading w-medium">{nftCollection.identifier}</p>
@@ -61,6 +61,7 @@
 			width: 150px;
 			height: 100px;
 			border-radius: var(--radius-2);
+			object-fit: contain;
 		}
 
 		p {
