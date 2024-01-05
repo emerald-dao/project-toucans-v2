@@ -47,9 +47,9 @@
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${$paymentData.amount}%20$${
-						$paymentData.currency
-					}%20to%20${
+					href={`https://twitter.com/intent/tweet?text=I%20just%20donated%20${
+						$paymentData.amount
+					}%20$${$paymentData.currency}%20to%20${
 						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
 					}%20on%20Toucans!%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
 						daoData.generalInfo.project_id
@@ -61,7 +61,7 @@
 				>
 			{:else if $paymentData.type === 'fund'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=Just%20funded%20${
+					href={`https://twitter.com/intent/tweet?text=I%20just%20funded%20${
 						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
 					}%20with%20${$paymentData.amount}%20$${
 						$paymentData.currency

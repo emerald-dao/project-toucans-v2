@@ -83,6 +83,11 @@ const contractData = {
 		emulator: '0xf8d6e0586b0a20c7',
 		testnet: '0x4d47bf3ce5e4393f',
 		mainnet: '0x39e42c67cc851cfb'
+	},
+	stFlowToken: {
+		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '0xe45c64ecfe31e465',
+		mainnet: '0xd6f80565193ad727'
 	}
 };
 
@@ -111,5 +116,6 @@ export const addresses: {
 	NFTCatalog: contractData.NFTCatalog[network],
 	SwapUtils: contractData.SwapUtils[network],
 	SwapFactory: contractData.SwapFactory[network],
-	EmeraldIdentity: contractData.EmeraldIdentity[network]
+	EmeraldIdentity: contractData.EmeraldIdentity[network],
+	stFlowToken: contractData.stFlowToken[network]
 };

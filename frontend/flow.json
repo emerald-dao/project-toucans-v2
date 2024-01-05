@@ -1,5 +1,13 @@
 {
 	"contracts": {
+		"stFlowToken": {
+			"source": "./src/flow/cadence/utility/stFlowToken.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "e45c64ecfe31e465",
+				"mainnet": "d6f80565193ad727"
+			}
+		},
 		"EmeraldIdentity": {
 			"source": "./src/flow/cadence/utility/EmeraldIdentity.cdc",
 			"aliases": {
@@ -263,20 +271,21 @@
 				"SwapError",
 				"SwapConfig",
 				"SwapInterfaces",
-				"SwapFactory"
+				"SwapFactory",
+				"stFlowToken"
 			]
 		},
 		"testnet": {
 			"testnet-account": [
 				"ToucansUtils",
-				"ToucansTokens",
-				"ToucansLockTokens",
 				"ToucansActions",
 				"Toucans"
 			]
 		},
 		"mainnet": {
 			"mainnet-account": [
+				"ToucansUtils",
+				"ToucansActions",
 				"Toucans"
 			]
 		}

@@ -10,6 +10,8 @@ import type { ProjectCreatedEvent } from './events/project-created.interface';
 import type { BatchMintEvent } from './events/batch-mint.interface';
 import type { LockTokensEvent } from './events/lock-tokens.interface';
 import type { WithdrawNFTsEvent } from './events/withdraw-nfts.interface';
+import type { StakeFlowEvent } from './events/stake-flow.interface';
+import type { UnstakeFlowEvent } from './events/unstake-flow.interface';
 
 export type DaoEvent =
 	| MintEvent
@@ -23,7 +25,9 @@ export type DaoEvent =
 	| ProjectCreatedEvent
 	| LockTokensEvent
 	| DonateNFTsEvent
-	| WithdrawNFTsEvent;
+	| WithdrawNFTsEvent
+	| StakeFlowEvent
+	| UnstakeFlowEvent;
 
 export type DaoEventName =
 	| 'Mint'
@@ -39,4 +43,6 @@ export type DaoEventName =
 	| 'AddSigner'
 	| 'DonateNFT'
 	| 'WithdrawNFTs'
-	| 'LockTokens';
+	| 'LockTokens'
+	| 'StakeFlow'
+	| 'UnstakeFlow';

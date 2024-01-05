@@ -21,7 +21,7 @@
 <div class="main-wrapper column-2 align-start">
 	{#if mainHoldersEntries.length > 0 && daoData.generalInfo.token_symbol}
 		{#await fetchFindProfiles()}
-			{#each holdersEntries as [address, balance]}
+			{#each mainHoldersEntries as [address, balance]}
 				<UserBalanceListElement
 					{address}
 					{balance}
@@ -29,7 +29,7 @@
 				/>
 			{/each}
 		{:then findProfiles}
-			{#each holdersEntries as [address, balance]}
+			{#each mainHoldersEntries as [address, balance]}
 				<UserBalanceListElement
 					findProfile={findProfiles[address]}
 					{address}

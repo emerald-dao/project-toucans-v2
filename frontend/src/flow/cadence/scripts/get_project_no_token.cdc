@@ -1,6 +1,7 @@
 import Toucans from "../Toucans.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import FiatToken from "../utility/FiatToken.cdc"
+import stFlowToken from "../utility/stFlowToken.cdc"
 import NFTCatalog from "../utility/NFTCatalog.cdc"
 import SwapInterfaces from "../utility/SwapInterfaces.cdc"
 import SwapConfig from "../utility/SwapConfig.cdc"
@@ -49,6 +50,11 @@ pub struct Info {
       "FLOW": info.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
       "USDC": info.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
       info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: info.paymentTokenInfo.tokenType) ?? 0.0
+    }
+    if let stFlowBalance = info.getVaultBalanceInTreasury(vaultType: Type<@stFlowToken.Vault>()) {
+      if stFlowBalance > 0.001 {
+        self.treasuryBalances["stFlow"] = stFlowBalance
+      }
     }
     self.paymentCurrency = info.paymentTokenInfo.symbol
     self.purchasing = info.purchasing

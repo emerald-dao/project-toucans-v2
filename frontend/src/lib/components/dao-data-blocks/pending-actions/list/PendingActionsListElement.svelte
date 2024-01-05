@@ -36,7 +36,9 @@
 		BatchMint: 'tabler:coin',
 		MintToTreasury: 'tabler:pig-money',
 		Burn: 'tabler:flame',
-		LockTokens: 'tabler:lock-square'
+		LockTokens: 'tabler:lock-square',
+		StakeFlow: 'tabler:coins',
+		UnstakeFlow: 'tabler:coins'
 	};
 
 	const actionTypeToText: {
@@ -52,7 +54,9 @@
 		BatchMint: 'Batch Mint',
 		MintToTreasury: 'Mint to Treasury',
 		Burn: 'Burn',
-		LockTokens: 'Locked Tokens'
+		LockTokens: 'Locked Tokens',
+		StakeFlow: 'Stake Flow',
+		UnstakeFlow: 'Unstake Flow'
 	};
 
 	function translateIntent(action: MultisigActions, intent: string) {

@@ -251,7 +251,7 @@ pub contract ToucansActions {
     }
   }
 
-  // burn your DAOs token from the treasury
+  // lock a token to a user
   pub struct LockTokens: Action {
     pub let recipient: Address
     pub let amount: UFix64
@@ -273,6 +273,52 @@ pub contract ToucansActions {
       self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
       self.unlockTime = unlockTime
       self.recipient = recipient
+    }
+  }
+
+  // stake flow by swapping it to stFlow on increment fi
+  pub struct StakeFlow: Action {
+    pub let flowAmount: UFix64
+    pub let readableAmount: String
+    pub let stFlowAmountOutMin: UFix64
+    pub let readableMin: String
+
+    pub fun getIntent(): String {
+      return "Stake ".concat(self.readableAmount).concat(" FLOW ").concat(" tokens by swapping them for a minimum of ").concat(self.readableMin).concat(" stFlow.")
+    }
+
+    pub fun getTitle(): String {
+      return "StakeFlow"
+    }
+
+    init(_ flowAmount: UFix64, _ stFlowAmountOutMin: UFix64) {
+      self.flowAmount = flowAmount
+      self.readableAmount = ToucansUtils.fixToReadableString(num: flowAmount)
+      self.stFlowAmountOutMin = stFlowAmountOutMin
+      self.readableMin = ToucansUtils.fixToReadableString(num: stFlowAmountOutMin)
+    }
+  }
+
+  // unstake flow by swapping stFlow for flow on increment fi
+  pub struct UnstakeFlow: Action {
+    pub let stFlowAmount: UFix64
+    pub let readableAmount: String
+    pub let flowAmountOutMin: UFix64
+    pub let readableMin: String
+
+    pub fun getIntent(): String {
+      return "Unstake FLOW".concat(" tokens by swapping ").concat(self.readableAmount).concat(" stFlow for a minimum of ").concat(self.readableMin).concat(" FLOW.")
+    }
+
+    pub fun getTitle(): String {
+      return "UnstakeFlow"
+    }
+
+    init(_ stFlowAmount: UFix64, _ flowAmountOutMin: UFix64) {
+      self.stFlowAmount = stFlowAmount
+      self.readableAmount = ToucansUtils.fixToReadableString(num: stFlowAmount)
+      self.flowAmountOutMin = flowAmountOutMin
+      self.readableMin = ToucansUtils.fixToReadableString(num: flowAmountOutMin)
     }
   }
 }

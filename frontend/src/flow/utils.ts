@@ -31,6 +31,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"../utility/SwapConfig.cdc"', addresses.SwapUtils)
 			.replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
 			.replace('"../utility/EmeraldIdentity.cdc"', addresses.EmeraldIdentity)
+			.replace('"../utility/stFlowToken.cdc"', addresses.stFlowToken)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
@@ -413,12 +414,12 @@ export const verifyAccountOwnership = async (userObject) => {
 	});
 };
 
-export const formatFix = (value) => {
+export const formatFix = (value, decimalPlaces = 4) => {
 	const i = Number.parseFloat(value);
 	if (i % 1 == 0) {
-		return i.toFixed(4);
+		return i.toFixed(decimalPlaces);
 	}
-	return i.toFixed(4);
+	return i.toFixed(decimalPlaces);
 };
 
 export const splitList = (list: string[], chunkSize: number) => {
