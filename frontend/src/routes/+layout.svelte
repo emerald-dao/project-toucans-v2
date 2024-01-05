@@ -117,6 +117,7 @@
 		flex-direction: column;
 		overflow: hidden;
 		grid-template-rows: auto 1fr auto;
+		min-height: 100vh;
 	}
 
 	.full-height {
@@ -125,6 +126,7 @@
 
 	main {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
 		overflow: hidden;
 	}

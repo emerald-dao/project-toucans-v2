@@ -31,12 +31,16 @@
 <style lang="scss">
 	.main-wrapper {
 		padding-inline: var(--space-5);
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 
 		span {
 			color: inherit;
 		}
 
 		.panels-wrapper {
+			flex: 1;
 			overflow-y: auto;
 		}
 	}

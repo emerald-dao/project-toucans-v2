@@ -7,14 +7,17 @@
 		[collectionIdentifier: string]: Nft[];
 	};
 	export let pageSize = 5;
+	export let hasTitle = true;
 </script>
 
 {#if Object.values(NFTs).some((array) => array.length > 0)}
 	<div class="column-3">
-		<span class="title">
-			<Icon icon="tabler:hexagon" />
-			NFTs Treasury
-		</span>
+		{#if hasTitle}
+			<span class="title">
+				<Icon icon="tabler:hexagon" />
+				NFTs Treasury
+			</span>
+		{/if}
 		<div class="card">
 			<NFTsList {NFTs} {pageSize} />
 		</div>

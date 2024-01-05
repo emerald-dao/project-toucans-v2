@@ -73,7 +73,7 @@
 				</div>
 			</DropDownHeading>
 		</div>
-		<div class="column-6">
+		<div class="column-5">
 			<a href="/admin" class="sidebar-link" class:active={$page.url.pathname === '/admin'}>
 				<div class="sidebar-link-icon">
 					<Icon icon="tabler:home" />
@@ -105,34 +105,6 @@
 					Rounds
 				</a>
 			{/if}
-			{#if activeDaoData.hasToken && activeDaoData.onChainData.minting}
-				<a
-					href="/admin/mint"
-					class="sidebar-link"
-					class:active={$page.url.pathname.includes('mint')}
-				>
-					<div class="sidebar-link-icon">
-						<Icon icon="tabler:coin" />
-					</div>
-					Mint
-				</a>
-			{/if}
-			<a href="/admin/burn" class="sidebar-link" class:active={$page.url.pathname.includes('burn')}>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:flame" />
-				</div>
-				Burn
-			</a>
-			<a
-				href="/admin/withdraw"
-				class="sidebar-link distribute-display"
-				class:active={$page.url.pathname.includes('withdraw')}
-			>
-				<div class="sidebar-link-icon">
-					<Icon icon="tabler:outbound" />
-				</div>
-				Withdraw
-			</a>
 			<a
 				href="/admin/multisig"
 				class="sidebar-link distribute-display"
@@ -155,6 +127,39 @@
 					Overflow
 				</a>
 			{/if}
+			<a
+				href="/admin/nft-collections"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('nft-collections')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:hexagon" />
+				</div>
+				NFT Collections
+			</a>
+			<span class="sidebar-divider">Funds management</span>
+			<a
+				href="/admin/withdraw"
+				class="sidebar-link distribute-display"
+				class:active={$page.url.pathname.includes('withdraw')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="tabler:outbound" />
+				</div>
+				Distribute
+			</a>
+			{#if activeDaoData.hasToken && activeDaoData.onChainData.minting}
+				<a
+					href="/admin/mint"
+					class="sidebar-link"
+					class:active={$page.url.pathname.includes('mint')}
+				>
+					<div class="sidebar-link-icon">
+						<Icon icon="tabler:coin" />
+					</div>
+					Mint
+				</a>
+			{/if}
 			{#if activeDaoData.hasToken}
 				<a
 					href="/admin/lock"
@@ -167,15 +172,11 @@
 					Lock
 				</a>
 			{/if}
-			<a
-				href="/admin/nft-collections"
-				class="sidebar-link distribute-display"
-				class:active={$page.url.pathname.includes('nft-collections')}
-			>
+			<a href="/admin/burn" class="sidebar-link" class:active={$page.url.pathname.includes('burn')}>
 				<div class="sidebar-link-icon">
-					<Icon icon="tabler:hexagon" />
+					<Icon icon="tabler:flame" />
 				</div>
-				NFT Collections
+				Burn
 			</a>
 		</div>
 	</div>
@@ -235,8 +236,18 @@
 			border-radius: var(--radius-1);
 		}
 
+		.sidebar-divider {
+			border-bottom: 1px solid var(--clr-surface-primary);
+			font-size: var(--font-size-1);
+			color: var(--clr-text-off);
+			margin-top: var(--space-3);
+			margin-bottom: -4px;
+			padding-bottom: var(--space-1);
+			padding-inline: var(--space-1);
+		}
+
 		.sidebar-link {
-			font-size: var(--font-size-3);
+			font-size: var(--font-size-2);
 			display: flex;
 
 			.sidebar-link-icon {

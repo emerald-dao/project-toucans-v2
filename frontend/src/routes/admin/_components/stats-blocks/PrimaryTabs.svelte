@@ -4,49 +4,63 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
 	import RoundsCard from '$components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
+	import { getProjectNFTTreasury } from '$flow/actions';
+	import NftsTreasuryWidget from '../../../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
 
 	export let daoData: DAOProject;
 </script>
 
 <div class="main-wrapper">
-	<Tabs>
-		<TabList>
-			<Tab>Recent Events</Tab>
+	{#await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id) then NFTs}
+		<Tabs>
+			<TabList>
+				<Tab>Recent Events</Tab>
+				{#if daoData.onChainData.currentFundingCycle}
+					<Tab>Active Round</Tab>
+				{/if}
+				{#if daoData.onChainData.fundingCycles.length > 0}
+					<Tab>Rounds</Tab>
+				{/if}
+				{#if Object.keys(NFTs).length > 0}
+					<Tab>NFTs</Tab>
+				{/if}
+			</TabList>
+			<TabPanel>
+				<EventsList {daoData} />
+			</TabPanel>
 			{#if daoData.onChainData.currentFundingCycle}
-				<Tab>Active Round</Tab>
+				<TabPanel>
+					<div class="card-wrapper card">
+						<RoundsCard
+							round={daoData.onChainData.currentFundingCycle}
+							projectToken={daoData.generalInfo.token_symbol}
+							paymentToken={daoData.onChainData.paymentCurrency}
+							projectId={daoData.generalInfo.project_id}
+							hasBorder={false}
+							activeRound={Number(daoData.onChainData.currentFundingCycle.details.cycleId)}
+						/>
+					</div>
+				</TabPanel>
 			{/if}
 			{#if daoData.onChainData.fundingCycles.length > 0}
-				<Tab>Rounds</Tab>
+				<TabPanel>
+					<RoundsList {daoData} finishedFilter={false} />
+				</TabPanel>
 			{/if}
-		</TabList>
-		<TabPanel>
-			<EventsList {daoData} />
-		</TabPanel>
-		{#if daoData.onChainData.currentFundingCycle}
-			<TabPanel>
-				<div class="round-card-wrapper card">
-					<RoundsCard
-						round={daoData.onChainData.currentFundingCycle}
-						projectToken={daoData.generalInfo.token_symbol}
-						paymentToken={daoData.onChainData.paymentCurrency}
-						projectId={daoData.generalInfo.project_id}
-						hasBorder={false}
-						activeRound={Number(daoData.onChainData.currentFundingCycle.details.cycleId)}
-					/>
-				</div>
-			</TabPanel>
-		{/if}
-		{#if daoData.onChainData.fundingCycles.length > 0}
-			<TabPanel>
-				<RoundsList {daoData} finishedFilter={false} />
-			</TabPanel>
-		{/if}
-	</Tabs>
+			{#if Object.keys(NFTs).length > 0}
+				<TabPanel>
+					<div class="card-wrapper">
+						<NftsTreasuryWidget {NFTs} hasTitle={false} pageSize={3} />
+					</div>
+				</TabPanel>
+			{/if}
+		</Tabs>
+	{/await}
 </div>
 
 <style lang="scss">
 	.main-wrapper {
-		.round-card-wrapper {
+		.card-wrapper {
 			margin-top: var(--space-4);
 		}
 	}

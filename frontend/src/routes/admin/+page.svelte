@@ -31,15 +31,10 @@
 	<div class="secondary-wrapper">
 		<div class="column-8">
 			<GeneralStats daoData={activeDaoData} />
-			{#await getProjectNFTTreasury(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id) then NFTs}
-				{#if Object.keys(NFTs).length > 0}
-					<NftsTreasuryWidget {NFTs} pageSize={4} />
-				{/if}
-			{/await}
 			<PrimaryTabs daoData={activeDaoData} />
 		</div>
 		<div class="column-space-between second-column">
-			<div class="column-6">
+			<div class="treasury-wrapper column-6">
 				<a href="/admin/withdraw">
 					<TreasuryWallet daoData={activeDaoData} />
 				</a>
@@ -55,9 +50,15 @@
 		display: grid;
 		grid-template-columns: 3fr 2fr;
 		gap: var(--space-13);
+		flex: 1;
 
 		.second-column {
 			display: flex;
+			flex: 1;
+
+			.treasury-wrapper {
+				flex: 1;
+			}
 
 			a {
 				text-decoration: none;

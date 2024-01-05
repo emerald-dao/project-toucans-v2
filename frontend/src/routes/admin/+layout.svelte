@@ -120,7 +120,7 @@
 
 		@include mq(medium) {
 			display: grid;
-			grid-template-columns: 280px auto;
+			grid-template-columns: 320px auto;
 		}
 
 		&.centered {

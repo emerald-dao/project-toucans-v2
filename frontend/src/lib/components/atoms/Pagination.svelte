@@ -30,7 +30,7 @@
 	>
 		<Icon
 			icon="tabler:arrow-left"
-			color={currentPage === 1 ? 'var(--clr-text-off)' : 'var(--clr-text-main)'}
+			color={currentPage === 1 ? 'var(--clr-text-main)' : 'var(--clr-heading-main)'}
 		/>
 	</Button>
 	<p class="xsmall">
@@ -47,7 +47,7 @@
 	>
 		<Icon
 			icon="tabler:arrow-right"
-			color={pageEnd >= amountOfItems ? 'var(--clr-text-off)' : 'var(--clr-text-main)'}
+			color={pageEnd >= amountOfItems ? 'var(--clr-text-main)' : 'var(--clr-heading-main)'}
 		/>
 	</Button>
 </div>
