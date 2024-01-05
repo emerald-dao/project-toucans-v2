@@ -66,6 +66,10 @@
 							bind:pageEnd
 							pageSize={8}
 						/>
+					{:else}
+						<span class="small">
+							<em> No collections found. </em>
+						</span>
 					{/if}
 				</div>
 				<Button
@@ -89,6 +93,7 @@
 	.collections-wrapper {
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat(2, 1fr);
 		gap: var(--space-10) var(--space-8);
 		width: 100%;
 	}
@@ -104,6 +109,10 @@
 		.secondary-wrapper {
 			flex: 1;
 			width: 100%;
+		}
+
+		em {
+			color: var(--clr-text-off);
 		}
 	}
 </style>

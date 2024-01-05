@@ -58,6 +58,7 @@
 		cursor: pointer;
 		position: relative;
 		transition: all 0.1s ease-in-out;
+		max-width: 100%;
 
 		img,
 		object,
@@ -68,7 +69,8 @@
 			object-fit: contain;
 		}
 
-		p {
+		p,
+		span {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			display: -webkit-box;

@@ -64,6 +64,10 @@
 			bind:pageEnd
 			pageSize={4}
 		/>
+	{:else}
+		<span class="small">
+			<em> No collections found. </em>
+		</span>
 	{/if}
 	<StepButtons />
 </form>
@@ -77,7 +81,12 @@
 		.collections-wrapper {
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(2, 1fr);
 			gap: var(--space-3);
+		}
+
+		em {
+			color: var(--clr-text-off);
 		}
 	}
 </style>
