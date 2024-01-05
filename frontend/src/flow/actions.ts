@@ -75,6 +75,7 @@ import type { ActionExecutionResult } from '$stores/custom/steps/step.interface'
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import type { LockedVaultDetails } from '$lib/types/dao-project/lock-tokens/locked-vault-details.interface';
 import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface';
+import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 
 if (browser) {
 	// set Svelte $user store to currentUser,
@@ -979,11 +980,7 @@ export const getProjectNFTTreasury: (
 	owner: string,
 	projectId: string
 ) => Promise<{
-	[collectionIdentifier: string]: {
-		id: string;
-		name: string;
-		thumbnail: string;
-	}[];
+	[collectionIdentifier: string]: Nft[];
 }> = async (owner: string, projectId: string) => {
 	try {
 		const response = await fcl.query({

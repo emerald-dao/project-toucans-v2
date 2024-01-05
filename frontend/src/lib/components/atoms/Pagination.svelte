@@ -21,7 +21,7 @@
 	$: pageEnd = pageStart + pageSize;
 </script>
 
-<div class="row-space-between row-4 align-center">
+<div class="main-wrapper row-space-between row-4 align-center">
 	<Button
 		on:click={prevPage}
 		state={currentPage === 1 ? 'disabled' : 'active'}
@@ -53,7 +53,11 @@
 </div>
 
 <style lang="scss">
-	.off {
-		color: var(--clr-text-off);
+	.main-wrapper {
+		width: 100%;
+
+		.off {
+			color: var(--clr-text-off);
+		}
 	}
 </style>

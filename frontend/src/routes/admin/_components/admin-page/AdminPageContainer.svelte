@@ -11,12 +11,11 @@
 		display: grid;
 		grid-template-columns: 3fr 4fr;
 		gap: var(--space-13);
-		height: 100%;
-		flex: 1;
 	}
 
 	div {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
 		width: 100%;
 	}

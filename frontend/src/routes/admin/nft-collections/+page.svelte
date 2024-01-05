@@ -40,28 +40,32 @@
 	</AdminPage.Header>
 	<AdminPage.Container grid={false}>
 		<AdminPage.Content>
-			<div class="collections-wrapper">
-				{#each currentPageCollections as collection (collection.identifier)}
-					{#if activeDaoData.onChainData.allowedNFTCollections.includes(collection.identifier)}
-						<NFTCollectionSelectedCard nftCollection={collection} bind:selectedCollections />
-					{:else}
-						<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
-					{/if}
-				{/each}
+			<div class="content-wrapper">
+				<div class="secondary-wrapper column-4 align-start">
+					<div class="collections-wrapper">
+						{#each currentPageCollections as collection (collection.identifier)}
+							{#if activeDaoData.onChainData.allowedNFTCollections.includes(collection.identifier)}
+								<NFTCollectionSelectedCard nftCollection={collection} bind:selectedCollections />
+							{:else}
+								<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
+							{/if}
+						{/each}
+					</div>
+					<Pagination amountOfItems={collectionsList.length} bind:pageStart bind:pageEnd />
+				</div>
+				<Button
+					state={selectedCollections.length === 0 ? 'disabled' : 'active'}
+					on:click={() =>
+						addAllowedNFTCollections(
+							selectedCollections,
+							activeDaoData.generalInfo.owner,
+							activeDaoData.generalInfo.project_id
+						)}
+					>{`Add ${selectedCollections.length === 0 ? 'selected' : selectedCollections.length} ${
+						selectedCollections.length === 1 ? 'collection' : 'collections'
+					}`}</Button
+				>
 			</div>
-			<Pagination amountOfItems={collectionsList.length} bind:pageStart bind:pageEnd />
-			<Button
-				state={selectedCollections.length === 0 ? 'disabled' : 'active'}
-				on:click={() =>
-					addAllowedNFTCollections(
-						selectedCollections,
-						activeDaoData.generalInfo.owner,
-						activeDaoData.generalInfo.project_id
-					)}
-				>{`Add ${selectedCollections.length === 0 ? 'selected' : selectedCollections.length} ${
-					selectedCollections.length === 1 ? 'collection' : 'collections'
-				}`}</Button
-			>
 		</AdminPage.Content>
 	</AdminPage.Container>
 </AdminPage.Root>
@@ -71,5 +75,19 @@
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: var(--space-10) var(--space-8);
+	}
+
+	.content-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-5);
+		justify-content: space-between;
+		flex: 1;
+		align-items: end;
+
+		.secondary-wrapper {
+			flex: 1;
+			width: 100%;
+		}
 	}
 </style>
