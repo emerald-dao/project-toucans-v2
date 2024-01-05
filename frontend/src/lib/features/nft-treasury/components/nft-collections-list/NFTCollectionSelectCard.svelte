@@ -32,8 +32,8 @@
 	on:click={handleSelectCollection}
 	on:keydown={handleSelectCollection}
 >
-	<object data="/toucans-illustration.png" type="image/png">
-		<img src={profileImg} alt="NFT" />
+	<object data={profileImg} type="image/png">
+		<img src="/toucans-illustration.png" alt="NFT" />
 	</object>
 	<div class="column-2 align-center">
 		<p class="heading w-medium">{nftCollection.identifier}</p>
@@ -56,7 +56,8 @@
 		position: relative;
 		transition: all 0.1s ease-in-out;
 
-		img {
+		img,
+		object {
 			width: 150px;
 			height: 100px;
 			border-radius: var(--radius-2);
