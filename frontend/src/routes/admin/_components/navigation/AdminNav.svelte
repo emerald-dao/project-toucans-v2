@@ -200,7 +200,6 @@
 		border-bottom: 1px solid var(--clr-neutral-400);
 		padding-inline: 5vw var(--space-5);
 		padding-block: var(--space-10);
-		overflow: hidden;
 
 		@include mq('medium') {
 			border-bottom: none;
