@@ -374,8 +374,10 @@ pub contract NFTCatalog {
           ),
           mediaType: "image/svg+xml"
         )
-        self.catalog = {
-          "ExampleNFT": NFTCatalogMetadata(
+        self.catalog = {}
+        self.catalogTypeData = {}
+        self.catalogProposals = {}
+        NFTCatalog.addCatalogEntry(collectionIdentifier: "ExampleNFT", metadata: NFTCatalogMetadata(
             contractName: "ExampleNFT", 
             contractAddress: self.account.address, 
             nftType: Type<@ExampleNFT.NFT>(), 
@@ -396,8 +398,8 @@ pub contract NFTCatalog {
                 "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
               }
             )
-          ),
-          "ChinoNFT": NFTCatalogMetadata(
+        ))
+        NFTCatalog.addCatalogEntry(collectionIdentifier: "ChinoNFT", metadata: NFTCatalogMetadata(
             contractName: "ChinoNFT", 
             contractAddress: self.account.address, 
             nftType: Type<@ChinoNFT.NFT>(), 
@@ -418,11 +420,7 @@ pub contract NFTCatalog {
                 "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
               }
             )
-          )
-        }
-        self.catalogTypeData = {}
-
-        self.catalogProposals = {}
+        ))
     }
 
 }

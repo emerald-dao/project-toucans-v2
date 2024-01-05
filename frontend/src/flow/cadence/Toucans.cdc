@@ -6,6 +6,7 @@ import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 import ToucansLockTokens from "./ToucansLockTokens.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
 
 pub contract Toucans {
 
@@ -916,6 +917,18 @@ pub contract Toucans {
       let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collection.getType().identifier)
       let contractAddress: Address = nameAndAddress[0] as! Address
       let contractName: String = nameAndAddress[1] as! String
+
+      // make sure this DAO accepts this nft type
+      let contractAddressToString: String = contractAddress.toString()
+      let nftTypeIdentifier: String = "A."
+        .concat(contractAddressToString.slice(from: 2, upTo: contractAddressToString.length))
+        .concat(".")
+        .concat(contractName)
+        .concat(".NFT")
+      let collectionsForType: {String: Bool} = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier) ?? panic("This collection is not supported in the NFTCatalog.")
+      let collectionIdentifier: String = collectionsForType.keys[0]
+      assert(self.getAllowedNFTCollections().contains(collectionIdentifier), message: "This DAO does not accept this NFT type.")
+      
       emit DonateNFT(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
@@ -957,6 +970,13 @@ pub contract Toucans {
       for id in nftIDs {
         collection.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
       }
+    }
+
+    pub fun getAllowedNFTCollections(): [String] {
+      if let allowedNFTCollections = self.extra["allowedNFTCollections"] {
+        return (allowedNFTCollections as! {String: Bool}).keys
+      }
+      return []
     }
 
 
