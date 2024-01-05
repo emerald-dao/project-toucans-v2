@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -11,8 +10,6 @@
 		TreasuryWallet,
 		DaoStatsIntro
 	} from './_components';
-	import NftsTreasuryWidget from '../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
-	import { getProjectNFTTreasury } from '$flow/actions';
 	import * as AdminPage from './_components/admin-page';
 
 	const adminData: {

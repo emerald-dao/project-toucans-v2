@@ -51,7 +51,12 @@
 							{/if}
 						{/each}
 					</div>
-					<Pagination amountOfItems={collectionsList.length} bind:pageStart bind:pageEnd />
+					<Pagination
+						amountOfItems={collectionsList.length}
+						bind:pageStart
+						bind:pageEnd
+						pageSize={8}
+					/>
 				</div>
 				<Button
 					state={selectedCollections.length === 0 ? 'disabled' : 'active'}
@@ -73,8 +78,9 @@
 <style lang="scss">
 	.collections-wrapper {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(4, 1fr);
 		gap: var(--space-10) var(--space-8);
+		width: 100%;
 	}
 
 	.content-wrapper {
