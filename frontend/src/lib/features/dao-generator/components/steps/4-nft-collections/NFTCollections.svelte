@@ -57,13 +57,6 @@
 		flex-direction: column;
 		gap: var(--space-6);
 
-		.introduction {
-			h5 {
-				margin-bottom: var(--space-2);
-				margin-top: 0;
-			}
-		}
-
 		.collections-wrapper {
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);

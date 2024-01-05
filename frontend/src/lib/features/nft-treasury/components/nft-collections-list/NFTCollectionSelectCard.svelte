@@ -21,6 +21,8 @@
 
 		selectedCollections = [...selectedCollections, nftCollection.identifier];
 	};
+
+	let profileImg = nftCollection.image ?? '/toucans-illustration.png';
 </script>
 
 <div
@@ -30,10 +32,9 @@
 	on:click={handleSelectCollection}
 	on:keydown={handleSelectCollection}
 >
-	<img src={nftCollection.image} alt="NFT" />
+	<img src={profileImg} alt="NFT" />
 	<div class="column-2 align-center">
 		<p class="heading w-medium">{nftCollection.identifier}</p>
-		<span class="small">{nftCollection.name}</span>
 	</div>
 	<slot />
 </div>
@@ -57,6 +58,15 @@
 			width: 150px;
 			height: 100px;
 			border-radius: var(--radius-2);
+		}
+
+		p {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			word-break: break-word;
 		}
 
 		&.active {
