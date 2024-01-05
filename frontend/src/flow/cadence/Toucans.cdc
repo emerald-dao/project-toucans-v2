@@ -248,12 +248,17 @@ pub contract Toucans {
     // Setters
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
     pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64])
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
+    pub fun proposeMintToTreasury(amount: UFix64)
     pub fun proposeBurn(tokenType: Type, amount: UFix64)
     pub fun proposeAddSigner(signer: Address)
     pub fun proposeRemoveSigner(signer: Address)
     pub fun proposeUpdateThreshold(threshold: UInt64)
+    pub fun proposeLockTokens(recipient: Address, tokenType: Type, amount: UFix64, unlockTime: UFix64)
+    
     // If the action is ready to execute, then allow anyone to do it.
     pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)

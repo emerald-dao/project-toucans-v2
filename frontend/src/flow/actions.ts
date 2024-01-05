@@ -728,6 +728,7 @@ const mintTokens = async (
 		cadence: replaceWithProperValues(mintTokensTx, projectId, projectOwner),
 		args: (arg, t) => [
 			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
 			arg(formatFix(amount), t.UFix64),
 			arg(recipient, t.Address)
 		],
@@ -757,6 +758,7 @@ const batchMintTokens = async (
 		cadence: replaceWithProperValues(batchMintTokensTx, projectId, projectOwner),
 		args: (arg, t) => [
 			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
 			arg(amountsArg, t.Dictionary({ key: t.Address, value: t.UFix64 }))
 		],
 		proposer: fcl.authz,
@@ -772,26 +774,12 @@ export const batchMintTokensExecution = (
 	amounts: Distribution[]
 ) => executeTransaction(() => batchMintTokens(projectOwner, projectId, amounts));
 
-const mintTokensToTreasury = async (projectId: string, amount: string) => {
+const mintTokensToTreasury = async (projectId: string, projectOwner: string, amount: string) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(mintTokensToTreasuryTx),
-		args: (arg, t) => [arg(projectId, t.String), arg(formatFix(amount), t.UFix64)],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const mintTokensToTreasuryExecution = (projectId: string, amount: string) =>
-	executeTransaction(() => mintTokensToTreasury(projectId, amount));
-
-const burnTokens = async (tokenSymbol: string, projectId: string, amount: string) => {
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(burnTokensTx, projectId),
 		args: (arg, t) => [
-			arg(tokenSymbol, t.String),
 			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
 			arg(formatFix(amount), t.UFix64)
 		],
 		proposer: fcl.authz,
@@ -801,8 +789,27 @@ const burnTokens = async (tokenSymbol: string, projectId: string, amount: string
 	});
 };
 
-export const burnTokensExecution = (tokenSymbol: string, projectId: string, amount: string) =>
-	executeTransaction(() => burnTokens(tokenSymbol, projectId, amount));
+export const mintTokensToTreasuryExecution = (projectId: string, projectOwner: string, amount: string) =>
+	executeTransaction(() => mintTokensToTreasury(projectId, projectOwner, amount));
+
+const burnTokens = async (tokenSymbol: string, projectId: string, projectOwner: string, amount: string) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(burnTokensTx, projectId),
+		args: (arg, t) => [
+			arg(tokenSymbol, t.String),
+			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
+			arg(formatFix(amount), t.UFix64)
+		],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const burnTokensExecution = (tokenSymbol: string, projectId: string, projectOwner: string, amount: string) =>
+	executeTransaction(() => burnTokens(tokenSymbol, projectId, projectOwner, amount));
 
 const addAllowedNFTCollections = async (
 	projectOwner: string,
@@ -863,6 +870,7 @@ export const removeAllowedNFTCollectionsExecution = (
 const lockTokens = async (
 	tokenSymbol: string,
 	projectId: string,
+	projectOwner: string,
 	amount: string,
 	recipient: string,
 	unlockTimeInUnixSeconds: string
@@ -872,6 +880,7 @@ const lockTokens = async (
 		args: (arg, t) => [
 			arg(tokenSymbol, t.String),
 			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
 			arg(formatFix(amount), t.UFix64),
 			arg(recipient, t.Address),
 			arg(formatFix(unlockTimeInUnixSeconds), t.UFix64)
@@ -886,12 +895,13 @@ const lockTokens = async (
 export const lockTokensExecution = (
 	tokenSymbol: string,
 	projectId: string,
+	projectOwner: string,
 	amount: string,
 	recipient: string,
 	unlockTimeInUnixSeconds: string
 ) =>
 	executeTransaction(() =>
-		lockTokens(tokenSymbol, projectId, amount, recipient, unlockTimeInUnixSeconds)
+		lockTokens(tokenSymbol, projectId, projectOwner, amount, recipient, unlockTimeInUnixSeconds)
 	);
 
 const setUpVault = async (projectId: string, contractAddress: string) => {

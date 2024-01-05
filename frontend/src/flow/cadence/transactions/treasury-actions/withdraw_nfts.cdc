@@ -27,9 +27,14 @@ transaction(projectOwner: Address, projectId: String, collectionIdentifier: Stri
   }
 
   execute {
-    let nftContract = getAccount(self.CatalogEntry.contractAddress).contracts.borrow<&NonFungibleToken>(name: self.CatalogEntry.contractName)!
-    let blankCollection <- nftContract.createEmptyCollection()
-    self.Project.proposeWithdrawNFTs(collectionType: blankCollection.getType(), recipientCollection: self.RecipientCollection, nftIDs: nftIDs)
-    destroy  blankCollection
+    let contractAddressToString = self.CatalogEntry.contractAddress.toString()
+    let collectionType = CompositeType(
+      "A."
+      .concat(contractAddressToString.slice(from: 2, upTo: contractAddressToString.length))
+      .concat(".")
+      .concat(self.CatalogEntry.contractName)
+      .concat(".Collection")
+    )!
+    self.Project.proposeWithdrawNFTs(collectionType: collectionType, recipientCollection: self.RecipientCollection, nftIDs: nftIDs)
   }
 }

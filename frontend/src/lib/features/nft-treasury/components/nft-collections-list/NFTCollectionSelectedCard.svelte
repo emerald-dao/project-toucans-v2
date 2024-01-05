@@ -4,21 +4,22 @@
 	import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface.js';
 	import type { Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
-	import { removeAllowedNFTCollections } from '../../../../../routes/admin/nft-collections/_actions/removeAllowedNFTCollections';
+	import type {
+		DAOProject,
+		DaoDatabaseData
+	} from '$lib/types/dao-project/dao-project.interface.js';
+	import { removeAllowedNFTCollections } from '../../../../../routes/admin/[projectId]/nft-collections/_actions/removeAllowedNFTCollections';
 
 	export let nftCollection: NftCollection;
 	export let selectedCollections: string[];
 
 	const adminData: {
-		activeDao: Writable<number>;
-		userDaos: Writable<DAOProject[]>;
+		activeDao: Writable<DAOProject>;
+		otherDaos: DaoDatabaseData[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
-	const userDaosStore = adminData.userDaos;
-
-	$: activeDaoData = $userDaosStore[$activeDaoStore];
+	$: activeDaoData = $activeDaoStore;
 </script>
 
 <NFTCollectionSelectCard {nftCollection} bind:selectedCollections isCollectionActive={true}>

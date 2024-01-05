@@ -4,7 +4,7 @@
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
-	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
+	import TreasuryWallet from '../../../../admin/[projectId]/_components/stats-blocks/TreasuryWallet.svelte';
 	import RequiredNft from './atoms/RequiredNft.svelte';
 	import { user } from '$stores/flow/FlowStore';
 	import { currencies } from '$stores/flow/TokenStore';

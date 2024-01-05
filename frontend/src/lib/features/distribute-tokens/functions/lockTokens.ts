@@ -12,6 +12,7 @@ export const lockTokens = async (
 	return await lockTokensExecution(
 		currency,
 		daoData.generalInfo.project_id,
+		daoData.generalInfo.owner,
 		amount.toString(),
 		recipient,
 		unlockTime.toString()
