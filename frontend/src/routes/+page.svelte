@@ -6,12 +6,6 @@
 	import { PoweredByECDAO } from '@emerald-dao/component-library';
 
 	export let data;
-
-	const statsData = {
-		data1: { title: '', stat: '' },
-		data2: { title: '', stat: '' },
-		data3: { title: '', stat: '' }
-	};
 </script>
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->

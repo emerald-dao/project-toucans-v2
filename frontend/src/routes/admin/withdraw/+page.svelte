@@ -1,13 +1,14 @@
 <script type="ts">
-	import { fly } from 'svelte/transition';
 	import type { Writable } from 'svelte/store';
 	import { getContext, onMount } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import * as DistributeTokens from '$lib/features/distribute-tokens/components';
+	import * as AdminPage from '../_components/admin-page';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import NftDistributionForm from './_components/NFTDistributionForm.svelte';
 	import { withdrawTokens } from '$lib/features/distribute-tokens/functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
+	import FungibleTokensDistributionForm from './_components/FungibleTokensDistributionForm.svelte';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -47,22 +48,28 @@
 
 	$: if (activeCurrency) resetDistribution();
 
-	const handleCreateWithdrawAction = () => {
-		withdrawTokens(activeDaoData, distStaging, activeCurrency as ECurrencies);
+	const handleCreateWithdrawAction = async () => {
+		const actionResult = await withdrawTokens(
+			activeDaoData,
+			distStaging,
+			activeCurrency as ECurrencies
+		);
 
-		resetDistribution();
+		if (actionResult.state === 'success') {
+			resetDistribution();
+		}
 	};
 </script>
 
-<div class="main-wrapper" in:fly={{ x: 10, duration: 400 }}>
-	<DistributeTokens.Container grid={activeCurrency !== 'NFTs'}>
-		<DistributeTokens.Content>
-			<DistributeTokens.Header>
-				<DistributeTokens.Title>Distribute Tokens</DistributeTokens.Title>
-				<DistributeTokens.Description>
+<AdminPage.Root>
+	<AdminPage.Container grid={activeCurrency !== 'NFTs'}>
+		<AdminPage.Content>
+			<AdminPage.Header>
+				<AdminPage.Title>Distribute Tokens</AdminPage.Title>
+				<AdminPage.Description>
 					Distribute treasury tokens to your community members.
-				</DistributeTokens.Description>
-			</DistributeTokens.Header>
+				</AdminPage.Description>
+			</AdminPage.Header>
 			<DistributeTokens.Tabs>
 				{#each Object.entries(activeDaoData.onChainData.treasuryBalances) as [currency] (currency)}
 					<DistributeTokens.Tab {currency} bind:activeCurrency />
@@ -70,34 +77,34 @@
 				<DistributeTokens.Tab currency="NFTs" bind:activeCurrency />
 			</DistributeTokens.Tabs>
 			{#if activeCurrency != 'NFTs'}
-				<DistributeTokens.Form
-					{formDist}
-					{csvDist}
-					{activeCurrency}
-					{availableBalance}
-					projectOwner={activeDaoData.generalInfo.owner}
-					projectId={activeDaoData.generalInfo.project_id}
-					bind:distStaging
-				/>
+				<DistributeTokens.AvailableBalance {availableBalance} currency={activeCurrency} />
+				{#if availableBalance && Number(availableBalance) > 0}
+					<FungibleTokensDistributionForm
+						{formDist}
+						{csvDist}
+						{activeCurrency}
+						{availableBalance}
+						projectOwner={activeDaoData.generalInfo.owner}
+						projectId={activeDaoData.generalInfo.project_id}
+						bind:distStaging
+					/>
+				{:else}
+					<DistributeTokens.NoTokensMessage>
+						{`No ${activeCurrency} tokens available to distribute.`}
+					</DistributeTokens.NoTokensMessage>
+				{/if}
 			{:else if activeCurrency === 'NFTs'}
 				<NftDistributionForm {activeDaoData} />
 			{/if}
-		</DistributeTokens.Content>
+		</AdminPage.Content>
 		{#if activeCurrency != 'NFTs'}
-			<DistributeTokens.Content>
+			<AdminPage.Content>
 				<DistributeTokens.Staging bind:distStaging tokenName={activeCurrency} />
 				<DistributeTokens.Button
 					on:click={handleCreateWithdrawAction}
 					disabled={distStaging.length === 0}>Create Withdraw Action</DistributeTokens.Button
 				>
-			</DistributeTokens.Content>
+			</AdminPage.Content>
 		{/if}
-	</DistributeTokens.Container>
-</div>
-
-<style lang="scss">
-	.main-wrapper {
-		display: flex;
-		flex: 1;
-	}
-</style>
+	</AdminPage.Container>
+</AdminPage.Root>

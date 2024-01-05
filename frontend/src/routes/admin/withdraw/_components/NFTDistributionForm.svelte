@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import NftAddressInput from '$lib/features/distribute-tokens/components/sections/NftAddressInput.svelte';
+	import NftAddressInput from './atoms/NftAddressInput.svelte';
 	import { getProjectNFTTreasury } from '$flow/actions';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
@@ -24,6 +24,8 @@
 		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address);
 		resetDistributionForm();
 	};
+
+	let resetAddressValidation: () => void;
 </script>
 
 <div in:fade|local={{ duration: 200 }} class="main-wrapper">
@@ -39,8 +41,15 @@
 					projectOwner={activeDaoData.generalInfo.owner}
 					projectId={activeDaoData.generalInfo.project_id}
 					bind:isValid={isAddressValid}
+					bind:handleChange={resetAddressValidation}
 				/>
-				<NFTsList bind:selectedNFTIds bind:selectedCollection {NFTs} clickable={true} />
+				<NFTsList
+					bind:selectedNFTIds
+					bind:selectedCollection
+					{NFTs}
+					clickable={true}
+					on:collectionChange={resetAddressValidation}
+				/>
 			</div>
 			<Button
 				on:click={handleCreateWithdrawNftsAction}

@@ -96,12 +96,10 @@
 		</div>
 	</section>
 {:else}
-	<section>
-		<div class="container-large">
-			<AdminNav />
-			<div class="main-wrapper">
-				<slot />
-			</div>
+	<section class="dashboard-section">
+		<AdminNav />
+		<div class="main-wrapper">
+			<slot />
 		</div>
 	</section>
 {/if}
@@ -118,28 +116,24 @@
 		padding: 0;
 		display: flex;
 		flex: 1;
-		justify-content: center;
+		overflow: hidden;
+
+		@include mq(medium) {
+			display: grid;
+			grid-template-columns: 280px auto;
+		}
 
 		&.centered {
 			align-items: center;
 		}
 
-		.container-large {
+		.main-wrapper {
+			padding-block: var(--space-11);
+			padding-inline: var(--space-12);
 			display: flex;
 			flex-direction: column;
-			gap: var(--space-8);
-
-			@include mq(medium) {
-				display: grid;
-				grid-template-columns: 280px auto;
-				gap: var(--space-12);
-			}
-
-			.main-wrapper {
-				padding-block: var(--space-11);
-				display: flex;
-				flex-direction: column;
-			}
+			overflow-y: auto;
+			padding-inline: var(--space-12) 5vw;
 		}
 
 		.card-primary {

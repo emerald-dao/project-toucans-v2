@@ -3,11 +3,11 @@ import { ECurrencies } from '$lib/types/common/enums';
 import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
 
-const validationSuite = create(
+const fungibleTokenDistributionValidation = create(
 	(
 		data: Distribution,
 		currentField,
-		availableBalance: number | undefined,
+		availableBalance: number | undefined | 'infinite',
 		amountOfTokensInStaging: number,
 		projectOwner: string,
 		projectId: string,
@@ -19,40 +19,30 @@ const validationSuite = create(
 			enforce(data.address).lengthEquals(18);
 		});
 
-		skipWhen(validationSuite.get().hasErrors('address'), () => {
-			test.memo(
-				'address',
-				"Address doesn't have a vault set up.",
-				async () => {
-					return (await checkAddress(
-						data.address,
-						projectOwner,
-						projectId,
-						currencyToDistribute
-					)) as string;
-				},
-				[data.address]
-			);
+		test('address', 'Address should start with 0x', () => {
+			enforce(data.address).startsWith('0x');
+		});
+
+		skipWhen(fungibleTokenDistributionValidation.get().hasErrors('address'), () => {
+			test('address', "Address doesn't have a vault set up.", async () => {
+				return (await checkAddress(
+					data.address,
+					projectOwner,
+					projectId,
+					currencyToDistribute
+				)) as string;
+			});
 		});
 
 		test('amount', 'Amount should me greater than 0', () => {
 			enforce(data.amount).greaterThan(0);
 		});
 
-		omitWhen(availableBalance === undefined, () => {
+		omitWhen(availableBalance === undefined || availableBalance === 'infinite', () => {
 			test('amount', `Treasury doesn't have enough tokens`, () => {
 				enforce(data.amount).lessThan((availableBalance as number) - amountOfTokensInStaging);
 			});
 		});
-
-		if (data.date) {
-			let currentDateToUnixTimeStamp = Math.floor(new Date().getTime() / 1000);
-			let datePickedToUnixTimeStamp = new Date(data.date).getTime() / 1000;
-
-			test('date', 'Date must be later than today', () => {
-				enforce(datePickedToUnixTimeStamp).greaterThan(currentDateToUnixTimeStamp);
-			});
-		}
 	}
 );
 
@@ -80,4 +70,4 @@ const checkAddress = async (
 	});
 };
 
-export default validationSuite;
+export default fungibleTokenDistributionValidation;

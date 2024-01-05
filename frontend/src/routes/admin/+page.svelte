@@ -13,6 +13,7 @@
 	} from './_components';
 	import NftsTreasuryWidget from '../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
 	import { getProjectNFTTreasury } from '$flow/actions';
+	import * as AdminPage from './_components/admin-page';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -25,7 +26,7 @@
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 </script>
 
-<div class="main-wrapper column-5" in:fly={{ x: 10, duration: 400 }}>
+<AdminPage.Root>
 	<DaoStatsIntro daoData={activeDaoData} />
 	<div class="secondary-wrapper">
 		<div class="column-8">
@@ -47,25 +48,19 @@
 			<Signers daoData={activeDaoData} />
 		</div>
 	</div>
-</div>
+</AdminPage.Root>
 
 <style lang="scss">
-	.main-wrapper {
-		flex: 1;
+	.secondary-wrapper {
+		display: grid;
+		grid-template-columns: 3fr 2fr;
+		gap: var(--space-13);
 
-		.secondary-wrapper {
-			display: grid;
-			grid-template-columns: 3fr 2fr;
-			gap: var(--space-13);
-			height: 100%;
+		.second-column {
+			display: flex;
 
-			.second-column {
-				display: flex;
-				height: 100%;
-
-				a {
-					text-decoration: none;
-				}
+			a {
+				text-decoration: none;
 			}
 		}
 	}

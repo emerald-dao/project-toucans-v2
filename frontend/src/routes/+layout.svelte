@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Profile } from '$lib/types/common/profile.interface';
 	import { network } from '$flow/config';
 	import '../app.postcss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
@@ -62,7 +61,40 @@
 		console.log('hi!');
 		avatarDropdownNav[0].url = `/u/${$user.addr}`;
 	}
+
+	$: routes = $page.url.pathname.split('/');
 </script>
+
+<div class="body" class:full-height={routes[1] === 'admin'}>
+	<Header
+		themeStore={theme}
+		logIn={() => connect()}
+		{unauthenticate}
+		user={$user}
+		profile={$profile}
+		{navElements}
+		sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
+		avatarDropDownNavigation={$user.addr ? avatarDropdownNav : undefined}
+		{network}
+		transactionInProgress={$transactionStore.progress}
+		logoText="Toucans"
+		logoUrl="/toucans-logo.png"
+		{notificationsNumber}
+		width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
+	/>
+	<main>
+		<slot />
+	</main>
+	{#if $page.url.pathname === '/' || $page.url.pathname === '/discover' || $page.url.pathname === '/docs'}
+		<Footer
+			{navElements}
+			{emeraldTools}
+			socials={socialMedia}
+			logoText="Toucans"
+			logoUrl="/toucans-logo.png"
+		/>
+	{/if}
+</div>
 
 <TransactionModal
 	transactionInProgress={$transactionStore.progress}
@@ -72,26 +104,6 @@
 	on:close={() => transactionStore.resetTransaction()}
 />
 
-<Header
-	themeStore={theme}
-	logIn={() => connect()}
-	{unauthenticate}
-	user={$user}
-	profile={$profile}
-	{navElements}
-	sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
-	avatarDropDownNavigation={$user.addr ? avatarDropdownNav : undefined}
-	{network}
-	transactionInProgress={$transactionStore.progress}
-	logoText="Toucans"
-	logoUrl="/toucans-logo.png"
-	{notificationsNumber}
-	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
-/>
-<main>
-	<slot />
-</main>
-
 <Seo
 	title={dappInfo.title}
 	description={dappInfo.description}
@@ -99,19 +111,21 @@
 	image="https://toucans.ecdao.org/favicon.png"
 />
 
-{#if $page.url.pathname === '/' || $page.url.pathname === '/discover' || $page.url.pathname === '/docs'}
-	<Footer
-		{navElements}
-		{emeraldTools}
-		socials={socialMedia}
-		logoText="Toucans"
-		logoUrl="/toucans-logo.png"
-	/>
-{/if}
-
 <style>
+	.body {
+		display: grid;
+		flex-direction: column;
+		overflow: hidden;
+		grid-template-rows: auto 1fr auto;
+	}
+
+	.full-height {
+		height: 100vh;
+	}
+
 	main {
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 	}
 </style>

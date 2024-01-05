@@ -1,10 +1,10 @@
 <script type="ts">
-	import { fly } from 'svelte/transition';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import PendingActionsList from '$lib/components/dao-data-blocks/pending-actions/list/PendingActionsList.svelte';
 	import { getProjectInfo } from '$flow/actions';
+	import * as AdminPage from '../_components/admin-page';
 
 	const adminData: {
 		activeDao: Writable<number>;
@@ -25,27 +25,18 @@
 	});
 </script>
 
-<div in:fly={{ x: 10, duration: 400 }} class="column-6">
-	<div>
-		<h5>Actions Queue</h5>
-		<p class="small">Actions waiting for signatures</p>
-	</div>
-	<div>
+<AdminPage.Root>
+	<AdminPage.Header>
+		<AdminPage.Title>Actions Queue</AdminPage.Title>
+		<AdminPage.Description>Actions waiting for signatures</AdminPage.Description>
+	</AdminPage.Header>
+	<AdminPage.Container grid={false}>
 		{#if activeDaoData.onChainData.actions.length < 1}
-			<span><em>This project has no actions waiting for signatures</em></span>
+			<AdminPage.EmptyMessage
+				>This project has no actions waiting for signatures</AdminPage.EmptyMessage
+			>
 		{:else}
 			<PendingActionsList daoData={activeDaoData} />
 		{/if}
-	</div>
-</div>
-
-<style lang="scss">
-	h5 {
-		margin-bottom: var(--space-2);
-		margin-top: 0;
-	}
-
-	em {
-		color: var(--clr-text-off);
-	}
-</style>
+	</AdminPage.Container>
+</AdminPage.Root>

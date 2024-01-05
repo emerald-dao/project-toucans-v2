@@ -2,7 +2,7 @@
 	import { fly } from 'svelte/transition';
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import type { SuiteRunResult } from 'vest';
-	import nftsValidationSuite from './validateNFTs';
+	import nftDistributionValidation from '../../_validations/nftDistributionValidation';
 	import { onMount } from 'svelte';
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
@@ -11,18 +11,14 @@
 	export let projectId: string;
 	export let isValid: boolean = false;
 
-	let res = nftsValidationSuite.get();
+	let res = nftDistributionValidation.get();
 	let addressPending: boolean;
-	let addressPendingMessage = ['Checking if address exists in the blockchain'];
+	let addressPendingMessage = ['Checking if address has collection vault...'];
 
-	const handleChange = (input: Event) => {
-		const target = input.target as HTMLInputElement;
+	export const handleChange = () => {
+		res = nftDistributionValidation(address, projectOwner, projectId);
 
-		res = nftsValidationSuite(address, target.name, projectOwner, projectId);
-
-		if (target.name === 'address') {
-			addressPending = true;
-		}
+		addressPending = true;
 
 		(res as SuiteRunResult).done((result) => {
 			res = result;
@@ -40,9 +36,14 @@
 	};
 
 	onMount(() => {
-		nftsValidationSuite.reset();
-		res = nftsValidationSuite.get();
+		nftDistributionValidation.reset();
+		res = nftDistributionValidation.get();
 	});
+
+	$: if (address === '') {
+		nftDistributionValidation.reset();
+		res = nftDistributionValidation.get();
+	}
 </script>
 
 <div transition:fly|local={{ duration: 200, y: 30 }}>

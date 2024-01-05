@@ -1,24 +1,18 @@
 <script lang="ts">
 	import Pagination from '$components/atoms/Pagination.svelte';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import NFTCard from './atoms/NFTCard.svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 
 	export let NFTs: {
 		[collectionIdentifier: string]: Nft[];
 	};
-
-	// // Add 20 sample NFTs to the first collection
-	// NFTs['A.f8d6e0586b0a20c7.ChinoNFT.Collection'] = Array.from({ length: 20 }, (_, i) => ({
-	// 	id: `A.f8d6e0586b0a20c7.ChinoNFT.${i}`,
-	// 	name: `Chino NFT ${i}`,
-	// 	thumbnail: 'https://picsum.photos/200/300'
-	// }));
-
 	export let pageSize = 5;
 	export let userNFTs = false;
 	export let clickable = false;
 	export let selectedCollection = '';
+
+	const dispatch = createEventDispatcher();
 
 	let displayedNfts: Nft[] = [];
 
@@ -35,6 +29,8 @@
 
 	const handleCollectionChange = () => {
 		updateSelectedNFTs();
+
+		dispatch('collectionChange', selectedCollection);
 	};
 
 	const updateSelectedNFTs = () => {
@@ -78,8 +74,8 @@
 		</select>
 	</div>
 	{#if currentPageNFTs.length === 0}
-		<p class="small">
-			<em> Sorry! You don't have NFTs from this collection. </em>
+		<p class="small off">
+			<em> Sorry! We didn't find NFTs from this collection. </em>
 		</p>
 	{:else}
 		<div class="nfts-grid" style={`grid-template-columns: repeat(${pageSize}, 1fr)`}>
@@ -104,5 +100,9 @@
 	.nfts-grid {
 		display: grid;
 		grid-gap: var(--space-3);
+	}
+
+	.off {
+		color: var(--clr-text-off);
 	}
 </style>
