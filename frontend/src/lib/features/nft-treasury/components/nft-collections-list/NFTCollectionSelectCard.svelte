@@ -32,7 +32,9 @@
 	on:click={handleSelectCollection}
 	on:keydown={handleSelectCollection}
 >
-	<img src={profileImg} alt="NFT" />
+	<object data="/toucans-illustration.png" type="image/png">
+		<img src={profileImg} alt="NFT" />
+	</object>
 	<div class="column-2 align-center">
 		<p class="heading w-medium">{nftCollection.identifier}</p>
 	</div>
