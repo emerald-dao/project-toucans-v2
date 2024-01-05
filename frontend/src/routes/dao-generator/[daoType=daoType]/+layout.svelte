@@ -34,9 +34,9 @@
 		<GeneratorNav />
 	</div>
 	<div class="content-wrapper">
-		<Container width="small" --container-s="34ch">
+		<div class="container-small">
 			<slot />
-		</Container>
+		</div>
 	</div>
 </Section>
 
@@ -48,7 +48,12 @@
 			display: block;
 		}
 	}
+
 	.content-wrapper {
 		margin-top: 2.8rem;
+
+		.container-small {
+			max-width: 38ch;
+		}
 	}
 </style>

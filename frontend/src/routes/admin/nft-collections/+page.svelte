@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SearchBar from '$lib/components/search-bar/SearchBar.svelte';
 	import NFTCollectionSelectedCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectedCard.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
 	import { Button } from '@emerald-dao/component-library';
@@ -22,11 +23,12 @@
 	$: activeDaoData = $userDaosStore[$activeDaoStore];
 
 	let collectionsList = Object.values(data.projectNFTs);
+	let filteredCollections = collectionsList;
 
 	let pageStart: number;
 	let pageEnd: number;
 
-	$: currentPageCollections = collectionsList.slice(pageStart, pageEnd);
+	$: currentPageCollections = filteredCollections.slice(pageStart, pageEnd);
 
 	let selectedCollections: string[] = [];
 </script>
@@ -42,21 +44,29 @@
 		<AdminPage.Content>
 			<div class="content-wrapper">
 				<div class="secondary-wrapper column-4 align-start">
-					<div class="collections-wrapper">
-						{#each currentPageCollections as collection (collection.identifier)}
-							{#if activeDaoData.onChainData.allowedNFTCollections.includes(collection.identifier)}
-								<NFTCollectionSelectedCard nftCollection={collection} bind:selectedCollections />
-							{:else}
-								<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
-							{/if}
-						{/each}
-					</div>
-					<Pagination
-						amountOfItems={collectionsList.length}
-						bind:pageStart
-						bind:pageEnd
-						pageSize={8}
+					<SearchBar
+						items={collectionsList}
+						bind:filteredItems={filteredCollections}
+						searchTerms={['name', 'identifier']}
+						placeholder="Search collections..."
 					/>
+					{#if filteredCollections.length > 0}
+						<div class="collections-wrapper">
+							{#each currentPageCollections as collection (collection.identifier)}
+								{#if activeDaoData.onChainData.allowedNFTCollections.includes(collection.identifier)}
+									<NFTCollectionSelectedCard nftCollection={collection} bind:selectedCollections />
+								{:else}
+									<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
+								{/if}
+							{/each}
+						</div>
+						<Pagination
+							amountOfItems={filteredCollections.length}
+							bind:pageStart
+							bind:pageEnd
+							pageSize={8}
+						/>
+					{/if}
 				</div>
 				<Button
 					state={selectedCollections.length === 0 ? 'disabled' : 'active'}

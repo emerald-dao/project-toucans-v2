@@ -1,6 +1,5 @@
 <!-- Page that dynamically renders each step of the DAO Generation process -->
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { getContext } from 'svelte';
 	import type { createSteps } from '$stores/custom/steps/Steps';

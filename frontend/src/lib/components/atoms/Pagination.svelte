@@ -22,42 +22,48 @@
 </script>
 
 <div class="main-wrapper row-space-between row-4 align-center">
-	<Button
-		on:click={prevPage}
-		state={currentPage === 1 ? 'disabled' : 'active'}
-		type="transparent"
-		color="neutral"
-	>
+	<button on:click={prevPage} disabled={currentPage === 1} type="button" color="neutral">
 		<Icon
 			icon="tabler:arrow-left"
-			color={currentPage === 1 ? 'var(--clr-text-main)' : 'var(--clr-heading-main)'}
+			color={currentPage === 1 ? 'var(--clr-text-off)' : 'var(--clr-heading-main)'}
 		/>
-	</Button>
+	</button>
 	<p class="xsmall">
 		{currentPage}
 		<span class="off">
 			/ {Math.ceil(amountOfItems / pageSize)}
 		</span>
 	</p>
-	<Button
-		on:click={nextPage}
-		state={pageEnd >= amountOfItems ? 'disabled' : 'active'}
-		type="transparent"
-		color="neutral"
-	>
+	<button on:click={nextPage} disabled={pageEnd >= amountOfItems} type="button" color="neutral">
 		<Icon
 			icon="tabler:arrow-right"
-			color={pageEnd >= amountOfItems ? 'var(--clr-text-main)' : 'var(--clr-heading-main)'}
+			color={pageEnd >= amountOfItems ? 'var(--clr-text-off)' : 'var(--clr-heading-main)'}
 		/>
-	</Button>
+	</button>
 </div>
 
 <style lang="scss">
 	.main-wrapper {
 		width: 100%;
 
-		.off {
-			color: var(--clr-text-off);
+		button {
+			padding: 0;
+			border: none;
+			background: none;
+			cursor: pointer;
+			outline: none;
+
+			&:disabled {
+				cursor: not-allowed;
+			}
+		}
+
+		p {
+			color: var(--clr-heading-main);
+
+			.off {
+				color: var(--clr-text-off);
+			}
 		}
 	}
 </style>

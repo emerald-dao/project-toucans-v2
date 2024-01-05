@@ -9,6 +9,7 @@
 	import NftCollectionSelectCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectCard.svelte';
 	import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface';
 	import Pagination from '$components/atoms/Pagination.svelte';
+	import SearchBar from '$components/search-bar/SearchBar.svelte';
 
 	const daoGeneratorData: typeof TdaoGeneratorData | typeof daoAndTokenGeneratorData =
 		getContext('daoGeneratorData');
@@ -21,11 +22,12 @@
 	} = getContext('projectNFTCatalog');
 
 	let collectionsList = Object.values(projectNFTs);
+	let filteredCollections = collectionsList;
 
 	let pageStart: number;
 	let pageEnd: number;
 
-	$: currentPageCollections = collectionsList.slice(pageStart, pageEnd);
+	$: currentPageCollections = filteredCollections.slice(pageStart, pageEnd);
 
 	let selectedCollections: string[] = [];
 
@@ -40,14 +42,29 @@
 >
 	<div class="column-2">
 		<label>NFT Collections</label>
-		<p class="small">Select the collections from which you would like to receive NFTs</p>
+		<p class="small">
+			Select the collections from which you would like to receive NFTs. This can be edited later.
+		</p>
 	</div>
-	<div class="collections-wrapper">
-		{#each currentPageCollections as nftCollection (nftCollection.identifier)}
-			<NftCollectionSelectCard {nftCollection} bind:selectedCollections />
-		{/each}
-	</div>
-	<Pagination amountOfItems={collectionsList.length} bind:pageStart bind:pageEnd pageSize={4} />
+	<SearchBar
+		items={collectionsList}
+		bind:filteredItems={filteredCollections}
+		searchTerms={['name', 'identifier']}
+		placeholder="Search collections.."
+	/>
+	{#if filteredCollections.length > 0}
+		<div class="collections-wrapper">
+			{#each currentPageCollections as nftCollection (nftCollection.identifier)}
+				<NftCollectionSelectCard {nftCollection} bind:selectedCollections />
+			{/each}
+		</div>
+		<Pagination
+			amountOfItems={filteredCollections.length}
+			bind:pageStart
+			bind:pageEnd
+			pageSize={4}
+		/>
+	{/if}
 	<StepButtons />
 </form>
 

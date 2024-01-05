@@ -38,7 +38,8 @@
 		</object>
 	</div>
 	<div class="column-2 align-center">
-		<p class="heading w-medium">{nftCollection.identifier}</p>
+		<p class="heading w-medium">{nftCollection.name}</p>
+		<span class="xsmall">{nftCollection.identifier}</span>
 	</div>
 	<slot />
 </div>
