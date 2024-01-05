@@ -128,7 +128,18 @@
 				fontSize="0.85rem"
 				decimalNumbers={2}
 			/>
-		{:else if event.type === 'NewFundingCycle'}
+		{/if}
+		{#if event.type === 'DonateNFT' || event.type === 'WithdrawNFTs'}
+			<Currency
+				amount={event.type === 'WithdrawNFTs'
+					? -Number(event.data.amount)
+					: Number(event.data.amount)}
+				currency={event.data.contractName}
+				color="heading"
+				fontSize="0.85rem"
+			/>
+		{/if}
+		{#if event.type === 'NewFundingCycle'}
 			<SeeRoundDetailsModal
 				round={daoData.onChainData.fundingCycles[Number(event.data.newCycleId)]}
 				projectToken={daoData.generalInfo.token_symbol}

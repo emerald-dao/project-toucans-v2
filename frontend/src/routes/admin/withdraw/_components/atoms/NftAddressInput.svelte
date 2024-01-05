@@ -50,7 +50,7 @@
 	<form id="dist-form" autocomplete="off" class="wrapper">
 		<InputWrapper
 			name="address"
-			label="Address"
+			label="Recipient Address"
 			pending={addressPending}
 			pendingMessage={addressPendingMessage}
 			errors={res.getErrors('address')}

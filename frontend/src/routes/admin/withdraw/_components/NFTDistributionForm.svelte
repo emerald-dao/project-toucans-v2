@@ -3,7 +3,7 @@
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import NftAddressInput from './atoms/NftAddressInput.svelte';
-	import { getProjectNFTTreasury } from '$flow/actions';
+	import { canReceiveNFTCollection, getProjectNFTTreasury } from '$flow/actions';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { withdrawNFTs } from '$lib/features/distribute-tokens/functions/withdrawNFTs';
@@ -20,7 +20,13 @@
 		selectedNFTIds = [];
 	};
 
-	const handleCreateWithdrawNftsAction = () => {
+	const handleCreateWithdrawNftsAction = async () => {
+		const canReceiveNFT = await canReceiveNFTCollection(address, selectedCollection);
+		if (!canReceiveNFT) {
+			alert(
+				"The user cannot receive this type of NFT because they don't have a collection set up."
+			);
+		}
 		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address);
 		resetDistributionForm();
 	};
@@ -57,7 +63,7 @@
 				state={isAddressValid && selectedNFTIds.length > 0 ? 'active' : 'disabled'}
 			>
 				{#if selectedNFTIds.length === 1}
-					{`Distribute ${selectedNFTIds.length} NFT`}
+					{`Distribute 1 NFT`}
 				{:else if selectedNFTIds.length === 0}
 					{`Distribute NFTs`}
 				{:else}

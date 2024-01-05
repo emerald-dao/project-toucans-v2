@@ -84,7 +84,7 @@ pub contract ToucansActions {
     pub let contractName: String
 
     pub fun getIntent(): String {
-      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.contractName).concat(" NFTs from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
+      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.contractName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
     }
 
     pub fun getTitle(): String {

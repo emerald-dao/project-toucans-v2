@@ -54,6 +54,7 @@ import getBalancesScript from './cadence/scripts/get_balances.cdc?raw';
 import hasProjectVaultSetupScript from './cadence/scripts/has_project_vault_setup.cdc?raw';
 import canReceiveToucansTokenScript from './cadence/scripts/can_receive_toucans_token.cdc?raw';
 import canReceiveProjectTokenScript from './cadence/scripts/can_receive_project_token.cdc?raw';
+import canReceiveNFTCollectionScript from './cadence/scripts/can_receive_nft_collection.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
@@ -1133,6 +1134,24 @@ export const canReceiveProjectToken = async (
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(canReceiveProjectTokenScript, projectId, contractAddress),
 			args: (arg, t) => [arg(userAddress, t.Address)]
+		});
+		return response;
+	} catch (e) {
+		return false;
+	}
+};
+
+export const canReceiveNFTCollection = async (
+	userAddress: string,
+	collectionIdentifier: string
+) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(canReceiveNFTCollectionScript),
+			args: (arg, t) => [
+				arg(userAddress, t.Address),
+				arg(collectionIdentifier, t.String)
+			]
 		});
 		return response;
 	} catch (e) {
