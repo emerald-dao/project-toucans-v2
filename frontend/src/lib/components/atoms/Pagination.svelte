@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 
 	export let amountOfItems: number;
@@ -19,6 +18,10 @@
 
 	$: pageStart = (currentPage - 1) * pageSize;
 	$: pageEnd = pageStart + pageSize;
+
+	$: if (currentPage > Math.ceil(amountOfItems / pageSize)) {
+		currentPage = Math.ceil(amountOfItems / pageSize);
+	}
 </script>
 
 <div class="main-wrapper row-space-between row-4 align-center">
