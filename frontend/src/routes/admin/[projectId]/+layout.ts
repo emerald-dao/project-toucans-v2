@@ -25,7 +25,7 @@ async function fetchProjectData(project: DaoDatabaseData): Promise<DAOProject> {
 		funding: {
 			...(await fetchDaoFundingStats(project.project_id)),
 			funders: (await fetchDaoFunders(project.project_id)).reduce(
-				(obj, item) => Object.assign(obj, { [item.address]: item.amount }),
+				(obj, item) => Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
 				{}
 			)
 		}
