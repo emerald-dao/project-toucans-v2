@@ -29,7 +29,11 @@
 	let pageStart: number;
 	let pageEnd: number;
 
-	$: currentPageCollections = filteredCollections.slice(pageStart, pageEnd);
+	$: currentPageCollections = filteredCollections
+		.sort((a, b) =>
+			activeDaoData.onChainData.allowedNFTCollections.includes(a.identifier) ? -1 : 1
+		)
+		.slice(pageStart, pageEnd);
 
 	let selectedCollections: string[] = [];
 </script>
@@ -37,9 +41,9 @@
 <AdminPage.Root>
 	<AdminPage.Header>
 		<AdminPage.Title>NFT Treasury</AdminPage.Title>
-		<AdminPage.Description
-			>Please select the collections from which you would like to receive NFTs.</AdminPage.Description
-		>
+		<AdminPage.Description>
+			Please select the collections from which you would like to receive NFTs.
+		</AdminPage.Description>
 	</AdminPage.Header>
 	<AdminPage.Container grid={false}>
 		<AdminPage.Content>
