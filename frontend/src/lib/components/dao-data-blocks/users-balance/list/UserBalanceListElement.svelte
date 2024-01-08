@@ -4,7 +4,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let address: string;
-	export let balance: string;
+	export let balance: number;
 	export let tokenSymbol: string | null = null;
 	export let findProfile: FindProfile | undefined = undefined;
 </script>
@@ -29,7 +29,7 @@
 	</div>
 	{#if tokenSymbol}
 		<Currency
-			amount={Number(balance)}
+			amount={balance}
 			currency={tokenSymbol}
 			color="heading"
 			fontSize="var(--font-size-0)"
@@ -37,7 +37,7 @@
 		/>
 	{:else}
 		<Currency
-			amount={Number(balance)}
+			amount={balance}
 			moneyPrefix={true}
 			color="heading"
 			fontSize="var(--font-size-0)"

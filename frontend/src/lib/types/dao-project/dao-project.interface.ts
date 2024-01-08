@@ -19,10 +19,7 @@ export interface DAOProject {
 	funding: {
 		numbers: number[];
 		total_funding: number;
-		funders: {
-			address: string;
-			amount: number;
-		}
+		funders: { [address: string]: { amount: number; num_nfts: number } }
 	}
 }
 

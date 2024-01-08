@@ -7,7 +7,13 @@
 
 	$: fundersEntries = Object.entries(daoData.funding.funders);
 	$: mainFunderEntries = fundersEntries
-		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
+		.sort((a, b) =>
+			Number(a[1].amount) < Number(b[1].amount)
+				? 1
+				: Number(a[1].amount) > Number(b[1].amount)
+				? -1
+				: 0
+		)
 		.slice(0, 10);
 
 	async function fetchFindProfiles() {
@@ -20,12 +26,12 @@
 <div class="column-2 align-start">
 	{#if mainFunderEntries.length > 0}
 		{#await fetchFindProfiles()}
-			{#each mainFunderEntries as [address, balance]}
-				<UserBalanceListElement {address} {balance} />
+			{#each mainFunderEntries as [address, { amount }]}
+				<UserBalanceListElement {address} balance={amount} />
 			{/each}
 		{:then findProfiles}
-			{#each mainFunderEntries as [address, balance]}
-				<UserBalanceListElement findProfile={findProfiles[address]} {address} {balance} />
+			{#each mainFunderEntries as [address, { amount }]}
+				<UserBalanceListElement findProfile={findProfiles[address]} {address} balance={amount} />
 			{/each}
 		{/await}
 	{:else}

@@ -24,7 +24,7 @@
 			{#each mainHoldersEntries as [address, balance]}
 				<UserBalanceListElement
 					{address}
-					{balance}
+					balance={Number(balance)}
 					tokenSymbol={daoData.generalInfo.token_symbol}
 				/>
 			{/each}
@@ -33,7 +33,7 @@
 				<UserBalanceListElement
 					findProfile={findProfiles[address]}
 					{address}
-					{balance}
+					balance={Number(balance)}
 					tokenSymbol={daoData.generalInfo.token_symbol}
 				/>
 			{/each}

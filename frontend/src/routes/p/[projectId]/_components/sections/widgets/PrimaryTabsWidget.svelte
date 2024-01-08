@@ -4,6 +4,7 @@
 	import { Tab, TabList, TabPanel, Tabs, TooltipIcon } from '@emerald-dao/component-library';
 	import MainHoldersLeaderboard from '$components/dao-data-blocks/holders/leaderboard/MainHoldersLeaderboard.svelte';
 	import MainFundersLeaderboard from '$components/dao-data-blocks/funders/leaderboard/MainFundersLeaderboard.svelte';
+	import NFTDonorsLeaderboard from '$components/dao-data-blocks/funders/leaderboard/NFTDonorsLeaderboard.svelte';
 
 	export let daoData: DAOProject;
 </script>
@@ -12,6 +13,7 @@
 	<Tabs>
 		<TabList>
 			<Tab>Funders</Tab>
+			<Tab>NFT Donors</Tab>
 			{#if daoData.hasToken}
 				<Tab>Holders</Tab>
 				<Tab>Liquidity Pools</Tab>
@@ -19,6 +21,9 @@
 		</TabList>
 		<TabPanel>
 			<MainFundersLeaderboard {daoData} />
+		</TabPanel>
+		<TabPanel>
+			<NFTDonorsLeaderboard {daoData} />
 		</TabPanel>
 		{#if daoData.hasToken}
 			<TabPanel>
