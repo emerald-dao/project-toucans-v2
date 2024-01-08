@@ -6,14 +6,15 @@ import { get } from 'svelte/store';
 
 export const ssr = false;
 
-export async function load() {
+export async function load({ depends }) {
+    depends('app:admin');
     if (get(user).loggedIn) {
         const { data } = await supabase.from('projects').select().eq('owner', get(user).addr).eq('network', network);
 
         if (!data || !data.length) {
-            return
+            return {}
         }
         throw redirect(302, `/admin/${data[0].project_id}`);
     }
-    throw redirect(302, `/admin/error`)
+    return {}
 }
