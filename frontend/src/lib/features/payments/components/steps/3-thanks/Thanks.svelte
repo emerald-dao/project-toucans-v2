@@ -15,9 +15,15 @@
 		<p>
 			{#if $paymentData.type === 'donation'}
 				{`You donated`}
-				<span class="strong">
-					{`${$paymentData.amount} $${$paymentData.currency}`}
-				</span>
+				{#if $paymentData.currency === 'NFTs' && $paymentData.NFTs && $paymentData.NFTCollection}
+					<span class="strong">
+						{`${$paymentData.NFTs.length} NFTs from ${$paymentData.NFTCollection} collection`}
+					</span>
+				{:else}
+					<span class="strong">
+						{`${$paymentData.amount} $${$paymentData.currency}`}
+					</span>
+				{/if}
 				to
 				<span class="strong">
 					{`${$paymentData.daoName}.`}

@@ -22,10 +22,12 @@
 	</div>
 	<div class="column align-start">
 		<h4>{daoData.projects.name}</h4>
-		<div class="row-2">
-			Treasury Value:
-			<Currency amount={daoData.treasury_value} moneyPrefix color="heading" decimalNumbers={2} />
-		</div>
+		{#if daoData.treasury_value}
+			<div class="row-2">
+				Treasury Value:
+				<Currency amount={daoData.treasury_value} moneyPrefix color="heading" decimalNumbers={2} />
+			</div>
+		{/if}
 		{#if daoData.price && daoData.price >= 0.01}
 			<div class="row-0">
 				<Label size="small" color="tertiary" hasBorder={false}>

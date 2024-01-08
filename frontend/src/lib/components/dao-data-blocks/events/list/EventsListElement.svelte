@@ -43,7 +43,17 @@
 			text: 'Donate',
 			color: 'primary'
 		},
+		DonateNFT: {
+			icon: 'tabler:heart-handshake',
+			text: 'Donate',
+			color: 'primary'
+		},
 		Withdraw: {
+			icon: 'tabler:circle-arrow-up-right',
+			text: 'Withdraw',
+			color: 'alert'
+		},
+		WithdrawNFTs: {
 			icon: 'tabler:circle-arrow-up-right',
 			text: 'Withdraw',
 			color: 'alert'
@@ -105,7 +115,7 @@
 		</div>
 	</div>
 	<div class="row-3">
-		{#if (event.type === 'Purchase' || event.type === 'Donate') && event.data.message}
+		{#if (event.type === 'Purchase' || event.type === 'Donate' || event.type === 'DonateNFT') && event.data.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>
@@ -114,10 +124,10 @@
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
 		{/if}
-		{#if event.type === 'Purchase' || event.type === 'Donate'}
+		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'DonateNFT'}
 			<WalletLabel address={event.data.by} find={findNames[event.data.by]} />
 		{/if}
-		{#if event.type === 'Withdraw' || event.type === 'Mint' || event.type === 'LockTokens'}
+		{#if event.type === 'Withdraw' || event.type === 'Mint' || event.type === 'LockTokens' || event.type === 'WithdrawNFTs'}
 			<WalletLabel address={event.data.to} find={findNames[event.data.to]} />
 		{/if}
 		{#if (event.type === 'BatchWithdraw' || event.type === 'BatchMint') && event.data.amounts}
@@ -138,7 +148,18 @@
 				fontSize="0.85rem"
 				decimalNumbers={2}
 			/>
-		{:else if event.type === 'NewFundingCycle'}
+		{/if}
+		{#if event.type === 'DonateNFT' || event.type === 'WithdrawNFTs'}
+			<Currency
+				amount={event.type === 'WithdrawNFTs'
+					? -Number(event.data.amount)
+					: Number(event.data.amount)}
+				currency={event.data.contractName}
+				color="heading"
+				fontSize="0.85rem"
+			/>
+		{/if}
+		{#if event.type === 'NewFundingCycle'}
 			<SeeRoundDetailsModal
 				round={daoData.onChainData.fundingCycles[Number(event.data.newCycleId)]}
 				projectToken={daoData.generalInfo.token_symbol}

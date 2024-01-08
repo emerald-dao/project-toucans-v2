@@ -14,11 +14,9 @@
 	export let cycleIndex: number;
 
 	$: adminData = getContext('admin-data') as {
-		activeDao: Writable<number>;
 		userDaos: Writable<DAOProject[]>;
 	};
 
-	$: activeDao = adminData.activeDao;
 	$: userDaos = adminData.userDaos;
 
 	$: issuanceRate = Number(round.details.issuanceRate);
@@ -45,7 +43,7 @@
 		formData.startDate = round.details.timeframe.startTime;
 		formData.endDate = round.details.timeframe.endTime || '0';
 		formData.reserveRate = reserveRate;
-		formData.projectId = $userDaos[$activeDao].generalInfo.project_id;
+		formData.projectId = $userDaos[0].generalInfo.project_id;
 		formData.cycleIndex = cycleIndex;
 
 		infiniteRound = round.details.timeframe.endTime === null;
@@ -86,7 +84,7 @@
 		<div class="content-wrapper">
 			<div class="column-4">
 				<EditRoundDatePicker
-					rounds={$userDaos[$activeDao].onChainData.fundingCycles}
+					rounds={$userDaos[0].onChainData.fundingCycles}
 					bind:infiniteDuration={infiniteRound}
 					cycleId={round.details.cycleId}
 					minStartTimePlus5Minutes={new Date()}
@@ -111,12 +109,12 @@
 				<label for="issuance-rate">
 					Issuance rate
 					<em>
-						(current rate: {issuanceRate} ${$userDaos[$activeDao].generalInfo.token_symbol})
+						(current rate: {issuanceRate} ${$userDaos[0].generalInfo.token_symbol})
 					</em>
 				</label>
 				<CurrencyInput
 					name="issuance-rate"
-					currency={$userDaos[$activeDao].generalInfo.token_symbol}
+					currency={$userDaos[0].generalInfo.token_symbol}
 					bind:value={formData.issuanceRate}
 					on:input={handleChange}
 					isValid={res.isValid('issuance-rate')}
@@ -135,13 +133,13 @@
 					>Funding target
 					<em>
 						(current target: {fundingTarget === 0 ? '∞' : fundingTarget}
-						${$userDaos[$activeDao].onChainData.paymentCurrency})
+						${$userDaos[0].onChainData.paymentCurrency})
 					</em>
 				</label>
 				<span class="xsmall"><em>* Put a 0 to make the target infinite</em></span>
 				<CurrencyInput
 					name="funding-target"
-					currency={$userDaos[$activeDao].onChainData.paymentCurrency}
+					currency={$userDaos[0].onChainData.paymentCurrency}
 					bind:value={formData.fundingTarget}
 					on:input={handleChange}
 					isValid={res.isValid('funding-target')}

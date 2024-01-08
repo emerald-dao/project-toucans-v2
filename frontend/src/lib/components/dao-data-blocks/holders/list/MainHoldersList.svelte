@@ -18,7 +18,7 @@
 	}
 </script>
 
-<div class="column-2 align-start">
+<div class="main-wrapper column-2 align-start">
 	{#if mainHoldersEntries.length > 0 && daoData.generalInfo.token_symbol}
 		{#await fetchFindProfiles()}
 			{#each mainHoldersEntries as [address, balance]}

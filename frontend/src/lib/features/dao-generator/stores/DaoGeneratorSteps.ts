@@ -8,7 +8,8 @@ import {
 	Tokenomics,
 	ReviewAndDeploy,
 	EditDelay,
-	PreferredCurrency
+	PreferredCurrency,
+	NFTCollections
 } from '../components/steps';
 import { get } from 'svelte/store';
 import { daoAndTokenGeneratorData } from './DaoAndTokenGeneratorData';
@@ -35,6 +36,14 @@ export const daoAndTokenGeneratorSteps = createSteps([
 		name: 'Socials',
 		slug: 'socials',
 		component: Socials,
+		action: null,
+		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'NFT Collections',
+		slug: 'nft-collections',
+		component: NFTCollections,
 		action: null,
 		form: true,
 		state: 'inactive'
@@ -86,6 +95,14 @@ export const daoGeneratorSteps = createSteps([
 		name: 'Socials',
 		slug: 'socials',
 		component: Socials,
+		action: null,
+		form: true,
+		state: 'inactive'
+	},
+	{
+		name: 'NFT Collections',
+		slug: 'nft-collections',
+		component: NFTCollections,
 		action: null,
 		form: true,
 		state: 'inactive'

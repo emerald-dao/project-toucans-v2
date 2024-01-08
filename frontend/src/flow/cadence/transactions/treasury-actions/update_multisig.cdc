@@ -7,12 +7,14 @@ import Toucans from "../../Toucans.cdc"
 
 transaction(projectOwner: Address, projectId: String, newSigners: [Address], newThreshold: UInt64) {
 
-  let Project: &Toucans.Project
+  let Project: &Toucans.Project{Toucans.ProjectPublic}
   
-  prepare(owner: AuthAccount) {
-    let collection = owner.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
-                    ?? panic("A DAOTreasury doesn't exist here.")
-    self.Project = collection.borrowProject(projectId: projectId) ?? panic("Project does not exist.")
+  prepare(signer: AuthAccount) {
+    let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
+                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+                  ?? panic("This is an incorrect address for project owner.")
+    self.Project = projectCollection.borrowProjectPublic(projectId: projectId)
+                  ?? panic("Project does not exist, at least in this collection.")
   }
 
   execute {

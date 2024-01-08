@@ -12,7 +12,8 @@ export const emptyDaoGeneratorData: DaoOnlyGeneratorData = {
 		twitter: '',
 		discord: '',
 		logo: undefined,
-		bannerImage: undefined
+		bannerImage: undefined,
+		allowedNFTCollections: []
 	},
 	tokenomics: {
 		paymentCurrency: ECurrencies.FLOW

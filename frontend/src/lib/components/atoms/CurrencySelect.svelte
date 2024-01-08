@@ -6,7 +6,11 @@
 <div class="radio-tabs" id="currencies">
 	{#each currencies as currency}
 		<label>
-			<span>{`$${currency}`}</span>
+			{#if currency === 'NFTs'}
+				<span>{`${currency}`}</span>
+			{:else}
+				<span>{`$${currency}`}</span>
+			{/if}
 			<input type="radio" id={currency} name="currency" value={currency} bind:group={value} />
 		</label>
 	{/each}

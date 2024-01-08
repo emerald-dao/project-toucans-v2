@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -20,10 +21,10 @@
 		<div class="card-primary row-space-between align-center">
 			<Currency {amount} currency={tokenName} />
 			<Icon icon="tabler:arrow-narrow-right" />
-			<span>{forAccount}</span>
+			<UserAvatar address={forAccount} />
 		</div>
 		<div class="clickable" on:click={deleteDist} on:keydown>
-			<Icon icon="tabler:circle-x" />
+			<Icon class="header-link" icon="tabler:x" />
 		</div>
 	</div>
 </div>
@@ -35,10 +36,7 @@
 		.card-primary {
 			width: 100%;
 			padding: var(--space-4) var(--space-6);
-
-			span {
-				font-size: var(--font-size-0);
-			}
+			border-radius: var(--radius-1);
 		}
 
 		.clickable {

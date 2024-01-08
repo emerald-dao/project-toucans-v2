@@ -9,8 +9,9 @@
 	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
 	import VotingsWidget from './widgets/VotingsWidget.svelte';
-	import MainFundersWidget from './widgets/MainFundersWidget.svelte';
 	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
+	import NftsTreasuryWidget from './widgets/NftsTreasuryWidget.svelte';
+	import { getProjectNFTTreasury } from '$flow/actions';
 
 	export let daoData: DAOProject;
 
@@ -59,6 +60,11 @@
 					: null}
 			/>
 		{/if}
+		{#await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id) then NFTs}
+			{#if Object.keys(NFTs).length > 0}
+				<NftsTreasuryWidget {NFTs} pageSize={4} />
+			{/if}
+		{/await}
 		<ProjectCharts {daoData} />
 		<ProjectLists {daoData} />
 	</div>
