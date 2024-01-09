@@ -101,11 +101,7 @@ pub contract ToucansActions {
       self.collectionType = collectionType
       self.recipientCollection = recipientCollection
       self.nftIDs = nftIDs
-      let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collectionType.identifier)
-      let contractAddress = nameAndAddress[0] as! Address
-      let contractName = nameAndAddress[1] as! String
-
-      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromContractNameAndAddress(contractName: contractName, contractAddress: contractAddress)
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collectionType.identifier)
       let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
       self.collectionIdentifier = nftCatalogCollectionIdentifier
       self.collectionName = nftCatalogEntry.collectionDisplay.name

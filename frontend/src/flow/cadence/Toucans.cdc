@@ -953,12 +953,8 @@ pub contract Toucans {
                                    
 
     pub fun donateNFTToTreasury(collection: @NonFungibleToken.Collection, sender: Address, message: String) {
-      let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collection.getType().identifier)
-      let contractAddress: Address = nameAndAddress[0] as! Address
-      let contractName: String = nameAndAddress[1] as! String
-
       // make sure this DAO accepts this nft type
-      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromContractNameAndAddress(contractName: contractName, contractAddress: contractAddress)
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collection.getType().identifier)
       let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
       assert(self.getAllowedNFTCollections().contains(nftCatalogCollectionIdentifier), message: "This DAO does not accept this NFT type.")
       
@@ -979,7 +975,7 @@ pub contract Toucans {
       let nftTreasury = self.borrowNFTTreasury()!
 
       if nftTreasury[collection.getType()] == nil {
-        let nftContract = getAccount(contractAddress).contracts.borrow<&NonFungibleToken>(name: contractName)!
+        let nftContract = getAccount(nftCatalogEntry.contractAddress).contracts.borrow<&NonFungibleToken>(name: nftCatalogEntry.contractName)!
         nftTreasury[collection.getType()] <-! nftContract.createEmptyCollection()
       }
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collection.getType())!
