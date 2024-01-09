@@ -11,9 +11,9 @@
 
 	let pageMove: 'next' | 'previous' = 'next';
 
-	const mainFundersEntries = Object.entries(daoData.funding.funders).sort(
-		(a, b) => Number(b[1].num_nfts) - Number(a[1].num_nfts)
-	);
+	const mainFundersEntries = Object.entries(daoData.funding.funders)
+		.filter((ele) => ele[1].num_nfts > 0)
+		.sort((a, b) => Number(b[1].num_nfts) - Number(a[1].num_nfts));
 </script>
 
 <div>
