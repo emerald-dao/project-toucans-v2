@@ -9,6 +9,9 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
       if let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionID) {
         let publicPath = data.collectionData.publicPath
         if let userCollection = publicAccount.getCapability(publicPath).borrow<&{MetadataViews.ResolverCollection}>() {
+            if userCollection.getIDs().length == 0 {
+                continue
+            }
             let nfts: [NFTData] = []
             for id in userCollection.getIDs() {
                 let nft = userCollection.borrowViewResolver(id: id)

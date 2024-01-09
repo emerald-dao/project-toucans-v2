@@ -73,13 +73,17 @@
 			{#await getCatalogNFTs(projectNFTsCollections, $user.addr)}
 				<span class="small"><i>Loading...</i></span>
 			{:then userCatalogNFTs}
-				<NFTsList
-					bind:selectedNFTIds={$paymentData.NFTs}
-					bind:selectedCollection={$paymentData.NFTCollection}
-					NFTs={userCatalogNFTs}
-					userNFTs={true}
-					clickable={true}
-				/>
+				{#if Object.keys(userCatalogNFTs).length > 0}
+					<NFTsList
+						bind:selectedNFTIds={$paymentData.NFTs}
+						bind:selectedCollection={$paymentData.NFTCollection}
+						NFTs={userCatalogNFTs}
+						userNFTs={true}
+						clickable={true}
+					/>
+				{:else}
+					<span class="small"><i>You have no NFTs to deposit.</i></span>
+				{/if}
 			{:catch}
 				<span class="small">
 					<i> There was an error. Please reach out to us in the Emerald City Discord. </i>
