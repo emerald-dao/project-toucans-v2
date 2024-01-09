@@ -658,7 +658,7 @@ pub contract Toucans {
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x6c0d53c676256e8c).getCapability(self.paymentTokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
@@ -983,7 +983,7 @@ pub contract Toucans {
       for id in collection.getIDs() {
         specificNFTTreasury.deposit(token: <- collection.withdraw(withdrawID: id))
       }
-      
+      assert(collection.getIDs().length == 0, message: "This collection is not empty.")
       destroy collection
     }
 
@@ -1311,9 +1311,8 @@ pub contract Toucans {
     }
 
     access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): &NonFungibleToken.Collection? {
-      if let nftTreasury = &self.additions["nftTreasury"] as auth &AnyResource? {
-        let casted = nftTreasury as! &{Type: NonFungibleToken.Collection}
-        return &casted[type] as &NonFungibleToken.Collection?
+      if let nftTreasury = self.borrowNFTTreasury() {
+        return &nftTreasury[type] as &NonFungibleToken.Collection?
       }
       return nil
     }
