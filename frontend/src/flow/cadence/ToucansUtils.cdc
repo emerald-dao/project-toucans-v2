@@ -121,4 +121,16 @@ pub contract ToucansUtils {
     let estimatedSwapPoolCap = (estimatedSwapOutStable>estimatedSwapOutV1)? poolCapStable:poolCapV1
     return estimatedSwapPoolCap
   }
+
+  pub fun getNFTCatalogCollectionIdentifierFromContractNameAndAddress(contractName: String, contractAddress: Address): String {
+    let contractAddressToString: String = contractAddress.toString()
+    let nftTypeIdentifier: String = "A."
+      .concat(contractAddressToString.slice(from: 2, upTo: contractAddressToString.length))
+      .concat(".")
+      .concat(contractName)
+      .concat(".NFT")
+    let collectionsForType: {String: Bool} = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier) ?? panic("This collection is not supported in the NFTCatalog.")
+    let collectionIdentifier: String = collectionsForType.keys[0]
+    return collectionIdentifier
+  }
 }

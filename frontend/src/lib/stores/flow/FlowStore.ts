@@ -66,7 +66,7 @@ const contractData = {
 	},
 	Toucans: {
 		emulator: '0xf8d6e0586b0a20c7',
-		testnet: '0x04525cc647ef7524',
+		testnet: '0x918c2008c16da416',
 		mainnet: '0x577a3c409c5dcb5e'
 	},
 	SwapUtils: {

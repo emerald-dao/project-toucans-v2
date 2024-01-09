@@ -1,6 +1,7 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
 
 pub contract ToucansActions {
 
@@ -80,11 +81,13 @@ pub contract ToucansActions {
     pub let collectionType: Type
     pub let recipientCollection: Capability<&{NonFungibleToken.Receiver}>
     pub let nftIDs: [UInt64]
-    pub let contractAddress: Address
-    pub let contractName: String
+    pub let collectionIdentifier: String
+    pub let collectionName: String
+    pub let collectionExternalURL: String
+    pub let extra: {String: AnyStruct}
 
     pub fun getIntent(): String {
-      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.contractName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
+      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.collectionName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
     }
 
     pub fun getTitle(): String {
@@ -99,8 +102,15 @@ pub contract ToucansActions {
       self.recipientCollection = recipientCollection
       self.nftIDs = nftIDs
       let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collectionType.identifier)
-      self.contractAddress = nameAndAddress[0] as! Address
-      self.contractName = nameAndAddress[1] as! String
+      let contractAddress = nameAndAddress[0] as! Address
+      let contractName = nameAndAddress[1] as! String
+
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromContractNameAndAddress(contractName: contractName, contractAddress: contractAddress)
+      let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
+      self.collectionIdentifier = nftCatalogCollectionIdentifier
+      self.collectionName = nftCatalogEntry.collectionDisplay.name
+      self.collectionExternalURL = nftCatalogEntry.collectionDisplay.externalURL.url
+      self.extra = {}
     }
   }
 

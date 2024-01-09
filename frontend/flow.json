@@ -1,11 +1,9 @@
 {
 	"contracts": {
-		"stFlowToken": {
-			"source": "./src/flow/cadence/utility/stFlowToken.cdc",
+		"ChinoNFT": {
+			"source": "./src/flow/cadence/utility/ChinoNFT.cdc",
 			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "e45c64ecfe31e465",
-				"mainnet": "d6f80565193ad727"
+				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"EmeraldIdentity": {
@@ -34,12 +32,6 @@
 		},
 		"ExampleNFT": {
 			"source": "./src/flow/cadence/utility/ExampleNFT.cdc",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
-			}
-		},
-		"ChinoNFT": {
-			"source": "./src/flow/cadence/utility/ChinoNFT.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
@@ -176,7 +168,6 @@
 			"source": "./src/flow/cadence/Toucans.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "04525cc647ef7524",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -184,7 +175,6 @@
 			"source": "./src/flow/cadence/ToucansActions.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "04525cc647ef7524",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -192,24 +182,21 @@
 			"source": "./src/flow/cadence/ToucansLockTokens.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "577a3c409c5dcb5e",
-				"testnet": "04525cc647ef7524"
+				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
 		"ToucansTokens": {
 			"source": "./src/flow/cadence/ToucansTokens.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "577a3c409c5dcb5e",
-				"testnet": "04525cc647ef7524"
+				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
 		"ToucansUtils": {
 			"source": "./src/flow/cadence/ToucansUtils.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "577a3c409c5dcb5e",
-				"testnet": "04525cc647ef7524"
+				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
 		"ViewResolver": {
@@ -218,6 +205,14 @@
 				"emulator": "f8d6e0586b0a20c7",
 				"mainnet": "1d7e57aa55817448",
 				"testnet": "9a0766d93b6608b7"
+			}
+		},
+		"stFlowToken": {
+			"source": "./src/flow/cadence/utility/stFlowToken.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "d6f80565193ad727",
+				"testnet": "e45c64ecfe31e465"
 			}
 		}
 	},
@@ -239,7 +234,7 @@
 			}
 		},
 		"testnet-account": {
-			"address": "04525cc647ef7524",
+			"address": "918c2008c16da416",
 			"key": {
 				"type": "file",
 				"location": "testnet-account.pkey"
@@ -277,6 +272,8 @@
 		},
 		"testnet": {
 			"testnet-account": [
+				"ToucansTokens",
+				"ToucansLockTokens",
 				"ToucansUtils",
 				"ToucansActions",
 				"Toucans"

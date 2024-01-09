@@ -70,8 +70,9 @@ pub contract Toucans {
     projectId: String,
     projectOwner: Address, 
     amount: UInt64,
-    contractName: String,
-    contractAddress: Address,
+    collectionIdentifier: String,
+    collectionName: String,
+    collectionExternalURL: String,
     by: Address,
     message: String
   )
@@ -97,8 +98,9 @@ pub contract Toucans {
   pub event WithdrawNFTs(
     projectId: String,
     projectOwner: Address, 
-    contractName: String,
-    contractAddress: Address,
+    collectionIdentifier: String,
+    collectionName: String,
+    collectionExternalURL: String,
     amount: UInt64,
     to: Address
   )
@@ -380,6 +382,7 @@ pub contract Toucans {
       for id in nftIDs {
         assert(existingIDs.contains(id), message: "The NFT ID ".concat(id.toString()).concat(" does not exist in the NFT Treasury."))
       }
+      
       let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection)
       self.multiSignManager.createMultiSign(action: action)
     }
@@ -482,7 +485,7 @@ pub contract Toucans {
           case Type<ToucansActions.WithdrawNFTs>():
             let withdraw: ToucansActions.WithdrawNFTs = action as! ToucansActions.WithdrawNFTs
             let recipientCollection: &{NonFungibleToken.Receiver} = withdraw.recipientCollection.borrow()!
-            self.withdrawNFTsFromTreasury(collectionType: withdraw.collectionType, collection: recipientCollection, nftIDs: withdraw.nftIDs, contractName: withdraw.contractName, contractAddress: withdraw.contractAddress)
+            self.withdrawNFTsFromTreasury(collectionType: withdraw.collectionType, collection: recipientCollection, nftIDs: withdraw.nftIDs, collectionIdentifier: withdraw.collectionIdentifier, collectionName: withdraw.collectionName, collectionExternalURL: withdraw.collectionExternalURL)
           case Type<ToucansActions.MintTokens>():
             let mint: ToucansActions.MintTokens = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
@@ -655,7 +658,7 @@ pub contract Toucans {
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0xf8d6e0586b0a20c7).getCapability(self.paymentTokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(0x6c0d53c676256e8c).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
@@ -955,22 +958,17 @@ pub contract Toucans {
       let contractName: String = nameAndAddress[1] as! String
 
       // make sure this DAO accepts this nft type
-      let contractAddressToString: String = contractAddress.toString()
-      let nftTypeIdentifier: String = "A."
-        .concat(contractAddressToString.slice(from: 2, upTo: contractAddressToString.length))
-        .concat(".")
-        .concat(contractName)
-        .concat(".NFT")
-      let collectionsForType: {String: Bool} = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier) ?? panic("This collection is not supported in the NFTCatalog.")
-      let collectionIdentifier: String = collectionsForType.keys[0]
-      assert(self.getAllowedNFTCollections().contains(collectionIdentifier), message: "This DAO does not accept this NFT type.")
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromContractNameAndAddress(contractName: contractName, contractAddress: contractAddress)
+      let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
+      assert(self.getAllowedNFTCollections().contains(nftCatalogCollectionIdentifier), message: "This DAO does not accept this NFT type.")
       
       emit DonateNFT(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
         amount: UInt64(collection.getIDs().length),
-        contractName: contractName,
-        contractAddress: contractAddress,
+        collectionIdentifier: nftCatalogCollectionIdentifier,
+        collectionName: nftCatalogEntry.collectionDisplay.name,
+        collectionExternalURL: nftCatalogEntry.collectionDisplay.externalURL.url,
         by: sender,
         message: message
       )
@@ -993,12 +991,13 @@ pub contract Toucans {
       destroy collection
     }
 
-    access(self) fun withdrawNFTsFromTreasury(collectionType: Type, collection: &{NonFungibleToken.Receiver}, nftIDs: [UInt64], contractName: String, contractAddress: Address) {
+    access(self) fun withdrawNFTsFromTreasury(collectionType: Type, collection: &{NonFungibleToken.Receiver}, nftIDs: [UInt64], collectionIdentifier: String, collectionName: String, collectionExternalURL: String) {
       emit WithdrawNFTs(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        contractName: contractName,
-        contractAddress: contractAddress,
+        collectionIdentifier: collectionIdentifier,
+        collectionName: collectionName,
+        collectionExternalURL: collectionExternalURL,
         amount: UInt64(nftIDs.length),
         to: collection.owner!.address
       )
