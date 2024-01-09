@@ -150,14 +150,16 @@
 			/>
 		{/if}
 		{#if event.type === 'DonateNFT' || event.type === 'WithdrawNFTs'}
-			<Currency
-				amount={event.type === 'WithdrawNFTs'
-					? -Number(event.data.amount)
-					: Number(event.data.amount)}
-				currency={event.data.contractName}
-				color="heading"
-				fontSize="0.85rem"
-			/>
+			<a href={event.data.collectionExternalURL} target="_blank" style="text-decoration: none;">
+				<Currency
+					amount={event.type === 'WithdrawNFTs'
+						? -Number(event.data.amount)
+						: Number(event.data.amount)}
+					currency={event.data.collectionIdentifier}
+					color="heading"
+					fontSize="0.85rem"
+				/>
+			</a>
 		{/if}
 		{#if event.type === 'NewFundingCycle'}
 			<SeeRoundDetailsModal

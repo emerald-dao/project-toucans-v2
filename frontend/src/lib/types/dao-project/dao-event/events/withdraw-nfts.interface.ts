@@ -5,8 +5,9 @@ export interface WithdrawNFTsEvent extends BaseEvent {
 	data: {
 		to: string;
 		amount: string;
-		contractName: string;
-		contractAddress: string;
+		collectionIdentifier: string;
+		collectionName: string;
+		collectionExternalURL: string;
 		projectOwner: string;
 	};
 }

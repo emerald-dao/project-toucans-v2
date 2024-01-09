@@ -5,8 +5,9 @@ export interface DonateNFTsEvent extends BaseEvent {
 	data: {
 		amount: string;
 		message: string;
-		contractName: string;
-		contractAddress: string;
+		collectionIdentifier: string;
+		collectionName: string;
+		collectionExternalURL: string;
 		projectOwner: string;
 		by: string;
 	};
