@@ -4,11 +4,11 @@ import MetadataViews from "../utility/MetadataViews.cdc"
 
 pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]} {
   let res: {String: [NFTData]} = {}
-  let publicAccount = getAccount(user)
+  let authAccount = getAuthAccount(user)
   for collectionID in collectionIdentifiers {
       if let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionID) {
-        let publicPath = data.collectionData.publicPath
-        if let userCollection = publicAccount.getCapability(publicPath).borrow<&{MetadataViews.ResolverCollection}>() {
+        let storagePath = data.collectionData.storagePath
+        if let userCollection = authAccount.borrow<&{MetadataViews.ResolverCollection}>(from: storagePath) {
             if userCollection.getIDs().length == 0 {
                 continue
             }
