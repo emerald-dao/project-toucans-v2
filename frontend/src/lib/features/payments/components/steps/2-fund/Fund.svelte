@@ -11,7 +11,6 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import FeeWarning from '../../atoms/FeeWarning.svelte';
 	import { getCatalogNFTs } from '$flow/actions';
-	import { onMount } from 'svelte';
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import { user } from '$stores/flow/FlowStore';
 
@@ -39,16 +38,6 @@
 	} else if (daoData.generalInfo.token_symbol) {
 		currencies = [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol, 'NFTs'];
 	}
-
-	let userCatalogNFTs: {
-		[collectionIdentifier: string]: { id: string; name: string; thumbnail: string }[];
-	};
-
-	onMount(async () => {
-		if ($user.addr) {
-			userCatalogNFTs = await getCatalogNFTs(projectNFTsCollections, $user.addr);
-		}
-	});
 
 	$: if ($paymentData.NFTs && $paymentData.currency === 'NFTs') {
 		if ($paymentData.NFTs.length > 0) {
@@ -81,13 +70,21 @@
 				<em> Please log in to your account to view your NFTs collections! </em>
 			</p>
 		{:else}
-			<NFTsList
-				bind:selectedNFTIds={$paymentData.NFTs}
-				bind:selectedCollection={$paymentData.NFTCollection}
-				NFTs={userCatalogNFTs}
-				userNFTs={true}
-				clickable={true}
-			/>
+			{#await getCatalogNFTs(projectNFTsCollections, $user.addr)}
+				<span class="small"><i>Loading...</i></span>
+			{:then userCatalogNFTs}
+				<NFTsList
+					bind:selectedNFTIds={$paymentData.NFTs}
+					bind:selectedCollection={$paymentData.NFTCollection}
+					NFTs={userCatalogNFTs}
+					userNFTs={true}
+					clickable={true}
+				/>
+			{:catch}
+				<span class="small">
+					<i> There was an error. Please reach out to us in the Emerald City Discord. </i>
+				</span>
+			{/await}
 		{/if}
 	{:else}
 		<CurrencyInput
