@@ -181,7 +181,6 @@ pub contract ExampleToken: FungibleToken {
       _editDelay: UFix64,
       _minting: Bool,
       _initialTreasurySupply: UFix64,
-      _initialAllowedNFTCollections: [String],
       _maxSupply: UFix64?,
       _extra: {String: AnyStruct}
     ) {
@@ -224,7 +223,6 @@ pub contract ExampleToken: FungibleToken {
         editDelay: _editDelay,
         minting: _minting,
         initialTreasurySupply: _initialTreasurySupply,
-        initialAllowedNFTCollections: _initialAllowedNFTCollections,
         extra: _extra
       )
 

@@ -34,7 +34,9 @@ transaction(
     }
 
     // Blank empty for now
-    let extra: {String: AnyStruct} = {}
+    let extra: {String: AnyStruct} = {
+      "initialAllowedNFTCollections": initialAllowedNFTCollections
+    }
 
     deployer.contracts.add(
       name: contractName,
@@ -43,7 +45,6 @@ transaction(
       _editDelay: editDelay,
       _minting: minting,
       _initialTreasurySupply: initialTreasurySupply,
-      _initialAllowedNFTCollections: initialAllowedNFTCollections,
       _maxSupply: maxSupply,
       _extra: extra
     )

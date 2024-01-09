@@ -1428,9 +1428,12 @@ pub contract Toucans {
       editDelay: UFix64,
       minting: Bool,
       initialTreasurySupply: UFix64,
-      initialAllowedNFTCollections: [String],
       extra: {String: AnyStruct}
     ) {
+      var initialAllowedNFTCollections: [String] = []
+      if let ianc = extra["initialAllowedNFTCollections"] {
+        initialAllowedNFTCollections = ianc as! [String]
+      }
       let projectId: String = projectTokenInfo.contractName
       let project: @Project <- create Project(
         projectId: projectId, 
