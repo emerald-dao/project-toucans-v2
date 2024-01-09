@@ -3,6 +3,9 @@ import Crypto
 import ToucansTokens from "./ToucansTokens.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
 import ToucansActions from "./ToucansActions.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import ToucansLockTokens from "./ToucansLockTokens.cdc"
+import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 
 pub contract Toucans {
 
@@ -17,9 +20,15 @@ pub contract Toucans {
     }
   }
 
+  pub resource DummyMinter: Minter {
+    pub fun mint(amount: UFix64): @FungibleToken.Vault {
+      return <- FlowToken.createEmptyVault()
+    }
+  }
+
   pub event ProjectCreated(
     projectId: String,
-    tokenTypeIdentifier: String,
+    tokenTypeIdentifier: String?,
     by: Address
   )
 
@@ -53,6 +62,16 @@ pub contract Toucans {
     message: String
   )
 
+  pub event DonateNFT(
+    projectId: String,
+    projectOwner: Address, 
+    amount: UInt64,
+    contractName: String,
+    contractAddress: Address,
+    by: Address,
+    message: String
+  )
+
   // Multi Sign Actions
   pub event Withdraw(
     projectId: String,
@@ -70,6 +89,14 @@ pub contract Toucans {
     amounts: {Address: UFix64},
     amount: UFix64,
     failed: [Address]
+  )
+  pub event WithdrawNFTs(
+    projectId: String,
+    projectOwner: Address, 
+    contractName: String,
+    contractAddress: Address,
+    amount: UInt64,
+    to: Address
   )
   pub event Mint(
     projectId: String,
@@ -94,6 +121,15 @@ pub contract Toucans {
     currentCycle: UInt64?,
     tokenSymbol: String,
     amount: UFix64
+  )
+  pub event LockTokens(
+    projectId: String,
+    by: Address, 
+    to: Address,
+    currentCycle: UInt64?,
+    tokenSymbol: String,
+    amount: UFix64,
+    unlockTime: UFix64
   )
   pub event AddSigner(projectId: String, signer: Address)
   pub event RemoveSigner(projectId: String, signer: Address)
@@ -201,27 +237,30 @@ pub contract Toucans {
 
   pub resource interface ProjectPublic {
     pub let projectId: String
-    pub let projectTokenInfo: ToucansTokens.TokenInfo
+    pub var projectTokenInfo: ToucansTokens.TokenInfo
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     pub var totalFunding: UFix64
-    pub let editDelay: UFix64
+    pub var editDelay: UFix64
     pub var purchasing: Bool
     pub let minting: Bool
 
     // Setters
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64])
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
-    pub fun proposeBurn(amount: UFix64)
+    pub fun proposeBurn(tokenType: Type, amount: UFix64)
     pub fun proposeAddSigner(signer: Address)
     pub fun proposeRemoveSigner(signer: Address)
     pub fun proposeUpdateThreshold(threshold: UInt64)
     // If the action is ready to execute, then allow anyone to do it.
     pub fun finalizeAction(actionUUID: UInt64)
     pub fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
+    pub fun donateNFTToTreasury(collection: @NonFungibleToken.Collection, sender: Address, message: String)
     pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
     pub fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
     pub fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
+    pub fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver})
     
     // Getters
     pub fun getCurrentIssuanceRate(): UFix64?
@@ -232,19 +271,24 @@ pub contract Toucans {
     pub fun getVaultTypesInTreasury(): [Type]
     pub fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
     pub fun getExtra(): {String: AnyStruct}
+    pub fun getCompletedActionIds(): {UInt64: Bool}
     pub fun getFunders(): {Address: UFix64}
     pub fun getOverflowBalance(): UFix64
     pub fun borrowManagerPublic(): &Manager{ManagerPublic}
+    pub fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}?
+    pub fun hasTokenContract(): Bool
+    pub fun getCollectionTypesInTreasury(): [Type]
+    pub fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT]
   }
 
   pub resource Project: ProjectPublic {
     pub let projectId: String
-    pub let projectTokenInfo: ToucansTokens.TokenInfo
+    pub var projectTokenInfo: ToucansTokens.TokenInfo
     pub let paymentTokenInfo: ToucansTokens.TokenInfo
     // Of payment tokens
     pub var totalFunding: UFix64
     // You cannot edit or start a new cycle within this time frame
-    pub let editDelay: UFix64
+    pub var editDelay: UFix64
     pub let minting: Bool
     pub var purchasing: Bool
     pub var nextCycleId: UInt64
@@ -257,10 +301,30 @@ pub contract Toucans {
     access(self) let treasury: @{Type: FungibleToken.Vault}
     access(self) let multiSignManager: @Manager
     access(self) let overflow: @FungibleToken.Vault
-    access(self) let minter: @{Minter}
+    access(self) var minter: @{Minter}
     access(self) let funders: {Address: UFix64}
     access(self) var extra: {String: AnyStruct}
     access(self) var additions: @{String: AnyResource}
+
+    // This function will be called when the owner is ready to add their own token to the DAO.  
+    //
+    // This function is useless if the project owner already configured a token when they
+    // created the project.
+    // 
+    // COMING SOON
+    //
+    // pub fun evolve(projectTokenInfo: ToucansTokens.TokenInfo, minter: @{Minter}, initialTreasurySupply: UFix64, editDelay: UFix64) {
+    //   pre {
+    //     !self.hasTokenContract(): "This project already has an associated token."
+    //   }
+    //   self.editDelay = editDelay
+    //   self.projectTokenInfo = projectTokenInfo
+    //   let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
+    //   assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
+    //   self.depositToTreasury(vault: <- initialVault)
+    //   let dummyMinter <- self.minter <- minter
+    //   destroy dummyMinter
+    // }
 
 
     //  __  __       _ _   _    _____ _             
@@ -288,24 +352,39 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64]) {
+      let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)
+                        ?? panic("This collection type does not exist in the NFT Treasury.")
+      let existingIDs: [UInt64] = specificNFTTreasury.getIDs()
+      for id in nftIDs {
+        assert(existingIDs.contains(id), message: "The NFT ID ".concat(id.toString()).concat(" does not exist in the NFT Treasury."))
+      }
+      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
       pre {
         recipientVault.borrow()!.getType() == self.projectTokenInfo.tokenType: 
           "This vault cannot receive the projects token."
         self.minting: "Minting is turned off."
+        self.hasTokenContract(): "There is no token to mint."
       }
       let action = ToucansActions.MintTokens(recipientVault, amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun proposeBurn(amount: UFix64) {
-      let action = ToucansActions.BurnTokens(amount, self.projectTokenInfo.symbol)
+    pub fun proposeBurn(tokenType: Type, amount: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: tokenType) 
+                ?? panic("Unsupported token type for burning.")
+      let action = ToucansActions.BurnTokens(amount, tokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
     }
 
     pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       pre {
         self.minting: "Minting is turned off."
+        self.hasTokenContract(): "There is no token to mint."
       }
       let action = ToucansActions.BatchMintTokens(recipientVaults, amounts, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
@@ -314,6 +393,7 @@ pub contract Toucans {
     pub fun proposeMintToTreasury(amount: UFix64) {
       pre {
         self.minting: "Minting is turned off."
+        self.hasTokenContract(): "There is no token to mint."
       }
       let action = ToucansActions.MintTokensToTreasury(amount, self.projectTokenInfo.symbol)
       self.multiSignManager.createMultiSign(action: action)
@@ -345,47 +425,73 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    pub fun proposeLockTokens(recipient: Address, tokenType: Type, amount: UFix64, unlockTime: UFix64) {
+      let tokenInfo = self.getTokenInfo(inputVaultType: tokenType) 
+                ?? panic("Unsupported token type for locking tokens.")
+      let action = ToucansActions.LockTokens(recipient, amount, tokenInfo.symbol, unlockTime)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     pub fun finalizeAction(actionUUID: UInt64) {
       let actionState: ActionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
       assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
       
       if actionState == ActionState.ACCEPTED {
+        self.markCompletedAction(actionUUID: actionUUID, mark: true)
         let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
         let action: {ToucansActions.Action} = actionWrapper.action
         switch action.getType() {
           case Type<ToucansActions.WithdrawToken>():
-            let withdraw = action as! ToucansActions.WithdrawToken
+            let withdraw: ToucansActions.WithdrawToken = action as! ToucansActions.WithdrawToken
             let recipientVault: &{FungibleToken.Receiver} = withdraw.recipientVault.borrow()!
             self.withdrawFromTreasury(vaultType: withdraw.vaultType, vault: recipientVault, amount: withdraw.amount, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.BatchWithdrawToken>():
-            let withdraw = action as! ToucansActions.BatchWithdrawToken
+            let withdraw: ToucansActions.BatchWithdrawToken = action as! ToucansActions.BatchWithdrawToken
             self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts, tokenSymbol: withdraw.tokenSymbol)
+          case Type<ToucansActions.WithdrawNFTs>():
+            let withdraw: ToucansActions.WithdrawNFTs = action as! ToucansActions.WithdrawNFTs
+            let recipientCollection: &{NonFungibleToken.Receiver} = withdraw.recipientCollection.borrow()!
+            self.withdrawNFTsFromTreasury(collectionType: withdraw.collectionType, collection: recipientCollection, nftIDs: withdraw.nftIDs, contractName: withdraw.contractName, contractAddress: withdraw.contractAddress)
           case Type<ToucansActions.MintTokens>():
-            let mint = action as! ToucansActions.MintTokens
+            let mint: ToucansActions.MintTokens = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
           case Type<ToucansActions.BatchMintTokens>():
-            let mint = action as! ToucansActions.BatchMintTokens
+            let mint: ToucansActions.BatchMintTokens = action as! ToucansActions.BatchMintTokens
             self.batchMint(vaults: mint.recipientVaults, amounts: mint.amounts)
           case Type<ToucansActions.BurnTokens>():
-            let burn = action as! ToucansActions.BurnTokens
-            self.burn(amount: burn.amount)
+            let burn: ToucansActions.BurnTokens = action as! ToucansActions.BurnTokens
+            if burn.tokenSymbol == self.projectTokenInfo.symbol {
+              self.burn(tokenType: self.projectTokenInfo.tokenType, tokenSymbol: burn.tokenSymbol, amount: burn.amount)
+            } else {
+              self.burn(tokenType: ToucansTokens.getTokenInfoFromSymbol(symbol: burn.tokenSymbol)!.tokenType, tokenSymbol: burn.tokenSymbol, amount: burn.amount)
+            }
           case Type<ToucansActions.MintTokensToTreasury>():
-            let mint = action as! ToucansActions.MintTokensToTreasury
+            let mint: ToucansActions.MintTokensToTreasury = action as! ToucansActions.MintTokensToTreasury
             let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
             self.mint(recipientVault: ref, amount: mint.amount)
           case Type<ToucansActions.AddOneSigner>():
-            let addSigner = action as! ToucansActions.AddOneSigner
+            let addSigner: ToucansActions.AddOneSigner = action as! ToucansActions.AddOneSigner
             self.multiSignManager.addSigner(signer: addSigner.signer)
             emit AddSigner(projectId: self.projectId, signer: addSigner.signer)
           case Type<ToucansActions.RemoveOneSigner>():
-            let removeSigner = action as! ToucansActions.RemoveOneSigner
+            let removeSigner: ToucansActions.RemoveOneSigner = action as! ToucansActions.RemoveOneSigner
             self.multiSignManager.removeSigner(signer: removeSigner.signer)
             emit RemoveSigner(projectId: self.projectId, signer: removeSigner.signer)
           case Type<ToucansActions.UpdateTreasuryThreshold>():
-            let updateThreshold = action as! ToucansActions.UpdateTreasuryThreshold
+            let updateThreshold: ToucansActions.UpdateTreasuryThreshold = action as! ToucansActions.UpdateTreasuryThreshold
             self.multiSignManager.updateThreshold(newThreshold: updateThreshold.threshold)
             emit UpdateThreshold(projectId: self.projectId, newThreshold: updateThreshold.threshold)
+          case Type<ToucansActions.LockTokens>():
+            let tokenLock: ToucansActions.LockTokens = action as! ToucansActions.LockTokens
+            if tokenLock.tokenSymbol == self.projectTokenInfo.symbol {
+              self.sendToLock(recipient: tokenLock.recipient, tokenInfo: self.projectTokenInfo, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
+            } else {
+              self.sendToLock(recipient: tokenLock.recipient, tokenInfo: ToucansTokens.getTokenInfoFromSymbol(symbol: tokenLock.tokenSymbol)!, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
+            }
         }
+      }
+      if actionState == ActionState.DECLINED {
+        self.markCompletedAction(actionUUID: actionUUID, mark: false)
       }
 
       // Will delete the action and make sure everything is good to go
@@ -411,6 +517,7 @@ pub contract Toucans {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
         timeframe.startTime >= getCurrentBlock().timestamp: "Start time must be now or in the future."
+        self.hasTokenContract(): "There is no token to mint."
       }
 
       let newFundingCycle: FundingCycle = FundingCycle(details: FundingCycleDetails(
@@ -506,11 +613,12 @@ pub contract Toucans {
       pre {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
         self.purchasing: "Purchasing is turned off at the moment."
+        self.hasTokenContract(): "There is no token to purchase."
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(self.paymentTokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(0xf8d6e0586b0a20c7).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
@@ -671,11 +779,12 @@ pub contract Toucans {
       let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType())
                 ?? panic("Unsupported token type for donating.")
 
-      // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
-                                          .borrow<&{FungibleToken.Receiver}>()
-                                          ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
-      emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
+      // remove tax on donations for the time being
+      //
+      // let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
+      //                                     .borrow<&{FungibleToken.Receiver}>()
+      //                                     ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
+      // emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
 
       emit Donate(
         projectId: self.projectId,
@@ -696,6 +805,7 @@ pub contract Toucans {
     pub fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
       pre {
         vault.getType() == self.projectTokenInfo.tokenType: "The received vault is not the project's token type."
+        self.hasTokenContract(): "There is no project token."
       }
       emit Donate(
         projectId: self.projectId,
@@ -708,6 +818,31 @@ pub contract Toucans {
       )
       self.depositToTreasury(vault: <- vault)
     }
+
+    access(self) fun markCompletedAction(actionUUID: UInt64, mark: Bool) {
+      if self.extra["completedActionIds"] == nil {
+        self.extra["completedActionIds"] = {} as {UInt64: Bool}
+      }
+
+      (self.extra["completedActionIds"]! as! {UInt64: Bool}).insert(key: actionUUID, mark)
+    }
+
+    pub fun addAllowedNFTCollections(collectionIdentifiers: [String]) {
+      if self.extra["allowedNFTCollections"] == nil {
+        self.extra["allowedNFTCollections"] = {} as {String: Bool}
+      }
+
+      for collectionIdentifier in collectionIdentifiers {
+        (self.extra["allowedNFTCollections"]! as! {String: Bool}).insert(key: collectionIdentifier, true)
+      }
+    }
+
+    pub fun removeAllowedNFTCollections(collectionIdentifiers: [String]) {      
+      for collectionIdentifier in collectionIdentifiers {
+        (self.extra["allowedNFTCollections"]! as! {String: Bool}).remove(key: collectionIdentifier)
+      }
+    }
+
 
 
     //   __  __ _       _   _             
@@ -723,6 +858,7 @@ pub contract Toucans {
     access(account) fun mint(recipientVault: &{FungibleToken.Receiver}, amount: UFix64) {
       pre {
         self.minting: "Minting is off. You cannot do this."
+        self.hasTokenContract(): "There is no token to mint."
       }
 
       let tokens <- self.minter.mint(amount: amount)
@@ -741,6 +877,7 @@ pub contract Toucans {
     access(account) fun batchMint(vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}) {
       pre {
         self.minting: "Minting is off. You cannot do this."
+        self.hasTokenContract(): "There is no token to mint."
       }
 
       let failed: [Address] = []
@@ -767,6 +904,100 @@ pub contract Toucans {
     }
 
 
+    //   _   _ ______ _______ 
+    //  | \ | |  ____|__   __|
+    //  |  \| | |__     | |   
+    //  | . ` |  __|    | |   
+    //  | |\  | |       | |   
+    //  |_| \_|_|       |_|   
+                                   
+
+    pub fun donateNFTToTreasury(collection: @NonFungibleToken.Collection, sender: Address, message: String) {
+      let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collection.getType().identifier)
+      let contractAddress: Address = nameAndAddress[0] as! Address
+      let contractName: String = nameAndAddress[1] as! String
+      emit DonateNFT(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        amount: UInt64(collection.getIDs().length),
+        contractName: contractName,
+        contractAddress: contractAddress,
+        by: sender,
+        message: message
+      )
+
+      if self.additions["nftTreasury"] == nil {
+        self.additions["nftTreasury"] <-! ({} as @{Type: NonFungibleToken.Collection})
+      }
+      let nftTreasury = self.borrowNFTTreasury()!
+
+      if nftTreasury[collection.getType()] == nil {
+        let nftContract = getAccount(contractAddress).contracts.borrow<&NonFungibleToken>(name: contractName)!
+        nftTreasury[collection.getType()] <-! nftContract.createEmptyCollection()
+      }
+      let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collection.getType())!
+
+      for id in collection.getIDs() {
+        specificNFTTreasury.deposit(token: <- collection.withdraw(withdrawID: id))
+      }
+      
+      destroy collection
+    }
+
+    access(self) fun withdrawNFTsFromTreasury(collectionType: Type, collection: &{NonFungibleToken.Receiver}, nftIDs: [UInt64], contractName: String, contractAddress: Address) {
+      emit WithdrawNFTs(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        contractName: contractName,
+        contractAddress: contractAddress,
+        amount: UInt64(nftIDs.length),
+        to: collection.owner!.address
+      )
+      let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)!
+      for id in nftIDs {
+        collection.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+      }
+    }
+
+
+    //   _______    _                _                _    
+    //  |__   __|  | |              | |              | |   
+    //     | | ___ | | _____ _ __   | |     ___   ___| | __
+    //     | |/ _ \| |/ / _ \ '_ \  | |    / _ \ / __| |/ /
+    //     | | (_) |   <  __/ | | | | |___| (_) | (__|   < 
+    //     |_|\___/|_|\_\___|_| |_| |______\___/ \___|_|\_\
+                                                                                           
+
+    access(account) fun sendToLock(recipient: Address, tokenInfo: ToucansTokens.TokenInfo, amount: UFix64, unlockTime: UFix64) {
+      if self.additions["lockedTokensManager"] == nil {
+        self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
+      }
+
+      let tokenLockManager: &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
+      let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw!(amount: amount)
+      tokenLockManager.deposit(recipient: recipient, unlockTime: unlockTime, vault: <- vaultToLock, tokenInfo: tokenInfo)
+
+      emit LockTokens(
+        projectId: self.projectId,
+        by: self.owner!.address, 
+        to: recipient,
+        currentCycle: self.getCurrentFundingCycleId(),
+        tokenSymbol: tokenInfo.symbol,
+        amount: amount,
+        unlockTime: unlockTime
+      )
+    }
+
+    pub fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver}) {
+      if self.additions["lockedTokensManager"] == nil {
+        self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
+      }
+
+      let tokenLockManager: &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic} = self.borrowLockTokensManagerPublic()!
+      tokenLockManager.claim(lockedVaultUuid: lockedVaultUuid, receiver: recipientVault)
+    } 
+
+
     //   ____                   
     //  |  _ \                  
     //  | |_) |_   _ _ __ _ __  
@@ -775,15 +1006,15 @@ pub contract Toucans {
     //  |____/ \__,_|_|  |_| |_|
                          
 
-    access(account) fun burn(amount: UFix64) {
-      let tokens <- self.treasury[self.projectTokenInfo.tokenType]?.withdraw!(amount: amount)
+    access(account) fun burn(tokenType: Type, tokenSymbol: String, amount: UFix64) {
+      let tokens <- self.treasury[tokenType]?.withdraw!(amount: amount)
       destroy tokens
 
       emit Burn(
         projectId: self.projectId,
         by: self.owner!.address, 
         currentCycle: self.getCurrentFundingCycleId(),
-        tokenSymbol: self.projectTokenInfo.symbol,
+        tokenSymbol: tokenSymbol,
         amount: amount
       )
     }
@@ -844,6 +1075,20 @@ pub contract Toucans {
       return self.treasury[vaultType]?.balance
     }
 
+    pub fun getCollectionTypesInTreasury(): [Type] {
+      return self.borrowNFTTreasury()?.keys ?? []
+    }
+
+    pub fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT] {
+      let ans: [&NonFungibleToken.NFT] = []
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        for id in nftTreasury.getIDs() {
+          ans.append(nftTreasury.borrowNFT(id: id))
+        }
+      }
+      return ans
+    }
+
     pub fun getCurrentFundingCycleIndex(): Int? {
       var i: Int = self.fundingCycles.length - 1
       let timestamp: UFix64 = getCurrentBlock().timestamp
@@ -897,12 +1142,24 @@ pub contract Toucans {
       return self.extra
     }
 
+    pub fun getCompletedActionIds(): {UInt64: Bool} {
+      if self.extra["completedActionIds"] == nil {
+        return {}
+      }
+
+      return self.extra["completedActionIds"]! as! {UInt64: Bool}
+    }
+
     pub fun getFunders(): {Address: UFix64} {
       return self.funders
     }
 
     pub fun getOverflowBalance(): UFix64 {
       return self.overflow.balance
+    }
+
+    pub fun hasTokenContract(): Bool {
+      return self.minter.getType() != Type<@DummyMinter>()
     }
 
 
@@ -923,14 +1180,44 @@ pub contract Toucans {
       if index == nil {
         return nil
       }
-      return &self.fundingCycles[index!] as &FundingCycle?
+      return &self.fundingCycles[index!] as &FundingCycle
     }
 
     pub fun borrowManagerPublic(): &Manager{ManagerPublic} {
       return &self.multiSignManager as &Manager{ManagerPublic}
     }
 
+    access(self) fun borrowLockTokensManager(): &ToucansLockTokens.Manager? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
+        return lockTokensManager as! &ToucansLockTokens.Manager
+      }
+      return nil
+    }
+
+    pub fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
+        return lockTokensManager as! &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}
+      }
+      return nil
+    }
+
+    access(self) fun borrowNFTTreasury(): &{Type: NonFungibleToken.Collection}? {
+      if let nftTreasury = &self.additions["nftTreasury"] as auth &AnyResource? {
+        return nftTreasury as! &{Type: NonFungibleToken.Collection}
+      }
+      return nil
+    }
+
+    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): &NonFungibleToken.Collection? {
+      if let nftTreasury = &self.additions["nftTreasury"] as auth &AnyResource? {
+        let casted = nftTreasury as! &{Type: NonFungibleToken.Collection}
+        return &casted[type] as &NonFungibleToken.Collection?
+      }
+      return nil
+    }
+
     init(
+      projectId: String,
       projectTokenInfo: ToucansTokens.TokenInfo,
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
@@ -939,15 +1226,36 @@ pub contract Toucans {
       initialThreshold: UInt64,
       minting: Bool,
       initialTreasurySupply: UFix64,
+      initialAllowedNFTCollections: [String],
       extra: {String: AnyStruct}
     ) {
       pre {
         ToucansTokens.getTokenInfo(tokenType: paymentTokenInfo.tokenType) != nil: "Unsupported token type for payment."
       }
-      self.projectId = projectTokenInfo.contractName
+
+      let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
+      let emptyPaymentVault <- paymentContract.createEmptyVault()
+
+      // no new token created
+      if minter.getType() == Type<@DummyMinter>() {
+        self.treasury <- {emptyPaymentVault.getType(): <- emptyPaymentVault}
+      } else {
+        let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
+        assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
+        self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
+      }
+      let allowedNFTCollections: {String: Bool} = {}
+      for allowedNFTCollection in initialAllowedNFTCollections {
+        allowedNFTCollections[allowedNFTCollection] = true
+      }
+      self.projectId = projectId
       self.nextCycleId = 0
       self.totalFunding = 0.0
       self.extra = extra
+      self.extra = {
+        "completedActionIds": {} as {UInt64: Bool},
+        "allowedNFTCollections": allowedNFTCollections
+      }
       self.fundingCycles = []
       self.minter <- minter
       self.funders = {}
@@ -956,13 +1264,10 @@ pub contract Toucans {
       self.paymentTokenInfo = paymentTokenInfo
       self.minting = minting
       self.purchasing = true
-      self.additions <- {}
-
-      let initialVault: @FungibleToken.Vault <- self.minter.mint(amount: initialTreasurySupply)
-      assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
-      let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
-      let emptyPaymentVault <- paymentContract.createEmptyVault()
-      self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
+      self.additions <- {
+        "lockedTokensManager": <- ToucansLockTokens.createManager(),
+        "nftTreasury": <- ({} as @{Type: NonFungibleToken.Collection})
+      }
       self.overflow <- paymentContract.createEmptyVault()
       self.multiSignManager <- create Manager(_initialSigners: initialSigners, _initialThreshold: initialThreshold)
     }
@@ -987,6 +1292,34 @@ pub contract Toucans {
   pub resource Collection: CollectionPublic {
     pub let projects: @{String: Project}
 
+    pub fun createProjectNoToken(
+      projectId: String,
+      paymentTokenInfo: ToucansTokens.TokenInfo,
+      initialAllowedNFTCollections: [String],
+      extra: {String: AnyStruct}
+    ) {
+      let project: @Project <- create Project(
+        projectId: projectId,
+        projectTokenInfo: paymentTokenInfo, // use the payment token, or "preferred currency", for this 
+        paymentTokenInfo: paymentTokenInfo, 
+        minter: <- create DummyMinter(), 
+        editDelay: 0.0, 
+        initialSigners: [self.owner!.address], 
+        initialThreshold: 1, 
+        minting: false, 
+        initialTreasurySupply: 0.0, 
+        initialAllowedNFTCollections: initialAllowedNFTCollections,
+        extra: extra
+      )
+      self.projects[projectId] <-! project
+
+      emit ProjectCreated(
+        projectId: projectId,
+        tokenTypeIdentifier: nil,
+        by: self.owner!.address
+      )
+    }
+
     pub fun createProject(
       projectTokenInfo: ToucansTokens.TokenInfo, 
       paymentTokenInfo: ToucansTokens.TokenInfo,
@@ -994,10 +1327,23 @@ pub contract Toucans {
       editDelay: UFix64,
       minting: Bool,
       initialTreasurySupply: UFix64,
+      initialAllowedNFTCollections: [String],
       extra: {String: AnyStruct}
     ) {
-      let project: @Project <- create Project(projectTokenInfo: projectTokenInfo, paymentTokenInfo: paymentTokenInfo, minter: <- minter, editDelay: editDelay, initialSigners: [self.owner!.address], initialThreshold: 1, minting: minting, initialTreasurySupply: initialTreasurySupply, extra: extra)
       let projectId: String = projectTokenInfo.contractName
+      let project: @Project <- create Project(
+        projectId: projectId, 
+        projectTokenInfo: projectTokenInfo, 
+        paymentTokenInfo: paymentTokenInfo, 
+        minter: <- minter, 
+        editDelay: editDelay, 
+        initialSigners: [self.owner!.address], 
+        initialThreshold: 1, 
+        minting: minting, 
+        initialTreasurySupply: initialTreasurySupply, 
+        initialAllowedNFTCollections: initialAllowedNFTCollections,
+        extra: extra
+      )
       self.projects[projectId] <-! project
 
       emit ProjectCreated(

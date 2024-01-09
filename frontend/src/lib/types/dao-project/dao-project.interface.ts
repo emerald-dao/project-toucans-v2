@@ -19,10 +19,7 @@ export interface DAOProject {
 	funding: {
 		numbers: number[];
 		total_funding: number;
-		funders: {
-			address: string;
-			amount: number;
-		}
+		funders: { [address: string]: { amount: number; num_nfts: number } }
 	}
 }
 
@@ -55,6 +52,7 @@ export interface DaoBlockchainData {
 	purchasing: boolean;
 	maxSupply: string | null;
 	requiredNft: RequiredNft | null;
+	allowedNFTCollections: string[];
 	balances: {
 		[address: string]: string;
 	};

@@ -19,7 +19,9 @@ export interface PaymentData {
 	tokenName: string;
 	payerAddress: string;
 	contractName: string;
-	currency: ECurrencies;
+	currency: ECurrencies | 'NFTs';
 	amount: number;
 	specialMessage: string;
+	NFTs?: string[];
+	NFTCollection?: string;
 }

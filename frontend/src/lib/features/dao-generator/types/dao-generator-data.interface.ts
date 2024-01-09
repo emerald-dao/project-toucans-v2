@@ -15,6 +15,7 @@ export interface DaoAndTokenGeneratorData {
 		contractName: string;
 		logo: File[] | undefined;
 		bannerImage: File[] | undefined;
+		allowedNFTCollections: string[];
 	};
 	tokenomics: {
 		paymentCurrency: ECurrencies;
@@ -38,6 +39,7 @@ export interface DaoOnlyGeneratorData {
 		discord: string;
 		logo: File[] | undefined;
 		bannerImage: File[] | undefined;
+		allowedNFTCollections: string[];
 	};
 	tokenomics: {
 		paymentCurrency: ECurrencies;

@@ -1,6 +1,5 @@
 import FungibleToken from "../utility/FungibleToken.cdc"
 import Toucans from "../Toucans.cdc"
-import MetadataViews from "../utility/MetadataViews.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 
 transaction(projectOwner: Address, projectId: String, amount: UFix64, message: String) {

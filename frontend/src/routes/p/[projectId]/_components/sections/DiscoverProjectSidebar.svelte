@@ -4,14 +4,13 @@
 	import Icon from '@iconify/svelte';
 	import SubscribeButton from '../atoms/SubscribeButton.svelte';
 	import PaymentModal from '$lib/features/payments/components/PaymentModal.svelte';
-	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
+	import TreasuryWallet from '../../../../admin/[projectId]/_components/stats-blocks/TreasuryWallet.svelte';
 	import RequiredNft from './atoms/RequiredNft.svelte';
 	import { user } from '$stores/flow/FlowStore';
 	import { currencies } from '$stores/flow/TokenStore';
 	import { handleBannerImgError, handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let daoData: DAOProject;
-	console.log(daoData);
 </script>
 
 <aside class="column-8">
@@ -39,7 +38,7 @@
 					class="dao-logo"
 				/>
 				<div class="commands-wrapper row-2 align-center">
-					{#if daoData.generalInfo.owner === $user.addr}
+					{#if daoData.generalInfo.owner === $user.addr || ($user.addr && daoData.onChainData.signers.includes($user.addr))}
 						<Button size="x-small" color="neutral" type="ghost" href="/admin">Manage DAO</Button>
 					{/if}
 					<!-- {#if daoData.hasToken && daoData.onChainData.minting}

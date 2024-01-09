@@ -20,7 +20,7 @@ export const load: PageLoad = async ({ params, depends }) => {
 	const hasToken = generalInfo.contract_address !== null;
 	const funding = await fetchDaoFundingStats(generalInfo.project_id);
 	const funders = (await fetchDaoFunders(generalInfo.project_id)).reduce(
-		(obj, item) => Object.assign(obj, { [item.address]: item.amount }),
+		(obj, item) => Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
 		{}
 	);
 

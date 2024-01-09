@@ -12,5 +12,6 @@ export const paymentData = writable<FundData | DonationData>({
 	contractName: '',
 	currency: ECurrencies.FLOW,
 	amount: 0,
-	specialMessage: ''
+	specialMessage: '',
+	daoTokenSymbol: ''
 });

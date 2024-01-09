@@ -19,13 +19,13 @@ export const paymentSteps = createSteps([
 		}
 	},
 	{
-		name: 'Fund',
+		name: 'Pay',
 		component: Fund,
 		action: () => submitPayment(get(paymentData)),
 		form: false,
 		state: 'inactive',
 		button: {
-			text: 'Pay',
+			text: 'Send',
 			icon: 'tabler:cash'
 		}
 	},

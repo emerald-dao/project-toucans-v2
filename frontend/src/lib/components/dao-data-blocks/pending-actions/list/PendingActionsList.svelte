@@ -7,7 +7,7 @@
 	export let showDetail = true;
 </script>
 
-{#each daoData.onChainData.actions as action}
+{#each daoData.onChainData.actions as action (action)}
 	<PendingActionsListElement
 		projectOwner={daoData.generalInfo.owner}
 		daoId={daoData.generalInfo.project_id}
