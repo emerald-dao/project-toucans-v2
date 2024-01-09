@@ -15,7 +15,7 @@
 		{#if hasTitle}
 			<span class="title">
 				<Icon icon="tabler:hexagon" />
-				NFTs Treasury
+				NFT Treasury
 			</span>
 		{/if}
 		<div class="card">
