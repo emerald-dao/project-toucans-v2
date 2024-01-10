@@ -1246,7 +1246,7 @@ export const getCatalogNFTs: (
 	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
 	try {
-		let batchSize = 20;
+		let batchSize = 5;
 		let response = {}
 		for (let i = 0; i < collectionIdentifiers.length; i += batchSize) {
 			let tempResponse = await fcl.query({
