@@ -1247,10 +1247,16 @@ export const getCatalogNFTs: (
 	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
 	try {
-		const response = await fcl.query({
-			cadence: replaceWithProperValues(getCatalogNFTsScript),
-			args: (arg, t) => [arg(collectionIdentifiers, t.Array(t.String)), arg(user, t.Address)]
-		});
+		let batchSize = 20;
+		let response = {}
+		for (let i = 0; i < collectionIdentifiers.length; i += batchSize) {
+			let tempResponse = await fcl.query({
+				cadence: replaceWithProperValues(getCatalogNFTsScript),
+				args: (arg, t) => [arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)), arg(user, t.Address)],
+				limit: 9999
+			});
+			response = { ...response, ...tempResponse }
+		}
 
 		return response;
 	} catch (e) {
