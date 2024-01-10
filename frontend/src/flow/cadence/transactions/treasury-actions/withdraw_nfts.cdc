@@ -10,7 +10,8 @@ import NonFungibleToken from "../../utility/NonFungibleToken.cdc"
 transaction(projectOwner: Address, projectId: String, collectionIdentifier: String, nftIDs: [UInt64], recipientAddr: Address) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
-  let RecipientCollection: Capability<&{NonFungibleToken.Receiver}>
+  let RecipientCollectionReceiver: Capability<&{NonFungibleToken.Receiver}>
+  let RecipientCollectionPublic: Capability<&{NonFungibleToken.CollectionPublic}>
   let CatalogEntry: NFTCatalog.NFTCatalogMetadata
   
   prepare(signer: AuthAccount) {
@@ -23,7 +24,8 @@ transaction(projectOwner: Address, projectId: String, collectionIdentifier: Stri
           ?? panic("There is no NFT Catalog entry for this.")
     let publicPath: PublicPath = self.CatalogEntry.collectionData.publicPath
 
-    self.RecipientCollection = getAccount(recipientAddr).getCapability<&{NonFungibleToken.Receiver}>(publicPath)
+    self.RecipientCollectionReceiver = getAccount(recipientAddr).getCapability<&{NonFungibleToken.Receiver}>(publicPath)
+    self.RecipientCollectionPublic = getAccount(recipientAddr).getCapability<&{NonFungibleToken.CollectionPublic}>(publicPath)
   }
 
   execute {
@@ -35,6 +37,6 @@ transaction(projectOwner: Address, projectId: String, collectionIdentifier: Stri
       .concat(self.CatalogEntry.contractName)
       .concat(".Collection")
     )!
-    self.Project.proposeWithdrawNFTs(collectionType: collectionType, recipientCollection: self.RecipientCollection, nftIDs: nftIDs)
+    self.Project.proposeWithdrawNFTs(collectionType: collectionType, recipientCollection: self.RecipientCollectionReceiver, nftIDs: nftIDs, self.RecipientCollectionPublic)
   }
 }

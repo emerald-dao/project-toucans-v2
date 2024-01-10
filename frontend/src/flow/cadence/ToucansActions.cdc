@@ -87,16 +87,16 @@ pub contract ToucansActions {
     pub let extra: {String: AnyStruct}
 
     pub fun getIntent(): String {
-      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.collectionName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
+      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.collectionName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.address))
     }
 
     pub fun getTitle(): String {
       return "WithdrawNFTs"
     }
 
-    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>) {
+    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
       pre {
-        recipientCollection.check(): "Invalid recipient capability."
+        recipientCollection.check() || recipientCollectionBackup.check(): "Invalid recipient capability."
       }
       self.collectionType = collectionType
       self.recipientCollection = recipientCollection
@@ -106,7 +106,7 @@ pub contract ToucansActions {
       self.collectionIdentifier = nftCatalogCollectionIdentifier
       self.collectionName = nftCatalogEntry.collectionDisplay.name
       self.collectionExternalURL = nftCatalogEntry.collectionDisplay.externalURL.url
-      self.extra = {}
+      self.extra = {"backupReceiver": recipientCollectionBackup}
     }
   }
 
