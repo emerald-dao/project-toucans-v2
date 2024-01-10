@@ -1252,7 +1252,7 @@ export const getCatalogNFTs: (
 		for (let i = 0; i < collectionIdentifiers.length; i += batchSize) {
 			let tempResponse = await fcl.query({
 				cadence: replaceWithProperValues(getCatalogNFTsScript),
-				args: (arg, t) => [arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)), arg('0x34b57a6391ed7130', t.Address)],
+				args: (arg, t) => [arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)), arg(user, t.Address)],
 				limit: 9999
 			});
 			response = { ...response, ...tempResponse }
