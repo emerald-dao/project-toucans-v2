@@ -78,7 +78,6 @@
 						bind:selectedNFTIds={$paymentData.NFTs}
 						bind:selectedCollection={$paymentData.NFTCollection}
 						NFTs={userCatalogNFTs}
-						userNFTs={true}
 						clickable={true}
 					/>
 				{:else}

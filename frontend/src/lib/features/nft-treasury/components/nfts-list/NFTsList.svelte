@@ -8,7 +8,6 @@
 		[collectionIdentifier: string]: Nft[];
 	};
 	export let pageSize = 5;
-	export let userNFTs = false;
 	export let clickable = false;
 	export let selectedCollection = '';
 
@@ -18,9 +17,7 @@
 
 	export let selectedNFTIds: string[] = [];
 
-	let collectionIdentifiers = userNFTs
-		? Object.keys(NFTs)
-		: Array.from(new Set(Object.keys(NFTs).map((key) => key.split('.')[2])));
+	let collectionIdentifiers = Object.keys(NFTs);
 
 	onMount(async () => {
 		selectedCollection = collectionIdentifiers[0];
@@ -35,15 +32,7 @@
 
 	const updateSelectedNFTs = () => {
 		selectedNFTIds = [];
-
-		if (userNFTs) {
-			displayedNfts = NFTs[selectedCollection] || [];
-		} else {
-			const keyPrefix = Object.keys(NFTs).find((key) =>
-				key.endsWith(`.${selectedCollection}.Collection`)
-			);
-			displayedNfts = keyPrefix ? NFTs[keyPrefix] : [];
-		}
+		displayedNfts = NFTs[selectedCollection] || [];
 	};
 
 	const handleNFTClick = (nftId: string) => {
