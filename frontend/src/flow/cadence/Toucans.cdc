@@ -266,7 +266,7 @@ pub contract Toucans {
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
-    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64])
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
     pub fun proposeMintToTreasury(amount: UFix64)
@@ -375,7 +375,7 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64]) {
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)
                         ?? panic("This collection type does not exist in the NFT Treasury.")
       let existingIDs: [UInt64] = specificNFTTreasury.getIDs()
@@ -383,7 +383,7 @@ pub contract Toucans {
         assert(existingIDs.contains(id), message: "The NFT ID ".concat(id.toString()).concat(" does not exist in the NFT Treasury."))
       }
       
-      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection)
+      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection, recipientCollectionBackup)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -484,8 +484,21 @@ pub contract Toucans {
             self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.WithdrawNFTs>():
             let withdraw: ToucansActions.WithdrawNFTs = action as! ToucansActions.WithdrawNFTs
-            let recipientCollection: &{NonFungibleToken.Receiver} = withdraw.recipientCollection.borrow()!
-            self.withdrawNFTsFromTreasury(collectionType: withdraw.collectionType, collection: recipientCollection, nftIDs: withdraw.nftIDs, collectionIdentifier: withdraw.collectionIdentifier, collectionName: withdraw.collectionName, collectionExternalURL: withdraw.collectionExternalURL)
+            let recipientAddr: Address = withdraw.recipientCollection.address
+            var backupReceiver: &{NonFungibleToken.CollectionPublic}? = nil
+            if withdraw.extra["backupReceiver"] != nil {
+              backupReceiver = (withdraw.extra["backupReceiver"]! as! Capability<&{NonFungibleToken.CollectionPublic}>).borrow()
+            }
+            self.withdrawNFTsFromTreasury(
+              collectionType: withdraw.collectionType, 
+              collectionReceiver: withdraw.recipientCollection.borrow(), 
+              nftIDs: withdraw.nftIDs, 
+              collectionIdentifier: withdraw.collectionIdentifier, 
+              collectionName: withdraw.collectionName, 
+              collectionExternalURL: withdraw.collectionExternalURL,
+              recipientAddr: recipientAddr,
+              backupReceiver
+            )
           case Type<ToucansActions.MintTokens>():
             let mint: ToucansActions.MintTokens = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
@@ -987,7 +1000,16 @@ pub contract Toucans {
       destroy collection
     }
 
-    access(self) fun withdrawNFTsFromTreasury(collectionType: Type, collection: &{NonFungibleToken.Receiver}, nftIDs: [UInt64], collectionIdentifier: String, collectionName: String, collectionExternalURL: String) {
+    access(self) fun withdrawNFTsFromTreasury(
+      collectionType: Type, 
+      collectionReceiver: &{NonFungibleToken.Receiver}?, 
+      nftIDs: [UInt64], 
+      collectionIdentifier: String, 
+      collectionName: String, 
+      collectionExternalURL: String, 
+      recipientAddr: Address,
+      _ backupReceiver: &{NonFungibleToken.CollectionPublic}?
+    ) {
       emit WithdrawNFTs(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
@@ -995,11 +1017,20 @@ pub contract Toucans {
         collectionName: collectionName,
         collectionExternalURL: collectionExternalURL,
         amount: UInt64(nftIDs.length),
-        to: collection.owner!.address
+        to: recipientAddr
       )
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)!
-      for id in nftIDs {
-        collection.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+      // if main receiver available, use that
+      if let receiver = collectionReceiver {
+        for id in nftIDs {
+          receiver.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+        }
+      } else {
+        log("using backuop")
+        // otherwise use backup receiver
+        for id in nftIDs {
+          backupReceiver!.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+        }
       }
     }
 
