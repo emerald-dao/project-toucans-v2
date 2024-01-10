@@ -7,7 +7,12 @@
 </script>
 
 <div class="nft-wrapper" class:clickable class:selected={isSelected} on:click>
-	<img src={nft.thumbnail} alt="NFT" />
+	<img
+		src={nft.thumbnail.startsWith('ipfs://')
+			? `https://nftstorage.link/ipfs/${nft.thumbnail.slice(7)}`
+			: nft.thumbnail}
+		alt="NFT"
+	/>
 	<div class="content-wrapper">
 		<p class="heading">{nft.name}</p>
 	</div>
