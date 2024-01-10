@@ -1245,13 +1245,14 @@ export const getCatalogNFTs: (
 		thumbnail: string;
 	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
+	collectionIdentifiers.splice(collectionIdentifiers.indexOf('Fantastec-SWAP'), 1)
 	try {
-		let batchSize = 5;
+		let batchSize = 15;
 		let response = {}
 		for (let i = 0; i < collectionIdentifiers.length; i += batchSize) {
 			let tempResponse = await fcl.query({
 				cadence: replaceWithProperValues(getCatalogNFTsScript),
-				args: (arg, t) => [arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)), arg(user, t.Address)],
+				args: (arg, t) => [arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)), arg('0x34b57a6391ed7130', t.Address)],
 				limit: 9999
 			});
 			response = { ...response, ...tempResponse }
