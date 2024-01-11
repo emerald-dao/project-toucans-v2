@@ -10,11 +10,6 @@ transaction(projectOwner: Address, projectId: String, nftIDs: [UInt64], collecti
   let CatalogEntry: NFTCatalog.NFTCatalogMetadata
 
   prepare(user: AuthAccount) {
-    if user.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
-      user.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
-      user.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
-    }
-
     let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
                   .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                   ?? panic("This is an incorrect address for project owner.")
