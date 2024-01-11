@@ -30,13 +30,10 @@
 	let projectNFTsCollections = daoData.onChainData.allowedNFTCollections;
 	let currencies: string[];
 
-	if (projectNFTsCollections.length <= 1 && daoData.generalInfo.token_symbol) {
-		currencies =
-			projectNFTsCollections.length === 0 || projectNFTsCollections[0].trim() === ''
-				? [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]
-				: [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol, 'NFTs'];
-	} else if (daoData.generalInfo.token_symbol) {
+	if (daoData.generalInfo.token_symbol) {
 		currencies = [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol, 'NFTs'];
+	} else {
+		currencies = [ECurrencies.FLOW, ECurrencies.USDC, 'NFTs'];
 	}
 
 	$: if ($paymentData.NFTs && $paymentData.currency === 'NFTs') {
@@ -69,7 +66,7 @@
 			<p class="small" style="padding: var(--space-7) 0;">
 				<em> Please log in to your account to view your NFTs collections! </em>
 			</p>
-		{:else}
+		{:else if projectNFTsCollections.length > 0}
 			{#await getCatalogNFTs(projectNFTsCollections, $user.addr)}
 				<span class="small"><i>Loading...</i></span>
 			{:then userCatalogNFTs}
@@ -88,6 +85,8 @@
 					<i> There was an error. Please reach out to us in the Emerald City Discord. </i>
 				</span>
 			{/await}
+		{:else}
+			<span class="small"><i>This DAO has not set up any NFT collections yet.</i></span>
 		{/if}
 	{:else}
 		<CurrencyInput
