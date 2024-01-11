@@ -1245,7 +1245,9 @@ export const getCatalogNFTs: (
 		thumbnail: string;
 	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
-	collectionIdentifiers.splice(collectionIdentifiers.indexOf('Fantastec-SWAP'), 1)
+	if (collectionIdentifiers.indexOf('Fantastec-SWAP') > -1) {
+		collectionIdentifiers.splice(collectionIdentifiers.indexOf('Fantastec-SWAP'), 1)
+	}
 	try {
 		let batchSize = 15;
 		let response = {}
