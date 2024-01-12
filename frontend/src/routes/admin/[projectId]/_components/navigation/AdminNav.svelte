@@ -187,7 +187,7 @@
 			</a>
 			{#if network === 'mainnet'}
 				<a
-					href="/admin/staking"
+					href={`/admin/${activeDaoData.generalInfo.project_id}/staking`}
 					class="sidebar-link distribute-display"
 					class:active={$page.url.pathname.includes('staking')}
 				>

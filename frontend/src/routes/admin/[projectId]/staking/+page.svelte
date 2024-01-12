@@ -2,18 +2,16 @@
 	import { fly } from 'svelte/transition';
 	import type { Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import Stake from './components/Stake.svelte';
 
 	const adminData: {
-		activeDao: Writable<number>;
-		userDaos: Writable<DAOProject[]>;
+		activeDao: Writable<DAOProject>;
+		otherDaos: DaoDatabaseData[];
 	} = getContext('admin-data');
 
 	const activeDaoStore = adminData.activeDao;
-	const userDaosStore = adminData.userDaos;
-
-	$: activeDaoData = $userDaosStore[$activeDaoStore];
+	$: activeDaoData = $activeDaoStore;
 </script>
 
 <div in:fly={{ x: 10, duration: 400 }}>
