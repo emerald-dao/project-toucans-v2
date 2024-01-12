@@ -15,3 +15,13 @@
 		</label>
 	{/each}
 </div>
+
+<style lang="scss">
+	label {
+		padding: var(--space-2) var(--space-2);
+
+		@include mq('small') {
+			padding: var(--space-2) var(--space-4);
+		}
+	}
+</style>

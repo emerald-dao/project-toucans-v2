@@ -46,8 +46,12 @@
 		border: 1px solid var(--clr-neutral-badge);
 		border-radius: var(--radius-5);
 		background-color: var(--clr-background-secondary);
-		width: 70vw;
+		width: 90vw;
 		overflow: hidden;
+
+		@include mq('small') {
+			width: 70vw;
+		}
 
 		@include mq('medium') {
 			min-height: 70vh;
