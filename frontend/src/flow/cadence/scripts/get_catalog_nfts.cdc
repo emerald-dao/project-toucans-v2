@@ -16,7 +16,13 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
             for index, id in userCollection.getIDs() {
                 let nft = userCollection.borrowViewResolver(id: id)
                 let display = nft.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
-                let nftData = NFTData(id, display.name, display.thumbnail.uri())
+                var serialNum: UInt64? = nil
+                if let serialView = nft.resolveView(Type<MetadataViews.Serial>()) {
+                    if let serial = serialView as? MetadataViews.Serial {
+                        serialNum = serial.number
+                    }
+                }
+                let nftData = NFTData(id, display.name, display.thumbnail.uri(), serialNum)
                 nfts.append(nftData)
             }
             res[collectionID] = nfts
@@ -31,10 +37,12 @@ pub struct NFTData {
     pub let id: UInt64
     pub let name: String
     pub let thumbnail: String
+    pub let serial: UInt64?
 
-    init(_ id: UInt64, _ name: String, _ thumbnail: String) {
+    init(_ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?) {
         self.id = id
         self.name = name
         self.thumbnail = thumbnail
+        self.serial = serial
     }
 }

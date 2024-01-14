@@ -1243,6 +1243,7 @@ export const getCatalogNFTs: (
 		id: string;
 		name: string;
 		thumbnail: string;
+		serial: string | null;
 	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
 	if (collectionIdentifiers.indexOf('Fantastec-SWAP') > -1) {

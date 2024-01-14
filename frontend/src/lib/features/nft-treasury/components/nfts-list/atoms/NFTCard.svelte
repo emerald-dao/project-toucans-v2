@@ -7,6 +7,11 @@
 </script>
 
 <div class="nft-wrapper" class:clickable class:selected={isSelected} on:click>
+	{#if nft.serial}
+		<div class="serial">
+			<p class="xsmall">#{nft.serial}</p>
+		</div>
+	{/if}
 	<img
 		src={nft.thumbnail.startsWith('ipfs://')
 			? `https://nftstorage.link/ipfs/${nft.thumbnail.slice(7)}`
@@ -20,6 +25,7 @@
 
 <style lang="scss">
 	.nft-wrapper {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -41,6 +47,14 @@
 				-webkit-box-orient: vertical;
 				word-break: break-word;
 			}
+		}
+
+		.serial {
+			position: absolute;
+			right: 0px;
+			padding: var(--space-1);
+			background-color: var(--clr-surface-primary);
+			border-radius: 0 var(--radius-2) 0 var(--radius-1);
 		}
 
 		img {
