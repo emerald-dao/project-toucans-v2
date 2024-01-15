@@ -8,7 +8,7 @@
 	import type { DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import DaoOfTheMonth from './_components/sections/DaoOfTheMonth.svelte';
 	import TechnicalDetailsSection from './_components/sections/TechnicalDetailsSection.svelte';
-	import CommunityToolBox from './_components/sections/CommunityToolBox.svelte';
+	import CommunityToolBox from './_components/sections/community-toolbox/CommunityToolbox.svelte';
 
 	export let data;
 
