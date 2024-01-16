@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Image from '$components/Image.svelte';
 	import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface.js';
 
 	export let nftCollection: NftCollection;
@@ -22,7 +23,7 @@
 		selectedCollections = [...selectedCollections, nftCollection.identifier];
 	};
 
-	let profileImg = nftCollection.image ?? '/toucans-illustration.png';
+	let imgSrc = nftCollection.image ?? '/toucans-illustration.png';
 </script>
 
 <div
@@ -33,9 +34,7 @@
 	on:keydown={handleSelectCollection}
 >
 	<div class="image-wrapper">
-		<object data={profileImg} type="image/png">
-			<img src="/flow-logo.png" alt="NFT" />
-		</object>
+		<Image src={imgSrc} alt="collection" width="150px" height="100px" objectFit="contain" />
 	</div>
 	<div class="column-2 align-center">
 		<p class="heading w-medium">{nftCollection.name}</p>
@@ -60,13 +59,9 @@
 		transition: all 0.1s ease-in-out;
 		max-width: 100%;
 
-		img,
-		object,
 		.image-wrapper {
-			width: 150px;
-			height: 100px;
 			border-radius: var(--radius-2);
-			object-fit: contain;
+			overflow: hidden;
 		}
 
 		p,
