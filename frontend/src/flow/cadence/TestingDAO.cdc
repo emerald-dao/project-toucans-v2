@@ -217,7 +217,7 @@ pub contract TestingDAO: FungibleToken {
         editDelay: 0.0,
         minting: true,
         initialTreasurySupply: 100.0,
-        extra: {}
+        extra: {"initialAllowedNFTCollections": ["ExampleNFT"]}
       )
 
       self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)

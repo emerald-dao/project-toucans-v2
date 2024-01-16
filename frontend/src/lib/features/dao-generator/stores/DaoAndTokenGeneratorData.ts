@@ -14,7 +14,8 @@ export const emptyDaoAndTokenGeneratorData: DaoAndTokenGeneratorData = {
 		discord: '',
 		contractName: '',
 		logo: undefined,
-		bannerImage: undefined
+		bannerImage: undefined,
+		allowedNFTCollections: []
 	},
 	tokenomics: {
 		paymentCurrency: ECurrencies.FLOW,

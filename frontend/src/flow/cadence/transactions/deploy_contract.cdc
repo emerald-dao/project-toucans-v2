@@ -20,6 +20,7 @@ transaction(
   // Supply
   initialTreasurySupply: UFix64,
   maxSupply: UFix64?,
+  initialAllowedNFTCollections: [String],
 ) {
 
   prepare(deployer: AuthAccount) {
@@ -33,7 +34,9 @@ transaction(
     }
 
     // Blank empty for now
-    let extra: {String: AnyStruct} = {}
+    let extra: {String: AnyStruct} = {
+      "initialAllowedNFTCollections": initialAllowedNFTCollections
+    }
 
     deployer.contracts.add(
       name: contractName,

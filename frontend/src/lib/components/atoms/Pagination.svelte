@@ -1,0 +1,72 @@
+<script lang="ts">
+	import Icon from '@iconify/svelte';
+
+	export let amountOfItems: number;
+
+	export let pageSize = 6;
+
+	export let pageStart = 0;
+	export let pageEnd = pageSize;
+
+	let currentPage = 1;
+	const nextPage = () => {
+		currentPage += 1;
+	};
+	const prevPage = () => {
+		currentPage -= 1;
+	};
+
+	$: pageStart = (currentPage - 1) * pageSize;
+	$: pageEnd = pageStart + pageSize;
+
+	$: if (currentPage > Math.ceil(amountOfItems / pageSize)) {
+		currentPage = Math.ceil(amountOfItems / pageSize);
+	}
+</script>
+
+<div class="main-wrapper row-space-between row-4 align-center">
+	<button on:click={prevPage} disabled={currentPage === 1} type="button" color="neutral">
+		<Icon
+			icon="tabler:arrow-left"
+			color={currentPage === 1 ? 'var(--clr-text-off)' : 'var(--clr-heading-main)'}
+		/>
+	</button>
+	<p class="xsmall">
+		{currentPage}
+		<span class="off">
+			/ {Math.ceil(amountOfItems / pageSize)}
+		</span>
+	</p>
+	<button on:click={nextPage} disabled={pageEnd >= amountOfItems} type="button" color="neutral">
+		<Icon
+			icon="tabler:arrow-right"
+			color={pageEnd >= amountOfItems ? 'var(--clr-text-off)' : 'var(--clr-heading-main)'}
+		/>
+	</button>
+</div>
+
+<style lang="scss">
+	.main-wrapper {
+		width: 100%;
+
+		button {
+			padding: 0;
+			border: none;
+			background: none;
+			cursor: pointer;
+			outline: none;
+
+			&:disabled {
+				cursor: not-allowed;
+			}
+		}
+
+		p {
+			color: var(--clr-heading-main);
+
+			.off {
+				color: var(--clr-text-off);
+			}
+		}
+	}
+</style>

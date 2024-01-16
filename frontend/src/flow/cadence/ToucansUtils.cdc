@@ -4,6 +4,7 @@ import NFTCatalog from "./utility/NFTCatalog.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import FIND from "./utility/FIND.cdc"
 import EmeraldIdentity from "./utility/EmeraldIdentity.cdc"
+import SwapInterfaces from "./utility/SwapInterfaces.cdc"
 
 pub contract ToucansUtils {
   pub fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {
@@ -72,5 +73,59 @@ pub contract ToucansUtils {
     let numToString: String = num.toString()
     let indexOfDot: Int = ToucansUtils.index(numToString, ".", 1)!
     return numToString.slice(from: 0, upTo: indexOfDot + 3)
+  }
+
+  // stringAddress DOES NOT include the `0x`
+  pub fun stringToAddress(stringAddress: String): Address {
+    var r: UInt64 = 0
+    var bytes: [UInt8] = stringAddress.decodeHex()
+
+    while bytes.length > 0 {
+      r = r + (UInt64(bytes.removeFirst()) << UInt64(bytes.length * 8))
+    }
+
+    return Address(r)
+  }
+
+  // returns:
+  // [address, contractname]
+  pub fun getAddressAndContractNameFromCollectionIdentifier(identifier: String): [AnyStruct] {
+    let address: Address = self.stringToAddress(stringAddress: identifier.slice(from: 2, upTo: 18))
+    let contractName: String = identifier.slice(from: 19, upTo: identifier.length - 11)
+    return [address, contractName]
+  }
+  
+  // figure out with swap is better
+  pub fun getEstimatedSwapOut(amountIn: UFix64, tokenInKey: String): UFix64 {
+    // normal xyk pool
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    // stableswap pool with most liquidity
+    let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    
+    let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    let estimatedSwapOut = (estimatedSwapOutStable>estimatedSwapOutV1)? estimatedSwapOutStable:estimatedSwapOutV1
+
+    return estimatedSwapOut
+  }
+
+  // figure out with swap is better
+  pub fun getEstimatedSwapPoolCap(amountIn: UFix64, tokenInKey: String): &{SwapInterfaces.PairPublic} {
+    // normal xyk pool
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    // stableswap pool with most liquidity
+    let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+
+    let estimatedSwapPoolCap = (estimatedSwapOutStable>estimatedSwapOutV1)? poolCapStable:poolCapV1
+    return estimatedSwapPoolCap
+  }
+
+  pub fun getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: String): String {
+    let nftTypeIdentifier: String = collectionIdentifier.slice(from: 0, upTo: collectionIdentifier.length - 10).concat("NFT")
+    let collectionsForType: {String: Bool} = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier) ?? panic("This collection is not supported in the NFTCatalog.")
+    let collectionIdentifier: String = collectionsForType.keys[0]
+    return collectionIdentifier
   }
 }

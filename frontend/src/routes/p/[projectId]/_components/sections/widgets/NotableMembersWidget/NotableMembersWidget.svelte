@@ -9,7 +9,13 @@
 
 	$: fundersEntries = Object.entries(daoData.funding.funders);
 	$: mainFunderEntries = fundersEntries
-		.sort((a, b) => (Number(a[1]) < Number(b[1]) ? 1 : Number(a[1]) > Number(b[1]) ? -1 : 0))
+		.sort((a, b) =>
+			Number(a[1].amount) < Number(b[1].amount)
+				? 1
+				: Number(a[1].amount) > Number(b[1].amount)
+				? -1
+				: 0
+		)
 		.slice(0, 5);
 
 	const lpAddresses = Object.values(daoData.onChainData.lpAddresses);
@@ -54,7 +60,7 @@
 								<div class={`member-${i + 1} center`}>
 									<NotableMemberAvatar address={funder[0]} position={i + 1}>
 										<span class="xsmall"> Total invested </span>
-										<Currency amount={funder[1]} moneyPrefix={true} decimalNumbers={2} />
+										<Currency amount={funder[1].amount} moneyPrefix={true} decimalNumbers={2} />
 									</NotableMemberAvatar>
 								</div>
 							{/each}

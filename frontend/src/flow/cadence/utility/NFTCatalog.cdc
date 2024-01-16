@@ -1,6 +1,7 @@
 import MetadataViews from "./MetadataViews.cdc"
 import NFTCatalogSnapshot from "./NFTCatalogSnapshot.cdc"
 import ExampleNFT from "./ExampleNFT.cdc"
+import ChinoNFT from "./ChinoNFT.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
 
 // NFTCatalog
@@ -373,8 +374,10 @@ pub contract NFTCatalog {
           ),
           mediaType: "image/svg+xml"
         )
-        self.catalog = {
-          "ExampleNFT": NFTCatalogMetadata(
+        self.catalog = {}
+        self.catalogTypeData = {}
+        self.catalogProposals = {}
+        NFTCatalog.addCatalogEntry(collectionIdentifier: "ExampleNFT", metadata: NFTCatalogMetadata(
             contractName: "ExampleNFT", 
             contractAddress: self.account.address, 
             nftType: Type<@ExampleNFT.NFT>(), 
@@ -395,11 +398,29 @@ pub contract NFTCatalog {
                 "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
               }
             )
-          )
-        }
-        self.catalogTypeData = {}
-
-        self.catalogProposals = {}
+        ))
+        NFTCatalog.addCatalogEntry(collectionIdentifier: "ChinoNFT", metadata: NFTCatalogMetadata(
+            contractName: "ChinoNFT", 
+            contractAddress: self.account.address, 
+            nftType: Type<@ChinoNFT.NFT>(), 
+            collectionData: NFTCollectionData(
+              storagePath: ChinoNFT.CollectionStoragePath,
+              publicPath: ChinoNFT.CollectionPublicPath,
+              privatePath: /private/chinoNFTCollection,
+              publicLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+              privateLinkedType: Type<&ChinoNFT.Collection{ChinoNFT.ChinoNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>()
+            ), 
+            collectionDisplay : MetadataViews.NFTCollectionDisplay(
+              name: "The Chino Collection",
+              description: "This collection is cool because chino is COOOOL.",
+              externalURL: MetadataViews.ExternalURL("https://example-nft.onflow.org"),
+              squareImage: media,
+              bannerImage: media,
+              socials: {
+                "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
+              }
+            )
+        ))
     }
 
 }

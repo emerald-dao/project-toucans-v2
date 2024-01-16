@@ -42,7 +42,7 @@
 			test: () => daoData.onChainData.purchasing
 		},
 		{
-			message: 'You do not own the required NFT to purchase.',
+			message: 'You do not own NFTs to donate.',
 			test: async () => {
 				if (daoData.onChainData.requiredNft) {
 					await ownsNFTFromCatalog(
@@ -80,7 +80,7 @@
 		$paymentData.payerAddress = $user.addr as string;
 		$paymentData.projectId = daoData.generalInfo.project_id;
 		$paymentData.currency = daoData.onChainData.paymentCurrency;
-		$paymentData.tokenName = daoData.generalInfo.token_symbol;
+		$paymentData.tokenName = daoData.generalInfo.token_symbol as string;
 
 		if ($paymentData.type === 'fund') {
 			$paymentData.issuanceRate = Number(
@@ -90,7 +90,7 @@
 				daoData.onChainData.currentFundingCycle!.details.reserveRate
 			);
 		} else if ($paymentData.type === 'donation') {
-			$paymentData.daoTokenSymbol = daoData.generalInfo.token_symbol;
+			$paymentData.daoTokenSymbol = daoData.generalInfo.token_symbol as string;
 		}
 	};
 

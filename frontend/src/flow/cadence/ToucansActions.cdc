@@ -1,5 +1,7 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
+import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
 
 pub contract ToucansActions {
 
@@ -71,6 +73,40 @@ pub contract ToucansActions {
         totalAmount = totalAmount + amount
       }
       self.totalReadableAmount = ToucansUtils.fixToReadableString(num: totalAmount)
+    }
+  }
+
+  // Withdraws NFTs from the treasury to 1 address
+  pub struct WithdrawNFTs: Action {
+    pub let collectionType: Type
+    pub let recipientCollection: Capability<&{NonFungibleToken.Receiver}>
+    pub let nftIDs: [UInt64]
+    pub let collectionIdentifier: String
+    pub let collectionName: String
+    pub let collectionExternalURL: String
+    pub let extra: {String: AnyStruct}
+
+    pub fun getIntent(): String {
+      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.collectionName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.address))
+    }
+
+    pub fun getTitle(): String {
+      return "WithdrawNFTs"
+    }
+
+    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
+      pre {
+        recipientCollection.check() || recipientCollectionBackup.check(): "Invalid recipient capability."
+      }
+      self.collectionType = collectionType
+      self.recipientCollection = recipientCollection
+      self.nftIDs = nftIDs
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collectionType.identifier)
+      let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
+      self.collectionIdentifier = nftCatalogCollectionIdentifier
+      self.collectionName = nftCatalogEntry.collectionDisplay.name
+      self.collectionExternalURL = nftCatalogEntry.collectionDisplay.externalURL.url
+      self.extra = {"backupReceiver": recipientCollectionBackup}
     }
   }
 
@@ -221,7 +257,7 @@ pub contract ToucansActions {
     }
   }
 
-  // burn your DAOs token from the treasury
+  // lock a token to a user
   pub struct LockTokens: Action {
     pub let recipient: Address
     pub let amount: UFix64
@@ -243,6 +279,52 @@ pub contract ToucansActions {
       self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
       self.unlockTime = unlockTime
       self.recipient = recipient
+    }
+  }
+
+  // stake flow by swapping it to stFlow on increment fi
+  pub struct StakeFlow: Action {
+    pub let flowAmount: UFix64
+    pub let readableAmount: String
+    pub let stFlowAmountOutMin: UFix64
+    pub let readableMin: String
+
+    pub fun getIntent(): String {
+      return "Stake ".concat(self.readableAmount).concat(" FLOW ").concat(" tokens by swapping them for a minimum of ").concat(self.readableMin).concat(" stFlow.")
+    }
+
+    pub fun getTitle(): String {
+      return "StakeFlow"
+    }
+
+    init(_ flowAmount: UFix64, _ stFlowAmountOutMin: UFix64) {
+      self.flowAmount = flowAmount
+      self.readableAmount = ToucansUtils.fixToReadableString(num: flowAmount)
+      self.stFlowAmountOutMin = stFlowAmountOutMin
+      self.readableMin = ToucansUtils.fixToReadableString(num: stFlowAmountOutMin)
+    }
+  }
+
+  // unstake flow by swapping stFlow for flow on increment fi
+  pub struct UnstakeFlow: Action {
+    pub let stFlowAmount: UFix64
+    pub let readableAmount: String
+    pub let flowAmountOutMin: UFix64
+    pub let readableMin: String
+
+    pub fun getIntent(): String {
+      return "Unstake FLOW".concat(" tokens by swapping ").concat(self.readableAmount).concat(" stFlow for a minimum of ").concat(self.readableMin).concat(" FLOW.")
+    }
+
+    pub fun getTitle(): String {
+      return "UnstakeFlow"
+    }
+
+    init(_ stFlowAmount: UFix64, _ flowAmountOutMin: UFix64) {
+      self.stFlowAmount = stFlowAmount
+      self.readableAmount = ToucansUtils.fixToReadableString(num: stFlowAmount)
+      self.flowAmountOutMin = flowAmountOutMin
+      self.readableMin = ToucansUtils.fixToReadableString(num: flowAmountOutMin)
     }
   }
 }

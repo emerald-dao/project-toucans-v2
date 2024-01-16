@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Currency, InputWrapper } from '@emerald-dao/component-library';
+	import { Currency } from '@emerald-dao/component-library';
 	import { paymentActiveStep } from '$lib/features/payments/stores/PaymentSteps';
 	import validationSuite from './validation';
 	import { fade } from 'svelte/transition';
@@ -10,6 +10,9 @@
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import FeeWarning from '../../atoms/FeeWarning.svelte';
+	import { getCatalogNFTs } from '$flow/actions';
+	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let isValid = false;
 	export let daoData: DAOProject;
@@ -23,6 +26,23 @@
 	};
 
 	let res = validationSuite.get();
+
+	let projectNFTsCollections = daoData.onChainData.allowedNFTCollections;
+	let currencies: string[];
+
+	if (daoData.generalInfo.token_symbol) {
+		currencies = [ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol, 'NFTs'];
+	} else {
+		currencies = [ECurrencies.FLOW, ECurrencies.USDC, 'NFTs'];
+	}
+
+	$: if ($paymentData.NFTs && $paymentData.currency === 'NFTs') {
+		if ($paymentData.NFTs.length > 0) {
+			isValid = true;
+		} else if ($paymentData.NFTs.length === 0) {
+			isValid = false;
+		}
+	}
 </script>
 
 <form
@@ -32,33 +52,54 @@
 	in:fade={{ duration: 200 }}
 >
 	{#if $paymentData.type === 'donation'}
-		<div class="currency-select-wrapper">
-			{#if daoData.hasToken}
-				<CurrencySelect
-					currencies={[ECurrencies.FLOW, ECurrencies.USDC, daoData.generalInfo.token_symbol]}
-					bind:value={$paymentData.currency}
-				/>
-			{:else}
-				<CurrencySelect
-					currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
-					bind:value={$paymentData.currency}
-				/>
-			{/if}
-		</div>
+		{#if daoData.hasToken}
+			<CurrencySelect {currencies} bind:value={$paymentData.currency} />
+		{:else}
+			<CurrencySelect {currencies} bind:value={$paymentData.currency} />
+		{/if}
 	{/if}
-	{#if $paymentData.type === 'fund' || ($paymentData.type === 'donation' && $paymentData.currency !== daoData.generalInfo.token_symbol)}
+	{#if $paymentData.type === 'fund'}
 		<FeeWarning paymentCurrency={$paymentData.currency} />
 	{/if}
-	<CurrencyInput
-		autofocus
-		currency={$paymentData.currency}
-		errors={res.getErrors('amount')}
-		isValid={res.isValid('amount')}
-		fontSize="var(--font-size-7)"
-		hasBorder={false}
-		on:input={(input) => handleChange(input.detail)}
-		bind:value={$paymentData.amount}
-	/>
+	{#if $paymentData.currency === 'NFTs'}
+		{#if !$user.addr}
+			<p class="small" style="padding: var(--space-7) 0;">
+				<em> Please log in to your account to view your NFTs collections! </em>
+			</p>
+		{:else if projectNFTsCollections.length > 0}
+			{#await getCatalogNFTs(projectNFTsCollections, $user.addr)}
+				<span class="small"><i>Loading...</i></span>
+			{:then userCatalogNFTs}
+				{#if Object.keys(userCatalogNFTs).length > 0}
+					<NFTsList
+						bind:selectedNFTIds={$paymentData.NFTs}
+						bind:selectedCollection={$paymentData.NFTCollection}
+						NFTs={userCatalogNFTs}
+						clickable={true}
+					/>
+				{:else}
+					<span class="small"><i>You have no NFTs to deposit.</i></span>
+				{/if}
+			{:catch}
+				<span class="small">
+					<i> There was an error. Please reach out to us in the Emerald City Discord. </i>
+				</span>
+			{/await}
+		{:else}
+			<span class="small"><i>This DAO has not set up any NFT collections yet.</i></span>
+		{/if}
+	{:else}
+		<CurrencyInput
+			autofocus
+			currency={$paymentData.currency}
+			errors={res.getErrors('amount')}
+			isValid={res.isValid('amount')}
+			fontSize="var(--font-size-7)"
+			hasBorder={false}
+			on:input={(input) => handleChange(input.detail)}
+			bind:value={$paymentData.amount}
+		/>
+	{/if}
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
 		<div class="funding-data-wrapper">
@@ -126,10 +167,9 @@
 	form {
 		width: 100%;
 		margin-bottom: var(--space-9);
-
-		.currency-select-wrapper {
-			margin-bottom: var(--space-4);
-		}
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
 
 		.funding-data-wrapper {
 			margin-top: var(--space-8);

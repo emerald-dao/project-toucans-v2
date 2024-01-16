@@ -2,6 +2,7 @@ import ExampleToken from "../ExampleToken.cdc"
 import Toucans from "../Toucans.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import FiatToken from "../utility/FiatToken.cdc"
+import stFlowToken from "../utility/stFlowToken.cdc"
 import NFTCatalog from "../utility/NFTCatalog.cdc"
 import SwapInterfaces from "../utility/SwapInterfaces.cdc"
 import SwapConfig from "../utility/SwapConfig.cdc"
@@ -34,6 +35,7 @@ pub struct Info {
   pub let purchasing: Bool
   pub let requiredNft: NFTData?
   pub var trading: Bool
+  pub let allowedNFTCollections: [String]
   pub let lpAddresses: {String: Address}
   pub let completedActionIds: {UInt64: Bool}
 
@@ -54,6 +56,11 @@ pub struct Info {
       info.paymentTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: info.paymentTokenInfo.tokenType) ?? 0.0,
       info.projectTokenInfo.symbol: info.getVaultBalanceInTreasury(vaultType: Type<@ExampleToken.Vault>()) ?? 0.0
     }
+    if let stFlowBalance = info.getVaultBalanceInTreasury(vaultType: Type<@stFlowToken.Vault>()) {
+      if stFlowBalance > 0.001 {
+        self.treasuryBalances["stFlow"] = stFlowBalance
+      }
+    }
     self.paymentCurrency = info.paymentTokenInfo.symbol
     self.maxSupply = ExampleToken.maxSupply
     self.purchasing = info.purchasing
@@ -71,6 +78,11 @@ pub struct Info {
       }
     } else {
       self.requiredNft = nil
+    }
+    if let allowedNFTCollections = info.getExtra()["allowedNFTCollections"] {
+      self.allowedNFTCollections = (allowedNFTCollections as! {String: Bool}).keys
+    } else {
+      self.allowedNFTCollections = []
     }
 
     let projectCurrencyIdentifier: String = info.projectTokenInfo.tokenType.identifier

@@ -2,14 +2,15 @@ import FungibleToken from "../../utility/FungibleToken.cdc"
 import Toucans from "../../Toucans.cdc"
 import ToucansTokens from "../../ToucansTokens.cdc"
 
-transaction(tokenSymbol: String, projectId: String, amount: UFix64) {
+transaction(tokenSymbol: String, projectId: String, projectOwner: Address, amount: UFix64) {
 
-  let Project: &Toucans.Project
-
-  prepare(owner: AuthAccount) {
-    let projectCollection = owner.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
+  let Project: &Toucans.Project{Toucans.ProjectPublic}
+  
+  prepare(signer: AuthAccount) {
+    let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
+                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                   ?? panic("This is an incorrect address for project owner.")
-    self.Project = projectCollection.borrowProject(projectId: projectId)
+    self.Project = projectCollection.borrowProjectPublic(projectId: projectId)
                   ?? panic("Project does not exist, at least in this collection.")
   }
 

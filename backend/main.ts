@@ -5,18 +5,16 @@ import express from "express";
 import { DaoRankingData } from "./types/dao-ranking.interface";
 import { calcTokenPrice, getTrendingDatav2 } from "./flow/actions";
 import { supabase } from "./supabaseClient";
-import { fetchFlowPrice } from "./functions/fetchFlowPrice";
+import { fetchFlowPrice, fetchStFlowPrice } from "./functions/fetchFlowPrice";
 import { fetchAllProjects } from "./supabase/fetchAllProjects";
-import { network } from "./flow/config";
 import { roundToUSDPrice } from './flow/utils';
 import { fetchAllProposals } from './supabase/fetchAllProposals';
 import { fetchTokenInfo } from './functions/fetchTokenInfo';
 import cron from "node-cron";
-import { fetchAllRankings } from './supabase/fetchAllRankings';
 import { fetchAllFundEvents } from './supabase/fetchAllFundEvents';
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -91,6 +89,13 @@ async function gatherTrendingProjects() {
     return null;
   }
 
+  // fetch stFlow price
+  const stFlowPrice = await fetchStFlowPrice(flowPrice);
+  if (!stFlowPrice) {
+    console.log('Invalid stFlow price.')
+    return null;
+  }
+
   // for last weeks funding
   for (const event of fundEvents) {
     const usdAmount = event.data.tokenSymbol === 'USDC'
@@ -133,6 +138,9 @@ async function gatherTrendingProjects() {
     let mainBalances = Number(treasuryBalances["USDC"]) + Number((treasuryBalances["FLOW"]) * flowPrice);
     if (projects[projectId].price) {
       mainBalances += Number(treasuryBalances[addressList[projectId].token_symbol]) * projects[projectId].price;
+    }
+    if (treasuryBalances["stFlow"]) {
+      mainBalances += Number((treasuryBalances["stFlow"] * stFlowPrice));
     }
     projects[projectId].treasury_value = Math.round(mainBalances * 100) / 100;
   }

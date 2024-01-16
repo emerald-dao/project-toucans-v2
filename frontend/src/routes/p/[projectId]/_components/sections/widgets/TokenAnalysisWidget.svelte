@@ -130,7 +130,8 @@
 					<Currency
 						amount={tokenData.averageFunding}
 						color="heading"
-						currency={daoData.onChainData.paymentCurrency}
+						moneyPrefix={true}
+						decimalNumbers={2}
 						fontSize="var(--font-size-1)"
 					/>
 				</div>

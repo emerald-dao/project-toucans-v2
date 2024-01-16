@@ -12,6 +12,8 @@
 	import { daoAndTokenGeneratorData } from '$lib/features/dao-generator/stores/DaoAndTokenGeneratorData';
 	import { daoGeneratorData } from '$lib/features/dao-generator/stores/DaoGeneratorData';
 
+	export let data;
+
 	$: $page.params.daoType === 'dao-token'
 		? setContext('daoGeneratorActiveStep', daoAndTokenGeneratorActiveStep)
 		: setContext('daoGeneratorActiveStep', daoGeneratorActiveStep);
@@ -23,6 +25,8 @@
 	$: $page.params.daoType === 'dao-token'
 		? setContext('daoGeneratorData', daoAndTokenGeneratorData)
 		: setContext('daoGeneratorData', daoGeneratorData);
+
+	setContext('projectNFTCatalog', data.projectNFTs);
 </script>
 
 <Section paddingTop="none">
@@ -30,9 +34,9 @@
 		<GeneratorNav />
 	</div>
 	<div class="content-wrapper">
-		<Container width="small" --container-s="34ch">
+		<div class="container-small">
 			<slot />
-		</Container>
+		</div>
 	</div>
 </Section>
 
@@ -44,7 +48,12 @@
 			display: block;
 		}
 	}
+
 	.content-wrapper {
 		margin-top: 2.8rem;
+
+		.container-small {
+			max-width: 38ch;
+		}
 	}
 </style>

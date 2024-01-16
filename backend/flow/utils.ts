@@ -59,7 +59,7 @@ const contractData = {
   },
   Toucans: {
     emulator: '0xf8d6e0586b0a20c7',
-    testnet: '0x04525cc647ef7524',
+    testnet: '0x918c2008c16da416',
     mainnet: '0x577a3c409c5dcb5e'
   },
   SwapUtils: {
@@ -71,6 +71,11 @@ const contractData = {
     emulator: '0xf8d6e0586b0a20c7',
     testnet: '0xcbed4c301441ded2',
     mainnet: '0xb063c16cac85dbd1'
+  },
+  stFlowToken: {
+    emulator: '0xf8d6e0586b0a20c7',
+    testnet: '0xe45c64ecfe31e465',
+    mainnet: '0xd6f80565193ad727'
   }
 };
 
@@ -90,7 +95,8 @@ export const addresses: {
   FiatToken: contractData.FiatToken[network],
   NFTCatalog: contractData.NFTCatalog[network],
   SwapUtils: contractData.SwapUtils[network],
-  SwapFactory: contractData.SwapFactory[network]
+  SwapFactory: contractData.SwapFactory[network],
+  stFlowToken: contractData.stFlowToken[network]
 };
 
 export function getCadenceCode(scriptFileName: string, contractName: string | undefined, contractAddress: string | undefined) {
@@ -124,6 +130,7 @@ export function replaceWithProperValues(script: string, contractName: string | u
       .replace('"../utility/SwapInterfaces.cdc"', addresses.SwapUtils)
       .replace('"../utility/SwapConfig.cdc"', addresses.SwapUtils)
       .replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
+      .replace('"../utility/stFlowToken.cdc"', addresses.stFlowToken)
       .replaceAll('ExampleToken', contractName)
   );
 }

@@ -12,7 +12,7 @@
 	let pageMove: 'next' | 'previous' = 'next';
 
 	const mainFundersEntries = Object.entries(daoData.funding.funders).sort(
-		(a, b) => Number(b[1]) - Number(a[1])
+		(a, b) => Number(b[1].amount) - Number(a[1].amount)
 	);
 </script>
 
@@ -26,7 +26,7 @@
 		on:nextPage={() => (pageMove = 'next')}
 		on:previousPage={() => (pageMove = 'previous')}
 	>
-		{#each mainFundersEntries as [address, funding], i}
+		{#each mainFundersEntries as [address, { amount }], i}
 			{#if i < paginationMax && i >= paginationMin}
 				<LeaderboardListElement
 					rank={i + 1}
@@ -34,7 +34,7 @@
 					bind:pageMove
 					pagePosition={i - paginationMin}
 				>
-					<Currency amount={funding} moneyPrefix={true} decimalNumbers={2} color="heading" />
+					<Currency {amount} moneyPrefix={true} decimalNumbers={2} color="heading" />
 				</LeaderboardListElement>
 			{/if}
 		{/each}

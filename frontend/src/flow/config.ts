@@ -25,12 +25,12 @@ const fclConfigInfo = {
 	testnet: {
 		accessNode: 'https://rest-testnet.onflow.org',
 		discoveryWallet: 'https://fcl-discovery.onflow.org/testnet/authn',
-		discoveryAuthnInclude: ['0x9d2e44203cb13051']
+		discoveryAuthnInclude: ['0x82ec283f88a62e65', '0x9d2e44203cb13051']
 	},
 	mainnet: {
 		accessNode: 'https://rest-mainnet.onflow.org',
 		discoveryWallet: 'https://fcl-discovery.onflow.org/authn',
-		discoveryAuthnInclude: ['0xe5cd26afebe62781']
+		discoveryAuthnInclude: ['0xead892083b3e2c6c', '0xe5cd26afebe62781']
 	}
 }
 

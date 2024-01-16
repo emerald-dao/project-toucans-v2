@@ -8,6 +8,8 @@
 	import SeeRoundDetailsModal from '../../funding-rounds/atoms/SeeRoundDetailsModal.svelte';
 	import WalletLabel from '$components/atoms/WalletLabel.svelte';
 	import type { FindMap } from '$lib/types/common/find.interface';
+	import BatchMintingList from '$components/dao-data-blocks/pending-actions/atoms/BatchMintingList.svelte';
+	import { ECurrencies } from '$lib/types/common/enums';
 
 	export let event: DaoEvent;
 	export let i: number;
@@ -41,7 +43,17 @@
 			text: 'Donate',
 			color: 'primary'
 		},
+		DonateNFT: {
+			icon: 'tabler:heart-handshake',
+			text: 'Donate',
+			color: 'primary'
+		},
 		Withdraw: {
+			icon: 'tabler:circle-arrow-up-right',
+			text: 'Withdraw',
+			color: 'alert'
+		},
+		WithdrawNFTs: {
 			icon: 'tabler:circle-arrow-up-right',
 			text: 'Withdraw',
 			color: 'alert'
@@ -80,6 +92,16 @@
 			icon: 'tabler:signature',
 			text: 'Added signer',
 			color: 'tertiary'
+		},
+		StakeFlow: {
+			icon: 'tabler:coins',
+			text: 'Staked Flow',
+			color: 'primary'
+		},
+		UnstakeFlow: {
+			icon: 'tabler:coins',
+			text: 'Unstaked Flow',
+			color: 'alert'
 		}
 	};
 </script>
@@ -93,7 +115,7 @@
 		</div>
 	</div>
 	<div class="row-3">
-		{#if (event.type === 'Purchase' || event.type === 'Donate') && event.data.message}
+		{#if (event.type === 'Purchase' || event.type === 'Donate' || event.type === 'DonateNFT') && event.data.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>
@@ -102,11 +124,19 @@
 				<p class="special-message">{event.data.message}</p>
 			</Modal>
 		{/if}
-		{#if event.type === 'Purchase' || event.type === 'Donate'}
+		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'DonateNFT'}
 			<WalletLabel address={event.data.by} find={findNames[event.data.by]} />
 		{/if}
-		{#if event.type === 'Withdraw' || event.type === 'Mint' || event.type === 'LockTokens'}
+		{#if event.type === 'Withdraw' || event.type === 'Mint' || event.type === 'LockTokens' || event.type === 'WithdrawNFTs'}
 			<WalletLabel address={event.data.to} find={findNames[event.data.to]} />
+		{/if}
+		{#if (event.type === 'BatchWithdraw' || event.type === 'BatchMint') && event.data.amounts}
+			<div class="header-link" on:click={() => getModal(`batch-withdraw-${i}`).open()} on:keydown>
+				<Icon icon="tabler:message" />
+			</div>
+			<Modal background="var(--clr-background-secondary)" id={`batch-withdraw-${i}`}>
+				<BatchMintingList amounts={event.data.amounts} currency={event.data.tokenSymbol} />
+			</Modal>
 		{/if}
 		{#if event.type === 'Purchase' || event.type === 'Donate' || event.type === 'Withdraw' || event.type === 'BatchWithdraw' || event.type === 'Mint' || event.type === 'BatchMint' || event.type === 'Burn' || event.type === 'LockTokens'}
 			<Currency
@@ -118,7 +148,20 @@
 				fontSize="0.85rem"
 				decimalNumbers={2}
 			/>
-		{:else if event.type === 'NewFundingCycle'}
+		{/if}
+		{#if event.type === 'DonateNFT' || event.type === 'WithdrawNFTs'}
+			<a href={event.data.collectionExternalURL} target="_blank" style="text-decoration: none;">
+				<Currency
+					amount={event.type === 'WithdrawNFTs'
+						? -Number(event.data.amount)
+						: Number(event.data.amount)}
+					currency={event.data.collectionIdentifier}
+					color="heading"
+					fontSize="0.85rem"
+				/>
+			</a>
+		{/if}
+		{#if event.type === 'NewFundingCycle'}
 			<SeeRoundDetailsModal
 				round={daoData.onChainData.fundingCycles[Number(event.data.newCycleId)]}
 				projectToken={daoData.generalInfo.token_symbol}
@@ -128,6 +171,16 @@
 				activeRound={daoData.onChainData.currentFundingCycle
 					? Number(daoData.onChainData.currentFundingCycle.details.cycleId)
 					: null}
+			/>
+		{:else if event.type === 'StakeFlow' || event.type === 'UnstakeFlow'}
+			<Currency
+				amount={event.type === 'StakeFlow'
+					? Number(event.data.amountIn)
+					: Number(event.data.amountOut)}
+				currency={ECurrencies.FLOW}
+				color="heading"
+				fontSize="0.85rem"
+				decimalNumbers={2}
 			/>
 		{/if}
 	</div>

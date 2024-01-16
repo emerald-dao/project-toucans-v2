@@ -52,9 +52,15 @@ function getQuoteToFlowPriceFromDex(info) {
   let numQuote = 0.0
   if (info[0].includes('Flow')) {
     numFlow = parseFloat(info[2])
+    if (numFlow < 100) {
+      return null;
+    }
     numQuote = parseFloat(info[3])
   } else if (info[1].includes('Flow')) {
     numFlow = parseFloat(info[3])
+    if (numFlow < 100) {
+      return null;
+    }
     numQuote = parseFloat(info[2])
   } else {
     return null;
@@ -68,9 +74,15 @@ function getQuoteToUSDCPriceFromDex(info) {
   let numQuote = 0.0
   if (info[0].includes('FiatToken')) {
     numUsdc = parseFloat(info[2])
+    if (numUsdc < 100) {
+      return null;
+    }
     numQuote = parseFloat(info[3])
   } else if (info[1].includes('FiatToken')) {
     numUsdc = parseFloat(info[3])
+    if (numUsdc < 100) {
+      return null;
+    }
     numQuote = parseFloat(info[2])
   } else {
     return null;
@@ -131,6 +143,7 @@ function generateGetTrendingDataScript(projectIds: string[], contractAddresses: 
       let treasuryBalances${i} = {
         "FLOW": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
         "USDC": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
+        "stFlow": project${i}.getVaultBalanceInTreasury(vaultType: Type<@stFlowToken.Vault>()) ?? 0.0,
         project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0,
         project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${v}.Vault>()) ?? 0.0
       }
@@ -149,6 +162,7 @@ function generateGetTrendingDataScript(projectIds: string[], contractAddresses: 
       let treasuryBalances${i} = {
         "FLOW": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FlowToken.Vault>()) ?? 0.0,
         "USDC": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
+        "stFlow": project${i}.getVaultBalanceInTreasury(vaultType: Type<@stFlowToken.Vault>()) ?? 0.0,
         project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0
       }
       answer["${v}"] = Info(nil, nil, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, nil, project${i}.totalFunding, project${i}.getFunders().keys, [])
@@ -163,6 +177,7 @@ function generateGetTrendingDataScript(projectIds: string[], contractAddresses: 
   import SwapInterfaces from "../utility/SwapInterfaces.cdc"
   import SwapConfig from "../utility/SwapConfig.cdc"
   import SwapFactory from "../utility/SwapFactory.cdc"
+  import stFlowToken from "../utility/stFlowToken.cdc"
   ${imports}
 
   pub fun main(): {String: Info} {

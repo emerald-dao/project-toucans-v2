@@ -15,9 +15,15 @@
 		<p>
 			{#if $paymentData.type === 'donation'}
 				{`You donated`}
-				<span class="strong">
-					{`${$paymentData.amount} $${$paymentData.currency}`}
-				</span>
+				{#if $paymentData.currency === 'NFTs' && $paymentData.NFTs && $paymentData.NFTCollection}
+					<span class="strong">
+						{`${$paymentData.NFTs.length} NFTs from the ${$paymentData.NFTCollection} collection`}
+					</span>
+				{:else}
+					<span class="strong">
+						{`${$paymentData.amount} $${$paymentData.currency}`}
+					</span>
+				{/if}
 				to
 				<span class="strong">
 					{`${$paymentData.daoName}.`}
@@ -40,26 +46,44 @@
 		<Divider text="Share" />
 		<div class="share-buttons-wrapper">
 			{#if $paymentData.type === 'donation'}
-				<Button
-					href={`https://twitter.com/intent/tweet?text=Just%20donated%20${$paymentData.amount}%20$${
-						$paymentData.currency
-					}%20to%20${
-						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
-					}%20on%20Toucans!`}
-					target="_blank"
-					type="ghost"
-					color="neutral"
-					size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
-				>
+				{#if $paymentData.currency === 'NFTs' && $paymentData.NFTs && $paymentData.NFTCollection}
+					<Button
+						href={`https://twitter.com/intent/tweet?text=I%20just%20donated%20${
+							$paymentData.NFTs.length
+						}%20NFTs%20from%20the%20${$paymentData.NFTCollection}%20collection%20to%20${
+							daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
+						}%20on%20Toucans!%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
+							daoData.generalInfo.project_id
+						}`}
+						target="_blank"
+						type="ghost"
+						color="neutral"
+						size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
+					>
+				{:else}
+					<Button
+						href={`https://twitter.com/intent/tweet?text=I%20just%20donated%20${
+							$paymentData.amount
+						}%20$${$paymentData.currency}%20to%20${
+							daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
+						}%20on%20Toucans!%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
+							daoData.generalInfo.project_id
+						}`}
+						target="_blank"
+						type="ghost"
+						color="neutral"
+						size="small"><Icon icon="tabler:brand-twitter" />Twitter</Button
+					>
+				{/if}
 			{:else if $paymentData.type === 'fund'}
 				<Button
-					href={`https://twitter.com/intent/tweet?text=Just%20funded%20${
+					href={`https://twitter.com/intent/tweet?text=I%20just%20funded%20${
 						daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
 					}%20with%20${$paymentData.amount}%20$${
 						$paymentData.currency
 					}%20on%20Toucans%20and%20got%20${
 						$paymentData.amount * 0.95 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
-					}%20$${$paymentData.tokenName}: https://toucans.ecdao.org/p/${
+					}%20$${$paymentData.tokenName}.%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
 						daoData.generalInfo.project_id
 					}`}
 					target="_blank"

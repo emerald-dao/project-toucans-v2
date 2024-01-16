@@ -36,6 +36,8 @@ export async function POST({ request }) {
 		const [event] = executionResult.events.filter(
 			(event) =>
 				event.type.includes('Toucans.NewFundingCycle') ||
+				event.type.includes('Toucans.DonateNFT') ||
+				event.type.includes('Toucans.WithdrawNFT') ||
 				event.type.includes('Toucans.Donate') ||
 				event.type.includes('Toucans.Purchase') ||
 				event.type.includes('Toucans.Mint') ||
@@ -46,7 +48,9 @@ export async function POST({ request }) {
 				event.type.includes('Toucans.AddSigner') ||
 				event.type.includes('Toucans.RemoveSigner') ||
 				event.type.includes('Toucans.UpdateThreshold') ||
-				event.type.includes('Toucans.LockTokens')
+				event.type.includes('Toucans.LockTokens') ||
+				event.type.includes('Toucans.StakeFlow') ||
+				event.type.includes('Toucans.UnstakeFlow')
 		);
 
 		console.log('[SAVING]: Step 3', event);
@@ -55,7 +59,7 @@ export async function POST({ request }) {
 			return json({ success: false, error: 'Transaction does not contain any Toucans events.' });
 		}
 
-		const { projectId, amounts, ...rest } = event.data;
+		const { projectId, ...rest } = event.data;
 		const eventType = event.type.substring(27);
 
 		// if its a donate or purchase event, save it differently
@@ -75,6 +79,19 @@ export async function POST({ request }) {
 				_transaction_id: transactionId,
 				_funder: rest.by,
 				_usd_amount: amount
+			});
+
+			if (error) {
+				return json({ success: false, error: 'This transaction has already been added.' });
+			}
+		} else if (eventType === 'DonateNFT') {
+			const { error } = await supabase.rpc('save_nft_fund', {
+				_project_id: projectId,
+				_type: eventType,
+				_data: rest,
+				_transaction_id: transactionId,
+				_funder: rest.by,
+				_amount: rest.amount
 			});
 
 			if (error) {

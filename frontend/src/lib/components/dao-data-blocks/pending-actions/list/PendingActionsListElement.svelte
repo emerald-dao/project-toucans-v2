@@ -27,6 +27,7 @@
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'tabler:outbound',
+		WithdrawNFTs: 'tabler:outbound',
 		BatchWithdraw: 'tabler:outbound',
 		RemoveSigner: 'tabler:pencil-off',
 		AddSigner: 'tabler:pencil-plus',
@@ -35,13 +36,16 @@
 		BatchMint: 'tabler:coin',
 		MintToTreasury: 'tabler:pig-money',
 		Burn: 'tabler:flame',
-		LockTokens: 'tabler:lock-square'
+		LockTokens: 'tabler:lock-square',
+		StakeFlow: 'tabler:coins',
+		UnstakeFlow: 'tabler:coins'
 	};
 
 	const actionTypeToText: {
 		[key in MultisigActions]: string;
 	} = {
 		Withdraw: 'Withdraw',
+		WithdrawNFTs: 'Withdraw',
 		BatchWithdraw: 'Batch Withdraw',
 		RemoveSigner: 'Remove Signer',
 		AddSigner: 'Add Signer',
@@ -50,7 +54,9 @@
 		BatchMint: 'Batch Mint',
 		MintToTreasury: 'Mint to Treasury',
 		Burn: 'Burn',
-		LockTokens: 'Locked Tokens'
+		LockTokens: 'Locked Tokens',
+		StakeFlow: 'Stake Flow',
+		UnstakeFlow: 'Unstake Flow'
 	};
 
 	function translateIntent(action: MultisigActions, intent: string) {

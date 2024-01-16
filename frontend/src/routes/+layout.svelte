@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Profile } from '$lib/types/common/profile.interface';
 	import { network } from '$flow/config';
 	import '../app.postcss';
 	import '@emerald-dao/design-system/build/variables-dark.css';
@@ -46,9 +45,14 @@
 		$profile = await getProfile(address);
 	};
 
+	$: isDapperWallet =
+		$user.loggedIn &&
+		$user.services.find((service) => service.type === 'authn').uid.includes('dapper');
+
 	$: if ($user.addr) {
 		connectProfileToStore($user.addr);
 	} else {
+		isDapperWallet = false;
 		$profile = null;
 	}
 
@@ -62,7 +66,48 @@
 		console.log('hi!');
 		avatarDropdownNav[0].url = `/u/${$user.addr}`;
 	}
+
+	$: routes = $page.url.pathname.split('/');
 </script>
+
+{#if isDapperWallet}
+	<div class="dapper-note">
+		<p class="small">
+			You are logged in with Dapper Wallet. The only supported action you can do is donate NFTs to a
+			project.
+		</p>
+	</div>
+{/if}
+<div class="body" class:full-height={routes[1] === 'admin'}>
+	<Header
+		themeStore={theme}
+		logIn={() => connect()}
+		{unauthenticate}
+		user={$user}
+		profile={$profile}
+		{navElements}
+		sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
+		avatarDropDownNavigation={$user.addr ? avatarDropdownNav : undefined}
+		{network}
+		transactionInProgress={$transactionStore.progress}
+		logoText="Toucans"
+		logoUrl="/toucans-logo.png"
+		{notificationsNumber}
+		width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
+	/>
+	<main>
+		<slot />
+	</main>
+	{#if $page.url.pathname === '/' || $page.url.pathname === '/discover' || $page.url.pathname === '/docs'}
+		<Footer
+			{navElements}
+			{emeraldTools}
+			socials={socialMedia}
+			logoText="Toucans"
+			logoUrl="/toucans-logo.png"
+		/>
+	{/if}
+</div>
 
 <TransactionModal
 	transactionInProgress={$transactionStore.progress}
@@ -72,26 +117,6 @@
 	on:close={() => transactionStore.resetTransaction()}
 />
 
-<Header
-	themeStore={theme}
-	logIn={() => connect()}
-	{unauthenticate}
-	user={$user}
-	profile={$profile}
-	{navElements}
-	sticky={$page.url.pathname === '/' || $page.url.pathname === '/discover'}
-	avatarDropDownNavigation={$user.addr ? avatarDropdownNav : undefined}
-	{network}
-	transactionInProgress={$transactionStore.progress}
-	logoText="Toucans"
-	logoUrl="/toucans-logo.png"
-	{notificationsNumber}
-	width={$page.url.pathname.includes('/admin') ? 'large' : 'medium'}
-/>
-<main>
-	<slot />
-</main>
-
 <Seo
 	title={dappInfo.title}
 	description={dappInfo.description}
@@ -99,19 +124,36 @@
 	image="https://toucans.ecdao.org/favicon.png"
 />
 
-{#if $page.url.pathname === '/' || $page.url.pathname === '/discover' || $page.url.pathname === '/docs'}
-	<Footer
-		{navElements}
-		{emeraldTools}
-		socials={socialMedia}
-		logoText="Toucans"
-		logoUrl="/toucans-logo.png"
-	/>
-{/if}
+<style type="scss">
+	.body {
+		display: grid;
+		flex-direction: column;
+		overflow: hidden;
+		grid-template-rows: auto 1fr auto;
+		min-height: 100vh;
+	}
 
-<style>
+	.full-height {
+		height: 100vh;
+	}
+
 	main {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.dapper-note {
+		width: 100vw;
+		padding: 10px 25px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: var(--clr-secondary-main);
+
+		.small {
+			color: white;
+		}
 	}
 </style>

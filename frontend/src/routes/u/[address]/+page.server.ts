@@ -1,7 +1,7 @@
 import { getProjectBalances } from '$flow/actions';
 import type { Profile } from '$lib/types/common/profile.interface';
 import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
-import { fetchAllToucansProjects } from '$lib/utilities/api/supabase/fetchAllToucansProjects';
+import { fetchAllToucansProjectsWithToken } from '$lib/utilities/api/supabase/fetchAllToucansProjectsWithToken';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
 import type { UserData, Vault } from './_types/user-data.interface';
@@ -22,13 +22,14 @@ export const load = async ({ params, fetch }): Promise<UserData> => {
 
 const getUserVaults = async (address: string): Promise<Vault[]> => {
 	const rankedProjects = await fetchDaoRankings();
-	const projects = await fetchAllToucansProjects();
+	const projects = await fetchAllToucansProjectsWithToken();
 
 	const y = projects.map((x) => {
 		return { key: x.project_id, value: x.owner };
 	});
 
 	const balances = await getProjectBalances(address, y);
+	console.log('balances', balances)
 
 	const vaults: Vault[] = [];
 

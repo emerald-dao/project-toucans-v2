@@ -22,7 +22,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each projectsData as project, i}
+			{#each projectsData as project, i (project.project_id)}
 				<TokenRankingRow {project} number={i} />
 			{/each}
 		</tbody>

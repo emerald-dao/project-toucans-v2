@@ -1,64 +1,74 @@
-<script lang="ts">
-	import { fly } from 'svelte/transition';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
-	import {
-		PrimaryTabs,
-		SecondaryTabs,
-		GeneralStats,
-		Signers,
-		TreasuryWallet,
-		DaoStatsIntro
-	} from './_components';
+<script type="ts">
+	import { Button, Seo } from '@emerald-dao/component-library';
+	import { user } from '$stores/flow/FlowStore';
+	import ConnectPage from '$components/atoms/ConnectPage.svelte';
+	import { invalidate } from '$app/navigation';
+	import DesktopOnlyPage from '$components/desktop-only-page/DesktopOnlyPage.svelte';
 
-	const adminData: {
-		activeDao: Writable<number>;
-		userDaos: Writable<DAOProject[]>;
-	} = getContext('admin-data');
+	let screenSize: number;
 
-	const activeDaoStore = adminData.activeDao;
-	const userDaosStore = adminData.userDaos;
+	const onChangeUser = async () => {
+		await invalidate('app:admin');
+	};
 
-	$: activeDaoData = $userDaosStore[$activeDaoStore];
+	$: $user.addr && onChangeUser();
 </script>
 
-<div class="main-wrapper column-5" in:fly={{ x: 10, duration: 400 }}>
-	<DaoStatsIntro daoData={activeDaoData} />
-	<div class="secondary-wrapper">
-		<div class="column-8">
-			<GeneralStats daoData={activeDaoData} />
-			<PrimaryTabs daoData={activeDaoData} />
-		</div>
-		<div class="column-space-between second-column">
-			<div class="column-6">
-				<a href="/admin/withdraw">
-					<TreasuryWallet daoData={activeDaoData} />
-				</a>
-				<SecondaryTabs daoData={activeDaoData} />
-			</div>
-			<Signers daoData={activeDaoData} />
-		</div>
-	</div>
-</div>
+<svelte:window bind:innerWidth={screenSize} />
 
-<style lang="scss">
-	.main-wrapper {
+{#if screenSize < 1040}
+	<DesktopOnlyPage />
+{:else if !$user.addr}
+	<ConnectPage />
+{:else}
+	<section class="container flex centered">
+		<div class="card-primary column-7 align-center">
+			<span>You do not have any DAOs to manage.</span>
+			<Button size="large" href="/dao-generator">Create DAO</Button>
+		</div>
+	</section>
+{/if}
+
+<Seo
+	title={`Admin | Toucans`}
+	description={`Manage your DAO's`}
+	type="WebPage"
+	image="https://toucans.ecdao.org/favicon.png"
+/>
+
+<style type="scss">
+	section {
+		padding: 0;
+		display: flex;
 		flex: 1;
+		overflow: hidden;
 
-		.secondary-wrapper {
+		@include mq(medium) {
 			display: grid;
-			grid-template-columns: 3fr 2fr;
-			gap: var(--space-13);
-			height: 100%;
+			grid-template-columns: 320px auto;
+		}
 
-			.second-column {
-				display: flex;
-				height: 100%;
+		&.centered {
+			align-items: center;
+		}
 
-				a {
-					text-decoration: none;
-				}
+		.main-wrapper {
+			padding-block: var(--space-11);
+			padding-inline: var(--space-12);
+			display: flex;
+			flex-direction: column;
+			overflow-y: auto;
+			padding-inline: var(--space-12) 5vw;
+		}
+
+		.card-primary {
+			padding: var(--space-12);
+			width: fit-content;
+			height: fit-content;
+
+			span {
+				text-align: center;
+				min-width: 18ch;
 			}
 		}
 	}

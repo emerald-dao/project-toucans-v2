@@ -14,10 +14,12 @@ Testing - https://dev.toucans.ecdao.org
 - ToucansUtils: `0x577a3c409c5dcb5e`
 - ToucansActions: `0x577a3c409c5dcb5e`
 - ToucansTokens: `0x577a3c409c5dcb5e`
+- ToucansLockTokens: `0x577a3c409c5dcb5e`
 
 **Testnet**
 
-- Toucans: `0x04525cc647ef7524`
-- ToucansUtils: `0x04525cc647ef7524`
-- ToucansActions: `0x04525cc647ef7524`
-- ToucansTokens: `0x04525cc647ef7524`
+- Toucans: `0x918c2008c16da416`
+- ToucansUtils: `0x918c2008c16da416`
+- ToucansActions: `0x918c2008c16da416`
+- ToucansTokens: `0x918c2008c16da416`
+- ToucansLockTokens: `0x918c2008c16da416`

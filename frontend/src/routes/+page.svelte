@@ -19,7 +19,7 @@
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
 <div class="no-overflow-x">
 	<HeroSection />
-	<LeadingProjectsSection allProjects={data.allProjects} />
+	<LeadingProjectsSection allProjects={projects} />
 	<ProductShowcaseSection />
 	<StatsSection background={'var(--clr-surface-primary)'} data={getToucansStats(projects.length)} />
 	<CommunityToolboxSection />
