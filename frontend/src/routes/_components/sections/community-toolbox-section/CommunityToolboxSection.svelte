@@ -1,21 +1,30 @@
 <script lang="ts">
+	import NftTreasuryCard from './cards/NftTreasuryCard.svelte';
 	import TokenCard from './cards/TokenCard.svelte';
 	import FundrisingCard from './cards/FundrisingCard.svelte';
 	import TreasuryCard from './cards/TreasuryCard.svelte';
 	import VotingCard from './cards/VotingCard.svelte';
+	import * as Section from '../atoms/section';
 </script>
 
 <section class="section-large">
 	<div class="container">
-		<h2 class="w-medium">
-			<span> The ultimate toolbox </span>
-			for communities and token creators
-		</h2>
+		<Section.Header>
+			<Section.Heading>
+				<Section.HeadingHighlight>The ultimate toolbox</Section.HeadingHighlight>
+				for communities and token creators
+			</Section.Heading>
+		</Section.Header>
 		<div class="cards-wrapper">
 			<TokenCard />
-			<FundrisingCard />
-			<TreasuryCard />
-			<VotingCard />
+			<div class="grid">
+				<FundrisingCard />
+				<TreasuryCard />
+			</div>
+			<div class="grid inverse">
+				<VotingCard />
+				<NftTreasuryCard />
+			</div>
 		</div>
 	</div>
 </section>
@@ -30,35 +39,20 @@
 			border-radius: 20px;
 			border: 1px;
 
-			h2 {
-				font-size: var(--font-size-9);
-				text-align: center;
-
-				span {
-					display: block;
-					white-space: nowrap;
-					background: -webkit-linear-gradient(
-						var(--clr-background-primary),
-						var(--clr-heading-main)
-					);
-					-webkit-background-clip: text;
-					-webkit-text-fill-color: transparent;
-				}
-			}
-
 			.cards-wrapper {
 				display: flex;
 				flex-direction: column;
 				gap: var(--space-6);
+				width: 100%;
 
-				@include mq('small') {
+				.grid {
 					display: grid;
-					grid-template-columns: repeat(2, 1fr);
-					grid-template-rows: repeat(3, auto);
-					grid-template-areas:
-						'card1 card1'
-						'card2 card3'
-						'card4 card4';
+					grid-template-columns: 2fr 3fr;
+					gap: var(--space-6);
+
+					&.inverse {
+						grid-template-columns: 3fr 2fr;
+					}
 				}
 			}
 		}

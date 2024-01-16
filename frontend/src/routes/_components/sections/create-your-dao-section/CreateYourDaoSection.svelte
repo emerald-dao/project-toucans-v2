@@ -40,10 +40,13 @@
 			}
 		}
 		.linear-gradient {
-			background: linear-gradient(180deg, #1e1e1e 50%, #317452 369.36%),
-				linear-gradient(0deg, #424242, #424242);
-			border-radius: 20px;
-			border: 1px solid #424242;
+			background: linear-gradient(
+				180deg,
+				var(--clr-background-secondary) 50%,
+				var(--clr-primary-main) 1000%
+			);
+			border-radius: var(--radius-3);
+			border: 1px solid var(--clr-border-primary);
 		}
 	}
 </style>

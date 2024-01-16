@@ -1,8 +1,4 @@
-<script lang="ts">
-	export let gridArea: string;
-</script>
-
-<div style={`grid-area: ${gridArea}`}>
+<div>
 	<slot />
 </div>
 

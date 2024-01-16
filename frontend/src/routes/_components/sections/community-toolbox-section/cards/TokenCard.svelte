@@ -6,7 +6,7 @@
 	import DaoStatsIntro from '../../../../admin/_components/stats-blocks/DaoStatsIntro.svelte';
 </script>
 
-<FeatureCard.Root gridArea="card1">
+<FeatureCard.Root>
 	<FeatureCard.Header>
 		<FeautreLabel icon="mdi:circle-multiple" textColor="text">Token</FeautreLabel>
 		<FeatureCard.Heading>
