@@ -1,8 +1,8 @@
 <script lang="ts">
 	import * as FeatureCard from '../atoms/feature-card';
 	import FeautreLabel from '../../atoms/FeatureLabel.svelte';
-	import TreasuryWallet from '../../../../admin/_components/stats-blocks/TreasuryWallet.svelte';
 	import { MOCK_DAO } from '../mockDao';
+	import TreasuryWallet from '../../../../admin/[projectId]/_components/stats-blocks/TreasuryWallet.svelte';
 </script>
 
 <FeatureCard.Root>
@@ -15,9 +15,5 @@
 	</FeatureCard.Header>
 	<FeatureCard.Content>
 		<TreasuryWallet color="neutral" daoData={MOCK_DAO} />
-		<!-- <div class="row-3">
-			<img src="/transactions.png" alt="Flow developers" />
-			<img src="/treasuryWallet.png" alt="Flow developers" />
-		</div> -->
 	</FeatureCard.Content>
 </FeatureCard.Root>

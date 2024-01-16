@@ -4,6 +4,10 @@
 	export let nft: Nft;
 	export let isSelected: boolean;
 	export let clickable: boolean;
+
+	let imgUrl = nft.thumbnail.startsWith('ipfs://')
+		? `https://nftstorage.link/ipfs/${nft.thumbnail.slice(7)}`
+		: nft.thumbnail;
 </script>
 
 <div class="nft-wrapper" class:clickable class:selected={isSelected} on:click>
@@ -12,12 +16,9 @@
 			<p class="xsmall">#{nft.serial}</p>
 		</div>
 	{/if}
-	<img
-		src={nft.thumbnail.startsWith('ipfs://')
-			? `https://nftstorage.link/ipfs/${nft.thumbnail.slice(7)}`
-			: nft.thumbnail}
-		alt="NFT"
-	/>
+	<object data={imgUrl} type="image/png">
+		<img src="/toucans-illustration.png" alt="NFT" />
+	</object>
 	<div class="content-wrapper">
 		<p class="heading">{nft.name}</p>
 	</div>
@@ -57,10 +58,12 @@
 			border-radius: 0 var(--radius-2) 0 var(--radius-1);
 		}
 
-		img {
+		img,
+		object {
 			width: 100%;
 			height: 120px;
 			object-fit: cover;
+			background-color: var(--clr-background-secondary);
 		}
 
 		&.clickable {

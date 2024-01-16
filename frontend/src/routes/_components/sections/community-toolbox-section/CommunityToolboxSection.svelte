@@ -51,7 +51,7 @@
 					gap: var(--space-6);
 
 					&.inverse {
-						grid-template-columns: 3fr 2fr;
+						grid-template-columns: 5fr 4fr;
 					}
 				}
 			}

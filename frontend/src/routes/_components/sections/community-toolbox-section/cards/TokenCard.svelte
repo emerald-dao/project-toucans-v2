@@ -2,8 +2,8 @@
 	import * as FeatureCard from '../atoms/feature-card';
 	import FeautreLabel from '../../atoms/FeatureLabel.svelte';
 	import { MOCK_DAO } from '../mockDao';
-	import GeneralStats from '../../../../admin/_components/stats-blocks/GeneralStats.svelte';
-	import DaoStatsIntro from '../../../../admin/_components/stats-blocks/DaoStatsIntro.svelte';
+	import DaoStatsIntro from '../../../../admin/[projectId]/_components/stats-blocks/DaoStatsIntro.svelte';
+	import GeneralStats from '../../../../admin/[projectId]/_components/stats-blocks/GeneralStats.svelte';
 </script>
 
 <FeatureCard.Root>
