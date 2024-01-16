@@ -64,5 +64,14 @@
 <style type="scss">
 	.tabs-wrapper {
 		min-height: 400px;
+		overflow-x: scroll;
+
+		&::-webkit-scrollbar-track {
+			border: none;
+		}
+
+		@include mq('small') {
+			overflow-x: auto;
+		}
 	}
 </style>

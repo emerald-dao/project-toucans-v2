@@ -67,7 +67,7 @@
 			<em> Sorry! We didn't find NFTs from this collection. </em>
 		</p>
 	{:else}
-		<div class="nfts-grid" style={`grid-template-columns: repeat(${pageSize}, 1fr)`}>
+		<div class="nfts-grid">
 			{#each currentPageNFTs as nft (nft.id)}
 				<NFTCard
 					{nft}
@@ -89,6 +89,7 @@
 	.nfts-grid {
 		display: grid;
 		grid-gap: var(--space-3);
+		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
 	}
 
 	.off {
