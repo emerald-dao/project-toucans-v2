@@ -31,10 +31,10 @@ async function gatherTrendingProjects() {
   const fundEvents = (await fetchAllFundEventsInTimeframe(WEEK_AGO));
   const proposalEvents = (await fetchAllProposals());
   const allProjects = await fetchAllProjects();
-  // project_id => { contract_address, owner, token_symbol }
+  // project_id => { contract_address, owner, token_symbol, participants }
   const addressList = {}
   const projects: { [projectId: string]: DaoRankingData } = {}
-  for (const { project_id, contract_address, token_symbol, owner } of allProjects) {
+  for (const { project_id, contract_address, token_symbol, owner, user_funding } of allProjects) {
     let volume_24h = null;
     let tvl = null;
     if (contract_address && token_symbol) {
@@ -58,9 +58,9 @@ async function gatherTrendingProjects() {
       tvl
     }
     if (contract_address && token_symbol) {
-      addressList[project_id] = { owner, contract_address, token_symbol };
+      addressList[project_id] = { owner, contract_address, token_symbol, participants: user_funding.map(ele => ele.address) };
     } else {
-      addressList[project_id] = { owner }
+      addressList[project_id] = { owner, participants: user_funding.map(ele => ele.address) }
     }
   }
 
@@ -119,7 +119,7 @@ async function gatherTrendingProjects() {
     projects[projectId].max_supply = maxSupply;
     projects[projectId].payment_currency = paymentCurrency;
     projects[projectId].num_holders = holders.length;
-    projects[projectId].num_participants = holders.concat(funders.filter((item) => holders.indexOf(item) < 0)).length;
+    projects[projectId].num_participants = Array.from(new Set(holders.concat(funders).concat(addressList[projectId].participants))).length;
     projects[projectId].num_proposals += Number(numProposals);
     // if there is a price
     if (pairInfo) {
