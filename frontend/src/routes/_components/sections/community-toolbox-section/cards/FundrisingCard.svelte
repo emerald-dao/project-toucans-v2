@@ -9,8 +9,8 @@
 	<FeatureCard.Header>
 		<FeautreLabel icon="mdi:account-cash" textColor="text">Fundrising</FeautreLabel>
 		<FeatureCard.Heading>
-			<FeatureCard.HeadingHighlight>Flow is a fast</FeatureCard.HeadingHighlight>, decentralized,
-			and developer-friendly blockchain.
+			<FeatureCard.HeadingHighlight>Recieve funding and donations</FeatureCard.HeadingHighlight> transparently
+			and securely.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

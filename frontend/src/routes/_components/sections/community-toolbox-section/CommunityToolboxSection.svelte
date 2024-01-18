@@ -5,6 +5,7 @@
 	import TreasuryCard from './cards/TreasuryCard.svelte';
 	import VotingCard from './cards/VotingCard.svelte';
 	import * as Section from '../atoms/section';
+	import { MOCK_DAO } from './mockDao';
 </script>
 
 <section class="section-large">
@@ -16,7 +17,7 @@
 			</Section.Heading>
 		</Section.Header>
 		<div class="cards-wrapper">
-			<TokenCard />
+			<TokenCard daoData={MOCK_DAO} />
 			<div class="grid">
 				<FundrisingCard />
 				<TreasuryCard />
@@ -51,7 +52,7 @@
 					gap: var(--space-6);
 
 					&.inverse {
-						grid-template-columns: 5fr 4fr;
+						grid-template-columns: 7fr 6fr;
 					}
 				}
 			}

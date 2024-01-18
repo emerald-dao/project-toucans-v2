@@ -2,20 +2,12 @@
 	import * as Section from '../atoms/section';
 </script>
 
-<section class="section-large container">
+<section class="section-large container column align-center">
 	<Section.Header>
 		<Section.Heading>
-			Token & community managment
-			<Section.HeadingHighlight>incredibly easy</Section.HeadingHighlight>
+			<Section.HeadingHighlight>Incredibly easy</Section.HeadingHighlight>
+			token & community managment
 		</Section.Heading>
 	</Section.Header>
 	<img src="/tokenAndCommunity.png" alt="tokenAndCommunity" />
 </section>
-
-<style lang="scss">
-	section {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-</style>

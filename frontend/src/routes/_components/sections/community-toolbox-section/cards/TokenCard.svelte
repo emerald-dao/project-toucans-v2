@@ -1,23 +1,25 @@
 <script lang="ts">
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import * as FeatureCard from '../atoms/feature-card';
 	import FeautreLabel from '../../atoms/FeatureLabel.svelte';
-	import { MOCK_DAO } from '../mockDao';
 	import DaoStatsIntro from '../../../../admin/[projectId]/_components/stats-blocks/DaoStatsIntro.svelte';
 	import GeneralStats from '../../../../admin/[projectId]/_components/stats-blocks/GeneralStats.svelte';
+
+	export let daoData: DAOProject;
 </script>
 
 <FeatureCard.Root>
 	<FeatureCard.Header>
 		<FeautreLabel icon="mdi:circle-multiple" textColor="text">Token</FeautreLabel>
 		<FeatureCard.Heading>
-			<FeatureCard.HeadingHighlight>Flow is a fast</FeatureCard.HeadingHighlight>, decentralized,
-			and developer-friendly blockchain.
+			<FeatureCard.HeadingHighlight>Create and manage a token</FeatureCard.HeadingHighlight>,
+			easily, effortesly. No code required.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>
 		<div class="card">
-			<DaoStatsIntro daoData={MOCK_DAO} />
-			<GeneralStats daoData={MOCK_DAO} />
+			<DaoStatsIntro {daoData} showAdminButtons={false} />
+			<GeneralStats {daoData} />
 		</div>
 	</FeatureCard.Content>
 </FeatureCard.Root>

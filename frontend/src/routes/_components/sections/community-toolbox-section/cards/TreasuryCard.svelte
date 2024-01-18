@@ -9,8 +9,9 @@
 	<FeatureCard.Header>
 		<FeautreLabel icon="mdi:treasure-chest" textColor="text">Multisig Treasury</FeautreLabel>
 		<FeatureCard.Heading>
-			<FeatureCard.HeadingHighlight>Flow is a fast</FeatureCard.HeadingHighlight>, decentralized,
-			and developer-friendly blockchain.
+			Manage funds with a <FeatureCard.HeadingHighlight
+				>secure multisig treasury. Transfer, deposit and withdraw
+			</FeatureCard.HeadingHighlight> with a click of a button.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

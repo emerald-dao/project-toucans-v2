@@ -9,8 +9,8 @@
 	<div class="container column-10 align-center">
 		<Section.Header>
 			<Section.Heading>
-				Any community can
-				<Section.HeadingHighlight>unlock it's potential</Section.HeadingHighlight>
+				<Section.HeadingHighlight>Unlock the potential</Section.HeadingHighlight>
+				of any community
 			</Section.Heading>
 			<Section.Description
 				>Unlock transparent funding and governance on the Flow Blockchain.</Section.Description

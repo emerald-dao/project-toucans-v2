@@ -1,9 +1,5 @@
 export const TABS = [
 	{
-		label: 'All',
-		value: 'all'
-	},
-	{
 		label: 'Top Funded Projects',
 		value: 'top-funded-projects'
 	},

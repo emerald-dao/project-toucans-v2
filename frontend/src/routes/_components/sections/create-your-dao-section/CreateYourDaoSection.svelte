@@ -1,52 +1,74 @@
 <script lang="ts">
+	import FeatureItem from './atoms/FeatureItem.svelte';
 	import { Button } from '@emerald-dao/component-library';
+	import { DAO_TYPES } from './../../../dao-generator/daoTypes';
+	import DaoTypeCards from './atoms/DaoTypeCards.svelte';
 </script>
 
 <section class="section-large">
-	<div class="container-small linear-gradient">
-		<div class="column-3 align-center">
-			<h2 class="w-medium">Ready to give super powers to your community?</h2>
-			<p>Unlock transparent funding and governance on the Flow Blockchain.</p>
+	<div class="container-small column-6">
+		<div class="column-7">
+			<div class="column-4">
+				<h2 class="w-medium">Create your DAO in seconds</h2>
+				<p>Unlock transparent funding and governance on the Flow Blockchain.</p>
+				<ul>
+					<FeatureItem>Free</FeatureItem>
+					<FeatureItem>Open Source</FeatureItem>
+					<FeatureItem>Easy to use</FeatureItem>
+					<FeatureItem>Community driven</FeatureItem>
+				</ul>
+			</div>
+			<div class="row-3">
+				<Button
+					href="https://discord.com/invite/emerald-city-906264258189332541"
+					type="ghost"
+					size="small"
+					color="neutral">Contact Us</Button
+				>
+				<Button href="/dao-generator" size="small" color="primary">Create a DAO for Free</Button>
+			</div>
 		</div>
-		<Button color="primary" size="large" width="extended" href="/dao-generator">
-			Create your DAO for free in just 5 minutes!
-		</Button>
+		<div class="cards-wrapper">
+			{#each DAO_TYPES as daoType}
+				<DaoTypeCards {daoType} />
+			{/each}
+		</div>
 	</div>
 </section>
 
 <style lang="scss">
 	section {
+		border-top: 0.5px solid var(--clr-border-primary);
 		background-color: var(--clr-background-secondary);
-		border-block: 1px solid var(--clr-neutral-badge);
 
 		.container-small {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			padding: 60px;
-			gap: var(--space-8);
-			border-radius: 20px;
-			border-color: var(--clr-border-primary);
-			text-align: center;
-			border: 1px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			text-align: left;
+			gap: var(--space-16);
 
 			p {
 				font-size: var(--font-size-3);
-				line-height: 30px;
 			}
 
 			h2 {
 				font-size: var(--font-size-7);
 			}
-		}
-		.linear-gradient {
-			background: linear-gradient(
-				180deg,
-				var(--clr-background-secondary) 50%,
-				var(--clr-primary-main) 1000%
-			);
-			border-radius: var(--radius-3);
-			border: 1px solid var(--clr-border-primary);
+
+			ul {
+				list-style: none;
+				padding-left: 0;
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-3);
+			}
+
+			.cards-wrapper {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				gap: var(--space-6);
+			}
 		}
 	}
 </style>

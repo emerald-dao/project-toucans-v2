@@ -10,7 +10,7 @@
 	div {
 		width: 100%;
 		padding-inline: var(--space-12);
-		margin-bottom: -3.2rem;
+		margin-bottom: -3rem;
 		display: grid;
 	}
 </style>

@@ -14,13 +14,13 @@ export interface DAOProject {
 	votes: Vote[];
 	events: DaoEvent[];
 	userBalance?: number;
-	vaultSetup: boolean;
+	vaultSetup?: boolean;
 	hasToken: boolean;
 	funding: {
 		numbers: number[];
 		total_funding: number;
-		funders: { [address: string]: { amount: number; num_nfts: number } }
-	}
+		funders: { [address: string]: { amount: number; num_nfts: number } };
+	};
 }
 
 export interface DaoDatabaseData {
@@ -81,16 +81,16 @@ export interface TokenInfo {
 	contractAddress: string;
 	tokenType: string;
 	receiverPath: {
-		domain: "public",
+		domain: 'public';
 		identifier: string;
 	};
 	symbol: string;
 	publicPath: {
-		domain: "public",
+		domain: 'public';
 		identifier: string;
 	};
 	storagePath: {
-		domain: "storage",
+		domain: 'storage';
 		identifier: string;
 	};
 	image: string;

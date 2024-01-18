@@ -1,26 +1,8 @@
 <script type="ts">
 	import { theme } from '$stores/ThemeStore';
-	import { Button, Currency, Seo } from '@emerald-dao/component-library';
+	import { Button, Seo } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-
-	const DAO_TYPES = [
-		{
-			title: 'DAO',
-			description:
-				'This option will launch a DAO. It will set up a multi-sig treasury, the ability to donate, vote, and more. It will not create a token upon deployment.',
-			icon: 'tabler:users',
-			slug: 'dao',
-			estimatedTime: '3 minutes'
-		},
-		{
-			title: 'DAO + Token',
-			description:
-				'This option will do everything the DAO option does as well as deploy a new fungible token on the Flow blockchain for you to fundraise with, mint, trade, and more.',
-			icon: 'tabler:coin',
-			slug: 'dao-token',
-			estimatedTime: '5 minutes'
-		}
-	];
+	import { DAO_TYPES } from './daoTypes';
 
 	let selectedDaoType = DAO_TYPES[0].slug;
 </script>
@@ -43,7 +25,6 @@
 			<h2 class="h4 w-medium">Create a DAO in Minutes!</h2>
 			<p>Choose an option below before getting started.</p>
 		</div>
-
 		<div class="row-6">
 			{#each DAO_TYPES as daoType}
 				<div
