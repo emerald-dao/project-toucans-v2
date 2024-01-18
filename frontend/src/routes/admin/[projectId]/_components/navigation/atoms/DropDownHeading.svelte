@@ -26,8 +26,6 @@
 			displayDropDown = false;
 		}
 	};
-
-	$: displayDropDown = false;
 </script>
 
 <svelte:window on:click={handleWindowClick} />
