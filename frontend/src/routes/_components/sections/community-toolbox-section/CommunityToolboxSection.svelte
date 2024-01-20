@@ -19,7 +19,7 @@
 		<div class="cards-wrapper">
 			<TokenCard daoData={MOCK_DAO} />
 			<div class="grid">
-				<!-- <FundrisingCard /> -->
+				<FundrisingCard />
 				<TreasuryCard />
 			</div>
 			<div class="grid inverse">
