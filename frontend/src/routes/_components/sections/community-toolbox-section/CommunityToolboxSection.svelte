@@ -47,12 +47,17 @@
 				width: 100%;
 
 				.grid {
-					display: grid;
-					grid-template-columns: 2fr 3fr;
+					display: flex;
+					flex-direction: column;
 					gap: var(--space-6);
 
-					&.inverse {
-						grid-template-columns: 7fr 6fr;
+					@include mq('medium') {
+						display: grid;
+						grid-template-columns: 2fr 3fr;
+
+						&.inverse {
+							grid-template-columns: 7fr 6fr;
+						}
 					}
 				}
 			}

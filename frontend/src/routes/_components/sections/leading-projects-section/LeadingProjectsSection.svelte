@@ -53,8 +53,12 @@
 
 			@include mq('small') {
 				display: grid;
-				grid-template-columns: repeat(4, 1fr);
+				grid-template-columns: repeat(2, 1fr);
 				grid-gap: var(--space-8);
+			}
+
+			@include mq('medium') {
+				grid-template-columns: repeat(4, 1fr);
 			}
 		}
 	}

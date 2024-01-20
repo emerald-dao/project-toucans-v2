@@ -18,7 +18,7 @@
 					<FeatureItem>Community driven</FeatureItem>
 				</ul>
 			</div>
-			<div class="row-3">
+			<div class="buttons-wrapper">
 				<Button
 					href="https://discord.com/invite/emerald-city-906264258189332541"
 					type="ghost"
@@ -42,10 +42,12 @@
 		background-color: var(--clr-background-secondary);
 
 		.container-small {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			text-align: left;
-			gap: var(--space-16);
+			@include mq('medium') {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				text-align: left;
+				gap: var(--space-16);
+			}
 
 			p {
 				font-size: var(--font-size-3);
@@ -61,6 +63,16 @@
 				display: flex;
 				flex-direction: column;
 				gap: var(--space-3);
+			}
+
+			.buttons-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-4);
+
+				@include mq('small') {
+					flex-direction: row;
+				}
 			}
 
 			.cards-wrapper {

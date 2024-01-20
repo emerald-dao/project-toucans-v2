@@ -38,10 +38,18 @@
 
 		.title-wrapper {
 			h1 {
-				font-size: var(--font-size-10);
+				font-size: var(--font-size-7);
 				margin-bottom: var(--space-6) 0;
 				padding-bottom: 20px;
 				line-height: 1.1;
+
+				@include mq('medium') {
+					font-size: var(--font-size-10);
+				}
+
+				@include mq('small') {
+					font-size: var(--font-size-9);
+				}
 
 				span {
 					background: -webkit-linear-gradient(
@@ -55,8 +63,12 @@
 
 			p {
 				max-width: 66ch;
-				font-size: var(--font-size-4);
+				font-size: var(--font-size-2);
 				line-height: 2;
+
+				@include mq('medium') {
+					font-size: var(--font-size-4);
+				}
 			}
 		}
 
@@ -66,7 +78,7 @@
 			gap: var(--space-4);
 			justify-content: center;
 
-			@include mq('medium') {
+			@include mq('small') {
 				flex-direction: row;
 			}
 		}
