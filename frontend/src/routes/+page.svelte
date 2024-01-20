@@ -9,12 +9,17 @@
 	import CommunityToolboxSection from './_components/sections/community-toolbox-section/CommunityToolboxSection.svelte';
 	import { getToucansStats } from './_data/getToucansStats';
 	import { DAO_OF_THE_MONTH } from './_data/daoOfTheMonth';
+	import { onMount } from 'svelte';
+	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
 
 	export let data;
 
-	const daoOfTheMonth = data.projectsRakings.find(
-		(project) => project.project_id === DAO_OF_THE_MONTH.projectId
-	);
+	let daoOfTheMonth: DaoRankingData | undefined = undefined;
+	onMount(() => {
+		daoOfTheMonth = data.projectsRakings.find(
+			(project) => project.project_id === DAO_OF_THE_MONTH.projectId
+		);
+	});
 </script>
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
