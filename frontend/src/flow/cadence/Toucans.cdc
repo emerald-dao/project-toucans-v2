@@ -1092,10 +1092,8 @@ pub contract Toucans {
     access(account) fun stakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
       // withdraw flow from treasury
       let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw!(amount: flowAmount)
-      let estimatedSwapPoolCap: &{SwapInterfaces.PairPublic} = ToucansUtils.getEstimatedSwapPoolCap(amountIn: flowAmount, tokenInKey: "A.1654653399040a61.FlowToken")
-      
       // deposit stFlow to treasury
-      let outVault <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
+      let outVault: @stFlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.1654653399040a61.FlowToken") as! @stFlowToken.Vault
       assert(outVault.balance >= stFlowAmountOutMin, message: SwapError.ErrorEncode(
         msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(stFlowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
         err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
@@ -1106,17 +1104,15 @@ pub contract Toucans {
         amountIn: flowAmount,
         amountOut: outVault.balance
       )
-      self.depositToTreasury(vault: <-outVault)
+      self.depositToTreasury(vault: <- outVault)
     }
 
     // DISCLAIMER: Only works on Mainnet.
     access(account) fun unstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
       // withdraw stFlow from treasury
       let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw!(amount: stFlowAmount)
-      let estimatedSwapPoolCap: &{SwapInterfaces.PairPublic} = ToucansUtils.getEstimatedSwapPoolCap(amountIn: stFlowAmount, tokenInKey: "A.d6f80565193ad727.stFlowToken")
-
       // deposit flow to treasury
-      let outVault <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
+      let outVault: @FlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.d6f80565193ad727.stFlowToken") as! @FlowToken.Vault
       assert(outVault.balance >= flowAmountOutMin, message: SwapError.ErrorEncode(
         msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(flowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
         err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
@@ -1127,7 +1123,7 @@ pub contract Toucans {
         amountIn: stFlowAmount,
         amountOut: outVault.balance
       )
-      self.depositToTreasury(vault: <-outVault)
+      self.depositToTreasury(vault: <- outVault)
     }
 
 

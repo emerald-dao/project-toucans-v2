@@ -168,6 +168,7 @@
 			"source": "./src/flow/cadence/Toucans.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "918c2008c16da416",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -175,6 +176,7 @@
 			"source": "./src/flow/cadence/ToucansActions.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "918c2008c16da416",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -182,6 +184,7 @@
 			"source": "./src/flow/cadence/ToucansLockTokens.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "918c2008c16da416",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -189,6 +192,7 @@
 			"source": "./src/flow/cadence/ToucansTokens.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "918c2008c16da416",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -196,6 +200,7 @@
 			"source": "./src/flow/cadence/ToucansUtils.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "918c2008c16da416",
 				"mainnet": "577a3c409c5dcb5e"
 			}
 		},
@@ -209,6 +214,14 @@
 		},
 		"stFlowToken": {
 			"source": "./src/flow/cadence/utility/stFlowToken.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "d6f80565193ad727",
+				"testnet": "e45c64ecfe31e465"
+			}
+		},
+		"LiquidStaking": {
+			"source": "./src/flow/cadence/utility/LiquidStaking.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
 				"mainnet": "d6f80565193ad727",
@@ -248,6 +261,8 @@
 				"FungibleTokenMetadataViews",
 				"FUSD",
 				"FIND",
+				"stFlowToken",
+				"LiquidStaking",
 				"OnChainMultiSig",
 				"NFTCatalogSnapshot",
 				"NFTCatalog",
@@ -266,16 +281,12 @@
 				"SwapError",
 				"SwapConfig",
 				"SwapInterfaces",
-				"SwapFactory",
-				"stFlowToken"
+				"SwapFactory"
 			]
 		},
 		"testnet": {
 			"testnet-account": [
-				"ToucansTokens",
-				"ToucansLockTokens",
 				"ToucansUtils",
-				"ToucansActions",
 				"Toucans"
 			]
 		},

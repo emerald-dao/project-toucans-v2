@@ -5,6 +5,9 @@ import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import FIND from "./utility/FIND.cdc"
 import EmeraldIdentity from "./utility/EmeraldIdentity.cdc"
 import SwapInterfaces from "./utility/SwapInterfaces.cdc"
+import LiquidStaking from "./utility/LiquidStaking.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import stFlowToken from "./utility/stFlowToken.cdc"
 
 pub contract ToucansUtils {
   pub fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {
@@ -94,9 +97,8 @@ pub contract ToucansUtils {
     let contractName: String = identifier.slice(from: 19, upTo: identifier.length - 11)
     return [address, contractName]
   }
-  
-  // figure out with swap is better
-  pub fun getEstimatedSwapOut(amountIn: UFix64, tokenInKey: String): UFix64 {
+
+  pub fun getEstimatedOut(amountIn: UFix64, tokenInKey: String): UFix64 {
     // normal xyk pool
     let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
     // stableswap pool with most liquidity
@@ -104,13 +106,18 @@ pub contract ToucansUtils {
     
     let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
     let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
-    let estimatedSwapOut = (estimatedSwapOutStable>estimatedSwapOutV1)? estimatedSwapOutStable:estimatedSwapOutV1
+    let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
+
+    if tokenInKey == "A.1654653399040a61.FlowToken" {
+      let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
+      return (estimatedSwapOut > estimatedStakeOut) ? estimatedSwapOut : estimatedStakeOut
+    }
 
     return estimatedSwapOut
   }
 
-  // figure out with swap is better
-  pub fun getEstimatedSwapPoolCap(amountIn: UFix64, tokenInKey: String): &{SwapInterfaces.PairPublic} {
+  pub fun swapTokensWithPotentialStake(inVault: @FungibleToken.Vault, tokenInKey: String): @FungibleToken.Vault {
+    let amountIn = inVault.balance
     // normal xyk pool
     let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
     let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
@@ -118,8 +125,16 @@ pub contract ToucansUtils {
     let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
     let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
 
-    let estimatedSwapPoolCap = (estimatedSwapOutStable>estimatedSwapOutV1)? poolCapStable:poolCapV1
-    return estimatedSwapPoolCap
+    let estimatedSwapPoolCap = (estimatedSwapOutStable > estimatedSwapOutV1) ? poolCapStable : poolCapV1
+    
+    let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
+    let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
+
+    if tokenInKey == "A.1654653399040a61.FlowToken" && estimatedStakeOut > estimatedSwapOut {
+      return <- LiquidStaking.stake(flowVault: <- (inVault as! @FlowToken.Vault))
+    }
+
+    return <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
   }
 
   pub fun getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: String): String {
