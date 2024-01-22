@@ -62,10 +62,11 @@
 	in:fade={{ duration: 200 }}
 >
 	<div class="introduction">
-		<h5>Create Staking Action</h5>
 		{#if currencyIn === ECurrencies.FLOW}
+			<h5>Stake $FLOW</h5>
 			<span class="small">Stake your $FLOW by swapping to $stFlow.</span>
 		{:else if currencyIn === ECurrencies.stFlow}
+			<h5>Unstake $FLOW</h5>
 			<span class="small">Unstake by swapping your $stFlow for $FLOW.</span>
 		{/if}
 	</div>
