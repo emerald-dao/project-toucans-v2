@@ -36,10 +36,15 @@
 	section {
 		text-align: center;
 		position: relative;
+		padding-block: 4rem;
+
+		@include mq('small') {
+			padding-block: 6rem;
+		}
 
 		.title-wrapper {
 			h1 {
-				font-size: var(--font-size-7);
+				font-size: var(--font-size-8);
 				margin-bottom: var(--space-6) 0;
 				padding-bottom: 20px;
 				line-height: 1.1;
