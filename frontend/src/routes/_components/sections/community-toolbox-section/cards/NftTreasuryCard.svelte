@@ -1,0 +1,32 @@
+<script lang="ts">
+	import * as FeatureCard from '../atoms/feature-card';
+	import FeautreLabel from '../../atoms/FeatureLabel.svelte';
+	import NewBadge from '../atoms/NewBadge.svelte';
+	import NfTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
+	import { MOCK_NFTS } from '../mockDao';
+</script>
+
+<FeatureCard.Root>
+	<FeatureCard.Header>
+		<div class="header-wrapper row-4 row-space-between">
+			<FeautreLabel icon="mdi:account-cash" textColor="text">NFT Treasury</FeautreLabel>
+			<NewBadge />
+		</div>
+		<FeatureCard.Heading>
+			<FeatureCard.HeadingHighlight>Collect and manage NFTs</FeatureCard.HeadingHighlight> from your
+			DAOs multisig treasury.
+		</FeatureCard.Heading>
+	</FeatureCard.Header>
+	<FeatureCard.Content>
+		<div class="card-primary">
+			<NfTsList NFTs={MOCK_NFTS} pageSize={2} />
+		</div>
+	</FeatureCard.Content>
+</FeatureCard.Root>
+
+<style lang="scss">
+	.header-wrapper {
+		width: 100%;
+		align-items: center;
+	}
+</style>

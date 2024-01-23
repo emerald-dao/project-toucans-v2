@@ -5,9 +5,9 @@
 	export let projects: DaoDatabaseData[];
 </script>
 
-<section class="container-small">
+<section class="container-medium">
 	<div class="column-12">
-		<h3 class="w-medium">Explore Projects</h3>
+		<h3 class="w-medium">Discover Projects</h3>
 		<div class="wrap">
 			{#each projects as project}
 				<ProjectCard {project} />
@@ -23,6 +23,10 @@
 
 		@include mq(small) {
 			grid-template-columns: 1fr 1fr;
+		}
+
+		@include mq(medium) {
+			grid-template-columns: 1fr 1fr 1fr;
 		}
 	}
 </style>
