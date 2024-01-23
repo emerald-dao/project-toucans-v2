@@ -1,8 +1,9 @@
 <script lang="ts">
+	import Image from '$components/Image.svelte';
 	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
 	import { LEADING_PROJECTS, type LeadingProjectType } from '../../leadingProjects';
 	import LeadingCardHighlightedData from './atoms/LeadingCardHighlightedData.svelte';
-	import LeadingProjectCardLabel from './atoms/LeadingProjectCardLabel.svelte';
+	import LeadingCardStat from './atoms/LeadingCardStat.svelte';
 
 	export let project: DaoRankingData;
 	export let leadingProjectyType: LeadingProjectType | undefined = undefined;
@@ -10,11 +11,6 @@
 	const LEADING_PROJECT_DATA = leadingProjectyType
 		? LEADING_PROJECTS[leadingProjectyType]
 		: undefined;
-
-	function handleBannerImgError(e: Event) {
-		const target = e.target as HTMLImageElement;
-		target.src = 'toucans-illustration.png';
-	}
 </script>
 
 {#if project.projects}
@@ -25,15 +21,22 @@
 			class="column-space-between column-1 align-left"
 		>
 			<div class="column-5">
-				<img
+				<Image
 					src={project.projects.banner_image ?? 'toucans-illustration.png'}
-					on:error={(e) => handleBannerImgError(e)}
 					alt={`${project.projects.name} banner`}
-					class="banner"
+					height="140px"
+					width="100%"
 				/>
 				<div class="card-content">
 					<h3 class="w-medium" style="text-align:left">{project.projects.name}</h3>
-					<p class="small" style="text-align:left">{project.projects.description}</p>
+					<div class="row-9">
+						{#if project.num_participants}
+							<LeadingCardStat title="Participants" stat={project.num_participants} />
+						{/if}
+						{#if project.treasury_value}
+							<LeadingCardStat title="Treasury Value" stat={`$${project.treasury_value}`} />
+						{/if}
+					</div>
 				</div>
 			</div>
 			{#if leadingProjectyType && LEADING_PROJECT_DATA}
@@ -47,11 +50,6 @@
 						/>
 					</div>
 				{/if}
-				<div class="label-container row-3 row-space-between">
-					<LeadingProjectCardLabel
-						>{LEADING_PROJECTS[leadingProjectyType].title}</LeadingProjectCardLabel
-					>
-				</div>
 			{/if}
 		</a>
 	</div>
@@ -65,24 +63,17 @@
 		flex: 1;
 
 		a {
-			background-color: var(--clr-surface-primary);
-			border-radius: 10px;
+			background-color: var(--clr-surface-secondary);
+			border-radius: var(--radius-3);
 			overflow: hidden;
 			text-decoration: none;
 			color: inherit;
 			flex: 1;
 			border: 1px solid var(--clr-border-primary);
 			transition: all 0.2s ease-in-out;
-			padding-bottom: var(--space-5);
 
 			&:hover {
-				background-color: var(--clr-surface-secondary);
-			}
-
-			.banner {
-				width: 100%;
-				height: 160px;
-				object-fit: cover;
+				filter: brightness(1.2);
 			}
 
 			.card-content {
@@ -94,26 +85,16 @@
 				width: 100%;
 
 				h3 {
-					font-size: var(--font-size-4);
-				}
-
-				p {
-					display: -webkit-box;
-					-webkit-line-clamp: 3;
-					-webkit-box-orient: vertical;
-					overflow: hidden;
-					font-size: var(--font-size-1);
+					font-size: var(--font-size-5);
 				}
 			}
 
 			.card-footer {
 				padding-inline: var(--space-5);
-			}
-
-			.label-container {
-				position: absolute;
-				top: var(--space-3);
-				left: var(--space-4);
+				padding-top: var(--space-3);
+				padding-bottom: var(--space-4);
+				border-top: 1px solid var(--clr-border-primary);
+				margin-top: var(--space-4);
 			}
 		}
 	}

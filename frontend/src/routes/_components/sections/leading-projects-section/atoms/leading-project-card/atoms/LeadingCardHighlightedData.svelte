@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
 	import type { LeadingProjectType } from '../../../leadingProjects';
 
 	export let data: string;
@@ -6,28 +7,34 @@
 	export let type: LeadingProjectType;
 </script>
 
-<div class="main-wrapper row-1">
-	<div class="w-medium label">
-		{#if type === 'highTokenPrice'}
+<div class="main-wrapper column-1">
+	<span class="description row">
+		<Icon icon="fluent:fire-24-filled" class="icon" color="var(--clr-primary-main)" width="1.2em" />
+		{description}
+	</span>
+	<span class="data">
+		{#if type === 'highTokenPrice' || type === 'mostFunded'}
 			$
 		{/if}
 		{data}
-	</div>
-	<span class="w-medium">{description}</span>
+	</span>
 </div>
 
 <style lang="scss">
 	.main-wrapper {
 		font-size: var(--font-size-0);
-		align-items: center;
-		margin-top: var(--space-4);
+		align-items: flex-start;
 
-		.label {
-			background-color: var(--clr-primary-badge);
-			color: var(--clr-primary-main);
+		.description {
 			font-size: var(--font-size-0);
-			padding: 0 var(--space-3);
-			border-radius: 10px;
+			gap: 0.1em;
+			align-items: center;
+			line-height: 1;
+		}
+
+		.data {
+			font-size: var(--font-size-4);
+			color: var(--clr-heading-main);
 		}
 	}
 </style>

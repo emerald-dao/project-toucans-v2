@@ -23,7 +23,7 @@
 
 {#if allFeaturedDaosFound}
 	<section class="section">
-		<div class="container-small column-12 align-center">
+		<div class="container column-12 align-center">
 			<div class="projects-wrapper">
 				{#each featuredDaosArray as [key, leadingProject]}
 					{#if leadingProject}
@@ -49,7 +49,7 @@
 			@include mq('small') {
 				display: grid;
 				gap: var(--space-10);
-				grid-template-columns: repeat(3, 1fr);
+				grid-template-columns: repeat(4, 1fr);
 			}
 		}
 	}
