@@ -1,14 +1,15 @@
 <script lang="ts">
-	import HighestMarketCapRankingLabel from './leading-project-card-ranking-label/HighestMarketCapRankingLabel.svelte';
-	import HighestValueRankingLabel from './leading-project-card-ranking-label/HighestValueRankingLabel.svelte';
-	import MostActiveRankingLabel from './leading-project-card-ranking-label/MostActiveRankingLabel.svelte';
 	import type { DaoRankingData } from '$lib/features/dao-ranking/types/dao-ranking-data.interface';
+	import { LEADING_PROJECTS, type LeadingProjectType } from '../../leadingProjects';
+	import LeadingCardHighlightedData from './atoms/LeadingCardHighlightedData.svelte';
+	import LeadingProjectCardLabel from './atoms/LeadingProjectCardLabel.svelte';
 
 	export let project: DaoRankingData;
+	export let leadingProjectyType: LeadingProjectType | undefined = undefined;
 
-	export let mostActive = false;
-	export let highestValue = false;
-	export let highestMarketCap = false;
+	const LEADING_PROJECT_DATA = leadingProjectyType
+		? LEADING_PROJECTS[leadingProjectyType]
+		: undefined;
 
 	function handleBannerImgError(e: Event) {
 		const target = e.target as HTMLImageElement;
@@ -21,30 +22,38 @@
 		<a
 			href={`/p/${project.project_id}`}
 			data-sveltekit-preload-data="hover"
-			class="column align-center"
+			class="column-space-between column-1 align-left"
 		>
-			<img
-				src={project.projects.banner_image ?? 'toucans-illustration.png'}
-				on:error={(e) => handleBannerImgError(e)}
-				alt={`${project.projects.name} banner`}
-				class="banner"
-			/>
-			<div class="card-content">
-				<h3 class="w-medium" style="text-align:left">{project.projects.name}</h3>
-				<p class="small" style="text-align:left">{project.projects.description}</p>
+			<div class="column-5">
+				<img
+					src={project.projects.banner_image ?? 'toucans-illustration.png'}
+					on:error={(e) => handleBannerImgError(e)}
+					alt={`${project.projects.name} banner`}
+					class="banner"
+				/>
+				<div class="card-content">
+					<h3 class="w-medium" style="text-align:left">{project.projects.name}</h3>
+					<p class="small" style="text-align:left">{project.projects.description}</p>
+				</div>
 			</div>
+			{#if leadingProjectyType && LEADING_PROJECT_DATA}
+				{@const featuredProperty = LEADING_PROJECT_DATA.featuredProperty.property}
+				{#if featuredProperty && project[featuredProperty]}
+					<div class="card-footer">
+						<LeadingCardHighlightedData
+							data={project[featuredProperty]}
+							description={LEADING_PROJECT_DATA.featuredProperty.description}
+							type={leadingProjectyType}
+						/>
+					</div>
+				{/if}
+				<div class="label-container row-3 row-space-between">
+					<LeadingProjectCardLabel
+						>{LEADING_PROJECTS[leadingProjectyType].title}</LeadingProjectCardLabel
+					>
+				</div>
+			{/if}
 		</a>
-		<div class="label-wrapper">
-			{#if mostActive}
-				<MostActiveRankingLabel />
-			{/if}
-			{#if highestValue}
-				<HighestValueRankingLabel />
-			{/if}
-			{#if highestMarketCap}
-				<HighestMarketCapRankingLabel />
-			{/if}
-		</div>
 	</div>
 {/if}
 
@@ -53,6 +62,7 @@
 		position: relative;
 		display: flex;
 		flex-direction: column;
+		flex: 1;
 
 		a {
 			background-color: var(--clr-surface-primary);
@@ -63,6 +73,7 @@
 			flex: 1;
 			border: 1px solid var(--clr-border-primary);
 			transition: all 0.2s ease-in-out;
+			padding-bottom: var(--space-5);
 
 			&:hover {
 				background-color: var(--clr-surface-secondary);
@@ -75,11 +86,11 @@
 			}
 
 			.card-content {
-				padding: var(--space-5) var(--space-5);
+				padding-inline: var(--space-5);
 				text-align: left;
 				display: flex;
 				flex-direction: column;
-				gap: 8px;
+				gap: var(--space-2);
 				width: 100%;
 
 				h3 {
@@ -87,7 +98,6 @@
 				}
 
 				p {
-					// max 4 lines
 					display: -webkit-box;
 					-webkit-line-clamp: 3;
 					-webkit-box-orient: vertical;
@@ -95,12 +105,16 @@
 					font-size: var(--font-size-1);
 				}
 			}
-		}
 
-		.label-wrapper {
-			position: absolute;
-			top: -10px;
-			width: 100%;
+			.card-footer {
+				padding-inline: var(--space-5);
+			}
+
+			.label-container {
+				position: absolute;
+				top: var(--space-3);
+				left: var(--space-4);
+			}
 		}
 	}
 </style>

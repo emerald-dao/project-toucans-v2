@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Section from '../atoms/section';
-	import Saos from 'saos';
 </script>
 
 <section class="section-large container-large column-12 align-center">
@@ -10,28 +9,52 @@
 			token & community managment
 		</Section.Heading>
 	</Section.Header>
-	<Saos animation={'puff-in-center 0.7s ease-in both'} once={true} top={350}>
+	<div class="a">
 		<img src="/dashboard-screenshot.png" alt="Product dashboard screenshot" />
-	</Saos>
+	</div>
 </section>
 
 <style lang="scss">
-	img {
-		border: 1px solid var(--clr-border-primary);
-		border-radius: var(--radius-2);
+	.a {
+		--border-size: 1px;
+		--border-angle: 0turn;
+
+		img {
+			border-radius: calc(var(--radius-1));
+		}
+
+		padding: var(--border-size);
+		border-radius: var(--radius-1);
+		overflow: hidden;
 		box-shadow: 0 20px 70px -50px var(--clr-primary-main);
+		background-image: conic-gradient(
+				from var(--border-angle),
+				var(--clr-border-primary),
+				var(--clr-border-primary) 50%,
+				transparent
+			),
+			conic-gradient(
+				from var(--border-angle),
+				var(--clr-border-primary) 90%,
+				var(--clr-tertiary-main),
+				var(--clr-primary-main)
+			);
+		background-size: calc(100% - (var(--border-size) * 8)) calc(100% - (var(--border-size) * 2)),
+			cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		animation: bg-spin 12s linear infinite;
+
+		@keyframes bg-spin {
+			to {
+				--border-angle: 1turn;
+			}
+		}
 	}
 
-	@keyframes -global-puff-in-center {
-		0% {
-			transform: scale(2);
-			filter: blur(4px);
-			opacity: 0;
-		}
-		100% {
-			transform: scale(1);
-			filter: blur(0px);
-			opacity: 1;
-		}
+	@property --border-angle {
+		syntax: '<angle>';
+		inherits: true;
+		initial-value: 0turn;
 	}
 </style>

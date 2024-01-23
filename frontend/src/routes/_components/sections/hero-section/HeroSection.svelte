@@ -43,12 +43,12 @@
 				padding-bottom: 20px;
 				line-height: 1.1;
 
-				@include mq('medium') {
-					font-size: var(--font-size-10);
-				}
-
 				@include mq('small') {
 					font-size: var(--font-size-9);
+				}
+
+				@include mq('medium') {
+					font-size: var(--font-size-10);
 				}
 
 				span {
