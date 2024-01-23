@@ -12,8 +12,8 @@
 	<div class="container">
 		<Section.Header>
 			<Section.Heading>
-				<Section.HeadingHighlight>The ultimate toolbox</Section.HeadingHighlight>
-				for communities and token creators
+				<Section.HeadingHighlight>The ultimate toolbox for</Section.HeadingHighlight>
+				communities and token creators.
 			</Section.Heading>
 		</Section.Header>
 		<div class="cards-wrapper">

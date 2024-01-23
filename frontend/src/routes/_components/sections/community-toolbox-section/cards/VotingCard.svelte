@@ -10,7 +10,7 @@
 		<FeautreLabel icon="mdi:vote" textColor="text">Voting</FeautreLabel>
 		<FeatureCard.Heading>
 			Embrace transparent governance with
-			<FeatureCard.HeadingHighlight>voting rounds</FeatureCard.HeadingHighlight>.
+			<FeatureCard.HeadingHighlight>voting directly in Discord</FeatureCard.HeadingHighlight>.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

@@ -1,6 +1,6 @@
 export const COMMUNITY_TYPES = [
 	{
-		name: 'Gaming communities',
+		name: 'Gaming Communities',
 		icon: 'noto:video-game'
 	},
 	{
@@ -16,7 +16,7 @@ export const COMMUNITY_TYPES = [
 		icon: 'noto:laptop-computer'
 	},
 	{
-		name: 'Educational communities',
+		name: 'Educational Communities',
 		icon: 'noto:graduation-cap'
 	},
 	{

@@ -9,8 +9,8 @@
 	<FeatureCard.Header>
 		<FeautreLabel icon="mdi:account-cash" textColor="text">Fundrising</FeautreLabel>
 		<FeatureCard.Heading>
-			<FeatureCard.HeadingHighlight>Recieve funding and donations</FeatureCard.HeadingHighlight> transparently
-			and securely.
+			<FeatureCard.HeadingHighlight>Receive funding and donations</FeatureCard.HeadingHighlight> with
+			automatic leaderboards.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

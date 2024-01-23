@@ -12,8 +12,8 @@
 	<FeatureCard.Header>
 		<FeautreLabel icon="mdi:circle-multiple" textColor="text">Token</FeautreLabel>
 		<FeatureCard.Heading>
-			<FeatureCard.HeadingHighlight>Create and manage a token</FeatureCard.HeadingHighlight>,
-			easily, effortesly. No code required.
+			<FeatureCard.HeadingHighlight>Create and manage a token</FeatureCard.HeadingHighlight>. We
+			deploy a smart contract directly to your account.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

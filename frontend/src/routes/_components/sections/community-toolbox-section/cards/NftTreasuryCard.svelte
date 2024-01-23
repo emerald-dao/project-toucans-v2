@@ -14,7 +14,7 @@
 		</div>
 		<FeatureCard.Heading>
 			<FeatureCard.HeadingHighlight>Collect and manage NFTs</FeatureCard.HeadingHighlight> from your
-			DAOs multisig treasury
+			DAOs multisig treasury.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

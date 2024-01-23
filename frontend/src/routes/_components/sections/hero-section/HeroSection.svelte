@@ -8,7 +8,7 @@
 	<div class="title-wrapper column-2 align-center">
 		<h1 class="w-medium">
 			Fund and govern communities
-			<span> effortessly </span>
+			<span> effortlessly. </span>
 		</h1>
 		<div>
 			<p>
@@ -52,10 +52,7 @@
 				}
 
 				span {
-					background: -webkit-linear-gradient(
-						var(--clr-background-primary),
-						var(--clr-primary-main)
-					);
+					background: -webkit-linear-gradient(var(--clr-border-secondary), var(--clr-primary-main));
 					-webkit-background-clip: text;
 					-webkit-text-fill-color: transparent;
 				}

@@ -10,8 +10,8 @@
 		<FeautreLabel icon="mdi:treasure-chest" textColor="text">Multisig Treasury</FeautreLabel>
 		<FeatureCard.Heading>
 			Manage funds with a <FeatureCard.HeadingHighlight
-				>secure multisig treasury. Transfer, deposit and withdraw
-			</FeatureCard.HeadingHighlight> with a click of a button.
+				>secure multisig treasury. Airdrop, mint, and withdraw
+			</FeatureCard.HeadingHighlight> together.
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>

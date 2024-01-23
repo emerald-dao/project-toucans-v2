@@ -30,9 +30,9 @@
 	/>
 	<CommunityToolboxSection />
 	<CommunityTypesSection />
-	{#if daoOfTheMonth}
+	<!-- {#if daoOfTheMonth}
 		<DaoOfTheMonthSection {daoOfTheMonth} />
-	{/if}
+	{/if} -->
 	<CreateYourDaoSection />
 </div>
 

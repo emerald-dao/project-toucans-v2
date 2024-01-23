@@ -6,7 +6,7 @@
 	<Section.Header>
 		<Section.Heading>
 			<Section.HeadingHighlight>Incredibly easy</Section.HeadingHighlight>
-			token & community managment
+			token & community managment.
 		</Section.Heading>
 	</Section.Header>
 	<div class="a">

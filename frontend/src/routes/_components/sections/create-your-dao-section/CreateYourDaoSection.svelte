@@ -9,7 +9,7 @@
 	<div class="container-small column-6">
 		<div class="column-7">
 			<div class="column-4">
-				<h2 class="w-medium">Create your DAO in seconds</h2>
+				<h2 class="w-medium">Create your DAO in minutes</h2>
 				<p>Unlock transparent funding and governance on the Flow Blockchain.</p>
 				<ul>
 					<FeatureItem>Free</FeatureItem>
