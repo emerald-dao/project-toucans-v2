@@ -13,7 +13,7 @@
 		{/if}
 		{data}
 	</div>
-	<span>{description}</span>
+	<span class="w-medium">{description}</span>
 </div>
 
 <style lang="scss">
