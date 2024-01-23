@@ -8,7 +8,7 @@ export const LEADING_PROJECTS = {
 		}
 	},
 	lotsOfNfts: {
-		title: '🖼️ Lots of NFTs',
+		title: '🖼️ NFT Treasury',
 		projectId: 'ADUToken',
 		featuredProperty: {
 			property: 'nft_count',

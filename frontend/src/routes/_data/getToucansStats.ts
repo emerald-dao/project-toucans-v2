@@ -1,7 +1,7 @@
 const TOUCANS_STATS = {
-	data1: { title: 'DAOs created', stat: undefined },
-	data2: { title: 'Total market cap', stat: '+33k' },
-	data3: { title: 'Funds raised', stat: '+15k' }
+	data1: { title: 'DAOs Created', stat: undefined },
+	data2: { title: 'Total Market Cap', stat: '+100k' },
+	data3: { title: 'Funds Raised', stat: '+15k' }
 };
 
 export const getToucansStats = (numberOfProjects: number) => {
