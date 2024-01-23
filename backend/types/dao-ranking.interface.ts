@@ -7,6 +7,7 @@ export interface DaoRankingData {
   num_holders: number;
   num_proposals: number;
   num_participants: number;
+  nft_count: number;
   treasury_value: number;
   max_supply: number | null;
   volume_24h: number | null;

@@ -42,12 +42,18 @@ async function gatherTrendingProjects() {
       volume_24h = tokenInfo && tokenInfo[2] || null;
       tvl = tokenInfo && tokenInfo[1] || null;
     }
+    let nft_count = 0;
+    let tempParticipants = user_funding.map(ele => {
+      nft_count += ele.num_nfts;
+      return ele.address;
+    })
     projects[project_id] = {
       project_id,
       week_funding: 0,
       total_supply: null,
       payment_currency: '',
       num_holders: 0,
+      nft_count,
       max_supply: null,
       num_proposals: 0,
       num_participants: 0,
@@ -58,9 +64,9 @@ async function gatherTrendingProjects() {
       tvl
     }
     if (contract_address && token_symbol) {
-      addressList[project_id] = { owner, contract_address, token_symbol, participants: user_funding.map(ele => ele.address) };
+      addressList[project_id] = { owner, contract_address, token_symbol, participants: tempParticipants };
     } else {
-      addressList[project_id] = { owner, participants: user_funding.map(ele => ele.address) }
+      addressList[project_id] = { owner, participants: tempParticipants }
     }
   }
 
