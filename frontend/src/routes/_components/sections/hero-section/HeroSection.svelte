@@ -25,7 +25,8 @@
 		</div>
 	</div>
 	<div class="buttons-wrapper">
-		<Button color="neutral" size="large" width="extended" href="/discover">Explore Projects</Button>
+		<Button color="neutral" size="large" width="extended" href="/discover">Discover Projects</Button
+		>
 		<Button color="primary" size="large" width="extended" href="/dao-generator">Create DAO</Button>
 	</div>
 	<BuiltOnFlow />
