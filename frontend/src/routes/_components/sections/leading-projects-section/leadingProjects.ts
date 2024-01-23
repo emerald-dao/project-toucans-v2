@@ -1,10 +1,10 @@
 export const LEADING_PROJECTS = {
-	highTokenPrice: {
-		title: '🪙 High Token Price',
+	highActivity: {
+		title: '🔥 High Activity',
 		projectId: 'SloppyStakes',
 		featuredProperty: {
-			property: 'price',
-			description: 'Token Price'
+			property: 'num_participants',
+			description: 'DAO Participants'
 		}
 	},
 	lotsOfNfts: {
@@ -12,15 +12,23 @@ export const LEADING_PROJECTS = {
 		projectId: 'ADUToken',
 		featuredProperty: {
 			property: 'nft_count',
-			description: 'NFTs in treasury'
+			description: 'NFTs Donated'
 		}
 	},
-	highActivity: {
-		title: '🔥 High Activity',
+	mostFunded: {
+		title: '💰 High Funding',
+		projectId: 'BallerzFC',
+		featuredProperty: {
+			property: 'total_funding',
+			description: 'Total Funding'
+		}
+	},
+	highTokenPrice: {
+		title: '🪙 High Token Price',
 		projectId: 'brasil',
 		featuredProperty: {
-			property: 'num_participants',
-			description: 'DAO participants'
+			property: 'price',
+			description: 'Token Price'
 		}
 	}
 };

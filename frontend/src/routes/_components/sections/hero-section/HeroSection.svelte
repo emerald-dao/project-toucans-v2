@@ -29,7 +29,7 @@
 		>
 		<Button color="primary" size="large" width="extended" href="/dao-generator">Create DAO</Button>
 	</div>
-	<BuiltOnFlow />
+	<!-- <BuiltOnFlow /> -->
 </section>
 
 <style type="scss">
