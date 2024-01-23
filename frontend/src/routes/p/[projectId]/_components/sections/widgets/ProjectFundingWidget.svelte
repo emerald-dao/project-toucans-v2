@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import RecentFundingChart from '$lib/components/dao-data-blocks/recent-funding/chart/RecentFundingChart.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Currency } from '@emerald-dao/component-library';
@@ -18,7 +19,9 @@
 		/>
 	</div>
 	<div class="secondary-wrapper">
-		<RecentFundingChart {daoData} />
+		{#if browser}
+			<RecentFundingChart {daoData} />
+		{/if}
 		<span class="w-medium">Funding</span>
 	</div>
 </div>

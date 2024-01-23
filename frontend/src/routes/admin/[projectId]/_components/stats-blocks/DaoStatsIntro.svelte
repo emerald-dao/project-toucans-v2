@@ -6,6 +6,7 @@
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 
 	export let daoData: DAOProject;
+	export let showAdminButtons = true;
 </script>
 
 <div class="main-wrapper">
@@ -28,27 +29,29 @@
 			</Label>
 		{/if}
 	</div>
-	<div class="row-6">
-		<div class="row-2 align-center">
-			{#if daoData.onChainData.currentFundingCycle}
-				<a href="/admin/rounds" class="rounds-link header-link">
-					<StatusCircle status="success" width="0.5rem" />
-					Active Funding Round
-				</a>
-			{:else if daoData.hasToken}
-				<a href="/admin/rounds" class="rounds-link header-link">
-					<StatusCircle status="alert" width="0.5rem" />
-					No Active Funding Round
-				</a>
-			{/if}
-		</div>
-		<a class="pending-actions" href="/admin/actions">
-			<div class="alert-number-wrapper">
-				<AlertNumber number={Number(daoData.onChainData.actions.length)} />
+	{#if showAdminButtons}
+		<div class="row-6">
+			<div class="row-2 align-center">
+				{#if daoData.onChainData.currentFundingCycle}
+					<a href="/admin/rounds" class="rounds-link header-link">
+						<StatusCircle status="success" width="0.5rem" />
+						Active Funding Round
+					</a>
+				{:else if daoData.hasToken}
+					<a href="/admin/rounds" class="rounds-link header-link">
+						<StatusCircle status="alert" width="0.5rem" />
+						No Active Funding Round
+					</a>
+				{/if}
 			</div>
-			<IconCircle icon="tabler:layout-list" color="primary" />
-		</a>
-	</div>
+			<a class="pending-actions" href="/admin/actions">
+				<div class="alert-number-wrapper">
+					<AlertNumber number={Number(daoData.onChainData.actions.length)} />
+				</div>
+				<IconCircle icon="tabler:layout-list" color="primary" />
+			</a>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">

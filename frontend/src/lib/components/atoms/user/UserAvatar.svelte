@@ -58,6 +58,7 @@
 		href={`/u/${userProfile.address}`}
 		style={`font-size: ${fontSize}`}
 		class:disabled={!userLink}
+		data-sveltekit-preload-data="hover"
 	>
 		<div class="image-wrapper">
 			<img

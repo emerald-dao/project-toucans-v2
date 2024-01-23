@@ -6,7 +6,6 @@ import { user } from '$stores/flow/FlowStore';
 import { fetchProjectDatabaseData } from '$lib/utilities/api/supabase/fetchProject';
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 import { fetchDaoVotes } from '$lib/utilities/api/supabase/fetchDaoVotes';
-import { fetchDaoRecentFunding } from '$lib/utilities/api/supabase/fetchDaoRecentFunding';
 import { fetchDaoFundingStats } from '$lib/utilities/api/supabase/fetchDaoFundingStats';
 import { fetchDaoFunders } from '$lib/utilities/api/supabase/fetchDaoFunders';
 
@@ -20,7 +19,8 @@ export const load: PageLoad = async ({ params, depends }) => {
 	const hasToken = generalInfo.contract_address !== null;
 	const funding = await fetchDaoFundingStats(generalInfo.project_id);
 	const funders = (await fetchDaoFunders(generalInfo.project_id)).reduce(
-		(obj, item) => Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
+		(obj, item) =>
+			Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
 		{}
 	);
 
@@ -39,10 +39,10 @@ export const load: PageLoad = async ({ params, depends }) => {
 				: null,
 			vaultSetup: userAddress
 				? await hasProjectVaultSetup(
-					generalInfo.contract_address,
-					generalInfo.project_id,
-					userAddress
-				)
+						generalInfo.contract_address,
+						generalInfo.project_id,
+						userAddress
+				  )
 				: true,
 			hasToken,
 			funding: { ...funding, funders }
