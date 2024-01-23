@@ -23,15 +23,15 @@
 
 {#if allFeaturedDaosFound}
 	<section class="section">
-		<div class="container column-12 align-center">
-			<div class="projects-wrapper">
-				{#each featuredDaosArray as [key, leadingProject]}
-					{#if leadingProject}
-						<LeadingProjectCard project={leadingProject} leadingProjectyType={key} />
-					{/if}
-				{/each}
-			</div>
+		<!-- <div class="column-12 align-center"> -->
+		<div class="projects-wrapper">
+			{#each featuredDaosArray as [key, leadingProject]}
+				{#if leadingProject}
+					<LeadingProjectCard project={leadingProject} leadingProjectyType={key} />
+				{/if}
+			{/each}
 		</div>
+		<!-- </div> -->
 	</section>
 {/if}
 
@@ -40,16 +40,22 @@
 		text-align: center;
 		background-color: var(--clr-background-secondary);
 		border-block: 0.5px solid var(--clr-border-primary);
+		overflow-x: scroll;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 
 		.projects-wrapper {
-			display: flex;
-			flex-direction: column;
+			display: grid;
+			grid-template-columns: repeat(4, 280px);
 			gap: var(--space-6);
+			width: fit-content;
+			padding-inline: var(--space-12);
+			margin-inline: auto;
 
 			@include mq('small') {
-				display: grid;
 				gap: var(--space-10);
-				grid-template-columns: repeat(4, 1fr);
 			}
 		}
 	}
