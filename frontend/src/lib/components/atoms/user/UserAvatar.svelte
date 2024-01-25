@@ -4,6 +4,7 @@
 	import type { Profile } from '$lib/types/common/profile.interface';
 	import { user } from '$stores/flow/FlowStore';
 	import UserName from './UserName.svelte';
+	import { onMount } from 'svelte';
 
 	export let imageSize = '47px';
 	export let fontSize = 'var(--font-size-1)';
@@ -16,21 +17,22 @@
 
 	export let userProfile: Profile | undefined = undefined;
 
-	if (userProfile === undefined) {
-		const getProfile = async () => {
-			userProfile = await fetch(`/api/get-profile/${address}`).then(
-				async (data) => (await data.json()) as Profile
-			);
-		};
-
-		getProfile();
-	}
-
 	const handleImageError = (event: Event) => {
 		if (event.target && event.target instanceof HTMLImageElement) {
 			event.target.src = '/avatars/lost-toucan.png';
 		}
 	};
+
+	onMount(() => {
+		if (userProfile === undefined) {
+			const getProfile = async () => {
+				userProfile = await fetch(`/api/get-profile/${address}`).then(
+					async (data) => (await data.json()) as Profile
+				);
+			};
+			getProfile();
+		}
+	});
 </script>
 
 {#if !userProfile}

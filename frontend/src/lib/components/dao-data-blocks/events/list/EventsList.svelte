@@ -21,15 +21,10 @@
 		currentPage -= 1;
 	};
 
-	$: allActivity = daoData.events
-		? daoData.events.sort((a, b) =>
-				a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0
-		  )
-		: [];
 	$: pageStart = (currentPage - 1) * pageSize;
 	$: pageEnd = pageStart + pageSize;
 	$: pagesNumbers = Array.from(Array(Math.ceil(daoData.events.length / pageSize)).keys());
-	$: currentPageEvents = allActivity.slice(pageStart, pageEnd);
+	$: currentPageEvents = daoData.events.slice(pageStart, pageEnd);
 
 	$: addressList = getUsersFromEvents(currentPageEvents);
 </script>
@@ -61,7 +56,7 @@
 				</Button>
 				<Button
 					on:click={nextPage}
-					state={pageEnd >= allActivity.length ? 'disabled' : 'active'}
+					state={pageEnd >= daoData.events.length ? 'disabled' : 'active'}
 					type="transparent"
 					color="neutral"
 				>

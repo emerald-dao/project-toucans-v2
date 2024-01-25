@@ -1004,7 +1004,7 @@ export const getProjectWithTokenInfo: (
 		response.actions = await getProjectActions(owner, projectId);
 		return response;
 	} catch (e) {
-		console.log('Error in getProjectInfo');
+		console.log('Error in getProjectWithTokenInfo');
 		console.log(e);
 	}
 };
@@ -1021,7 +1021,7 @@ const getProjectNoTokenInfo: (
 		response.actions = await getProjectActions(owner, projectId);
 		return response;
 	} catch (e) {
-		console.log('Error in getProjectInfo');
+		console.log('Error in getProjectNoTokenInfo');
 		console.log(e);
 	}
 };
