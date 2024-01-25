@@ -118,10 +118,10 @@
 />
 
 <Seo
-	title={dappInfo.title}
-	description={dappInfo.description}
+	title={'Toucans - Community Management'}
+	description={'Manage your community with no-code fungible token & DAO creation. Built-in airdrops, leaderboards, and transparently tracked activity. Completely free.'}
 	type="WebSite"
-	image="https://toucans.ecdao.org/favicon.png"
+	image={'/dashboard-screenshot.png'}
 />
 
 <style type="scss">
