@@ -17,12 +17,6 @@ export const load: PageLoad = async ({ params, depends }) => {
 	const generalInfo = await fetchProjectDatabaseData(params.projectId);
 	const userAddress = get(user).addr;
 	const hasToken = generalInfo.contract_address !== null;
-	const funding = await fetchDaoFundingStats(generalInfo.project_id);
-	const funders = (await fetchDaoFunders(generalInfo.project_id)).reduce(
-		(obj, item) =>
-			Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
-		{}
-	);
 
 	if (hasToken) {
 		return {
@@ -39,13 +33,19 @@ export const load: PageLoad = async ({ params, depends }) => {
 				: null,
 			vaultSetup: userAddress
 				? await hasProjectVaultSetup(
-						generalInfo.contract_address,
-						generalInfo.project_id,
-						userAddress
-				  )
+					generalInfo.contract_address,
+					generalInfo.project_id,
+					userAddress
+				)
 				: true,
 			hasToken,
-			funding: { ...funding, funders }
+			funding: {
+				...(await fetchDaoFundingStats(generalInfo.project_id)), funders: (await fetchDaoFunders(generalInfo.project_id)).reduce(
+					(obj, item) =>
+						Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
+					{}
+				)
+			}
 		};
 	} else {
 		return {
@@ -58,7 +58,13 @@ export const load: PageLoad = async ({ params, depends }) => {
 			events: (await fetchProjectEvents(generalInfo.project_id)).reverse(),
 			votes: await fetchDaoVotes(generalInfo.project_id),
 			hasToken,
-			funding: { ...funding, funders }
+			funding: {
+				...(await fetchDaoFundingStats(generalInfo.project_id)), funders: (await fetchDaoFunders(generalInfo.project_id)).reduce(
+					(obj, item) =>
+						Object.assign(obj, { [item.address]: { amount: item.amount, num_nfts: item.num_nfts } }),
+					{}
+				)
+			}
 		};
 	}
 };
