@@ -10,14 +10,20 @@ const validationSuite = create((data = {}, currentField) => {
 		enforce(data.amount).greaterThan(0);
 	});
 
-	skipWhen(
-		data.projectId != 'BallerzFC',
-		() => {
-			test('amount', 'Amount must be a positive integer', () => {
-				enforce(data.amount).isPositiveInteger();
-			})
+	test('amount', 'Amount must be a positive integer', () => {
+		if (data.projectId == 'BallerzFC') {
+			enforce(data.amount).isPositiveInteger();
 		}
-	)
+	})
+
+	// skipWhen(
+	// 	data.projectId != 'BallerzFC',
+	// 	() => {
+	// 		test('amount', 'Amount must be a positive integer', () => {
+	// 			enforce(data.amount).isPositiveInteger();
+	// 		})
+	// 	}
+	// )
 });
 
 export default validationSuite;
