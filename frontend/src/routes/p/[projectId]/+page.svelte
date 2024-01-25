@@ -101,10 +101,10 @@
 </section>
 
 <Seo
-	title={`${$daoDataStore.generalInfo.name} | Toucans`}
-	description={`${$daoDataStore.generalInfo.name} DAO project`}
+	title={`${data.generalInfo.name} | Toucans`}
+	description={`${data.generalInfo.description}`}
 	type="WebPage"
-	image="https://toucans.ecdao.org/favicon.png"
+	image={data.generalInfo.logo}
 />
 
 <style type="scss">
