@@ -9,7 +9,7 @@ import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEven
 import { network } from '$flow/config';
 import { fetchDaoFundingInfo } from '$lib/utilities/api/supabase/fetchDaoFundingInfo';
 
-// export const ssr = false;
+export const ssr = false;
 
 async function fetchProjectData(project: DaoDatabaseData): Promise<DAOProject> {
 	return {
