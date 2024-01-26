@@ -4,6 +4,7 @@ import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 import { fetchAllToucansProjectsWithToken } from '$lib/utilities/api/supabase/fetchAllToucansProjectsWithToken';
 import { fetchDaoRankings } from '$lib/utilities/api/supabase/fetchDaoRankings';
 import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilities/api/supabase/fetchProjectRecentDonateOrPurchaseEventByUser';
+import { fetchFlowPrice } from '$lib/utilities/fetchFlowPrice';
 import type { UserData, Vault } from './_types/user-data.interface';
 
 export const load = async ({ params, fetch }): Promise<UserData> => {
@@ -48,6 +49,16 @@ const getUserVaults = async (address: string): Promise<Vault[]> => {
 			});
 		}
 	}
+
+	vaults.push({
+		daoData: {
+			name: 'Flow',
+			logoUrl: '/flow-logo.png',
+			tokenSymbol: 'FLOW'
+		},
+		balance: balances["Flow"],
+		tokenValue: await fetchFlowPrice()
+	})
 
 	// sort daos by highest value
 	vaults.sort((a, b) => {

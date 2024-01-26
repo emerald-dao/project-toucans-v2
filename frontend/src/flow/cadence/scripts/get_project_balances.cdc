@@ -18,6 +18,9 @@ pub fun main(user: Address, projects: {String: Address}): {String: UFix64} {
       }
     } 
   }
+
+  let flowVault = getAccount(user).getCapability(/public/flowTokenBalance).borrow<&{FungibleToken.Balance}>()!
+  answer["Flow"] = flowVault.balance
   
   return answer
 }

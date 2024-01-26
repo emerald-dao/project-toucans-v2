@@ -21,14 +21,14 @@
 	$: vault = $selectedVaultStore !== null ? userData.vaults[$selectedVaultStore] : null;
 
 	$: transactions =
-		$selectedVaultStore !== null
+		$selectedVaultStore !== null && vault && vault.daoData.projectId
 			? userData.transactions.filter(
 					(transaction) => transaction.project_id === vault?.daoData.projectId
 			  )
 			: null;
 
 	onMount(async () => {
-		if (vault) {
+		if (vault && vault.daoData.projectId) {
 			projectLockTokens = await getLockedTokens(vault, $page.params.address);
 		}
 	});
@@ -110,20 +110,22 @@
 					</div>
 				</div>
 			</div>
-			<div class="events-wrapper">
-				{#if transactions}
-					<TransactionsList events={transactions} />
-				{/if}
-				{#if projectLockTokens}
-					<div style="padding-top:20px;">
-						<ProjectLockTokens
-							lockedVaults={projectLockTokens}
-							projectOwner={vault?.daoData.owner}
-							projectId={vault?.daoData.projectId}
-						/>
-					</div>
-				{/if}
-			</div>
+			{#if vault.daoData.projectId}
+				<div class="events-wrapper">
+					{#if transactions}
+						<TransactionsList events={transactions} />
+					{/if}
+					{#if projectLockTokens}
+						<div style="padding-top:20px;">
+							<ProjectLockTokens
+								lockedVaults={projectLockTokens}
+								projectOwner={vault?.daoData.owner}
+								projectId={vault?.daoData.projectId}
+							/>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 	</div>
 {/if}
