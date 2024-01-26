@@ -13,6 +13,7 @@
 	import { getCatalogNFTs } from '$flow/actions';
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import IconCircle from '$components/atoms/IconCircle.svelte';
 
 	export let isValid = false;
 	export let daoData: DAOProject;
@@ -75,6 +76,7 @@
 						bind:selectedNFTIds={$paymentData.NFTs}
 						bind:selectedCollection={$paymentData.NFTCollection}
 						NFTs={userCatalogNFTs}
+						pageSize={4}
 						clickable={true}
 					/>
 				{:else}
@@ -99,6 +101,12 @@
 			on:input={(input) => handleChange(input.detail)}
 			bind:value={$paymentData.amount}
 		/>
+	{/if}
+	{#if $paymentData.currency === 'NFTs' && $paymentData.NFTs}
+		<div class="row-2">
+			<IconCircle icon={$paymentData.NFTs.length} color="neutral" />
+			{$paymentData.NFTs.length == 1 ? 'NFT' : 'NFTs'} selected
+		</div>
 	{/if}
 	<SpecialMessage />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
@@ -170,6 +178,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
+
+		.row-2 {
+			font-size: var(--font-size-0);
+			gap: var(--space-2);
+			align-items: center;
+			padding: 1px 6px;
+		}
 
 		.funding-data-wrapper {
 			margin-top: var(--space-8);
