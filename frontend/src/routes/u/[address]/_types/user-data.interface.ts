@@ -7,16 +7,16 @@ export interface UserData {
 	transactions: DaoEvent[];
 }
 
-interface DaoProfile {
-	owner: string;
+interface TokenProfile {
 	name: string;
 	logoUrl: string;
-	projectId: string;
 	tokenSymbol: string;
+	projectId?: string;
+	owner?: string;
 }
 
 export interface Vault {
-	daoData: DaoProfile;
+	daoData: TokenProfile;
 	balance: number;
 	tokenValue: number;
 }
