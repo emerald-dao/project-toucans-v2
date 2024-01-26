@@ -74,6 +74,7 @@
 					{clickable}
 					on:click={() => handleNFTClick(nft.id)}
 					isSelected={selectedNFTIds.includes(nft.id)}
+					{selectedCollection}
 				/>
 			{/each}
 		</div>
@@ -89,7 +90,7 @@
 	.nfts-grid {
 		display: grid;
 		grid-gap: var(--space-3);
-		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 	}
 
 	.off {

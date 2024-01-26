@@ -1,14 +1,21 @@
 <script lang="ts">
 	import Image from '$lib/components/Image.svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import NFTCardDetails from './NFTCardDetails.svelte';
+	import NFLAllDay from './projects/NFLAllDay.svelte';
 
 	export let nft: Nft;
 	export let isSelected: boolean;
 	export let clickable: boolean;
+	export let selectedCollection: string;
 
 	let imgSrc = nft.thumbnail.startsWith('ipfs://')
 		? `https://nftstorage.link/ipfs/${nft.thumbnail.slice(7)}`
 		: nft.thumbnail;
+
+	let cardDetailComponents = {
+		NFLAllDay: NFLAllDay
+	};
 </script>
 
 <div class="nft-wrapper" class:clickable class:selected={isSelected} on:click>
@@ -20,9 +27,7 @@
 	<div class="image-wrapper">
 		<Image src={imgSrc} alt="NFT" width="100%" height="120px" />
 	</div>
-	<div class="content-wrapper">
-		<p class="w-medium heading">{nft.name}</p>
-	</div>
+	<svelte:component this={cardDetailComponents[selectedCollection] || NFTCardDetails} {nft} />
 </div>
 
 <style lang="scss">
@@ -36,22 +41,6 @@
 		text-align: center;
 		background-color: var(--clr-surface-primary);
 		overflow: hidden;
-
-		.content-wrapper {
-			width: 100%;
-			padding: var(--space-4) var(--space-2);
-			border-top: 1px solid var(--clr-neutral-badge);
-
-			.heading {
-				font-size: var(--font-size-1);
-				overflow: hidden;
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				-webkit-line-clamp: 1;
-				-webkit-box-orient: vertical;
-				word-break: break-word;
-			}
-		}
 
 		.serial {
 			position: absolute;
