@@ -37,6 +37,7 @@
 			fontSize="var(--font-size-1)"
 		/>
 	</td>
+	<td>{project.nft_count}</td>
 	<td>{project.num_proposals}</td>
 	<td>{project.num_participants}</td>
 	<td class="chart">
