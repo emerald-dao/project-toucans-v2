@@ -70,6 +70,7 @@ pub contract Toucans {
     projectId: String,
     projectOwner: Address, 
     amount: UInt64,
+    uuids: [UInt64],
     collectionIdentifier: String,
     collectionName: String,
     collectionExternalURL: String,
@@ -970,17 +971,6 @@ pub contract Toucans {
       let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collection.getType().identifier)
       let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
       assert(self.getAllowedNFTCollections().contains(nftCatalogCollectionIdentifier), message: "This DAO does not accept this NFT type.")
-      
-      emit DonateNFT(
-        projectId: self.projectId,
-        projectOwner: self.owner!.address, 
-        amount: UInt64(collection.getIDs().length),
-        collectionIdentifier: nftCatalogCollectionIdentifier,
-        collectionName: nftCatalogEntry.collectionDisplay.name,
-        collectionExternalURL: nftCatalogEntry.collectionDisplay.externalURL.url,
-        by: sender,
-        message: message
-      )
 
       if self.additions["nftTreasury"] == nil {
         self.additions["nftTreasury"] <-! ({} as @{Type: NonFungibleToken.Collection})
@@ -993,11 +983,26 @@ pub contract Toucans {
       }
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collection.getType())!
 
+      let donatedUUIDs: [UInt64] = []
       for id in collection.getIDs() {
-        specificNFTTreasury.deposit(token: <- collection.withdraw(withdrawID: id))
+        let nft <- collection.withdraw(withdrawID: id)
+        donatedUUIDs.append(nft.uuid)
+        specificNFTTreasury.deposit(token: <- nft)
       }
       assert(collection.getIDs().length == 0, message: "This collection is not empty.")
       destroy collection
+      
+      emit DonateNFT(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        amount: UInt64(donatedUUIDs.length),
+        uuids: donatedUUIDs,
+        collectionIdentifier: nftCatalogCollectionIdentifier,
+        collectionName: nftCatalogEntry.collectionDisplay.name,
+        collectionExternalURL: nftCatalogEntry.collectionDisplay.externalURL.url,
+        by: sender,
+        message: message
+      )
     }
 
     access(self) fun withdrawNFTsFromTreasury(
