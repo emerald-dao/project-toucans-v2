@@ -2,6 +2,7 @@
 	import Image from '$lib/components/Image.svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 	import NFTCardDetails from './NFTCardDetails.svelte';
+	import NBATopShot from './projects/NBATopShot.svelte';
 	import NFLAllDay from './projects/NFLAllDay.svelte';
 
 	export let nft: Nft;
@@ -14,7 +15,8 @@
 		: nft.thumbnail;
 
 	let cardDetailComponents = {
-		NFLAllDay: NFLAllDay
+		NFLAllDay: NFLAllDay,
+		NBATopShot: NBATopShot
 	};
 </script>
 
