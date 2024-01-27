@@ -140,9 +140,11 @@
 
 		position: fixed;
 		right: 0;
+		top: 0px;
 		background-color: var(--clr-background-secondary);
 		height: 100%;
 		min-width: 50vw;
+		z-index: 1000;
 
 		.content-wrapper {
 			padding: var(--space-14);
