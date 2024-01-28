@@ -2,23 +2,21 @@
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 
 	export let nft: Nft;
-	let traits = nft.traits.reduce(
-		(obj, item) => Object.assign(obj, { [item.name]: item.value }),
-		{}
-	);
-	let name = traits['playerFirstName'] + ' ' + traits['playerLastName'];
-	let tier = traits['editionTier'];
-	let playType = traits['playType'];
-	let set = traits['setName'];
-	let series = traits['seriesName'];
-	let team = traits['teamName'];
+	let traits = nft.traits
+		? nft.traits.reduce((obj, item) => Object.assign(obj, { [item.name]: item.value }), {})
+		: {};
+	let name = nft.traits ? traits['playerFirstName'] + ' ' + traits['playerLastName'] : nft.name;
 </script>
 
 <div class="content-wrapper">
 	<p class="w-medium heading">{name}</p>
-	<p class={`text ${tier}`}>{tier.toUpperCase()}</p>
-	<p class={`text`}>{playType}・{set}・{series}</p>
-	<p class={`text`}>{team}</p>
+	{#if nft.traits}
+		<p class={`text ${traits['editionTier'].toLowerCase()}`}>
+			{traits['editionTier'].toUpperCase()}
+		</p>
+		<p class={`text`}>{traits['playType']}・{traits['setName']}・{traits['seriesName']}</p>
+		<p class={`text`}>{traits['teamName']}</p>
+	{/if}
 </div>
 
 <style lang="scss">
