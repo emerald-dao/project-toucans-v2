@@ -610,7 +610,8 @@ const proposeWithdrawNFTs = async (
 	projectId: string,
 	collectionIdentifier: string,
 	nftIDs: string[],
-	recipient: string
+	recipient: string,
+	reasonMessage: string
 ) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(withdrawNFTsTx),
@@ -619,7 +620,8 @@ const proposeWithdrawNFTs = async (
 			arg(projectId, t.String),
 			arg(collectionIdentifier, t.String),
 			arg(nftIDs, t.Array(t.UInt64)),
-			arg(recipient, t.Address)
+			arg(recipient, t.Address),
+			arg(reasonMessage, t.String)
 		],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -633,10 +635,11 @@ export const proposeWithdrawNFTsExecution = (
 	projectId: string,
 	collectionIdentifier: string,
 	nftIDs: string[],
-	recipient: string
+	recipient: string,
+	reasonMessage: string
 ) =>
 	executeTransaction(() =>
-		proposeWithdrawNFTs(projectOwner, projectId, collectionIdentifier, nftIDs, recipient)
+		proposeWithdrawNFTs(projectOwner, projectId, collectionIdentifier, nftIDs, recipient, reasonMessage)
 	);
 
 const updateMultisig = async (

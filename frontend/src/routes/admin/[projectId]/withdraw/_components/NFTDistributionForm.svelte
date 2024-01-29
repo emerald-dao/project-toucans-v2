@@ -8,6 +8,7 @@
 	import Icon from '@iconify/svelte';
 	import { withdrawNFTs } from '$lib/features/distribute-tokens/functions/withdrawNFTs';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import SpecialMessage from '$lib/features/payments/components/atoms/SpecialMessage.svelte';
 
 	export let activeDaoData: DAOProject;
 	export let NFTs: {
@@ -17,6 +18,7 @@
 	let address: string;
 	let isAddressValid: boolean;
 	let selectedCollection: string;
+	let reasonMessage: string = '';
 	let selectedNFTIds: string[] = [];
 
 	const resetDistributionForm = () => {
@@ -33,7 +35,7 @@
 			);
 		}
 
-		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address);
+		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address, reasonMessage);
 		resetDistributionForm();
 	};
 
@@ -55,6 +57,9 @@
 			clickable={true}
 			on:collectionChange={resetAddressValidation}
 		/>
+		<div class="special-message">
+			<SpecialMessage bind:message={reasonMessage} messageText="Add a reason for withdrawl" />
+		</div>
 	</div>
 	<Button
 		on:click={handleCreateWithdrawNftsAction}
@@ -84,6 +89,10 @@
 
 		.content-wrapper {
 			width: 100%;
+
+			.special-message {
+				margin-top: var(--space-3);
+			}
 		}
 	}
 </style>

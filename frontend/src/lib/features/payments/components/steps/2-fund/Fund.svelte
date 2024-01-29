@@ -108,7 +108,7 @@
 			{$paymentData.NFTs.length == 1 ? 'NFT' : 'NFTs'} selected
 		</div>
 	{/if}
-	<SpecialMessage />
+	<SpecialMessage bind:message={$paymentData.specialMessage} />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
 		<div class="funding-data-wrapper">
 			<div class="row-2 align-center">
