@@ -1,0 +1,46 @@
+<script lang="ts">
+	import VotingOptionsListElement from './../../2-voting-options/components/VotingOptionsListElement.svelte';
+	import type { VotingOption } from '../voting-option.interface';
+	import Pagination from '$components/atoms/Pagination.svelte';
+	import type { Writable } from 'svelte/store';
+
+	export let votingOptions: Writable<VotingOption[]>;
+
+	export let pageStart: number;
+	export let pageEnd: number;
+	export let pageSize = 4;
+
+	$: currentPageVotingOptions = $votingOptions.slice(pageStart, pageEnd);
+
+	const handleDeleteOption = (event: CustomEvent<{ id: string }>) => {
+		votingOptions.update((options) => options.filter((option) => option.id !== event.detail.id));
+	};
+</script>
+
+<div class="main-wrapper">
+	<div class="items-wrapper">
+		{#each currentPageVotingOptions as votingOption, i (votingOption.id)}
+			<VotingOptionsListElement
+				{votingOption}
+				optionNumber={i + 1 + (pageStart > 0 ? pageStart : 0)}
+				on:delete={handleDeleteOption}
+			/>
+		{/each}
+	</div>
+	<Pagination amountOfItems={$votingOptions.length} bind:pageStart bind:pageEnd {pageSize} />
+</div>
+
+<style lang="scss">
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+
+		.items-wrapper {
+			display: grid;
+			gap: var(--space-3);
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(2, 1fr);
+		}
+	}
+</style>

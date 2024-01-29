@@ -1,5 +1,5 @@
 <script type="ts">
-	import { fly, fade } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 	import { paymentData } from '$lib/features/payments/stores/PaymentData';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 

@@ -8,19 +8,20 @@
 	export let pageStart = 0;
 	export let pageEnd = pageSize;
 
-	let currentPage = 1;
+	$: currentPage = Math.ceil(pageEnd / pageSize);
+
 	const nextPage = () => {
-		currentPage += 1;
+		pageStart += pageSize;
+		pageEnd += pageSize;
 	};
 	const prevPage = () => {
-		currentPage -= 1;
+		pageStart -= pageSize;
+		pageEnd -= pageSize;
 	};
 
-	$: pageStart = (currentPage - 1) * pageSize;
-	$: pageEnd = pageStart + pageSize;
-
-	$: if (currentPage > Math.ceil(amountOfItems / pageSize)) {
-		currentPage = Math.ceil(amountOfItems / pageSize);
+	$: if (amountOfItems <= pageStart) {
+		prevPage();
+		currentPage = Math.ceil(pageEnd / pageSize);
 	}
 </script>
 
