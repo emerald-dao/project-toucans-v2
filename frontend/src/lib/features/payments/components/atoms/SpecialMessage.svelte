@@ -1,8 +1,9 @@
 <script type="ts">
-	import { fly, fade } from 'svelte/transition';
-	import { paymentData } from '$lib/features/payments/stores/PaymentData';
+	import { fly } from 'svelte/transition';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
+	export let message: string;
+	export let messageText: string = 'Add a special message';
 	let viewSpecialMessage = false;
 	let specialMessageInput: HTMLInputElement;
 
@@ -17,7 +18,7 @@
 	};
 
 	const inputFocusOut = () => {
-		if ($paymentData.specialMessage === '') {
+		if (message === '') {
 			viewSpecialMessage = false;
 		}
 	};
@@ -29,17 +30,17 @@
 			<div in:fly|local={{ duration: 200, x: -10 }}>
 				<IconCircle icon="tabler:plus" color="neutral" />
 			</div>
-			Add a special message
+			{messageText}
 		</button>
 	{/if}
 	{#if viewSpecialMessage}
 		<div class="message-wrapper" in:fly|local={{ x: 20, duration: 200 }}>
 			<input
 				name="message"
-				placeholder="Write a special message"
+				placeholder={messageText}
 				id="special-message"
 				maxLength="70"
-				bind:value={$paymentData.specialMessage}
+				bind:value={message}
 				bind:this={specialMessageInput}
 				on:focusout={inputFocusOut}
 			/>

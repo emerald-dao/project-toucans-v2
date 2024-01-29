@@ -103,7 +103,8 @@ pub contract Toucans {
     collectionName: String,
     collectionExternalURL: String,
     amount: UInt64,
-    to: Address
+    to: Address,
+    message: String
   )
   pub event Mint(
     projectId: String,
@@ -267,7 +268,7 @@ pub contract Toucans {
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
-    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>)
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], message: String, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
     pub fun proposeMintToTreasury(amount: UFix64)
@@ -376,7 +377,7 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], message: String, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)
                         ?? panic("This collection type does not exist in the NFT Treasury.")
       let existingIDs: [UInt64] = specificNFTTreasury.getIDs()
@@ -384,7 +385,7 @@ pub contract Toucans {
         assert(existingIDs.contains(id), message: "The NFT ID ".concat(id.toString()).concat(" does not exist in the NFT Treasury."))
       }
       
-      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection, recipientCollectionBackup)
+      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection, recipientCollectionBackup, message)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -490,6 +491,7 @@ pub contract Toucans {
             if withdraw.extra["backupReceiver"] != nil {
               backupReceiver = (withdraw.extra["backupReceiver"]! as! Capability<&{NonFungibleToken.CollectionPublic}>).borrow()
             }
+            let message: String = withdraw.extra["message"] == nil ? "" : withdraw.extra["message"]! as! String
             self.withdrawNFTsFromTreasury(
               collectionType: withdraw.collectionType, 
               collectionReceiver: withdraw.recipientCollection.borrow(), 
@@ -498,6 +500,7 @@ pub contract Toucans {
               collectionName: withdraw.collectionName, 
               collectionExternalURL: withdraw.collectionExternalURL,
               recipientAddr: recipientAddr,
+              message: message,
               backupReceiver
             )
           case Type<ToucansActions.MintTokens>():
@@ -672,7 +675,7 @@ pub contract Toucans {
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
       // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(self.paymentTokenInfo.receiverPath)
+      let emeraldCityTreasury = getAccount(0x6c0d53c676256e8c).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
@@ -835,7 +838,7 @@ pub contract Toucans {
 
       // remove tax on donations for the time being
       //
-      // let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(tokenInfo.receiverPath)
+      // let emeraldCityTreasury = getAccount(0x6c0d53c676256e8c).getCapability(tokenInfo.receiverPath)
       //                                     .borrow<&{FungibleToken.Receiver}>()
       //                                     ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
       // emeraldCityTreasury.deposit(from: <- vault.withdraw(amount: vault.balance * 0.05))
@@ -1013,6 +1016,7 @@ pub contract Toucans {
       collectionName: String, 
       collectionExternalURL: String, 
       recipientAddr: Address,
+      message: String,
       _ backupReceiver: &{NonFungibleToken.CollectionPublic}?
     ) {
       emit WithdrawNFTs(
@@ -1022,7 +1026,8 @@ pub contract Toucans {
         collectionName: collectionName,
         collectionExternalURL: collectionExternalURL,
         amount: UInt64(nftIDs.length),
-        to: recipientAddr
+        to: recipientAddr,
+        message: message
       )
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)!
       // if main receiver available, use that
