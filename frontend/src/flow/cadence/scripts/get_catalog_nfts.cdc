@@ -14,6 +14,9 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
             }
             let nfts: [NFTData] = []
             for index, id in userCollection.getIDs() {
+                if index == 2000 {
+                    break
+                }
                 let nft = userCollection.borrowViewResolver(id: id)
                 let display = nft.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
                 var serialNum: UInt64? = nil
