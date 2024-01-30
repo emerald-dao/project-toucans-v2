@@ -66,6 +66,7 @@ import getStableSwapPoolInfoScript from './cadence/scripts/get_stable_swap_pool_
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
 import getCatalogNFTsScript from './cadence/scripts/get_catalog_nfts.cdc?raw';
+import getCatalogSpecificNFTsScript from './cadence/scripts/get_catalog_specific_nfts.cdc?raw';
 import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
 import { get } from 'svelte/store';
@@ -1238,16 +1239,28 @@ const getCatalogByCollectionIDs = async (group: string[]) => {
 	}
 };
 
+export const getCatalogSpecificNFTs: (
+	collectionIdentifier: string,
+	user: string
+) => Promise<Nft[]> = async (collectionIdentifier: string, user: string) => {
+	try {
+		let res = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogSpecificNFTsScript),
+			args: (arg, t) => [arg(collectionIdentifier, t.String), arg(user, t.Address)],
+			limit: 9999
+		});
+		return res;
+	} catch (e) {
+		console.log('Error in getCatalogSpecificNFTs');
+		console.log(e);
+	}
+};
+
 export const getCatalogNFTs: (
 	collectionIdentifiers: string[],
 	user: string
 ) => Promise<{
-	[collectionIdentifier: string]: {
-		id: string;
-		name: string;
-		thumbnail: string;
-		serial: string | null;
-	}[];
+	[collectionIdentifier: string]: Nft[];
 }> = async (collectionIdentifiers: string[], user: string) => {
 	if (collectionIdentifiers.indexOf('Fantastec-SWAP') > -1) {
 		collectionIdentifiers.splice(collectionIdentifiers.indexOf('Fantastec-SWAP'), 1)
