@@ -19,10 +19,12 @@
 
 	export let selectedNFTIds: string[] = [];
 
-	let collectionIdentifiers = Object.keys(NFTs);
+	export let collectionIdentifiers = Object.keys(NFTs);
 
 	onMount(async () => {
-		selectedCollection = collectionIdentifiers[0];
+		if (!selectedCollection) {
+			selectedCollection = collectionIdentifiers[0];
+		}
 		updateSelectedNFTs();
 	});
 
