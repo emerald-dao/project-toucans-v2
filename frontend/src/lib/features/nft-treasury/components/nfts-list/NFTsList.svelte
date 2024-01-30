@@ -88,7 +88,7 @@
 				/>
 			{/each}
 		</div>
-		<Pagination bind:pageStart bind:pageEnd amountOfItems={displayedNfts.length} {pageSize} />
+		<Pagination bind:pageStart bind:pageEnd amountOfItems={filteredNfts.length} {pageSize} />
 	{/if}
 </div>
 
