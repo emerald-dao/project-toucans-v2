@@ -62,7 +62,7 @@
 		{/if}
 		{#await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id) then NFTs}
 			{#if Object.keys(NFTs).length > 0}
-				<NftsTreasuryWidget {NFTs} pageSize={4} />
+				<NftsTreasuryWidget {NFTs} pageSize={3} />
 			{/if}
 		{/await}
 		<ProjectCharts {daoData} />
