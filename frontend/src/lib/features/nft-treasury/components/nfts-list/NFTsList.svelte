@@ -3,6 +3,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import NFTCard from './atoms/NFTCard.svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import AnimatedSearchBar from '$components/search-bar/AnimatedSearchBar.svelte';
 
 	export let NFTs: {
 		[collectionIdentifier: string]: Nft[];
@@ -14,6 +15,7 @@
 	const dispatch = createEventDispatcher();
 
 	let displayedNfts: Nft[] = [];
+	let filteredNfts: Nft[] = displayedNfts;
 
 	export let selectedNFTIds: string[] = [];
 
@@ -49,7 +51,7 @@
 
 	let pageStart: number;
 	let pageEnd: number;
-	$: currentPageNFTs = displayedNfts.slice(pageStart, pageEnd);
+	$: currentPageNFTs = filteredNfts.slice(pageStart, pageEnd);
 </script>
 
 <div class="column-3">
@@ -62,6 +64,12 @@
 			{/each}
 		</select>
 	</div>
+	<AnimatedSearchBar
+		items={displayedNfts}
+		bind:filteredItems={filteredNfts}
+		searchTerms={['name']}
+		placeholder="Search NFT name..."
+	/>
 	{#if currentPageNFTs.length === 0}
 		<p class="small off">
 			<em> Sorry! We didn't find NFTs from this collection. </em>
