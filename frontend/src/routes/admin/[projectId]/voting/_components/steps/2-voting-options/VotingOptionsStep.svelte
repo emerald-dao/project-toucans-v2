@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '@emerald-dao/component-library';
 	import { votingGeneratorOptions } from '../data';
-	import VotingOptionsList from './../2-voting-options/components/VotingOptionsList.svelte';
+	import VotingOptionsList from './components/VotingOptionsList.svelte';
 	import Icon from '@iconify/svelte';
 
 	const handleAddNewOption = () => {

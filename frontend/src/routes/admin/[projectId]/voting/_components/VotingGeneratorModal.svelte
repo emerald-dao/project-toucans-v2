@@ -4,6 +4,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
 	import { votingGeneratorActiveStep, votingGeneratorSteps } from './steps/steps';
+	import { setContext } from 'svelte';
 
 	export let daoData: DAOProject;
 
@@ -12,6 +13,8 @@
 	$: editDelay = daoData.onChainData.editDelay;
 
 	const id = `voting-generator-${daoData.generalInfo.project_id}`;
+
+	setContext('activeDao', daoData);
 </script>
 
 <Button

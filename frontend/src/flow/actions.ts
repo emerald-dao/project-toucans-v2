@@ -791,10 +791,18 @@ const mintTokensToTreasury = async (projectId: string, projectOwner: string, amo
 	});
 };
 
-export const mintTokensToTreasuryExecution = (projectId: string, projectOwner: string, amount: string) =>
-	executeTransaction(() => mintTokensToTreasury(projectId, projectOwner, amount));
+export const mintTokensToTreasuryExecution = (
+	projectId: string,
+	projectOwner: string,
+	amount: string
+) => executeTransaction(() => mintTokensToTreasury(projectId, projectOwner, amount));
 
-const burnTokens = async (tokenSymbol: string, projectId: string, projectOwner: string, amount: string) => {
+const burnTokens = async (
+	tokenSymbol: string,
+	projectId: string,
+	projectOwner: string,
+	amount: string
+) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(burnTokensTx, projectId),
 		args: (arg, t) => [
@@ -810,8 +818,12 @@ const burnTokens = async (tokenSymbol: string, projectId: string, projectOwner: 
 	});
 };
 
-export const burnTokensExecution = (tokenSymbol: string, projectId: string, projectOwner: string, amount: string) =>
-	executeTransaction(() => burnTokens(tokenSymbol, projectId, projectOwner, amount));
+export const burnTokensExecution = (
+	tokenSymbol: string,
+	projectId: string,
+	projectOwner: string,
+	amount: string
+) => executeTransaction(() => burnTokens(tokenSymbol, projectId, projectOwner, amount));
 
 const addAllowedNFTCollections = async (
 	projectOwner: string,
@@ -906,11 +918,7 @@ export const lockTokensExecution = (
 		lockTokens(tokenSymbol, projectId, projectOwner, amount, recipient, unlockTimeInUnixSeconds)
 	);
 
-const stakeFlow = async (
-	projectId: string,
-	flowAmount: number,
-	stFlowAmountOutMin: number
-) => {
+const stakeFlow = async (projectId: string, flowAmount: number, stFlowAmountOutMin: number) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(stakeFlowTx),
 		args: (arg, t) => [
@@ -931,11 +939,7 @@ export const stakeFlowExecution = (
 	stFlowAmountOutMin: number
 ) => executeTransaction(() => stakeFlow(projectId, flowAmount, stFlowAmountOutMin));
 
-const unstakeFlow = async (
-	projectId: string,
-	stFlowAmount: number,
-	flowAmountOutMin: number
-) => {
+const unstakeFlow = async (projectId: string, stFlowAmount: number, flowAmountOutMin: number) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(unstakeFlowTx),
 		args: (arg, t) => [
@@ -1210,10 +1214,7 @@ export const canReceiveNFTCollection = async (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(canReceiveNFTCollectionScript),
-			args: (arg, t) => [
-				arg(userAddress, t.Address),
-				arg(collectionIdentifier, t.String)
-			]
+			args: (arg, t) => [arg(userAddress, t.Address), arg(collectionIdentifier, t.String)]
 		});
 		return response;
 	} catch (e) {
@@ -1221,7 +1222,7 @@ export const canReceiveNFTCollection = async (
 	}
 };
 
-const getCatalogByCollectionIDs = async (group: string[]) => {
+export const getCatalogByCollectionIDs = async (group: string[]) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogListScript),
@@ -1247,18 +1248,21 @@ export const getCatalogNFTs: (
 	}[];
 }> = async (collectionIdentifiers: string[], user: string) => {
 	if (collectionIdentifiers.indexOf('Fantastec-SWAP') > -1) {
-		collectionIdentifiers.splice(collectionIdentifiers.indexOf('Fantastec-SWAP'), 1)
+		collectionIdentifiers.splice(collectionIdentifiers.indexOf('Fantastec-SWAP'), 1);
 	}
 	try {
 		let batchSize = 15;
-		let response = {}
+		let response = {};
 		for (let i = 0; i < collectionIdentifiers.length; i += batchSize) {
 			let tempResponse = await fcl.query({
 				cadence: replaceWithProperValues(getCatalogNFTsScript),
-				args: (arg, t) => [arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)), arg(user, t.Address)],
+				args: (arg, t) => [
+					arg(collectionIdentifiers.slice(i, i + batchSize), t.Array(t.String)),
+					arg(user, t.Address)
+				],
 				limit: 9999
 			});
-			response = { ...response, ...tempResponse }
+			response = { ...response, ...tempResponse };
 		}
 
 		return response;
@@ -1371,16 +1375,13 @@ export const getStableSwapPoolInfo = async (amountIn: number, tokenInCurrency: E
 	try {
 		let tokenInKey: string;
 		if (tokenInCurrency === ECurrencies.FLOW) {
-			tokenInKey = "A.1654653399040a61.FlowToken"
+			tokenInKey = 'A.1654653399040a61.FlowToken';
 		} else {
-			tokenInKey = "A.d6f80565193ad727.stFlowToken"
+			tokenInKey = 'A.d6f80565193ad727.stFlowToken';
 		}
 		return await fcl.query({
 			cadence: replaceWithProperValues(getStableSwapPoolInfoScript),
-			args: (arg, t) => [
-				arg(formatFix(amountIn), t.UFix64),
-				arg(tokenInKey, t.String)
-			]
+			args: (arg, t) => [arg(formatFix(amountIn), t.UFix64), arg(tokenInKey, t.String)]
 		});
 	} catch (e) {
 		console.log('Error in getStableSwapPoolInfo', e);
