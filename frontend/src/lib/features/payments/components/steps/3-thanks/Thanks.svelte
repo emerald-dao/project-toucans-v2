@@ -50,7 +50,9 @@
 					<Button
 						href={`https://twitter.com/intent/tweet?text=I%20just%20donated%20${
 							$paymentData.NFTs.length
-						}%20NFTs%20from%20the%20${$paymentData.NFTCollection}%20collection%20to%20${
+						}%20${$paymentData.NFTs.length == 1 ? 'NFT' : 'NFTs'}%20from%20the%20${
+							$paymentData.NFTCollection
+						}%20collection%20to%20${
 							daoData.generalInfo.twitter ? `@${daoData.generalInfo.twitter}` : $paymentData.daoName
 						}%20on%20Toucans!%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
 							daoData.generalInfo.project_id
