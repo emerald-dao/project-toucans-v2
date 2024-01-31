@@ -1,4 +1,5 @@
 export interface Nft {
+	uuid: string;
 	id: string;
 	name: string;
 	thumbnail: string;

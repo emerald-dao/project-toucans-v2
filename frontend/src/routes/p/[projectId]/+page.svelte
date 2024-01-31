@@ -1,6 +1,6 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
@@ -73,6 +73,20 @@
 	};
 
 	$: $user.addr && reloadUserBalance();
+
+	onMount(() => {
+		let uuidsMap = {};
+		let donateNFTEvents = data.events.filter((e) => e.type === 'DonateNFT');
+		for (let i = 0; i < donateNFTEvents.length; i++) {
+			let event = donateNFTEvents[i];
+			if (event.type === 'DonateNFT' && event.data.uuids) {
+				for (let j = 0; j < event.data.uuids.length; j++) {
+					uuidsMap[event.data.uuids[j]] = event.data.by;
+				}
+			}
+		}
+		$daoDataStore.generalInfo.nftUuidOwnerMap = uuidsMap;
+	});
 </script>
 
 <section class="container">

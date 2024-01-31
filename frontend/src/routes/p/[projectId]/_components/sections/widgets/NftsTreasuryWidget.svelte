@@ -8,6 +8,7 @@
 	};
 	export let pageSize = 5;
 	export let hasTitle = true;
+	export let nftUuidOwnerMap = {};
 </script>
 
 {#if Object.values(NFTs).some((array) => array.length > 0)}
@@ -19,7 +20,7 @@
 			</span>
 		{/if}
 		<div class="card">
-			<NFTsList {NFTs} {pageSize} />
+			<NFTsList {NFTs} {pageSize} {nftUuidOwnerMap} />
 		</div>
 	</div>
 {/if}
