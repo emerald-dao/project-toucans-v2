@@ -76,10 +76,10 @@
 
 	onMount(() => {
 		let uuidsMap = {};
-		let donateNFTEvents = data.events.filter((e) => e.type === 'DonateNFT');
+		let donateNFTEvents = data.events.filter((e) => e.type === 'DonateNFT').reverse();
 		for (let i = 0; i < donateNFTEvents.length; i++) {
 			let event = donateNFTEvents[i];
-			if (event.type === 'DonateNFT' && event.data.uuids) {
+			if (event.data.uuids) {
 				for (let j = 0; j < event.data.uuids.length; j++) {
 					uuidsMap[event.data.uuids[j]] = event.data.by;
 				}

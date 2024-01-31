@@ -10,5 +10,6 @@ export interface DonateNFTsEvent extends BaseEvent {
 		collectionExternalURL: string;
 		projectOwner: string;
 		by: string;
+		uuids: string[]
 	};
 }
