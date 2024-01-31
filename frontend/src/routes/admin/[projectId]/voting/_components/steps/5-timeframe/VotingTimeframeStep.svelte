@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import { votingGeneratorDates } from '../data';
+	import { votingGeneratorDates } from '../../../votingGeneratorData';
 
 	let startDate: string;
 	let endDate: string;
@@ -23,7 +23,7 @@
 			bind:checked={$votingGeneratorDates.hasTimeframe}
 		/>
 		<span class="slider" />
-		Show finished
+		Voting has timeframe
 	</label>
 	{#if $votingGeneratorDates.hasTimeframe}
 		<div class="column-3" transition:fly={{ y: 20, duration: 200 }}>

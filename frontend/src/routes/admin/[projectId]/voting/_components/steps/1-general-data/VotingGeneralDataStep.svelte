@@ -3,9 +3,9 @@
 	import { fly } from 'svelte/transition';
 	import validationSuite from './validation';
 	import { onMount } from 'svelte';
-	import { votingGeneratorGeneralData } from '../data';
-	import { votingGeneratorActiveStep } from '../steps';
-	import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../config';
+	import { votingGeneratorGeneralData } from '../../../votingGeneratorData';
+	import { votingGeneratorActiveStep } from '../../../votingGeneratorSteps';
+	import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../votingGeneratorConfig';
 
 	const handleChange = (input: Event) => {
 		const target = input.target as HTMLInputElement;

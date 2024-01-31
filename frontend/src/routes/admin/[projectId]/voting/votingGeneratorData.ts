@@ -1,6 +1,6 @@
 import { derived, writable } from 'svelte/store';
-import type { VotingOption } from './2-voting-options/voting-option.interface';
-import type { VotingModeSlugs } from './3-nft-mode/votingModes';
+import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
+import type { VotingModeSlugs } from './_components/steps/3-nft-mode/votingModes';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(defaultData);
@@ -42,6 +42,7 @@ export const votingGeneratorOptions = createVotingGeneratorDataStore<VotingOptio
 ]);
 
 export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingModeSlugs>('no-nfts');
+export const votingGeneratorRequiredCollection = createVotingGeneratorDataStore<[string]>(['']);
 
 export const votingGeneratorDates = createVotingGeneratorDataStore({
 	hasTimeframe: false,
@@ -54,18 +55,21 @@ export const votingGeneratorDatra = derived(
 		votingGeneratorGeneralData,
 		votingGeneratorOptions,
 		votingGeneratorNftMode,
+		votingGeneratorRequiredCollection,
 		votingGeneratorDates
 	],
 	([
 		$votingGeneratorGeneralData,
 		$votingGeneratorOptions,
 		$votingGeneratorNftMode,
+		$votingGeneratorRequiredCollection,
 		$votingGeneratorDates
 	]) => {
 		return {
 			...$votingGeneratorGeneralData,
 			options: $votingGeneratorOptions,
 			mode: $votingGeneratorNftMode,
+			requiredCollection: $votingGeneratorRequiredCollection,
 			...$votingGeneratorDates
 		};
 	}
@@ -75,5 +79,6 @@ export const resetVotingGeneratorStores = () => {
 	votingGeneratorGeneralData.reset();
 	votingGeneratorOptions.reset();
 	votingGeneratorNftMode.reset();
+	votingGeneratorRequiredCollection.reset();
 	votingGeneratorDates.reset();
 };

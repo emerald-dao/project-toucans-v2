@@ -1,5 +1,5 @@
 import { create, enforce, only, test } from 'vest';
-import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../config';
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../votingGeneratorConfig';
 
 const validationSuite = create((title: string, description: string, currentField) => {
 	only(currentField);

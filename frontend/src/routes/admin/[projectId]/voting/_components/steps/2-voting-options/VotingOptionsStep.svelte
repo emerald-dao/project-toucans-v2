@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '@emerald-dao/component-library';
-	import { votingGeneratorOptions } from '../data';
+	import { votingGeneratorOptions } from '../../../votingGeneratorData';
 	import VotingOptionsList from './components/VotingOptionsList.svelte';
 	import Icon from '@iconify/svelte';
 

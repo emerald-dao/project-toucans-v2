@@ -1,7 +1,7 @@
 <script lang="ts">
 	import VotingNftModeCard from './atoms/VotingNftModeCard.svelte';
 	import { VOTING_MODES } from './votingModes';
-	import { votingGeneratorNftMode } from '../data';
+	import { votingGeneratorNftMode } from '../../../votingGeneratorData';
 </script>
 
 <div class="main-wrapper">

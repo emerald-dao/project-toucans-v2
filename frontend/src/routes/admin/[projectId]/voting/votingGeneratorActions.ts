@@ -1,5 +1,5 @@
 import { executeTransaction } from '$flow/utils';
-import { resetVotingGeneratorStores } from './data';
+import { resetVotingGeneratorStores } from './votingGeneratorData';
 
 export const createVotingRound = async () => {
 	alert('TODO: createVotingRound');

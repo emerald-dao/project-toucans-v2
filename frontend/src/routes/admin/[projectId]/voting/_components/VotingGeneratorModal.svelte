@@ -3,8 +3,8 @@
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
-	import { votingGeneratorActiveStep, votingGeneratorSteps } from './steps/steps';
 	import { setContext } from 'svelte';
+	import { votingGeneratorActiveStep, votingGeneratorSteps } from '../votingGeneratorSteps';
 
 	export let daoData: DAOProject;
 

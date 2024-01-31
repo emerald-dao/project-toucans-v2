@@ -3,9 +3,10 @@
 	import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface';
 	import Pagination from '$components/atoms/Pagination.svelte';
 	import SearchBar from '$components/search-bar/SearchBar.svelte';
-	import { getCatalogByCollectionIDs, getNFTCatalog } from '$flow/actions';
+	import { getCatalogByCollectionIDs } from '$flow/actions';
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { votingGeneratorRequiredCollection } from '../../../votingGeneratorData';
 
 	const daoData = getContext<DAOProject>('activeDao');
 
@@ -24,8 +25,6 @@
 	let pageEnd: number;
 
 	$: currentPageCollections = filteredCollections.slice(pageStart, pageEnd);
-
-	let selectedCollections: string[] = [];
 </script>
 
 {#if daoData.onChainData.allowedNFTCollections.length === 0}
@@ -47,7 +46,11 @@
 			/>
 			<div class="collections-wrapper">
 				{#each currentPageCollections as nftCollection (nftCollection.identifier)}
-					<NftCollectionSelectCard {nftCollection} bind:selectedCollections />
+					<NftCollectionSelectCard
+						{nftCollection}
+						bind:selectedCollections={$votingGeneratorRequiredCollection}
+						singleCollectionSelect={true}
+					/>
 				{/each}
 			</div>
 			<Pagination
