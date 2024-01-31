@@ -8,6 +8,7 @@
 	import NftsTreasuryWidget from '../../../../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
 	import { onMount } from 'svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import DownloadNftTreasury from './atoms/DownloadNFTTreasury.svelte';
 
 	export let daoData: DAOProject;
 
@@ -59,6 +60,11 @@
 		{#if NFTs && Object.keys(NFTs).length > 0}
 			<TabPanel>
 				<div class="card-wrapper">
+					<DownloadNftTreasury
+						{NFTs}
+						events={daoData.events.filter((e) => e.type === 'DonateNFT').reverse()}
+						projectId={daoData.generalInfo.project_id}
+					/>
 					<NftsTreasuryWidget {NFTs} hasTitle={false} pageSize={3} />
 				</div>
 			</TabPanel>
