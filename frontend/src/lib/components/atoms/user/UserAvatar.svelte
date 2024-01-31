@@ -56,7 +56,7 @@
 	</div>
 {:else}
 	<a
-		class="row-3 align-center header-link"
+		class="row align-center header-link"
 		href={`/u/${userProfile.address}`}
 		style={`font-size: ${fontSize}`}
 		class:disabled={!userLink}
@@ -92,6 +92,11 @@
 {/if}
 
 <style lang="scss">
+	a {
+		overflow: hidden;
+		gap: 0.45em;
+	}
+
 	a.disabled {
 		pointer-events: none;
 	}
