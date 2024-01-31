@@ -39,7 +39,12 @@
 				/>
 				<div class="commands-wrapper row-2 align-center">
 					{#if daoData.generalInfo.owner === $user.addr || ($user.addr && daoData.onChainData.signers.includes($user.addr))}
-						<Button size="x-small" color="neutral" type="ghost" href="/admin">Manage DAO</Button>
+						<Button
+							size="x-small"
+							color="neutral"
+							type="ghost"
+							href={`/admin/${daoData.generalInfo.project_id}`}>Manage DAO</Button
+						>
 					{/if}
 					<!-- {#if daoData.hasToken && daoData.onChainData.minting}
 						<Label size="xx-small" color="neutral" hasBorder={false} iconRight="tabler:check">
