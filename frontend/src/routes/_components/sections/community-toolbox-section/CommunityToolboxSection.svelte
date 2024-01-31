@@ -1,7 +1,7 @@
 <script lang="ts">
 	import NftTreasuryCard from './cards/NftTreasuryCard.svelte';
 	import TokenCard from './cards/TokenCard.svelte';
-	import FundrisingCard from './cards/FundrisingCard.svelte';
+	import FundraisingCard from './cards/FundraisingCard.svelte';
 	import TreasuryCard from './cards/TreasuryCard.svelte';
 	import VotingCard from './cards/VotingCard.svelte';
 	import * as Section from '../atoms/section';
@@ -19,7 +19,7 @@
 		<div class="cards-wrapper">
 			<TokenCard daoData={MOCK_DAO} />
 			<div class="grid">
-				<FundrisingCard />
+				<FundraisingCard />
 				<TreasuryCard />
 			</div>
 			<div class="grid inverse">

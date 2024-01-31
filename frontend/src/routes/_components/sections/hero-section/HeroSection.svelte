@@ -13,7 +13,7 @@
 		<div>
 			<p>
 				Create a <FeatureLabel icon="mdi:circle-multiple">Token</FeatureLabel>. Unlock transparent <FeatureLabel
-					icon="mdi:account-cash">Fundrising</FeatureLabel
+					icon="mdi:account-cash">Fundraising</FeatureLabel
 				>
 				and <FeatureLabel icon="mdi:vote">Voting</FeatureLabel>.
 			</p>
