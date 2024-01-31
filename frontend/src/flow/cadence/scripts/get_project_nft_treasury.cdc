@@ -31,7 +31,7 @@ pub fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
                     traitsOpt = traits
                 }
             }
-            nftDatas.append(NFTData(nftRef.id, display.name, display.thumbnail.uri(), serialNum, traitsOpt))
+            nftDatas.append(NFTData(nftRef.uuid, nftRef.id, display.name, display.thumbnail.uri(), serialNum, traitsOpt))
         }
         res[collectionIdentifier] = nftDatas
     }
@@ -39,13 +39,15 @@ pub fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
 }
 
 pub struct NFTData {
+    pub let uuid: UInt64
     pub let id: UInt64
     pub let name: String
     pub let thumbnail: String
     pub let serial: UInt64?
     pub let traits: [MetadataViews.Trait]
 
-    init(_ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?, _ traits: MetadataViews.Traits?) {
+    init(_ uuid: UInt64, _ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?, _ traits: MetadataViews.Traits?) {
+        self.uuid = uuid
         self.id = id
         self.name = name
         self.thumbnail = thumbnail

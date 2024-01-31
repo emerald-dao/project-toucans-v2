@@ -23,6 +23,7 @@
 		border-top: 1px solid var(--clr-neutral-badge);
 		display: flex;
 		flex-direction: column;
+		flex-grow: 1;
 
 		.heading {
 			text-align: left;
