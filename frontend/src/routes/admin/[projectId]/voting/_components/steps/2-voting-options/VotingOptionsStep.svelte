@@ -25,7 +25,7 @@
 	let pageSize: number;
 </script>
 
-<div class="column-5">
+<div class="column-5 align-end">
 	<VotingOptionsList
 		votingOptions={votingGeneratorOptions}
 		bind:pageStart
@@ -34,6 +34,6 @@
 	/>
 	<Button color="neutral" type="ghost" size="x-small" on:click={handleAddNewOption}>
 		<Icon icon="tabler:plus" />
-		Add option
+		Add voting option
 	</Button>
 </div>

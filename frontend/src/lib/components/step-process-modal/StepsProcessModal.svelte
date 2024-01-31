@@ -21,12 +21,12 @@
 		<div class="main-wrapper column-space-between">
 			<div class="column-6">
 				{#if steps[$activeStepStore].name || steps[$activeStepStore].description}
-					<div class="title-wrapper column-1">
+					<div class="title-wrapper column-2">
 						{#if steps[$activeStepStore].name}
 							<h4>{steps[$activeStepStore].name}</h4>
 						{/if}
 						{#if steps[$activeStepStore].description}
-							<p class="xsmall">{steps[$activeStepStore].description}</p>
+							<p class="small">{steps[$activeStepStore].description}</p>
 						{/if}
 					</div>
 				{/if}
@@ -50,11 +50,11 @@
 		overflow: hidden;
 
 		@include mq('small') {
-			width: 70vw;
+			width: 85vw;
 		}
 
 		@include mq('medium') {
-			min-height: 70vh;
+			min-height: 85vh;
 			display: grid;
 			grid-template-columns: 2fr 5fr;
 		}
@@ -72,11 +72,10 @@
 			gap: var(--space-7);
 
 			.title-wrapper {
-				border-bottom: 1px var(--clr-neutral-badge) solid;
-				padding-bottom: var(--space-3);
+				padding-bottom: var(--space-4);
 
 				h4 {
-					font-size: var(--font-size-3);
+					font-size: var(--font-size-5);
 				}
 			}
 		}

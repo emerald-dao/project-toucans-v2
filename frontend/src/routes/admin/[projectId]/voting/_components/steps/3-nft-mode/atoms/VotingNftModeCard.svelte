@@ -13,12 +13,12 @@
 	<h4>
 		{title}
 	</h4>
-	<p class="xsmall">{description}</p>
+	<p class="small">{description}</p>
 </div>
 
 <style lang="scss">
 	.card {
-		padding: var(--space-5);
+		padding: var(--space-6);
 		border-radius: var(--radius-3);
 		border: 1px solid var(--clr-border-primary);
 		cursor: pointer;
@@ -26,6 +26,7 @@
 
 		&.active {
 			border-color: var(--clr-primary-main);
+			background-color: var(--clr-surface-primary);
 		}
 
 		h4 {

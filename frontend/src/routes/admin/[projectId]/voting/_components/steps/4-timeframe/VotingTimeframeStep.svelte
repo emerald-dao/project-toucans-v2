@@ -38,3 +38,17 @@
 		</div>
 	{/if}
 </div>
+
+<style lang="scss">
+	label {
+		width: fit-content;
+	}
+
+	input[type='datetime-local'] {
+		color: var(--clr-text-main);
+	}
+
+	input[type='datetime-local']::-webkit-calendar-picker-indicator {
+		filter: invert(50%);
+	}
+</style>

@@ -34,7 +34,12 @@
 	.main-wrapper {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 		gap: var(--space-3);
+		padding: var(--space-5);
+		border-radius: var(--radius-3);
+		border: 1px solid var(--clr-border-primary);
+		background-color: var(--clr-background-primary);
 
 		.items-wrapper {
 			display: grid;

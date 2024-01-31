@@ -23,6 +23,17 @@
 		prevPage();
 		currentPage = Math.ceil(pageEnd / pageSize);
 	}
+
+	$: if (pageEnd === 0 && amountOfItems > 0) {
+		alert('ka');
+		pageStart = 0;
+		pageEnd = pageSize;
+	}
+
+	$: if (amountOfItems === 0) {
+		pageStart = 0;
+		pageEnd = pageSize;
+	}
 </script>
 
 <div class="main-wrapper row-space-between row-4 align-center">

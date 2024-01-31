@@ -1,6 +1,6 @@
 import { derived, writable } from 'svelte/store';
 import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
-import type { VotingModeSlugs } from './_components/steps/3-nft-mode/votingModes';
+import type { VotingNftModeSlugs } from './_components/steps/3-nft-mode/votingNftModes';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(defaultData);
@@ -41,7 +41,7 @@ export const votingGeneratorOptions = createVotingGeneratorDataStore<VotingOptio
 	}
 ]);
 
-export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingModeSlugs>('no-nfts');
+export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingNftModeSlugs>('no-nfts');
 export const votingGeneratorRequiredCollection = createVotingGeneratorDataStore<[string]>(['']);
 
 export const votingGeneratorDates = createVotingGeneratorDataStore({
@@ -50,7 +50,7 @@ export const votingGeneratorDates = createVotingGeneratorDataStore({
 	endDate: new Date()
 });
 
-export const votingGeneratorDatra = derived(
+export const votingGeneratorData = derived(
 	[
 		votingGeneratorGeneralData,
 		votingGeneratorOptions,

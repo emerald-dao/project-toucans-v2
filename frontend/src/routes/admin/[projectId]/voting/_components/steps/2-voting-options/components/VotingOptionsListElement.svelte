@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade, fly } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import type { VotingOption } from '../voting-option.interface';
 	import OptionDescription from './atoms/OptionDescription.svelte';
