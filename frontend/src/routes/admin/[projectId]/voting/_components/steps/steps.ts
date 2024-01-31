@@ -6,6 +6,7 @@ import VotingNftModeStep from './3-nft-mode/VotingNftModeStep.svelte';
 import VotingRequiredNftsStep from './4-required-nfts/VotingRequiredNftsStep.svelte';
 import VotingTimeframeStep from './5-timeframe/VotingTimeframeStep.svelte';
 import VotingThanksStep from './6-thanks/VotingThanksStep.svelte';
+import { createVotingRound } from './actions';
 
 export const votingGeneratorSteps = createSteps([
 	{
@@ -61,10 +62,9 @@ export const votingGeneratorSteps = createSteps([
 	},
 	{
 		name: 'Timeframe',
-		description:
-			'Set how to distribute the funds. Funds will be automatically distributed to the addresses selected here. If no addresses are selected, the funds will be stored in the treasury wallet.',
+		description: `Select the timeframe for your voting round. You can't change this later.`,
 		component: VotingTimeframeStep,
-		action: null,
+		action: createVotingRound,
 		form: false,
 		state: 'inactive',
 		button: {

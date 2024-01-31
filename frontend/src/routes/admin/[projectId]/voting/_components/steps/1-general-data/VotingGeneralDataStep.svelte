@@ -3,7 +3,7 @@
 	import { fly } from 'svelte/transition';
 	import validationSuite from './validation';
 	import { onMount } from 'svelte';
-	import { votingGeneratorData } from '../data';
+	import { votingGeneratorGeneralData } from '../data';
 	import { votingGeneratorActiveStep } from '../steps';
 	import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../config';
 
@@ -11,8 +11,8 @@
 		const target = input.target as HTMLInputElement;
 
 		res = validationSuite(
-			$votingGeneratorData.title,
-			$votingGeneratorData.description,
+			$votingGeneratorGeneralData.title,
+			$votingGeneratorGeneralData.description,
 			target.name
 		);
 	};
@@ -44,7 +44,7 @@
 			type="text"
 			placeholder="New logo for Emerald City"
 			maxlength={TITLE_MAX_LENGTH}
-			bind:value={$votingGeneratorData.title}
+			bind:value={$votingGeneratorGeneralData.title}
 			on:input={handleChange}
 			bind:this={firstInput}
 		/>
@@ -61,7 +61,7 @@
 			placeholder="This is a description for the votation"
 			rows="2"
 			maxlength={DESCRIPTION_MAX_LENGTH}
-			bind:value={$votingGeneratorData.description}
+			bind:value={$votingGeneratorGeneralData.description}
 			on:input={handleChange}
 		/>
 	</InputWrapper>
