@@ -1043,6 +1043,17 @@ export const getProjectActions = async (owner: string, projectId: string) => {
 	}
 };
 
+function convertTraits(response, collectionType: string) {
+	if (response[collectionType]) {
+		for (let i = 0; i < response[collectionType].length; i++) {
+			let nft = response[collectionType][i]
+			nft.traits = nft.traits
+				? nft.traits.reduce((obj, item) => Object.assign(obj, { [item.name]: item.value }), {})
+				: undefined
+		}
+	}
+}
+
 export const getProjectNFTTreasury: (
 	owner: string,
 	projectId: string
@@ -1054,6 +1065,8 @@ export const getProjectNFTTreasury: (
 			cadence: replaceWithProperValues(getProjectNFTTreasuryScript),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
+		convertTraits(response, "NFLAllDay");
+		convertTraits(response, "NBATopShot");
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectNFTTreasury');

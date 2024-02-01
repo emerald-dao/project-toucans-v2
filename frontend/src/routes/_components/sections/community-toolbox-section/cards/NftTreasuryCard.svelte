@@ -2,7 +2,7 @@
 	import * as FeatureCard from '../atoms/feature-card';
 	import FeautreLabel from '../../atoms/FeatureLabel.svelte';
 	import NewBadge from '../atoms/NewBadge.svelte';
-	import NfTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
+	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import { MOCK_NFTS } from '../mockDao';
 </script>
 
@@ -19,7 +19,7 @@
 	</FeatureCard.Header>
 	<FeatureCard.Content>
 		<div class="card-primary">
-			<NfTsList NFTs={MOCK_NFTS} pageSize={2} />
+			<NFTsList NFTs={MOCK_NFTS} pageSize={2} />
 		</div>
 	</FeatureCard.Content>
 </FeatureCard.Root>

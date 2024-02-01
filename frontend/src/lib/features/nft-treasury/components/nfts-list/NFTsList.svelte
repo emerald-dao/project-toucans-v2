@@ -11,6 +11,7 @@
 	export let pageSize = 5;
 	export let clickable = false;
 	export let selectedCollection = '';
+	export let sortNFTs = true;
 	export let nftUuidOwnerMap: { [uuid: string]: string } = {};
 
 	const dispatch = createEventDispatcher();
@@ -38,6 +39,18 @@
 	const updateSelectedNFTs = () => {
 		selectedNFTIds = [];
 		displayedNfts = NFTs[selectedCollection] || [];
+
+		if (sortNFTs && selectedCollection === 'NFLAllDay') {
+			let tierRating = {
+				COMMON: 1,
+				UNCOMMON: 2,
+				RARE: 3,
+				LEGENDARY: 4
+			};
+			displayedNfts = displayedNfts.sort(
+				(a, b) => tierRating[b.traits['editionTier']] - tierRating[a.traits['editionTier']]
+			);
+		}
 	};
 
 	const handleNFTClick = (nftId: string) => {

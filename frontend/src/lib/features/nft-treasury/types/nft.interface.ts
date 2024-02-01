@@ -4,5 +4,5 @@ export interface Nft {
 	name: string;
 	thumbnail: string;
 	serial: string | null;
-	traits: { name: string; value: string }[] | null;
+	traits: { name: string; value: string }[] | undefined;
 }
