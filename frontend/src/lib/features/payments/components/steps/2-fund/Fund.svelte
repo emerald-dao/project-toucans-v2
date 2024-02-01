@@ -16,6 +16,7 @@
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import { onMount } from 'svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import CollectionSelector from '$lib/features/nft-treasury/components/nfts-list/atoms/CollectionSelector.svelte';
 
 	export let isValid = false;
 	export let daoData: DAOProject;
@@ -61,6 +62,7 @@
 	});
 
 	async function fetchUserNFTs() {
+		$paymentData.NFTs = [];
 		userNFTs = new Promise(async (resolve, reject) => {
 			if (!storedUserNFTs[$paymentData.NFTCollection]) {
 				storedUserNFTs[$paymentData.NFTCollection] = await getCatalogSpecificNFTs(
@@ -68,7 +70,7 @@
 					$user.addr
 				);
 			}
-			resolve(storedUserNFTs);
+			resolve(storedUserNFTs[$paymentData.NFTCollection]);
 		});
 	}
 </script>
@@ -95,24 +97,25 @@
 				<em> Please log in to your account to view your NFTs collections! </em>
 			</p>
 		{:else if projectNFTsCollections.length > 0}
-			{#await userNFTs}
-				<span class="small"><i>Loading...</i></span>
-			{:then userCatalogNFTs}
-				<NFTsList
-					bind:selectedNFTIds={$paymentData.NFTs}
+			<div class="column-3">
+				<CollectionSelector
 					bind:selectedCollection={$paymentData.NFTCollection}
-					NFTs={userCatalogNFTs}
-					pageSize={4}
-					clickable={true}
 					collectionIdentifiers={projectNFTsCollections}
 					on:collectionChange={fetchUserNFTs}
-					sortNFTs={false}
 				/>
-			{:catch}
-				<span class="small">
-					<i> There was an error. Please reach out to us in the Emerald City Discord. </i>
-				</span>
-			{/await}
+				{#await userNFTs}
+					<span class="small"><i>Loading...</i></span>
+				{:then userCatalogNFTs}
+					<NFTsList
+						bind:selectedNFTIds={$paymentData.NFTs}
+						selectedCollection={$paymentData.NFTCollection}
+						NFTs={userCatalogNFTs}
+						pageSize={3}
+						clickable={true}
+						sortNFTs={false}
+					/>
+				{/await}
+			</div>
 		{:else}
 			<span class="small"><i>This DAO has not set up any NFT collections yet.</i></span>
 		{/if}

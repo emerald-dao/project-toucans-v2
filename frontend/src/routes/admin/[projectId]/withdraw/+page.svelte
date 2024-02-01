@@ -93,15 +93,13 @@
 					</DistributeTokens.NoTokensMessage>
 				{/if}
 			{:else if activeCurrency === 'NFTs'}
-				{#await getProjectNFTTreasury(activeDaoData.generalInfo.owner, activeDaoData.generalInfo.project_id) then NFTs}
-					{#if !NFTs || Object.values(NFTs).every((array) => array.length === 0)}
-						<DistributeTokens.NoTokensMessage>
-							{`We didn't find any NFT on this treasury.`}
-						</DistributeTokens.NoTokensMessage>
-					{:else}
-						<NFTDistributionForm {activeDaoData} {NFTs} />
-					{/if}
-				{/await}
+				{#if activeDaoData.onChainData.allowedNFTCollections.length > 0}
+					<NFTDistributionForm {activeDaoData} />
+				{:else}
+					<DistributeTokens.NoTokensMessage>
+						{`We didn't find any NFT on this treasury.`}
+					</DistributeTokens.NoTokensMessage>
+				{/if}
 			{/if}
 		</AdminPage.Content>
 		{#if activeCurrency != 'NFTs'}

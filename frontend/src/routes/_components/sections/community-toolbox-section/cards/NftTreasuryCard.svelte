@@ -4,6 +4,7 @@
 	import NewBadge from '../atoms/NewBadge.svelte';
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import { MOCK_NFTS } from '../mockDao';
+	import CollectionSelector from '$lib/features/nft-treasury/components/nfts-list/atoms/CollectionSelector.svelte';
 </script>
 
 <FeatureCard.Root>
@@ -19,7 +20,10 @@
 	</FeatureCard.Header>
 	<FeatureCard.Content>
 		<div class="card-primary">
-			<NFTsList NFTs={MOCK_NFTS} pageSize={2} />
+			<div class="column-3">
+				<CollectionSelector selectedCollection="NFLAllDay" collectionIdentifiers={['NFLAllDay']} />
+				<NFTsList NFTs={MOCK_NFTS} selectedCollection="NFLAllDay" pageSize={2} />
+			</div>
 		</div>
 	</FeatureCard.Content>
 </FeatureCard.Root>
