@@ -49,6 +49,7 @@ import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getProjectLockedTokensScript from './cadence/scripts/get_project_locked_tokens.cdc?raw';
 import getProjectNFTTreasuryScript from './cadence/scripts/get_project_nft_treasury.cdc?raw';
+import getProjectSpecificNFTTreasuryScript from './cadence/scripts/get_project_specific_nft_treasury.cdc?raw';
 import getProjectLockedTokensForUserScript from './cadence/scripts/get_project_locked_tokens_for_user.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
@@ -1039,6 +1040,34 @@ export const getProjectActions = async (owner: string, projectId: string) => {
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectActions');
+		console.log(e);
+	}
+};
+
+function convertTraitsForSpecific(response) {
+	for (let i = 0; i < response.length; i++) {
+		let nft = response[i]
+		nft.traits = nft.traits
+			? nft.traits.reduce((obj, item) => Object.assign(obj, { [item.name]: item.value }), {})
+			: undefined
+	}
+
+}
+
+export const getProjectSpecificNFTTreasury: (
+	owner: string,
+	projectId: string,
+	collectionIdentifier: string
+) => Promise<Nft[]> = async (owner: string, projectId: string, collectionIdentifier: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String), arg(collectionIdentifier, t.String)]
+		});
+		convertTraitsForSpecific(response);
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectSpecificNFTTreasury');
 		console.log(e);
 	}
 };

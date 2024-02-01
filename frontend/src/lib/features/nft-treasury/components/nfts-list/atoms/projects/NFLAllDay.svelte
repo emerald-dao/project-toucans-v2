@@ -14,7 +14,10 @@
 			{nft.traits['editionTier'].toUpperCase()}
 		</p>
 		<p class={`text`}>
-			{nft.traits['playType']}・{nft.traits['setName']}・{nft.traits['seriesName']}
+			{#if nft.traits['playType']}
+				{nft.traits['playType']}・
+			{/if}
+			{nft.traits['setName']}・{nft.traits['seriesName']}
 		</p>
 		<p class={`text`}>{nft.traits['teamName']}</p>
 	{/if}

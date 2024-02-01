@@ -31,7 +31,7 @@
 			{#if daoData.onChainData.fundingCycles.length > 0}
 				<Tab>Rounds</Tab>
 			{/if}
-			{#if NFTs && Object.keys(NFTs).length > 0}
+			{#if daoData.onChainData.allowedNFTCollections.length > 0}
 				<Tab>NFTs</Tab>
 			{/if}
 		</TabList>
@@ -57,15 +57,10 @@
 				<RoundsList {daoData} finishedFilter={false} />
 			</TabPanel>
 		{/if}
-		{#if NFTs && Object.keys(NFTs).length > 0}
+		{#if daoData.onChainData.allowedNFTCollections.length > 0}
 			<TabPanel>
 				<div class="card-wrapper">
-					<DownloadNftTreasury
-						{NFTs}
-						events={daoData.events.filter((e) => e.type === 'DonateNFT').reverse()}
-						projectId={daoData.generalInfo.project_id}
-					/>
-					<NftsTreasuryWidget {NFTs} hasTitle={false} pageSize={3} />
+					<NftsTreasuryWidget hasTitle={false} pageSize={3} {daoData} downloadable={true} />
 				</div>
 			</TabPanel>
 		{/if}

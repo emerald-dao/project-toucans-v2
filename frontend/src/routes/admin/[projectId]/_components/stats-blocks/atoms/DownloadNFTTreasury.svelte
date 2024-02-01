@@ -4,17 +4,14 @@
 	import { Button } from '@emerald-dao/component-library';
 
 	export let projectId: string;
-	export let NFTs: {
-		[collectionIdentifier: string]: Nft[];
-	};
+	export let selectedCollection: string;
+	export let NFTs: Nft[];
 	// in ascending order
 	export let events: DonateNFTsEvent[];
 	let buttonState: 'active' | 'loading' | 'done' = 'active';
-	console.log(NFTs);
-	console.log(events);
 
 	async function downloadCSV() {
-		if (!NFTs['NFLAllDay']) return;
+		if (selectedCollection != 'NFLAllDay') return;
 		buttonState = 'loading';
 		let uuidsMap: { [uuid: string]: { donatedBy: string; txId: string; time: string } } = {};
 		for (let i = 0; i < events.length; i++) {
@@ -32,39 +29,37 @@
 
 		let csvContent = 'data:text/csv;charset=utf-8,';
 		csvContent += 'name,serial,team,tier,set,series,donated by,time,transaction id\n';
-		csvContent += NFTs['NFLAllDay']
-			.map((nft) => {
-				let name = nft.traits
-					? nft.traits['playerFirstName'] + ' ' + nft.traits['playerLastName']
-					: nft.name;
-				let { donatedBy, txId, time } = uuidsMap[nft.uuid]
-					? {
-							donatedBy: uuidsMap[nft.uuid].donatedBy,
-							txId: uuidsMap[nft.uuid].txId,
-							time: uuidsMap[nft.uuid].time
-					  }
-					: { donatedBy: 'N/A', txId: 'N/A', time: 'N/A' };
-				return (
-					name +
-					',' +
-					nft.serial +
-					',' +
-					nft.traits['teamName'] +
-					',' +
-					nft.traits['editionTier'] +
-					',' +
-					nft.traits['setName'] +
-					',' +
-					nft.traits['seriesName'] +
-					',' +
-					donatedBy +
-					',' +
-					time +
-					',' +
-					txId
-				);
-			})
-			.join('\n');
+		csvContent += NFTs.map((nft) => {
+			let name = nft.traits
+				? nft.traits['playerFirstName'] + ' ' + nft.traits['playerLastName']
+				: nft.name;
+			let { donatedBy, txId, time } = uuidsMap[nft.uuid]
+				? {
+						donatedBy: uuidsMap[nft.uuid].donatedBy,
+						txId: uuidsMap[nft.uuid].txId,
+						time: uuidsMap[nft.uuid].time
+				  }
+				: { donatedBy: 'N/A', txId: 'N/A', time: 'N/A' };
+			return (
+				name +
+				',' +
+				nft.serial +
+				',' +
+				nft.traits['teamName'] +
+				',' +
+				nft.traits['editionTier'] +
+				',' +
+				nft.traits['setName'] +
+				',' +
+				nft.traits['seriesName'] +
+				',' +
+				donatedBy +
+				',' +
+				time +
+				',' +
+				txId
+			);
+		}).join('\n');
 		var encodedUri = encodeURI(csvContent);
 		var downloadLink = document.createElement('a');
 		downloadLink.href = encodedUri;
