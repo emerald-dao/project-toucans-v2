@@ -41,7 +41,6 @@
 		displayedNfts = NFTs[selectedCollection] || [];
 
 		if (sortNFTs && selectedCollection === 'NFLAllDay') {
-			console.log('doing this');
 			let tierRating = {
 				COMMON: 1,
 				UNCOMMON: 2,
