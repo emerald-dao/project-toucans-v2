@@ -34,11 +34,8 @@
 		csvContent += 'name,serial,team,tier,set,series,donated by,time,transaction id\n';
 		csvContent += NFTs['NFLAllDay']
 			.map((nft) => {
-				let traits = nft.traits
-					? nft.traits.reduce((obj, item) => Object.assign(obj, { [item.name]: item.value }), {})
-					: {};
 				let name = nft.traits
-					? traits['playerFirstName'] + ' ' + traits['playerLastName']
+					? nft.traits['playerFirstName'] + ' ' + nft.traits['playerLastName']
 					: nft.name;
 				let { donatedBy, txId, time } = uuidsMap[nft.uuid]
 					? {
@@ -52,13 +49,13 @@
 					',' +
 					nft.serial +
 					',' +
-					traits['teamName'] +
+					nft.traits['teamName'] +
 					',' +
-					traits['editionTier'] +
+					nft.traits['editionTier'] +
 					',' +
-					traits['setName'] +
+					nft.traits['setName'] +
 					',' +
-					traits['seriesName'] +
+					nft.traits['seriesName'] +
 					',' +
 					donatedBy +
 					',' +

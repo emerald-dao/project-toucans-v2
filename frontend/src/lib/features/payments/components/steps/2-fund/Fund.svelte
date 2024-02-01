@@ -106,6 +106,7 @@
 					clickable={true}
 					collectionIdentifiers={projectNFTsCollections}
 					on:collectionChange={fetchUserNFTs}
+					sortNFTs={false}
 				/>
 			{:catch}
 				<span class="small">
