@@ -37,7 +37,7 @@
 
 {#if !userProfile}
 	<div class="row-3 align-center header-link change-opacity" style={`font-size: ${fontSize}`}>
-		<img src="/avatar-2.png" alt="avatar" style={`min-width: ${imageSize}; height: ${imageSize}`} />
+		<img src="/avatar-2.png" alt="avatar" style={`width: ${imageSize}; height: ${imageSize}`} />
 		{#if showName}
 			<div class="column">
 				<div class="row-2">
@@ -66,7 +66,7 @@
 			<img
 				src={userProfile.avatar}
 				alt="avatar"
-				style={`min-width: ${imageSize}; height: ${imageSize}`}
+				style={`width: ${imageSize}; height: ${imageSize}`}
 				on:error={handleImageError}
 			/>
 			{#if userProfile.address === $user.addr}
