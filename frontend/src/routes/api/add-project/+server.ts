@@ -6,8 +6,12 @@ import { verifyAccountOwnership } from '$flow/utils.js';
 import { network } from '$flow/config';
 import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-generator-data.interface.js';
 import type { CurrentUserObject } from '@onflow/fcl';
+import type { Database } from '../../../../supabase/database.types.js';
 
-const supabase = createClient(PublicEnv.PUBLIC_SUPABASE_URL, PrivateEnv.SUPABASE_SERVICE_KEY);
+const supabase = createClient<Database>(
+	PublicEnv.PUBLIC_SUPABASE_URL,
+	PrivateEnv.SUPABASE_SERVICE_KEY
+);
 
 export async function POST({ request }) {
 	const data: {
@@ -55,8 +59,9 @@ export async function POST({ request }) {
 		type: 'ProjectCreated',
 		data: {
 			by: data.user.addr,
-			tokenTypeIdentifier: `A.${data.user.addr?.slice(2)}.${data.daoData.daoDetails.contractName
-				}.Vault`
+			tokenTypeIdentifier: `A.${data.user.addr?.slice(2)}.${
+				data.daoData.daoDetails.contractName
+			}.Vault`
 		}
 	});
 

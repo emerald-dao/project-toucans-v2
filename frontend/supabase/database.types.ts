@@ -140,6 +140,7 @@ export interface Database {
         Row: {
           created_at: string | null
           max_supply: number | null
+          nft_count: number | null
           num_holders: number | null
           num_participants: number | null
           num_proposals: number | null
@@ -157,6 +158,7 @@ export interface Database {
         Insert: {
           created_at?: string | null
           max_supply?: number | null
+          nft_count?: number | null
           num_holders?: number | null
           num_participants?: number | null
           num_proposals?: number | null
@@ -174,6 +176,7 @@ export interface Database {
         Update: {
           created_at?: string | null
           max_supply?: number | null
+          nft_count?: number | null
           num_holders?: number | null
           num_participants?: number | null
           num_proposals?: number | null
@@ -242,6 +245,121 @@ export interface Database {
         }
         Relationships: []
       }
+      votes: {
+        Row: {
+          created_at: string
+          nft_uuid: string | null
+          selected_option: number
+          voting_round_id: number
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          nft_uuid?: string | null
+          selected_option: number
+          voting_round_id: number
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          nft_uuid?: string | null
+          selected_option?: number
+          voting_round_id?: number
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_selected_option_fkey"
+            columns: ["selected_option"]
+            isOneToOne: false
+            referencedRelation: "voting_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_voting_round_id_fkey"
+            columns: ["voting_round_id"]
+            isOneToOne: false
+            referencedRelation: "voting_rounds"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      voting_options: {
+        Row: {
+          description: string | null
+          id: number
+          name: string
+          option_number: number
+          voting_round_id: number
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          name: string
+          option_number: number
+          voting_round_id: number
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          name?: string
+          option_number?: number
+          voting_round_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voting_options_voting_round_id_fkey"
+            columns: ["voting_round_id"]
+            isOneToOne: false
+            referencedRelation: "voting_rounds"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      voting_rounds: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: number
+          name: string
+          nft_mode: Database["public"]["Enums"]["voting_nft_modes"]
+          project_id: string
+          required_nft_collection_id: string | null
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          name: string
+          nft_mode?: Database["public"]["Enums"]["voting_nft_modes"]
+          project_id: string
+          required_nft_collection_id?: string | null
+          start_date?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          name?: string
+          nft_mode?: Database["public"]["Enums"]["voting_nft_modes"]
+          project_id?: string
+          required_nft_collection_id?: string | null
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voting_rounds_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["project_id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -279,7 +397,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      voting_nft_modes: "no-nfts" | "nft-holders" | "nft-donators"
     }
     CompositeTypes: {
       [_ in never]: never
