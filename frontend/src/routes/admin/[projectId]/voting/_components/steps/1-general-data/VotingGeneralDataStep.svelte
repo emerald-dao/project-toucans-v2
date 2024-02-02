@@ -11,7 +11,7 @@
 		const target = input.target as HTMLInputElement;
 
 		res = validationSuite(
-			$votingGeneratorGeneralData.title,
+			$votingGeneratorGeneralData.name,
 			$votingGeneratorGeneralData.description,
 			target.name
 		);
@@ -44,7 +44,7 @@
 			type="text"
 			placeholder="New logo for Emerald City"
 			maxlength={TITLE_MAX_LENGTH}
-			bind:value={$votingGeneratorGeneralData.title}
+			bind:value={$votingGeneratorGeneralData.name}
 			on:input={handleChange}
 			bind:this={firstInput}
 		/>

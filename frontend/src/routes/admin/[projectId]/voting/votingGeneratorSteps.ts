@@ -50,7 +50,7 @@ export const votingGeneratorSteps = createSteps([
 		name: 'Timeframe',
 		description: `Select the timeframe for your voting round. You can't change this later.`,
 		component: VotingTimeframeStep,
-		action: createVotingRound,
+		action: () => createVotingRound(),
 		form: false,
 		state: 'inactive',
 		button: {

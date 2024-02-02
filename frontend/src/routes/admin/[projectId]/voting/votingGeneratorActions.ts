@@ -1,13 +1,35 @@
-import { executeTransaction } from '$flow/utils';
-import { resetVotingGeneratorStores } from './votingGeneratorData';
+import { page } from '$app/stores';
+import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
+import { user } from '$stores/flow/FlowStore';
+import { postVotingRound } from './_actions/postVotingRound';
+import {
+	resetVotingGeneratorStores,
+	votingGeneratorData,
+	votingGeneratorOptions
+} from './votingGeneratorData';
+import { get } from 'svelte/store';
 
-export const createVotingRound = async () => {
-	alert('TODO: createVotingRound');
-	const transactionResult = await executeTransaction('transaction-code');
+export const createVotingRound = async (): Promise<ActionExecutionResult> => {
+	if (!get(page).params.projectId || !get(user)) {
+		return {
+			state: 'error',
+			errorMessage: 'Error creating voting round'
+		};
+	}
 
-	if (transactionResult.state === 'success') {
+	const result = await postVotingRound(
+		get(page).params.projectId,
+		get(user),
+		get(votingGeneratorData),
+		get(votingGeneratorOptions)
+	);
+
+	if (result === 'success') {
 		resetVotingGeneratorStores();
 	}
 
-	return transactionResult;
+	return {
+		state: result,
+		errorMessage: result === 'success' ? '' : 'Error creating voting round'
+	};
 };

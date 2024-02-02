@@ -1,6 +1,6 @@
 export const VOTING_NFT_MODES: {
 	title: string;
-	slug: VotingNftModeSlugs;
+	slug: VotingNftModeSlug;
 	description: string;
 }[] = [
 	{
@@ -20,4 +20,4 @@ export const VOTING_NFT_MODES: {
 	}
 ];
 
-export type VotingNftModeSlugs = 'no-nfts' | 'nft-holders' | 'nft-donators';
+export type VotingNftModeSlug = 'no-nfts' | 'nft-holders' | 'nft-donators';

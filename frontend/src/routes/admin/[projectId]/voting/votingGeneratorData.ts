@@ -1,6 +1,7 @@
-import { derived, writable } from 'svelte/store';
+import { derived, writable, type Readable } from 'svelte/store';
 import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
-import type { VotingNftModeSlugs } from './_components/steps/3-nft-mode/votingNftModes';
+import type { VotingNftModeSlug } from './_components/steps/3-nft-mode/votingNftModes';
+import type { VotingRoundData } from './_actions/postVotingRound';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(defaultData);
@@ -19,12 +20,12 @@ const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 
 export const votingGeneratorGeneralData =
 	createVotingGeneratorDataStore<VotingGeneratorGeneralData>({
-		title: '',
+		name: '',
 		description: ''
 	});
 
-type VotingGeneratorGeneralData = {
-	title: string;
+export type VotingGeneratorGeneralData = {
+	name: string;
 	description: string;
 };
 
@@ -41,16 +42,22 @@ export const votingGeneratorOptions = createVotingGeneratorDataStore<VotingOptio
 	}
 ]);
 
-export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingNftModeSlugs>('no-nfts');
+export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingNftModeSlug>('no-nfts');
 export const votingGeneratorRequiredCollection = createVotingGeneratorDataStore<[string]>(['']);
 
-export const votingGeneratorDates = createVotingGeneratorDataStore({
+export const votingGeneratorDates = createVotingGeneratorDataStore<VotingGeneratorDates>({
 	hasTimeframe: false,
 	startDate: new Date(),
-	endDate: new Date()
+	endDate: undefined
 });
 
-export const votingGeneratorData = derived(
+export type VotingGeneratorDates = {
+	hasTimeframe: boolean;
+	startDate: Date;
+	endDate?: Date;
+};
+
+export const votingGeneratorData: Readable<VotingRoundData> = derived(
 	[
 		votingGeneratorGeneralData,
 		votingGeneratorOptions,
@@ -68,7 +75,7 @@ export const votingGeneratorData = derived(
 		return {
 			...$votingGeneratorGeneralData,
 			options: $votingGeneratorOptions,
-			mode: $votingGeneratorNftMode,
+			nftMode: $votingGeneratorNftMode,
 			requiredCollection: $votingGeneratorRequiredCollection,
 			...$votingGeneratorDates
 		};
