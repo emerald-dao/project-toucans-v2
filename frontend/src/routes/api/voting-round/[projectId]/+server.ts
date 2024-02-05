@@ -6,7 +6,7 @@ import { json } from '@sveltejs/kit';
 import type { CurrentUserObject } from '@onflow/fcl';
 import type { Database } from '../../../../../supabase/database.types.js';
 import type { VotingOption } from '../../../admin/[projectId]/voting/_components/steps/2-voting-options/voting-option.interface.js';
-import type { VotingRoundData } from '../../../admin/[projectId]/voting/_actions/postVotingRound.js';
+import type { VotingRoundData } from '../../../admin/[projectId]/voting/_types/voting-round-data.type.js';
 
 const supabase = createClient<Database>(
 	PublicEnv.PUBLIC_SUPABASE_URL,
@@ -25,6 +25,7 @@ export async function POST({ request, params }) {
 
 	try {
 		const verifyAccount = await verifyAccountOwnership(user);
+
 		if (!verifyAccount) {
 			return json({});
 		}

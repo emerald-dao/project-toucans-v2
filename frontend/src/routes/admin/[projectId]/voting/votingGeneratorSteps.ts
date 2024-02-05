@@ -5,7 +5,7 @@ import VotingOptionsStep from './_components/steps/2-voting-options/VotingOption
 import VotingNftModeStep from './_components/steps/3-nft-mode/VotingNftModeStep.svelte';
 import VotingTimeframeStep from './_components/steps/4-timeframe/VotingTimeframeStep.svelte';
 import VotingThanksStep from './_components/steps/5-thanks/VotingThanksStep.svelte';
-import { createVotingRound } from './votingGeneratorActions';
+import { createVotingRound } from './_actions/createVotingRound';
 
 export const votingGeneratorSteps = createSteps([
 	{

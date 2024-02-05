@@ -1,6 +1,6 @@
 import type { CurrentUserObject } from '@onflow/fcl';
 import type { VotingOption } from '../_components/steps/2-voting-options/voting-option.interface';
-import type { VotingNftModeSlug } from '../_components/steps/3-nft-mode/votingNftModes';
+import type { VotingRoundData } from '../_types/voting-round-data.type';
 
 export const postVotingRound = async (
 	projectId: string,
@@ -30,15 +30,4 @@ export const postVotingRound = async (
 
 		return 'error';
 	}
-};
-
-export type VotingRoundData = {
-	name: string;
-	description?: string;
-	options: VotingOption[];
-	nftMode: VotingNftModeSlug;
-	requiredCollection: string[];
-	hasTimeframe: boolean;
-	startDate: Date;
-	endDate?: Date;
 };

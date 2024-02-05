@@ -1,13 +1,13 @@
 import { derived, writable, type Readable } from 'svelte/store';
 import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
 import type { VotingNftModeSlug } from './_components/steps/3-nft-mode/votingNftModes';
-import type { VotingRoundData } from './_actions/postVotingRound';
+import type { VotingRoundData } from './_types/voting-round-data.type';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
-	const { subscribe, set, update } = writable(defaultData);
+	const { subscribe, set, update } = writable(structuredClone(defaultData));
 
 	const reset = () => {
-		set(defaultData);
+		set(structuredClone(defaultData));
 	};
 
 	return {

@@ -85,7 +85,7 @@
 			</a>
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/actions`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('actions')}
 			>
 				<div class="sidebar-link-icon">
@@ -110,7 +110,7 @@
 			{/if}
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/multisig`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('multisig')}
 			>
 				<div class="sidebar-link-icon">
@@ -121,7 +121,7 @@
 			{#if activeDaoData.hasToken}
 				<a
 					href={`/admin/${activeDaoData.generalInfo.project_id}/overflow`}
-					class="sidebar-link distribute-display"
+					class="sidebar-link"
 					class:active={$page.url.pathname.includes('overflow')}
 				>
 					<div class="sidebar-link-icon">
@@ -132,7 +132,7 @@
 			{/if}
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/nft-collections`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('nft-collections')}
 			>
 				<div class="sidebar-link-icon">
@@ -140,10 +140,20 @@
 				</div>
 				NFT Collections
 			</a>
+			<a
+				href={`/admin/${activeDaoData.generalInfo.project_id}/voting`}
+				class="sidebar-link"
+				class:active={$page.url.pathname.includes('voting')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="lucide:vote" />
+				</div>
+				Voting Rounds
+			</a>
 			<span class="sidebar-divider">Funds management</span>
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/withdraw`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('withdraw')}
 			>
 				<div class="sidebar-link-icon">
@@ -166,7 +176,7 @@
 			{#if activeDaoData.hasToken}
 				<a
 					href={`/admin/${activeDaoData.generalInfo.project_id}/lock`}
-					class="sidebar-link distribute-display"
+					class="sidebar-link"
 					class:active={$page.url.pathname.includes('lock')}
 				>
 					<div class="sidebar-link-icon">
@@ -188,7 +198,7 @@
 			{#if network === 'mainnet'}
 				<a
 					href={`/admin/${activeDaoData.generalInfo.project_id}/staking`}
-					class="sidebar-link distribute-display"
+					class="sidebar-link"
 					class:active={$page.url.pathname.includes('staking')}
 				>
 					<div class="sidebar-link-icon">
@@ -223,14 +233,6 @@
 		@include mq('medium') {
 			border-bottom: none;
 			border-right: 0.5px var(--clr-border-primary) solid;
-		}
-
-		.distribute-display {
-			display: none;
-
-			@include mq('medium') {
-				display: block;
-			}
 		}
 
 		.top-dropdown-wapper {
