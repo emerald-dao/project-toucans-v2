@@ -37,7 +37,7 @@
 </script>
 
 <nav>
-	<div class="column-10">
+	<div class="column-6">
 		<div class="row-3 align-center">
 			<img
 				src={activeDaoData.generalInfo.logo}
@@ -72,7 +72,7 @@
 				</div>
 			</DropDownHeading>
 		</div>
-		<div class="column-5">
+		<div class="column-4">
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}`}
 				class="sidebar-link"
@@ -260,7 +260,7 @@
 			border-bottom: 1px solid var(--clr-surface-primary);
 			font-size: var(--font-size-1);
 			color: var(--clr-text-off);
-			margin-top: var(--space-3);
+			margin-top: var(--space-1);
 			margin-bottom: -4px;
 			padding-bottom: var(--space-1);
 			padding-inline: var(--space-1);

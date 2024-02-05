@@ -68,7 +68,11 @@
 			<p class="small">{votingData[activeVotation].description}</p>
 		</div>
 
-		<VotingStatusCard votingData={votingData[activeVotation]} />
+		<VotingStatusCard
+			forVotes={votingData[activeVotation].for_total}
+			againstVotes={votingData[activeVotation].against_total}
+			isPending={votingData[activeVotation].pending}
+		/>
 	</div>
 </div>
 
