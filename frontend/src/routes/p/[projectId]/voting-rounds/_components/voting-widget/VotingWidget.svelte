@@ -1,7 +1,11 @@
 <script lang="ts">
+	import PieChart from '$components/charts/PieChart.svelte';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { fetchVotingRoundVotes } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
-	import VotingWidgetElement from './VotingWidgetElement.svelte';
+	import VotingElegibility from './VotingElegibility.svelte';
+	import VotingOptionCard from './VotingOptionCard.svelte';
+	import VotingWidgetCard from './VotingWidgetCard.svelte';
+	import { getVotingRoundStatus } from './getVotingRoundStatus';
 
 	export let votingRounds: VotingRound[];
 
@@ -10,23 +14,88 @@
 	$: activeRoundData = votingRounds[activeRound];
 
 	$: activeRoundVotes = fetchVotingRoundVotes(activeRoundData.id);
+
+	let selectedOption: number | undefined = undefined;
+
+	$: activeRoundStatus = getVotingRoundStatus(
+		new Date(activeRoundData.start_date),
+		activeRoundData.end_date ? new Date(activeRoundData.end_date) : undefined
+	);
+	$: isUserEligible = true;
+	$: userHasVoted = false;
+
+	let userVotedOption = 1;
 </script>
 
 <div class="column-3">
-	<VotingWidgetElement votingRound={activeRoundData}>
+	<VotingWidgetCard votingRound={activeRoundData} {activeRoundStatus}>
 		{#await activeRoundVotes}
-			banca...
+			<em>Loading options...</em>
 		{:then votes}
-			{#each votes as vote}
-				<div class="card row-3">
-					<span>{vote.name}</span>
-					<span>{vote.votes.length}</span>
+			{@const totalAmountOfVotes = votes.reduce((acc, vote) => acc + vote.votes.length, 0)}
+			{@const mostVotedOptions = votes
+				.filter((vote) => vote.votes.length === Math.max(...votes.map((vote) => vote.votes.length)))
+				.map((vote) => vote.option_number)}
+			<div class="voting-data-wrapper">
+				<div class="options-wrapper">
+					<VotingElegibility {isUserEligible} {userHasVoted} votingStauts={activeRoundStatus} />
+					{#each votes as vote}
+						<VotingOptionCard
+							votingOption={vote}
+							votesPercentage={((vote.votes.length / totalAmountOfVotes) * 100).toFixed(2) + '%'}
+							bind:selectedOption
+							{isUserEligible}
+							votingRoundStatus={activeRoundStatus}
+							{mostVotedOptions}
+							{userVotedOption}
+						/>
+					{/each}
 				</div>
-			{/each}
+				<div class="chart-wrapper">
+					{#if activeRoundStatus === 'upcoming'}
+						<em class="text-small">Chart will be available once the round starts</em>
+					{:else if totalAmountOfVotes === 0}
+						<em class="text-small">No votes yet</em>
+					{:else}
+						<PieChart
+							title={activeRoundData.name}
+							chartData={votes.map((vote) => vote.votes.length)}
+							labels={votes.map((vote) => vote.name)}
+						/>
+					{/if}
+				</div>
+			</div>
 		{/await}
-	</VotingWidgetElement>
+	</VotingWidgetCard>
 	<div class="row-3 row-space-between">
-		<button on:click={() => activeRound--}>previous</button>
-		<button on:click={() => activeRound++}>next</button>
+		<button on:click={() => activeRound--} disabled={activeRound === 0}>previous</button>
+		<button on:click={() => activeRound++} disabled={activeRound === votingRounds.length - 1}
+			>next</button
+		>
 	</div>
 </div>
+
+<style lang="scss">
+	.voting-data-wrapper {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--space-10);
+
+		.options-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-4);
+		}
+
+		.chart-wrapper {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+		}
+	}
+
+	em {
+		color: var(--clr-text-off);
+	}
+</style>

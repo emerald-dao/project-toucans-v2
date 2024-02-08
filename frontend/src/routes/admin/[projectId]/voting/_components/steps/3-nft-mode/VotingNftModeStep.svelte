@@ -35,7 +35,7 @@
 
 <div class="column-5">
 	<div class="options-wrapper">
-		{#each VOTING_NFT_MODES as { slug, title, description }}
+		{#each Object.entries(VOTING_NFT_MODES) as [slug, { title, description }]}
 			<VotingNftModeCard {slug} {title} {description} bind:selectedSlug={$votingGeneratorNftMode} />
 		{/each}
 	</div>

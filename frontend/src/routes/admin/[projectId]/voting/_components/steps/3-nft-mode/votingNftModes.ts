@@ -1,23 +1,21 @@
 export const VOTING_NFT_MODES: {
-	title: string;
-	slug: VotingNftModeSlug;
-	description: string;
-}[] = [
-	{
-		title: 'No NFTs required',
-		slug: 'no-nfts',
+	[key in VotingNftModeSlug]: {
+		title: string;
+		description: string;
+	};
+} = {
+	'no-nfts': {
+		title: 'Open votation',
 		description: 'Anyone can participate in the voting round.'
 	},
-	{
+	'nft-holders': {
 		title: 'NFT holders',
-		slug: 'nft-holders',
 		description: 'Users holding an NFT of a selected collection can vote.'
 	},
-	{
+	'nft-donators': {
 		title: 'NFT donators',
-		slug: 'nft-donators',
 		description: 'Users that donated an NFT of a selected collection can vote.'
 	}
-];
+};
 
 export type VotingNftModeSlug = 'no-nfts' | 'nft-holders' | 'nft-donators';

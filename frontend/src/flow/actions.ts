@@ -1222,7 +1222,11 @@ export const canReceiveNFTCollection = async (
 	}
 };
 
-export const getCatalogByCollectionIDs = async (group: string[]) => {
+export const getCatalogByCollectionIDs = async (
+	group: string[]
+): Promise<{ [collectionIdentifier: string]: NftCollection } | undefined> => {
+	console.log('va');
+
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogListScript),
