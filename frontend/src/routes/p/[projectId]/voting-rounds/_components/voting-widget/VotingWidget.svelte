@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { fetchVotingRoundVotes } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
@@ -7,19 +8,15 @@
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
 	import { getVotingRoundStatus } from './getVotingRoundStatus';
 
-	export let votingRounds: VotingRound[];
+	export let votingRound: VotingRound;
 
-	let activeRound = 0;
-
-	$: activeRoundData = votingRounds[activeRound];
-
-	$: activeRoundVotes = fetchVotingRoundVotes(activeRoundData.id);
+	$: activeRoundVotes = fetchVotingRoundVotes(votingRound.id);
 
 	let selectedOption: number | undefined = undefined;
 
 	$: activeRoundStatus = getVotingRoundStatus(
-		new Date(activeRoundData.start_date),
-		activeRoundData.end_date ? new Date(activeRoundData.end_date) : undefined
+		new Date(votingRound.start_date),
+		votingRound.end_date ? new Date(votingRound.end_date) : undefined
 	);
 	$: isUserEligible = true;
 	$: userHasVoted = false;
@@ -28,7 +25,7 @@
 </script>
 
 <div class="column-3">
-	<VotingWidgetCard votingRound={activeRoundData} {activeRoundStatus}>
+	<VotingWidgetCard {votingRound} {activeRoundStatus}>
 		{#await activeRoundVotes}
 			<em>Loading options...</em>
 		{:then votes}
@@ -58,7 +55,7 @@
 						<em class="text-small">No votes yet</em>
 					{:else}
 						<PieChart
-							title={activeRoundData.name}
+							title={votingRound.name}
 							chartData={votes.map((vote) => vote.votes.length)}
 							labels={votes.map((vote) => vote.name)}
 						/>
@@ -67,12 +64,6 @@
 			</div>
 		{/await}
 	</VotingWidgetCard>
-	<div class="row-3 row-space-between">
-		<button on:click={() => activeRound--} disabled={activeRound === 0}>previous</button>
-		<button on:click={() => activeRound++} disabled={activeRound === votingRounds.length - 1}
-			>next</button
-		>
-	</div>
 </div>
 
 <style lang="scss">
