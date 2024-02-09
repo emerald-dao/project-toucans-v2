@@ -25,10 +25,10 @@
 	};
 </script>
 
-<section class="container column-3">
-	{#if data.votingRounds.length === 0}
-		<em>No voting rounds available</em>
-	{:else if roundIndex >= 0 && data.votingRounds[roundIndex]}
+{#if data.votingRounds.length === 0}
+	<em>No voting rounds available</em>
+{:else if roundIndex >= 0 && data.votingRounds[roundIndex]}
+	<div class="main-wrapper">
 		<VotingWidget votingRound={data.votingRounds[roundIndex]} />
 		<div class="row-3 row-space-between">
 			<button on:click={onPreviousVotingRound} disabled={roundIndex === 0}>previous</button>
@@ -36,7 +36,16 @@
 				>next</button
 			>
 		</div>
-	{:else}
-		<em>We couldn't find the indicated voting round</em>
-	{/if}
-</section>
+	</div>
+{:else}
+	<em>We couldn't find the indicated voting round</em>
+{/if}
+
+<style lang="scss">
+	.main-wrapper {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+</style>
