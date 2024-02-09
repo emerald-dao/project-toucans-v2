@@ -30,9 +30,10 @@
 		let csvContent = 'data:text/csv;charset=utf-8,';
 		csvContent += 'name,serial,team,tier,set,series,donated by,time,transaction id\n';
 		csvContent += NFTs.map((nft) => {
-			let name = nft.traits
-				? nft.traits['playerFirstName'] + ' ' + nft.traits['playerLastName']
-				: nft.name;
+			let name =
+				nft.traits && nft.traits['playerFirstName'] && nft.traits['playerLastName']
+					? nft.traits['playerFirstName'] + ' ' + nft.traits['playerLastName']
+					: nft.name;
 			let { donatedBy, txId, time } = uuidsMap[nft.uuid]
 				? {
 						donatedBy: uuidsMap[nft.uuid].donatedBy,
