@@ -2,6 +2,7 @@
 	import UserBalanceListElement from '$lib/components/dao-data-blocks/users-balance/list/UserBalanceListElement.svelte';
 	import { getFindProfilesBatch } from '$flow/utils';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import DownloadHolders from '../../../../../routes/admin/[projectId]/_components/stats-blocks/atoms/DownloadHolders.svelte';
 
 	export let daoData: DAOProject;
 
@@ -37,6 +38,12 @@
 					tokenSymbol={daoData.generalInfo.token_symbol}
 				/>
 			{/each}
+			<DownloadHolders
+				holders={daoData.onChainData.balances}
+				{lpAddresses}
+				{findProfiles}
+				{daoData}
+			/>
 		{/await}
 	{:else}
 		<div class="no-holders-wrapper">

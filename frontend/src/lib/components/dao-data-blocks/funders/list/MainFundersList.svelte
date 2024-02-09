@@ -2,6 +2,7 @@
 	import UserBalanceListElement from '$lib/components/dao-data-blocks/users-balance/list/UserBalanceListElement.svelte';
 	import { getFindProfilesBatch } from '$flow/utils';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import DownloadFunders from '../../../../../routes/admin/[projectId]/_components/stats-blocks/atoms/DownloadFunders.svelte';
 
 	export let daoData: DAOProject;
 
@@ -33,6 +34,11 @@
 			{#each mainFunderEntries as [address, { amount }]}
 				<UserBalanceListElement findProfile={findProfiles[address]} {address} balance={amount} />
 			{/each}
+			<DownloadFunders
+				projectId={daoData.generalInfo.project_id}
+				funders={daoData.funding.funders}
+				{findProfiles}
+			/>
 		{/await}
 	{:else}
 		<div class="no-funders-wrapper">
