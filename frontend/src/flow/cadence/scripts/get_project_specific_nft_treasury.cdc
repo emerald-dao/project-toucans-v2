@@ -2,7 +2,7 @@ import Toucans from "../Toucans.cdc"
 import MetadataViews from "../utility/MetadataViews.cdc"
 import NFTCatalog from "../utility/NFTCatalog.cdc"
 
-pub fun main(projectOwner: Address, projectId: String, collectionIdentifier: String): [NFTData] {
+pub fun main(projectOwner: Address, projectId: String, collectionIdentifier: String, ids: [UInt64]): [NFTData] {
     let catalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier)
           ?? panic("There is no NFT Catalog entry for this.")
     let contractAddressToString = catalogEntry.contractAddress.toString()
@@ -18,7 +18,7 @@ pub fun main(projectOwner: Address, projectId: String, collectionIdentifier: Str
                     ?? panic("User does not have a Toucans Collection")
     let project = projectCollection.borrowProjectPublic(projectId: projectId)!
 
-    let nftRefs = project.getNFTRefs(collectionType: collectionType)
+    let nftRefs = project.getNFTRefsByIDs(collectionType: collectionType, ids: ids)
     let nftDatas: [NFTData] = []
     for nftRef in nftRefs {
         let display = nftRef.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display

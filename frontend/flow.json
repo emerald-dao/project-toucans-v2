@@ -286,13 +286,11 @@
 		},
 		"testnet": {
 			"testnet-account": [
-				"ToucansActions",
 				"Toucans"
 			]
 		},
 		"mainnet": {
 			"mainnet-account": [
-				"ToucansActions",
 				"Toucans"
 			]
 		}

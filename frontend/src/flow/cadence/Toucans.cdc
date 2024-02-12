@@ -304,6 +304,8 @@ pub contract Toucans {
     pub fun hasTokenContract(): Bool
     pub fun getCollectionTypesInTreasury(): [Type]
     pub fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT]
+    pub fun getNFTRefsByIDs(collectionType: Type, ids: [UInt64]): [&NonFungibleToken.NFT]
+    pub fun getNFTIDs(collectionType: Type): [UInt64]
   }
 
   pub resource Project: ProjectPublic {
@@ -1226,6 +1228,23 @@ pub contract Toucans {
         }
       }
       return ans
+    }
+
+    pub fun getNFTRefsByIDs(collectionType: Type, ids: [UInt64]): [&NonFungibleToken.NFT] {
+      let ans: [&NonFungibleToken.NFT] = []
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        for id in ids {
+          ans.append(nftTreasury.borrowNFT(id: id))
+        }
+      }
+      return ans
+    }
+
+    pub fun getNFTIDs(collectionType: Type): [UInt64] {
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        return nftTreasury.getIDs()
+      }
+      return []
     }
 
     pub fun getCurrentFundingCycleIndex(): Int? {

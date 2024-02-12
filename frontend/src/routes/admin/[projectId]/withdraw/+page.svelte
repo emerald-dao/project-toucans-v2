@@ -9,7 +9,6 @@
 	import { withdrawTokens } from '$lib/features/distribute-tokens/functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
 	import FungibleTokensDistributionForm from './_components/FungibleTokensDistributionForm.svelte';
-	import { getProjectNFTTreasury } from '$flow/actions';
 
 	const adminData: {
 		activeDao: Writable<DAOProject>;
