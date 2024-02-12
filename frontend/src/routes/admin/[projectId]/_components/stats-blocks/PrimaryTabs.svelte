@@ -4,21 +4,9 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
 	import RoundsCard from '$components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
-	import { getProjectNFTTreasury } from '$flow/actions';
 	import NftsTreasuryWidget from '../../../../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
-	import { onMount } from 'svelte';
-	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
-	import DownloadNftTreasury from './atoms/DownloadNFTTreasury.svelte';
 
 	export let daoData: DAOProject;
-
-	let NFTs: {
-		[collectionIdentifier: string]: Nft[];
-	};
-
-	onMount(async () => {
-		NFTs = await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id);
-	});
 </script>
 
 <div class="main-wrapper">

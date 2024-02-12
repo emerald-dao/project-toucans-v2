@@ -50,6 +50,7 @@ import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?r
 import getProjectLockedTokensScript from './cadence/scripts/get_project_locked_tokens.cdc?raw';
 import getProjectNFTTreasuryScript from './cadence/scripts/get_project_nft_treasury.cdc?raw';
 import getProjectSpecificNFTTreasuryScript from './cadence/scripts/get_project_specific_nft_treasury.cdc?raw';
+import getProjectSpecificNFTTreasuryIDsScript from './cadence/scripts/get_project_specific_nft_treasury_ids.cdc?raw';
 import getProjectLockedTokensForUserScript from './cadence/scripts/get_project_locked_tokens_for_user.cdc?raw';
 import getTokenBalanceScript from './cadence/scripts/get_token_balance.cdc?raw';
 import getPendingActionsScript from './cadence/scripts/get_pending_actions.cdc?raw';
@@ -1060,14 +1061,44 @@ export const getProjectSpecificNFTTreasury: (
 	collectionIdentifier: string
 ) => Promise<Nft[]> = async (owner: string, projectId: string, collectionIdentifier: string) => {
 	try {
-		const response = await fcl.query({
-			cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
-			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String), arg(collectionIdentifier, t.String)]
-		});
-		convertTraitsForSpecific(response);
-		return response;
+		const collectionIDs = await getProjectSpecificNFTTreasuryIDs(owner, projectId, collectionIdentifier);
+		const chunkSize = 300;
+		let promises = []
+		for (let i = 0; i < collectionIDs.length; i += chunkSize) {
+			const chunk = collectionIDs.slice(i, i + chunkSize);
+			promises.push(fcl.query({
+				cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
+				args: (arg, t) => [
+					arg(owner, t.Address),
+					arg(projectId, t.String),
+					arg(collectionIdentifier, t.String),
+					arg(chunk, t.Array(t.UInt64))
+				]
+			}));
+		}
+		let nfts = await Promise.all(promises);
+		let ans: Nft[] = [].concat(...nfts);
+		convertTraitsForSpecific(ans);
+		return ans;
 	} catch (e) {
 		console.log('Error in getProjectSpecificNFTTreasury');
+		console.log(e);
+	}
+};
+
+export const getProjectSpecificNFTTreasuryIDs: (
+	owner: string,
+	projectId: string,
+	collectionIdentifier: string
+) => Promise<Nft[]> = async (owner: string, projectId: string, collectionIdentifier: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryIDsScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String), arg(collectionIdentifier, t.String)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectSpecificNFTTreasuryIDs');
 		console.log(e);
 	}
 };
