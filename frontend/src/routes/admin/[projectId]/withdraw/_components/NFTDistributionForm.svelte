@@ -24,21 +24,17 @@
 	let storedUserNFTs: {
 		[collectionIdentifier: string]: Nft[];
 	} = {};
-	let userNFTs: Promise<Nft[]>;
 
-	fetchUserNFTs();
-	async function fetchUserNFTs() {
+	async function fetchUserNFTs(collectionIdentifier: string) {
 		selectedNFTIds = [];
-		userNFTs = new Promise(async (resolve, reject) => {
-			if (!storedUserNFTs[selectedCollection]) {
-				storedUserNFTs[selectedCollection] = await getProjectSpecificNFTTreasury(
-					activeDaoData.generalInfo.owner,
-					activeDaoData.generalInfo.project_id,
-					selectedCollection
-				);
-			}
-			resolve(storedUserNFTs[selectedCollection]);
-		});
+		if (!storedUserNFTs[collectionIdentifier]) {
+			storedUserNFTs[collectionIdentifier] = await getProjectSpecificNFTTreasury(
+				activeDaoData.generalInfo.owner,
+				activeDaoData.generalInfo.project_id,
+				collectionIdentifier
+			);
+		}
+		return storedUserNFTs[collectionIdentifier];
 	}
 
 	const resetDistributionForm = () => {
@@ -74,12 +70,9 @@
 			<CollectionSelector
 				bind:selectedCollection
 				collectionIdentifiers={projectNFTsCollections}
-				on:collectionChange={() => {
-					resetAddressValidation();
-					fetchUserNFTs();
-				}}
+				on:collectionChange={resetAddressValidation}
 			/>
-			{#await userNFTs}
+			{#await fetchUserNFTs(selectedCollection)}
 				<span class="small"><i>Loading...</i></span>
 			{:then userCatalogNFTs}
 				<NFTsList
