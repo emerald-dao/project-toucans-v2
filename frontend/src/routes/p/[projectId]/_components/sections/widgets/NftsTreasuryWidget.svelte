@@ -14,7 +14,10 @@
 	export let downloadable: boolean = false;
 
 	let projectNFTsCollections = daoData.onChainData.allowedNFTCollections;
-	let selectedCollection: string = projectNFTsCollections[0];
+	let selectedCollection: string =
+		daoData.generalInfo.project_id == 'ADUToken'
+			? projectNFTsCollections[Math.max(projectNFTsCollections.indexOf('NFLAllDay'), 0)]
+			: projectNFTsCollections[0];
 
 	let storedUserNFTs: {
 		[collectionIdentifier: string]: Nft[];
