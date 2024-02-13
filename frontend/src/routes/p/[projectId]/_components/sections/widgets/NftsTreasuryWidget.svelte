@@ -19,20 +19,18 @@
 	let storedUserNFTs: {
 		[collectionIdentifier: string]: Nft[];
 	} = {};
-	let userNFTs: Promise<Nft[]>;
 
-	fetchUserNFTs();
-	async function fetchUserNFTs() {
-		userNFTs = new Promise(async (resolve, reject) => {
-			if (!storedUserNFTs[selectedCollection]) {
-				storedUserNFTs[selectedCollection] = await getProjectSpecificNFTTreasury(
-					daoData.generalInfo.owner,
-					daoData.generalInfo.project_id,
-					selectedCollection
-				);
-			}
-			resolve(storedUserNFTs[selectedCollection]);
-		});
+	async function fetchUserNFTs(collectionIdentifier: string) {
+		console.log('Reloading!');
+
+		if (!storedUserNFTs[collectionIdentifier]) {
+			storedUserNFTs[collectionIdentifier] = await getProjectSpecificNFTTreasury(
+				daoData.generalInfo.owner,
+				daoData.generalInfo.project_id,
+				collectionIdentifier
+			);
+		}
+		return storedUserNFTs[collectionIdentifier];
 	}
 </script>
 
@@ -49,9 +47,8 @@
 				<CollectionSelector
 					bind:selectedCollection
 					collectionIdentifiers={projectNFTsCollections}
-					on:collectionChange={fetchUserNFTs}
 				/>
-				{#await userNFTs}
+				{#await fetchUserNFTs(selectedCollection)}
 					<span class="small"><i>Loading...</i></span>
 				{:then userCatalogNFTs}
 					<NFTsList
