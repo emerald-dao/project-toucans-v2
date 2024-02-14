@@ -1,6 +1,10 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { Button } from '@emerald-dao/component-library';
 	import VotingWidget from './_components/voting-widget/VotingWidget.svelte';
+	import Icon from '@iconify/svelte';
 
 	export let data;
 
@@ -14,17 +18,27 @@
 </script>
 
 {#if roundData}
-	<div class="main-wrapper">
+	<div class="main-wrapper" in:fly={{ duration: 200, y: 20 }} id={`${roundData.id}`}>
 		<VotingWidget votingRound={data.votingRounds[roundIndex]} />
 		<div class="row-3 row-space-between">
-			<a
-				href={`/p/${$page.params.projectId}/voting-rounds/${previousVotingRoundId}`}
-				disabled={roundIndex === 0}>Previous round</a
+			<Button
+				on:click={() => goto(`/p/${$page.params.projectId}/voting-rounds/${previousVotingRoundId}`)}
+				color="neutral"
+				type="ghost"
+				state={roundIndex === 0 ? 'disabled' : 'active'}
 			>
-			<a
-				href={`/p/${$page.params.projectId}/voting-rounds/${nextVotingRoundId}`}
-				disabled={roundIndex === data.votingRounds.length - 1}>Next round</a
+				<Icon icon="tabler:arrow-left" />
+				Previous round
+			</Button>
+			<Button
+				on:click={() => goto(`/p/${$page.params.projectId}/voting-rounds/${nextVotingRoundId}`)}
+				color="neutral"
+				type="ghost"
+				state={roundIndex === data.votingRounds.length - 1 ? 'disabled' : 'active'}
 			>
+				Next round
+				<Icon icon="tabler:arrow-right" />
+			</Button>
 		</div>
 	</div>
 {:else}
@@ -37,6 +51,6 @@
 		flex: 1;
 		flex-direction: column;
 		justify-content: space-between;
-		gap: var(--space-5);
+		gap: var(--space-12);
 	}
 </style>

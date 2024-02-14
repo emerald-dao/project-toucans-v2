@@ -16,7 +16,6 @@
 			<div class="column-3">
 				<h4 class="w-medium">
 					{votingRound.name}
-					<span class="w-regular">voting round</span>
 				</h4>
 				{#if votingRound.description}
 					<p class="small">{votingRound.description}</p>

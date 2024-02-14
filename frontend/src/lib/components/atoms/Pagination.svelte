@@ -25,7 +25,6 @@
 	}
 
 	$: if (pageEnd === 0 && amountOfItems > 0) {
-		alert('ka');
 		pageStart = 0;
 		pageEnd = pageSize;
 	}

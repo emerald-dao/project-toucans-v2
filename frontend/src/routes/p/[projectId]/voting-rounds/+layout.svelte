@@ -17,10 +17,23 @@
 		`}
 />
 <div class="container header-wrapper row-14 align-center justify-center">
-	<Button href={`/p/${$page.params.projectId}`} color="neutral" type="transparent">
-		<Icon icon="tabler:arrow-left" />
-		DAO Profile
-	</Button>
+	<div class="column align-start">
+		{#if $page.params.votingRoundId}
+			<Button
+				href={`/p/${$page.params.projectId}/voting-rounds`}
+				color="neutral"
+				type="transparent"
+			>
+				<Icon icon="tabler:arrow-left" />
+				All Voting Rounds
+			</Button>
+		{:else}
+			<Button href={`/p/${$page.params.projectId}`} color="neutral" type="transparent">
+				<Icon icon="tabler:arrow-left" />
+				DAO Profile
+			</Button>
+		{/if}
+	</div>
 	<div class="column-2 align-center">
 		<img src={`${data.generalInfo.logo}`} alt="DAO logo" width="70px" height="70px" />
 		<div class="column-1 align-center">
@@ -40,7 +53,7 @@
 		z-index: 1;
 		display: grid;
 		grid-template-columns: 1fr auto 1fr;
-		margin-top: -45px;
+		margin-top: -40px;
 		margin-bottom: var(--space-2);
 
 		img {
