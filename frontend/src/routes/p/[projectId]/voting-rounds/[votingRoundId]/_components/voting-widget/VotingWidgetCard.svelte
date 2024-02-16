@@ -4,14 +4,15 @@
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { VOTING_NFT_MODES } from '../../../../../../admin/[projectId]/voting/_components/steps/3-nft-mode/votingNftModes';
 	import VotingRoundTimer from './VotingRoundTimer.svelte';
-	import type { VotingRoundStatus } from './voting-round-status.type';
+	import type { VotingRoundStatusStoreData } from './voting-round-status.type';
 
 	export let votingRound: VotingRound;
-	export let activeRoundStatus: VotingRoundStatus;
+	export let activeRoundStatus: VotingRoundStatusStoreData;
 </script>
 
 <div class="card">
 	<div class="voting-round-data-wrapper">
+		{activeRoundStatus.status}
 		<div class="column-7">
 			<div class="column-3">
 				<h4 class="w-medium">
@@ -21,10 +22,22 @@
 					<p class="small">{votingRound.description}</p>
 				{/if}
 			</div>
-			{#if activeRoundStatus === 'active'}
-				<VotingRoundTimer title="Finishes in" days={3} hours={12} minutes={30} seconds={24} />
-			{:else if activeRoundStatus === 'upcoming'}
-				<VotingRoundTimer title="Starts in" days={3} hours={12} minutes={30} seconds={24} />
+			{#if activeRoundStatus.status === 'active' && activeRoundStatus.remainingTime}
+				<VotingRoundTimer
+					title="Finishes in"
+					days={activeRoundStatus.remainingTime.days}
+					hours={activeRoundStatus.remainingTime.hours}
+					minutes={activeRoundStatus.remainingTime.minutes}
+					seconds={activeRoundStatus.remainingTime.seconds}
+				/>
+			{:else if activeRoundStatus.status === 'upcoming' && activeRoundStatus.remainingTime}
+				<VotingRoundTimer
+					title="Starts in"
+					days={activeRoundStatus.remainingTime.days}
+					hours={activeRoundStatus.remainingTime.hours}
+					minutes={activeRoundStatus.remainingTime.minutes}
+					seconds={activeRoundStatus.remainingTime.seconds}
+				/>
 			{/if}
 			<div class="nft-mode-wrapper">
 				<div class="nft-mode-data-wrapper">

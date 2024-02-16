@@ -1,11 +1,12 @@
 <script lang="ts">
 	import PieChart from '$components/charts/PieChart.svelte';
+	import { createVotingRoundStatusStore } from '$lib/features/voting-generator/utils/createVotingRoundStatusStore';
+	import { postgreTimestampToDateTime } from '$lib/features/voting-generator/utils/postgreTimestampToDateTime';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { fetchVotingRoundVotes } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
 	import VotingElegibility from './VotingElegibility.svelte';
 	import VotingOptionCard from './VotingOptionCard.svelte';
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
-	import { getVotingRoundStatus } from './getVotingRoundStatus';
 
 	export let votingRound: VotingRound;
 
@@ -13,10 +14,11 @@
 
 	let selectedOption: number | undefined = undefined;
 
-	$: activeRoundStatus = getVotingRoundStatus(
-		new Date(votingRound.start_date),
-		votingRound.end_date ? new Date(votingRound.end_date) : undefined
+	const votingRoundStatus = createVotingRoundStatusStore(
+		postgreTimestampToDateTime(votingRound.end_date),
+		votingRound.start_date ? postgreTimestampToDateTime(votingRound.start_date) : undefined
 	);
+
 	$: isUserEligible = true;
 	$: userHasVoted = false;
 
@@ -24,7 +26,7 @@
 </script>
 
 <div class="column-3">
-	<VotingWidgetCard {votingRound} {activeRoundStatus}>
+	<VotingWidgetCard {votingRound} activeRoundStatus={$votingRoundStatus}>
 		{#await activeRoundVotes}
 			<em>Loading options...</em>
 		{:then votes}
@@ -34,21 +36,25 @@
 				.map((vote) => vote.option_number)}
 			<div class="voting-data-wrapper">
 				<div class="options-wrapper">
-					<VotingElegibility {isUserEligible} {userHasVoted} votingStauts={activeRoundStatus} />
+					<VotingElegibility
+						{isUserEligible}
+						{userHasVoted}
+						votingStauts={$votingRoundStatus.status}
+					/>
 					{#each votes as vote}
 						<VotingOptionCard
 							votingOption={vote}
 							votesPercentage={((vote.votes.length / totalAmountOfVotes) * 100).toFixed(2) + '%'}
 							bind:selectedOption
 							{isUserEligible}
-							votingRoundStatus={activeRoundStatus}
+							votingRoundStatus={$votingRoundStatus.status}
 							{mostVotedOptions}
 							{userVotedOption}
 						/>
 					{/each}
 				</div>
 				<div class="chart-wrapper">
-					{#if activeRoundStatus === 'upcoming'}
+					{#if $votingRoundStatus.status === 'upcoming'}
 						<em class="text-small">Chart will be available once the round starts</em>
 					{:else if totalAmountOfVotes === 0}
 						<em class="text-small">No votes yet</em>

@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       events: {
@@ -320,35 +320,35 @@ export interface Database {
         Row: {
           created_at: string
           description: string | null
-          end_date: string | null
+          end_date: string
           id: number
           name: string
           nft_mode: Database["public"]["Enums"]["voting_nft_modes"]
           project_id: string
           required_nft_collection_id: string | null
-          start_date: string
+          start_date: string | null
         }
         Insert: {
           created_at?: string
           description?: string | null
-          end_date?: string | null
+          end_date: string
           id?: number
           name: string
           nft_mode?: Database["public"]["Enums"]["voting_nft_modes"]
           project_id: string
           required_nft_collection_id?: string | null
-          start_date?: string
+          start_date?: string | null
         }
         Update: {
           created_at?: string
           description?: string | null
-          end_date?: string | null
+          end_date?: string
           id?: number
           name?: string
           nft_mode?: Database["public"]["Enums"]["voting_nft_modes"]
           project_id?: string
           required_nft_collection_id?: string | null
-          start_date?: string
+          start_date?: string | null
         }
         Relationships: [
           {
