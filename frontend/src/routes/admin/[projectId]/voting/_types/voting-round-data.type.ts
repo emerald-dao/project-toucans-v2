@@ -7,7 +7,6 @@ export type VotingRoundData = {
 	options: VotingOption[];
 	nftMode: VotingNftModeSlug;
 	requiredCollection: string[];
-	hasTimeframe: boolean;
-	startDate: string;
-	endDate?: string;
+	startDate?: string;
+	endDate: string;
 };

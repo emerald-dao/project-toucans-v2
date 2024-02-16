@@ -2,6 +2,7 @@ import { derived, writable, type Readable } from 'svelte/store';
 import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
 import type { VotingNftModeSlug } from './_components/steps/3-nft-mode/votingNftModes';
 import type { VotingRoundData } from './_types/voting-round-data.type';
+import { fromDate, getLocalTimeZone } from '@internationalized/date';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(structuredClone(defaultData));
@@ -45,17 +46,39 @@ export const votingGeneratorOptions = createVotingGeneratorDataStore<VotingOptio
 export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingNftModeSlug>('no-nfts');
 export const votingGeneratorRequiredCollection = createVotingGeneratorDataStore<[string]>(['']);
 
+const oneWeekFromNow = () => {
+	const oneWeekFromNow = new Date(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).setSeconds(0, 0));
+	const oneWeekFromNowWithTimezone = fromDate(oneWeekFromNow, getLocalTimeZone()).toString();
+
+	const formattedOneWeekFromNowWithTimezone = oneWeekFromNowWithTimezone
+		.split('-')
+		.slice(0, 3)
+		.join('-');
+
+	return formattedOneWeekFromNowWithTimezone;
+};
+
 export const votingGeneratorDates = createVotingGeneratorDataStore<VotingGeneratorDates>({
-	hasTimeframe: false,
-	startDate: new Date(),
-	endDate: undefined
+	startDate: undefined,
+	endDate: oneWeekFromNow()
 });
 
 export type VotingGeneratorDates = {
-	hasTimeframe: boolean;
-	startDate: Date;
-	endDate?: Date;
+	startDate?: string;
+	endDate: string;
 };
+
+export const votingGeneratorDatesWithTimezone = derived(
+	votingGeneratorDates,
+	($votingGeneratorDates) => {
+		return {
+			startDate: $votingGeneratorDates.startDate
+				? fromDate(new Date($votingGeneratorDates.startDate), getLocalTimeZone()).toString()
+				: undefined,
+			endDate: fromDate(new Date($votingGeneratorDates.endDate), getLocalTimeZone()).toString()
+		};
+	}
+);
 
 export const votingGeneratorData: Readable<VotingRoundData> = derived(
 	[
@@ -63,21 +86,21 @@ export const votingGeneratorData: Readable<VotingRoundData> = derived(
 		votingGeneratorOptions,
 		votingGeneratorNftMode,
 		votingGeneratorRequiredCollection,
-		votingGeneratorDates
+		votingGeneratorDatesWithTimezone
 	],
 	([
 		$votingGeneratorGeneralData,
 		$votingGeneratorOptions,
 		$votingGeneratorNftMode,
 		$votingGeneratorRequiredCollection,
-		$votingGeneratorDates
+		$votingGeneratorDatesWithTimeZone
 	]) => {
 		return {
 			...$votingGeneratorGeneralData,
 			options: $votingGeneratorOptions,
 			nftMode: $votingGeneratorNftMode,
 			requiredCollection: $votingGeneratorRequiredCollection,
-			...$votingGeneratorDates
+			...$votingGeneratorDatesWithTimeZone
 		};
 	}
 );
