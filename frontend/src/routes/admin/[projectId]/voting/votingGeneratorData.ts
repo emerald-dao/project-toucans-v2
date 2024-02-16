@@ -2,7 +2,7 @@ import { derived, writable, type Readable } from 'svelte/store';
 import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
 import type { VotingNftModeSlug } from './_components/steps/3-nft-mode/votingNftModes';
 import type { VotingRoundData } from './_types/voting-round-data.type';
-import { fromDate, getLocalTimeZone } from '@internationalized/date';
+import { fromDate, getLocalTimeZone, now, toCalendarDateTime } from '@internationalized/date';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(structuredClone(defaultData));
@@ -46,21 +46,11 @@ export const votingGeneratorOptions = createVotingGeneratorDataStore<VotingOptio
 export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingNftModeSlug>('no-nfts');
 export const votingGeneratorRequiredCollection = createVotingGeneratorDataStore<[string]>(['']);
 
-const oneWeekFromNow = () => {
-	const oneWeekFromNow = new Date(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).setSeconds(0, 0));
-	const oneWeekFromNowWithTimezone = fromDate(oneWeekFromNow, getLocalTimeZone()).toString();
-
-	const formattedOneWeekFromNowWithTimezone = oneWeekFromNowWithTimezone
-		.split('-')
-		.slice(0, 3)
-		.join('-');
-
-	return formattedOneWeekFromNowWithTimezone;
-};
-
 export const votingGeneratorDates = createVotingGeneratorDataStore<VotingGeneratorDates>({
 	startDate: undefined,
-	endDate: oneWeekFromNow()
+	endDate: toCalendarDateTime(now(getLocalTimeZone()).add({ weeks: 1 }))
+		.set({ second: 0, millisecond: 0 })
+		.toString()
 });
 
 export type VotingGeneratorDates = {
@@ -73,9 +63,12 @@ export const votingGeneratorDatesWithTimezone = derived(
 	($votingGeneratorDates) => {
 		return {
 			startDate: $votingGeneratorDates.startDate
-				? fromDate(new Date($votingGeneratorDates.startDate), getLocalTimeZone()).toString()
+				? fromDate(new Date($votingGeneratorDates.startDate), getLocalTimeZone()).toAbsoluteString()
 				: undefined,
-			endDate: fromDate(new Date($votingGeneratorDates.endDate), getLocalTimeZone()).toString()
+			endDate: fromDate(
+				new Date($votingGeneratorDates.endDate),
+				getLocalTimeZone()
+			).toAbsoluteString()
 		};
 	}
 );
