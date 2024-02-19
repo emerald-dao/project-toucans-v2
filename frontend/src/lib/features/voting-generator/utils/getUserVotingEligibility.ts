@@ -4,7 +4,7 @@ import type { User } from '@emerald-dao/component-library/models/user.interface'
 
 export const getUserVotingEligibility = async (
 	user: User,
-	voting: VotingRound
+	votingRound: VotingRound
 ): Promise<{
 	eligible: boolean;
 	reason?: 'required-nfts-not-owned' | 'required-nfts-already-used' | 'already-voted' | null;
@@ -12,21 +12,21 @@ export const getUserVotingEligibility = async (
 }> => {
 	// CHECK NFT MODE CASES
 	if (
-		(voting.nft_mode === 'nft-holders' || voting.nft_mode === 'nft-donators') &&
-		voting.required_nft_collection_id
+		(votingRound.nft_mode === 'nft-holders' || votingRound.nft_mode === 'nft-donators') &&
+		votingRound.required_nft_collection_id
 	) {
 		let eligibleNftsIds: string[] = [];
 
-		if (voting.nft_mode === 'nft-holders') {
+		if (votingRound.nft_mode === 'nft-holders') {
 			eligibleNftsIds = await getUserNftsFromCollection(
 				user.addr,
-				voting.required_nft_collection_id
+				votingRound.required_nft_collection_id
 			);
-		} else if (voting.nft_mode === 'nft-donators') {
+		} else if (votingRound.nft_mode === 'nft-donators') {
 			eligibleNftsIds = await getUserDonatedNftsFromCollection(
 				user.addr,
-				voting.required_nft_collection_id,
-				voting.project_id
+				votingRound.required_nft_collection_id,
+				votingRound.project_id
 			);
 		}
 
@@ -41,7 +41,7 @@ export const getUserVotingEligibility = async (
 		const { data: usedNfts, error } = await supabase
 			.from('votes')
 			.select('nft_uuid')
-			.eq('voting_round_id', voting.id)
+			.eq('voting_round_id', votingRound.id)
 			.in('nft_uuid', eligibleNftsIds);
 
 		if (error) {
@@ -70,7 +70,7 @@ export const getUserVotingEligibility = async (
 	const { data: votes, error } = await supabase
 		.from('votes')
 		.select('count(*)')
-		.eq('voting_round_id', voting.id)
+		.eq('voting_round_id', votingRound.id)
 		.eq('wallet_address', user.addr);
 
 	if (error) {
