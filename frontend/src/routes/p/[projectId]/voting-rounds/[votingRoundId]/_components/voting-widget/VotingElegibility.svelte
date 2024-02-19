@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import type { VotingRoundStatus } from './voting-round-status.type';
-	import { user } from '$stores/flow/FlowStore';
 
 	export let isUserEligible: boolean;
 	export let votingStauts: VotingRoundStatus;

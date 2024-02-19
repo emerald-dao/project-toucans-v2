@@ -1,7 +1,7 @@
 import { supabase } from '$lib/supabaseClient';
 import type { Database } from '../../../../../supabase/database.types';
 
-export async function fetchAllVotingRounds(projectId: string) {
+export async function fetchAllVotingRounds(projectId: string): Promise<VotingRound[]> {
 	const { data } = await supabase
 		.from('voting_rounds')
 		.select('*')

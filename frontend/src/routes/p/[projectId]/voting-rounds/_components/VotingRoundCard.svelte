@@ -1,28 +1,34 @@
 <script lang="ts">
-	import type { VotingRoundStatus } from '../[votingRoundId]/_components/voting-widget/voting-round-status.type.ts';
 	import { page } from '$app/stores';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import VotingElegibility from '../[votingRoundId]/_components/voting-widget/VotingElegibility.svelte';
+	import { createVotingRoundStatusStore } from '$lib/features/voting-generator/utils/createVotingRoundStatusStore.js';
 
 	export let votingRound: VotingRound;
 
-	$: isUserEligible = true;
+	const votingRoundStatus = createVotingRoundStatusStore(
+		votingRound.end_date,
+		votingRound.start_date
+	);
+
 	$: userHasVoted = false;
-	$: activeRoundStatus = 'upcoming' as VotingRoundStatus;
+	$: isUserEligible = true;
 </script>
 
 <a href={`/p/${$page.params.projectId}/voting-rounds/${votingRound.id}`} class="card-primary">
 	<div class="card-header">
 		<h3>{votingRound.name}</h3>
-		<VotingElegibility {isUserEligible} {userHasVoted} votingStauts={activeRoundStatus} />
+		<VotingElegibility {isUserEligible} {userHasVoted} votingStauts={$votingRoundStatus.status} />
 		<p>{votingRound.description}</p>
 	</div>
 	<div class="card-body">
 		<div class="row-10">
-			<div>
-				<p class="date-label w-medium xsmall">Start date</p>
-				<p class="small">{new Date(votingRound.start_date).toLocaleDateString()}</p>
-			</div>
+			{#if votingRound.start_date}
+				<div>
+					<p class="date-label w-medium xsmall">Start date</p>
+					<p class="small">{new Date(votingRound.start_date).toLocaleDateString()}</p>
+				</div>
+			{/if}
 			<div>
 				<p class="date-label w-medium xsmall">End date</p>
 				<p class="small">

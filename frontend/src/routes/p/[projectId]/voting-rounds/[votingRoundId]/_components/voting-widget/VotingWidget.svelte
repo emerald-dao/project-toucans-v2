@@ -15,8 +15,8 @@
 	let selectedOption: number | undefined = undefined;
 
 	const votingRoundStatus = createVotingRoundStatusStore(
-		postgreTimestampToDateTime(votingRound.end_date),
-		votingRound.start_date ? postgreTimestampToDateTime(votingRound.start_date) : undefined
+		votingRound.end_date,
+		votingRound.start_date
 	);
 
 	$: isUserEligible = true;

@@ -5,15 +5,22 @@ import type {
 	VotingRoundStatusStoreData
 } from '../../../../routes/p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
 import { getLocalTimeZone, now as getNow, ZonedDateTime } from '@internationalized/date';
+import { postgreTimestampToDateTime } from './postgreTimestampToDateTime';
 
 export const createVotingRoundStatusStore = (
-	endTimestamp: ZonedDateTime,
-	startTimestamp?: ZonedDateTime
+	endTimestamp: string,
+	startTimestamp: string | null
 ): Readable<VotingRoundStatusStoreData> => {
+	const formattedEndTimestamp = postgreTimestampToDateTime(endTimestamp);
+	const formattedStartTimestamp = startTimestamp
+		? postgreTimestampToDateTime(startTimestamp)
+		: undefined;
+
 	return readable<VotingRoundStatusStoreData>(
-		getVotingStatusStoreData(endTimestamp, startTimestamp),
+		getVotingStatusStoreData(formattedEndTimestamp, formattedStartTimestamp),
 		(set) => {
-			const update = () => set(getVotingStatusStoreData(endTimestamp, startTimestamp));
+			const update = () =>
+				set(getVotingStatusStoreData(formattedEndTimestamp, formattedStartTimestamp));
 
 			update();
 
@@ -34,7 +41,7 @@ const getVotingStatusStoreData = (
 	};
 };
 
-const getVotingStatus = (
+export const getVotingStatus = (
 	endTimestamp: ZonedDateTime,
 	startTimestamp?: ZonedDateTime
 ): VotingRoundStatus => {
