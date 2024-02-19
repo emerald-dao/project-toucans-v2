@@ -1,16 +1,39 @@
+import { getCatalogNFTs } from '$flow/actions';
 import { supabase } from '$lib/supabaseClient';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
-import type { User } from '@emerald-dao/component-library/models/user.interface';
+import type { VotingRoundStatus } from '../../../../routes/p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
+
+export interface VotingEligibility {
+	eligible: boolean;
+	reason?:
+		| 'required-nfts-not-owned'
+		| 'required-nfts-already-used'
+		| 'already-voted'
+		| 'not-connected'
+		| 'voting-round-ended'
+		| null;
+	availableNfts?: string[];
+}
 
 export const getUserVotingEligibility = async (
-	user: User,
-	votingRound: VotingRound
-): Promise<{
-	eligible: boolean;
-	reason?: 'required-nfts-not-owned' | 'required-nfts-already-used' | 'already-voted' | null;
-	availableNfts?: string[];
-}> => {
-	// CHECK NFT MODE CASES
+	userAddress: string | null,
+	votingRound: VotingRound,
+	votingRoundStatus: VotingRoundStatus
+): Promise<VotingEligibility> => {
+	if (votingRoundStatus === 'ended') {
+		return {
+			eligible: false,
+			reason: 'voting-round-ended'
+		};
+	}
+
+	if (!userAddress) {
+		return {
+			eligible: false,
+			reason: 'not-connected'
+		};
+	}
+
 	if (
 		(votingRound.nft_mode === 'nft-holders' || votingRound.nft_mode === 'nft-donators') &&
 		votingRound.required_nft_collection_id
@@ -19,12 +42,12 @@ export const getUserVotingEligibility = async (
 
 		if (votingRound.nft_mode === 'nft-holders') {
 			eligibleNftsIds = await getUserNftsFromCollection(
-				user.addr,
+				userAddress,
 				votingRound.required_nft_collection_id
 			);
 		} else if (votingRound.nft_mode === 'nft-donators') {
 			eligibleNftsIds = await getUserDonatedNftsFromCollection(
-				user.addr,
+				userAddress,
 				votingRound.required_nft_collection_id,
 				votingRound.project_id
 			);
@@ -66,19 +89,18 @@ export const getUserVotingEligibility = async (
 		};
 	}
 
-	// CHECK NO NFT MODE CASE
-	const { data: votes, error } = await supabase
+	const { error, count } = await supabase
 		.from('votes')
-		.select('count(*)')
+		.select('*', { count: 'exact', head: true })
 		.eq('voting_round_id', votingRound.id)
-		.eq('wallet_address', user.addr);
+		.eq('wallet_address', userAddress);
 
 	if (error) {
 		console.error('Error fetching votes', error);
 		throw error;
 	}
 
-	if (votes.length > 0) {
+	if (count !== null && count > 0) {
 		return {
 			eligible: false,
 			reason: 'already-voted'
@@ -94,9 +116,9 @@ const getUserNftsFromCollection = async (
 	walletAddress: string,
 	collectionId: string
 ): Promise<string[]> => {
-	// todo - fetch all the NFTs owned by the user from the collection
+	const nfts = await getCatalogNFTs([collectionId], walletAddress);
 
-	return [''];
+	return Object.values(nfts[collectionId]).map((nft) => nft.id);
 };
 
 const getUserDonatedNftsFromCollection = async (

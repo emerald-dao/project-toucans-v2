@@ -3,6 +3,8 @@
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import VotingElegibility from '../[votingRoundId]/_components/voting-widget/VotingElegibility.svelte';
 	import { createVotingRoundStatusStore } from '$lib/features/voting-generator/utils/createVotingRoundStatusStore.js';
+	import { getUserVotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let votingRound: VotingRound;
 
@@ -11,14 +13,19 @@
 		votingRound.start_date
 	);
 
-	$: userHasVoted = false;
-	$: isUserEligible = true;
+	const userEligibility = getUserVotingEligibility(
+		$user.addr ?? null,
+		votingRound,
+		$votingRoundStatus.status
+	);
 </script>
 
 <a href={`/p/${$page.params.projectId}/voting-rounds/${votingRound.id}`} class="card-primary">
 	<div class="card-header">
 		<h3>{votingRound.name}</h3>
-		<VotingElegibility {isUserEligible} {userHasVoted} votingStauts={$votingRoundStatus.status} />
+		{#await userEligibility then votingEligibility}
+			<VotingElegibility votingStauts={$votingRoundStatus.status} {votingEligibility} />
+		{/await}
 		<p>{votingRound.description}</p>
 	</div>
 	<div class="card-body">

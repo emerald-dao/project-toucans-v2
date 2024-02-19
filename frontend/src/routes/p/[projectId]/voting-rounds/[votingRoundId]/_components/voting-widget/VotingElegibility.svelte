@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import type { VotingRoundStatus } from './voting-round-status.type';
+	import type { VotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility';
 
-	export let isUserEligible: boolean;
 	export let votingStauts: VotingRoundStatus;
-	export let userHasVoted: boolean;
+	export let votingEligibility: VotingEligibility;
 </script>
 
 <div class="main-wrapper">
@@ -26,13 +26,13 @@
 			</span>
 		{/if}
 	</div>
-	{#if (votingStauts === 'active' || votingStauts === 'upcoming') && !userHasVoted}
+	{#if votingEligibility.eligible}
 		<div
 			class="elegibility-label"
-			class:active={isUserEligible && votingStauts === 'active'}
-			class:upcoming={isUserEligible && votingStauts === 'upcoming'}
+			class:active={votingEligibility.eligible && votingStauts === 'active'}
+			class:upcoming={votingEligibility.eligible && votingStauts === 'upcoming'}
 		>
-			{#if isUserEligible}
+			{#if votingEligibility.eligible}
 				<span class="row-1 align-center">
 					<Icon icon="tabler:check" />
 					You are eligible
@@ -41,7 +41,7 @@
 				<span>You are not eligible</span>
 			{/if}
 		</div>
-	{:else if userHasVoted}
+	{:else if votingEligibility.reason === ('already-voted' || 'required-nfts-already-used')}
 		<div class="elegibility-label">
 			<span class="row-1 align-center">
 				<Icon icon="tabler:check" />
