@@ -6,12 +6,12 @@ import type { VotingRoundStatus } from '../../../../routes/p/[projectId]/voting-
 export interface VotingEligibility {
 	eligible: boolean;
 	reason?:
-		| 'required-nfts-not-owned'
-		| 'required-nfts-already-used'
-		| 'already-voted'
-		| 'not-connected'
-		| 'voting-round-ended'
-		| null;
+	| 'required-nfts-not-owned'
+	| 'required-nfts-already-used'
+	| 'already-voted'
+	| 'not-connected'
+	| 'voting-round-ended'
+	| null;
 	availableNfts?: string[];
 }
 
@@ -49,7 +49,9 @@ export const getUserVotingEligibility = async (
 			eligibleNftsIds = await getUserDonatedNftsFromCollection(
 				userAddress,
 				votingRound.required_nft_collection_id,
-				votingRound.project_id
+				votingRound.project_id,
+				votingRound.start_date,
+				votingRound.end_date
 			);
 		}
 
@@ -124,9 +126,32 @@ const getUserNftsFromCollection = async (
 const getUserDonatedNftsFromCollection = async (
 	walletAddress: string,
 	collectionId: string,
-	projectId: string
+	projectId: string,
+	startDate: string,
+	endDate: string
 ): Promise<string[]> => {
-	// todo - fetch all the NFTs donated by the user from the collection to the project
+	const { data, error } = await supabase
+		.from('events')
+		.select('data, project_id, timestamp, type')
+		.eq('type', 'DonateNFT')
+		.eq('project_id', projectId)
+		.eq('data.by', walletAddress)
+		.eq('data.collectionIdentifier', collectionId)
+		.gte('timestamp', startDate)
+		.lte('timestamp', endDate);
 
-	return [''];
+	if (error) {
+		throw error;
+	}
+
+	// Calculate total amount donated by the specified user
+	let nftsDonated: string[] = [];
+	data.forEach(event => {
+		const { uuids } = event.data;
+		if (uuids) {
+			nftsDonated = nftsDonated.concat(uuids);
+		}
+	});
+
+	return nftsDonated;
 };
