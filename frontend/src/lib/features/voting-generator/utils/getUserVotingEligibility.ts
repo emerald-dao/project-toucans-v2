@@ -135,8 +135,8 @@ const getUserDonatedNftsFromCollection = async (
 		.select('data, project_id, timestamp, type')
 		.eq('type', 'DonateNFT')
 		.eq('project_id', projectId)
-		.eq('data.by', walletAddress)
-		.eq('data.collectionIdentifier', collectionId)
+		.eq('data:by->>', walletAddress)
+		.eq('data:collectionIdentifier->>', collectionId)
 		.gte('timestamp', startDate)
 		.lte('timestamp', endDate);
 
