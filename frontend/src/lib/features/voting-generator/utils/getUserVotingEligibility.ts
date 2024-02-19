@@ -6,12 +6,12 @@ import type { VotingRoundStatus } from '../../../../routes/p/[projectId]/voting-
 export interface VotingEligibility {
 	eligible: boolean;
 	reason?:
-	| 'required-nfts-not-owned'
-	| 'required-nfts-already-used'
-	| 'already-voted'
-	| 'not-connected'
-	| 'voting-round-ended'
-	| null;
+		| 'required-nfts-not-owned'
+		| 'required-nfts-already-used'
+		| 'already-voted'
+		| 'not-connected'
+		| 'voting-round-ended'
+		| null;
 	availableNfts?: string[];
 }
 
@@ -50,7 +50,7 @@ export const getUserVotingEligibility = async (
 				userAddress,
 				votingRound.required_nft_collection_id,
 				votingRound.project_id,
-				votingRound.start_date,
+				votingRound.start_date ?? votingRound.created_at,
 				votingRound.end_date
 			);
 		}
@@ -62,7 +62,6 @@ export const getUserVotingEligibility = async (
 			};
 		}
 
-		// CHECK USED NFTS
 		const { data: usedNfts, error } = await supabase
 			.from('votes')
 			.select('nft_uuid')
@@ -146,7 +145,7 @@ const getUserDonatedNftsFromCollection = async (
 
 	// Calculate total amount donated by the specified user
 	let nftsDonated: string[] = [];
-	data.forEach(event => {
+	data.forEach((event) => {
 		const { uuids } = event.data;
 		if (uuids) {
 			nftsDonated = nftsDonated.concat(uuids);
