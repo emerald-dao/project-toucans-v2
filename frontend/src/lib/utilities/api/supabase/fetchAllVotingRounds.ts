@@ -6,11 +6,12 @@ export async function fetchAllVotingRounds(projectId: string): Promise<VotingRou
 		.from('voting_rounds')
 		.select('*')
 		.eq('project_id', projectId)
-		.order('start_date', { ascending: false });
+		.order('end_date', { ascending: false });
 
 	if (!data || !data.length) {
 		return [];
 	}
+
 	return data;
 }
 

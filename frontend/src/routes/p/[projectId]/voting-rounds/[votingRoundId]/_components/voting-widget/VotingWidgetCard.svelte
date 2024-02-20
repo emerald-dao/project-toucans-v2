@@ -1,18 +1,18 @@
 <script lang="ts">
 	import Image from '$components/Image.svelte';
 	import { getCatalogByCollectionIDs } from '$flow/actions';
+	import type { VotingRoundStoreData } from '$lib/features/voting-generator/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { VOTING_NFT_MODES } from '../../../../../../admin/[projectId]/voting/_components/steps/3-nft-mode/votingNftModes';
 	import VotingRoundTimer from './VotingRoundTimer.svelte';
-	import type { VotingRoundStatusStoreData } from './voting-round-status.type';
 
 	export let votingRound: VotingRound;
-	export let activeRoundStatus: VotingRoundStatusStoreData;
+	export let votingRoundStoreData: VotingRoundStoreData;
 </script>
 
 <div class="card">
 	<div class="voting-round-data-wrapper">
-		{activeRoundStatus.status}
+		{votingRoundStoreData.votingStatus}
 		<div class="column-7">
 			<div class="column-3">
 				<h4 class="w-medium">
@@ -22,21 +22,15 @@
 					<p class="small">{votingRound.description}</p>
 				{/if}
 			</div>
-			{#if activeRoundStatus.status === 'active' && activeRoundStatus.remainingTime}
+			{#if votingRoundStoreData.votingStatus === 'active' && votingRoundStoreData.remainingTime}
 				<VotingRoundTimer
-					title="Finishes in"
-					days={activeRoundStatus.remainingTime.days}
-					hours={activeRoundStatus.remainingTime.hours}
-					minutes={activeRoundStatus.remainingTime.minutes}
-					seconds={activeRoundStatus.remainingTime.seconds}
+					remainingTime={votingRoundStoreData.remainingTime}
+					votingStatus={votingRoundStoreData.votingStatus}
 				/>
-			{:else if activeRoundStatus.status === 'upcoming' && activeRoundStatus.remainingTime}
+			{:else if votingRoundStoreData.votingStatus === 'upcoming' && votingRoundStoreData.remainingTime}
 				<VotingRoundTimer
-					title="Starts in"
-					days={activeRoundStatus.remainingTime.days}
-					hours={activeRoundStatus.remainingTime.hours}
-					minutes={activeRoundStatus.remainingTime.minutes}
-					seconds={activeRoundStatus.remainingTime.seconds}
+					remainingTime={votingRoundStoreData.remainingTime}
+					votingStatus={votingRoundStoreData.votingStatus}
 				/>
 			{/if}
 			<div class="nft-mode-wrapper">

@@ -1,28 +1,35 @@
 <script lang="ts">
-	export let title: string;
-	export let days: number;
-	export let hours: number;
-	export let minutes: number;
-	export let seconds: number;
+	import type { RemainingTime, VotingRoundStatus } from './voting-round-status.type';
+
+	export let remainingTime: RemainingTime;
+	export let votingStatus: VotingRoundStatus;
+
+	const TITLES: {
+		[key in VotingRoundStatus]: string;
+	} = {
+		upcoming: 'Starts in',
+		active: 'Ends in',
+		ended: 'Ended'
+	};
 </script>
 
 <div class="main-wrapper">
-	<span class="xsmall w-medium title">{title}</span>
+	<span class="xsmall w-medium title">{TITLES[votingStatus]}</span>
 	<div class="time-boxes-wrapper">
 		<div class="date-card">
-			<span>{days}</span>
+			<span>{remainingTime.days}</span>
 			<span class="xsmall">Days</span>
 		</div>
 		<div class="date-card">
-			<span>{hours}</span>
+			<span>{remainingTime.hours}</span>
 			<span class="xsmall">Hours</span>
 		</div>
 		<div class="date-card">
-			<span>{minutes}</span>
+			<span>{remainingTime.minutes}</span>
 			<span class="xsmall">Minutes</span>
 		</div>
 		<div class="date-card">
-			<span>{seconds}</span>
+			<span>{remainingTime.seconds}</span>
 			<span class="xsmall">Seconds</span>
 		</div>
 	</div>

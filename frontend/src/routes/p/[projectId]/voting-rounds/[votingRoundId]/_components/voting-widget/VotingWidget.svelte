@@ -1,9 +1,9 @@
 <script lang="ts">
 	import PieChart from '$components/charts/PieChart.svelte';
-	import { createVotingRoundStatusStore } from '$lib/features/voting-generator/utils/createVotingRoundStatusStore';
-	import { postgreTimestampToDateTime } from '$lib/features/voting-generator/utils/postgreTimestampToDateTime';
+	import { createVotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { fetchVotingRoundVotes } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
+	import { user } from '$stores/flow/FlowStore';
 	import VotingElegibility from './VotingElegibility.svelte';
 	import VotingOptionCard from './VotingOptionCard.svelte';
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
@@ -14,10 +14,7 @@
 
 	let selectedOption: number | undefined = undefined;
 
-	const votingRoundStatus = createVotingRoundStatusStore(
-		votingRound.end_date,
-		votingRound.start_date
-	);
+	$: votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
 
 	$: isUserEligible = true;
 	$: userHasVoted = false;
@@ -26,49 +23,52 @@
 </script>
 
 <div class="column-3">
-	<VotingWidgetCard {votingRound} activeRoundStatus={$votingRoundStatus}>
-		{#await activeRoundVotes}
-			<em>Loading options...</em>
-		{:then votes}
-			{@const totalAmountOfVotes = votes.reduce((acc, vote) => acc + vote.votes.length, 0)}
-			{@const mostVotedOptions = votes
-				.filter((vote) => vote.votes.length === Math.max(...votes.map((vote) => vote.votes.length)))
-				.map((vote) => vote.option_number)}
-			<div class="voting-data-wrapper">
-				<div class="options-wrapper">
-					<VotingElegibility
-						{isUserEligible}
-						{userHasVoted}
-						votingStauts={$votingRoundStatus.status}
-					/>
-					{#each votes as vote}
-						<VotingOptionCard
-							votingOption={vote}
-							votesPercentage={((vote.votes.length / totalAmountOfVotes) * 100).toFixed(2) + '%'}
-							bind:selectedOption
-							{isUserEligible}
-							votingRoundStatus={$votingRoundStatus.status}
-							{mostVotedOptions}
-							{userVotedOption}
+	{#await $votingRoundStore then votingRoundStoreData}
+		<VotingWidgetCard {votingRound} {votingRoundStoreData}>
+			{#await activeRoundVotes}
+				<em>Loading options...</em>
+			{:then votes}
+				{@const totalAmountOfVotes = votes.reduce((acc, vote) => acc + vote.votes.length, 0)}
+				{@const mostVotedOptions = votes
+					.filter(
+						(vote) => vote.votes.length === Math.max(...votes.map((vote) => vote.votes.length))
+					)
+					.map((vote) => vote.option_number)}
+				<div class="voting-data-wrapper">
+					<div class="options-wrapper">
+						<VotingElegibility
+							votingStauts={votingRoundStoreData.votingStatus}
+							votingEligibility={votingRoundStoreData.votingElegibility}
 						/>
-					{/each}
+						{#each votes as vote}
+							<VotingOptionCard
+								votingOption={vote}
+								votesPercentage={((vote.votes.length / totalAmountOfVotes) * 100).toFixed(2) + '%'}
+								bind:selectedOption
+								{isUserEligible}
+								votingRoundStatus={votingRoundStoreData.votingStatus}
+								{mostVotedOptions}
+								{userVotedOption}
+							/>
+						{/each}
+					</div>
+					<div class="chart-wrapper">
+						{#if votingRoundStoreData.votingStatus === 'upcoming'}
+							<em class="text-small">Chart will be available once the round starts</em>
+						{:else if totalAmountOfVotes === 0}
+							<em class="text-small">No votes yet</em>
+						{:else}
+							<PieChart
+								title={votingRound.name}
+								chartData={votes.map((vote) => vote.votes.length)}
+								labels={votes.map((vote) => vote.name)}
+							/>
+						{/if}
+					</div>
 				</div>
-				<div class="chart-wrapper">
-					{#if $votingRoundStatus.status === 'upcoming'}
-						<em class="text-small">Chart will be available once the round starts</em>
-					{:else if totalAmountOfVotes === 0}
-						<em class="text-small">No votes yet</em>
-					{:else}
-						<PieChart
-							title={votingRound.name}
-							chartData={votes.map((vote) => vote.votes.length)}
-							labels={votes.map((vote) => vote.name)}
-						/>
-					{/if}
-				</div>
-			</div>
-		{/await}
-	</VotingWidgetCard>
+			{/await}
+		</VotingWidgetCard>
+	{/await}
 </div>
 
 <style lang="scss">

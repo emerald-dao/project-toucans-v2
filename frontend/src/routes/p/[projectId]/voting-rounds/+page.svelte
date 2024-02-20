@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Pagination from '$components/atoms/Pagination.svelte';
 	import SearchBar from '$components/search-bar/SearchBar.svelte';
+	import { postgreTimestampToDateTime } from '$lib/features/voting-generator/utils/postgreTimestampToDateTime';
+	import { getLocalTimeZone, now } from '@internationalized/date';
 	import VotingRoundCard from './_components/VotingRoundCard.svelte';
 
 	export let data;
@@ -14,7 +16,9 @@
 	$: currentPageVotingRounds = showFinished
 		? filteredRounds.slice(pageStart, pageEnd)
 		: filteredRounds
-				.filter((round) => new Date(round.end_date) < new Date())
+				.filter(
+					(round) => postgreTimestampToDateTime(round.end_date).compare(now(getLocalTimeZone())) > 0
+				)
 				.slice(pageStart, pageEnd);
 </script>
 

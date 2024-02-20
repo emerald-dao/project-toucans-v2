@@ -1,30 +1,35 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import VotingElegibility from '../[votingRoundId]/_components/voting-widget/VotingElegibility.svelte';
-	import { createVotingRoundStatusStore } from '$lib/features/voting-generator/utils/createVotingRoundStatusStore.js';
-	import { getUserVotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility';
+	import { createVotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore.js';
 	import { user } from '$stores/flow/FlowStore';
+	import VotingRoundTimer from '../[votingRoundId]/_components/voting-widget/VotingRoundTimer.svelte';
 
 	export let votingRound: VotingRound;
 
-	const votingRoundStatus = createVotingRoundStatusStore(
-		votingRound.end_date,
-		votingRound.start_date
-	);
-
-	const userEligibility = getUserVotingEligibility(
-		$user.addr ?? null,
-		votingRound,
-		$votingRoundStatus.status
-	);
+	const votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
 </script>
 
-<a href={`/p/${$page.params.projectId}/voting-rounds/${votingRound.id}`} class="card-primary">
+<a
+	href={`/p/${$page.params.projectId}/voting-rounds/${votingRound.id}`}
+	class="card-primary"
+	in:fly={{ y: 20, duration: 100 }}
+>
 	<div class="card-header">
 		<h3>{votingRound.name}</h3>
-		{#await userEligibility then votingEligibility}
-			<VotingElegibility votingStauts={$votingRoundStatus.status} {votingEligibility} />
+		{#await $votingRoundStore then votingRoundStore}
+			<VotingElegibility
+				votingStauts={votingRoundStore.votingStatus}
+				votingEligibility={votingRoundStore.votingElegibility}
+			/>
+			{#if votingRoundStore.votingStatus === 'upcoming' || votingRoundStore.votingStatus === 'active'}
+				<VotingRoundTimer
+					remainingTime={votingRoundStore.remainingTime}
+					votingStatus={votingRoundStore.votingStatus}
+				/>
+			{/if}
 		{/await}
 		<p>{votingRound.description}</p>
 	</div>

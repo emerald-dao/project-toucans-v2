@@ -147,6 +147,7 @@ const getUserDonatedNftsFromCollection = async (
 	let nftsDonated: string[] = [];
 	data.forEach((event) => {
 		const { uuids } = event.data;
+
 		if (uuids) {
 			nftsDonated = nftsDonated.concat(uuids);
 		}
