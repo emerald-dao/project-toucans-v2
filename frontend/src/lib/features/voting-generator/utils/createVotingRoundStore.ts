@@ -10,14 +10,14 @@ import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRoun
 
 export type VotingRoundStoreData = {
 	votingStatus: VotingRoundStatus;
-	votingElegibility: VotingEligibility;
+	votingElegibility: Promise<VotingEligibility>;
 	remainingTime: RemainingTime;
 };
 
 export const createVotingRoundStore = (
 	votingRound: VotingRound,
 	userAddress: string | null
-): Readable<Promise<VotingRoundStoreData>> => {
+): Readable<VotingRoundStoreData> => {
 	const formattedEndTimestamp = postgreTimestampToDateTime(votingRound.end_date);
 	const formattedStartTimestamp = postgreTimestampToDateTime(
 		votingRound.start_date ?? votingRound.created_at
@@ -53,9 +53,9 @@ export const createVotingRoundStore = (
 
 	return derived(
 		[votingStatus, remainingTime, votingElegibility],
-		async ([$votingStatus, $remainingTime, $votingElegibility]) => ({
+		([$votingStatus, $remainingTime, $votingElegibility]) => ({
 			votingStatus: $votingStatus,
-			votingElegibility: await $votingElegibility,
+			votingElegibility: $votingElegibility,
 			remainingTime: $remainingTime
 		})
 	);

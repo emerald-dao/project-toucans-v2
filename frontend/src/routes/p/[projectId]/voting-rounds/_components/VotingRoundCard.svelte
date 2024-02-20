@@ -19,18 +19,16 @@
 >
 	<div class="card-header">
 		<h3>{votingRound.name}</h3>
-		{#await $votingRoundStore then votingRoundStore}
-			<VotingElegibility
-				votingStauts={votingRoundStore.votingStatus}
-				votingEligibility={votingRoundStore.votingElegibility}
+		<VotingElegibility
+			votingStauts={$votingRoundStore.votingStatus}
+			votingEligibilityPromise={$votingRoundStore.votingElegibility}
+		/>
+		{#if $votingRoundStore.votingStatus === 'upcoming' || $votingRoundStore.votingStatus === 'active'}
+			<VotingRoundTimer
+				remainingTime={$votingRoundStore.remainingTime}
+				votingStatus={$votingRoundStore.votingStatus}
 			/>
-			{#if votingRoundStore.votingStatus === 'upcoming' || votingRoundStore.votingStatus === 'active'}
-				<VotingRoundTimer
-					remainingTime={votingRoundStore.remainingTime}
-					votingStatus={votingRoundStore.votingStatus}
-				/>
-			{/if}
-		{/await}
+		{/if}
 		<p>{votingRound.description}</p>
 	</div>
 	<div class="card-body">

@@ -7,12 +7,11 @@
 	import VotingRoundTimer from './VotingRoundTimer.svelte';
 
 	export let votingRound: VotingRound;
-	export let votingRoundStoreData: VotingRoundStoreData;
+	export let votingRoundStore: VotingRoundStoreData;
 </script>
 
 <div class="card">
 	<div class="voting-round-data-wrapper">
-		{votingRoundStoreData.votingStatus}
 		<div class="column-7">
 			<div class="column-3">
 				<h4 class="w-medium">
@@ -22,17 +21,19 @@
 					<p class="small">{votingRound.description}</p>
 				{/if}
 			</div>
-			{#if votingRoundStoreData.votingStatus === 'active' && votingRoundStoreData.remainingTime}
-				<VotingRoundTimer
-					remainingTime={votingRoundStoreData.remainingTime}
-					votingStatus={votingRoundStoreData.votingStatus}
-				/>
-			{:else if votingRoundStoreData.votingStatus === 'upcoming' && votingRoundStoreData.remainingTime}
-				<VotingRoundTimer
-					remainingTime={votingRoundStoreData.remainingTime}
-					votingStatus={votingRoundStoreData.votingStatus}
-				/>
-			{/if}
+			{#await votingRoundStore then votingRoundStoreData}
+				{#if votingRoundStoreData.votingStatus === 'active' && votingRoundStoreData.remainingTime}
+					<VotingRoundTimer
+						remainingTime={votingRoundStoreData.remainingTime}
+						votingStatus={votingRoundStoreData.votingStatus}
+					/>
+				{:else if votingRoundStoreData.votingStatus === 'upcoming' && votingRoundStoreData.remainingTime}
+					<VotingRoundTimer
+						remainingTime={votingRoundStoreData.remainingTime}
+						votingStatus={votingRoundStoreData.votingStatus}
+					/>
+				{/if}
+			{/await}
 			<div class="nft-mode-wrapper">
 				<div class="nft-mode-data-wrapper">
 					<div class="voting-mode-label">

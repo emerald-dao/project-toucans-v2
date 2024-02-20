@@ -4,7 +4,7 @@
 	import type { VotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility';
 
 	export let votingStauts: VotingRoundStatus;
-	export let votingEligibility: VotingEligibility;
+	export let votingEligibilityPromise: Promise<VotingEligibility>;
 </script>
 
 <div class="main-wrapper">
@@ -26,29 +26,31 @@
 			</span>
 		{/if}
 	</div>
-	{#if votingEligibility.eligible}
-		<div
-			class="elegibility-label"
-			class:active={votingEligibility.eligible && votingStauts === 'active'}
-			class:upcoming={votingEligibility.eligible && votingStauts === 'upcoming'}
-		>
-			{#if votingEligibility.eligible}
+	{#await votingEligibilityPromise then votingEligibility}
+		{#if votingEligibility.eligible}
+			<div
+				class="elegibility-label"
+				class:active={votingEligibility.eligible && votingStauts === 'active'}
+				class:upcoming={votingEligibility.eligible && votingStauts === 'upcoming'}
+			>
+				{#if votingEligibility.eligible}
+					<span class="row-1 align-center">
+						<Icon icon="tabler:check" />
+						You are eligible
+					</span>
+				{:else}
+					<span>You are not eligible</span>
+				{/if}
+			</div>
+		{:else if votingEligibility.reason === ('already-voted' || 'required-nfts-already-used')}
+			<div class="elegibility-label">
 				<span class="row-1 align-center">
 					<Icon icon="tabler:check" />
-					You are eligible
+					You have already voted
 				</span>
-			{:else}
-				<span>You are not eligible</span>
-			{/if}
-		</div>
-	{:else if votingEligibility.reason === ('already-voted' || 'required-nfts-already-used')}
-		<div class="elegibility-label">
-			<span class="row-1 align-center">
-				<Icon icon="tabler:check" />
-				You have already voted
-			</span>
-		</div>
-	{/if}
+			</div>
+		{/if}
+	{/await}
 </div>
 
 <style lang="scss">
