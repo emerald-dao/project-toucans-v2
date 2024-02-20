@@ -20,7 +20,7 @@
 	<div class="card-header">
 		<h3>{votingRound.name}</h3>
 		<VotingElegibility
-			votingStauts={$votingRoundStore.votingStatus}
+			votingStatus={$votingRoundStore.votingStatus}
 			votingEligibilityPromise={$votingRoundStore.votingElegibility}
 		/>
 		{#if $votingRoundStore.votingStatus === 'upcoming' || $votingRoundStore.votingStatus === 'active'}

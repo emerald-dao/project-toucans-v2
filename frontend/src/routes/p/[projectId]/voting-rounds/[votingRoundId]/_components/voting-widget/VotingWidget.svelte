@@ -34,7 +34,7 @@
 			<div class="voting-data-wrapper">
 				<div class="options-wrapper">
 					<VotingElegibility
-						votingStauts={$votingRoundStore.votingStatus}
+						votingStatus={$votingRoundStore.votingStatus}
 						votingEligibilityPromise={$votingRoundStore.votingElegibility}
 					/>
 					{#each votes as vote}

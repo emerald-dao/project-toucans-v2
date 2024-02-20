@@ -3,54 +3,56 @@
 	import type { VotingRoundStatus } from './voting-round-status.type';
 	import type { VotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility';
 
-	export let votingStauts: VotingRoundStatus;
+	export let votingStatus: VotingRoundStatus;
 	export let votingEligibilityPromise: Promise<VotingEligibility>;
 </script>
 
 <div class="main-wrapper">
-	<div class="status-label" class:active={votingStauts === 'active'}>
-		{#if votingStauts === 'active'}
+	<div class="status-label" class:active={votingStatus === 'active'}>
+		{#if votingStatus === 'active'}
 			<span class="row-1 align-center">
 				<Icon icon="tabler:check" />
 				Round is active
 			</span>
-		{:else if votingStauts === 'upcoming'}
+		{:else if votingStatus === 'upcoming'}
 			<span class="row-1 align-center">
 				<Icon icon="tabler:clock" />
 				Round is upcoming
 			</span>
-		{:else if votingStauts === 'ended'}
+		{:else if votingStatus === 'ended'}
 			<span class="row-1 align-center">
 				<Icon icon="tabler:clock-check" />
 				Round has finished
 			</span>
 		{/if}
 	</div>
-	{#await votingEligibilityPromise then votingEligibility}
-		{#if votingEligibility.eligible}
-			<div
-				class="elegibility-label"
-				class:active={votingEligibility.eligible && votingStauts === 'active'}
-				class:upcoming={votingEligibility.eligible && votingStauts === 'upcoming'}
-			>
-				{#if votingEligibility.eligible}
+	{#if votingStatus !== 'ended'}
+		{#await votingEligibilityPromise then votingEligibility}
+			{#if votingEligibility.reason && (votingEligibility.reason === 'already-voted' || votingEligibility.reason === 'required-nfts-already-used')}
+				<div class="elegibility-label">
 					<span class="row-1 align-center">
 						<Icon icon="tabler:check" />
-						You are eligible
+						You have already voted
 					</span>
-				{:else}
-					<span>You are not eligible</span>
-				{/if}
-			</div>
-		{:else if votingEligibility.reason === ('already-voted' || 'required-nfts-already-used')}
-			<div class="elegibility-label">
-				<span class="row-1 align-center">
-					<Icon icon="tabler:check" />
-					You have already voted
-				</span>
-			</div>
-		{/if}
-	{/await}
+				</div>
+			{:else}
+				<div
+					class="elegibility-label"
+					class:active={votingEligibility.eligible && votingStatus === 'active'}
+					class:upcoming={votingEligibility.eligible && votingStatus === 'upcoming'}
+				>
+					{#if votingEligibility.eligible}
+						<span class="row-1 align-center">
+							<Icon icon="tabler:check" />
+							You are eligible
+						</span>
+					{:else}
+						<span>You are not eligible</span>
+					{/if}
+				</div>
+			{/if}
+		{/await}
+	{/if}
 </div>
 
 <style lang="scss">

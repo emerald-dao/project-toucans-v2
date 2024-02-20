@@ -53,6 +53,8 @@ export const getUserVotingEligibility = async (
 				votingRound.start_date ?? votingRound.created_at,
 				votingRound.end_date
 			);
+
+			console.log(eligibleNftsIds);
 		}
 
 		if (eligibleNftsIds.length === 0) {
@@ -134,12 +136,13 @@ const getUserDonatedNftsFromCollection = async (
 		.select('data, project_id, timestamp, type')
 		.eq('type', 'DonateNFT')
 		.eq('project_id', projectId)
-		.eq('data:by->>', walletAddress)
-		.eq('data:collectionIdentifier->>', collectionId)
+		.eq('data->>by', walletAddress)
+		.eq('data->>collectionIdentifier', collectionId)
 		.gte('timestamp', startDate)
 		.lte('timestamp', endDate);
 
 	if (error) {
+		console.log(error);
 		throw error;
 	}
 
