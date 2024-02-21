@@ -1,6 +1,7 @@
 import { getCatalogNFTs } from '$flow/actions';
 import { supabase } from '$lib/supabaseClient';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
+import type { Vote } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
 import type { VotingRoundStatus } from '../../../../routes/p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
 
 export interface VotingEligibility {
@@ -18,7 +19,8 @@ export interface VotingEligibility {
 export const getUserVotingEligibility = async (
 	userAddress: string | null,
 	votingRound: VotingRound,
-	votingRoundStatus: VotingRoundStatus
+	votingRoundStatus: VotingRoundStatus,
+	votes?: Vote[]
 ): Promise<VotingEligibility> => {
 	if (votingRoundStatus === 'ended') {
 		return {
@@ -62,19 +64,31 @@ export const getUserVotingEligibility = async (
 			};
 		}
 
-		const { data: usedNfts, error } = await supabase
-			.from('votes')
-			.select('nft_uuid')
-			.eq('voting_round_id', votingRound.id)
-			.in('nft_uuid', eligibleNftsIds);
+		let usedNftsUuids: string[];
 
-		if (error) {
-			console.error('Error fetching used NFTs', error);
-			throw error;
+		if (votes) {
+			const votesWithUsedNfts = votes.filter((vote) =>
+				vote.nft_uuid ? eligibleNftsIds.includes(vote.nft_uuid) : false
+			);
+
+			usedNftsUuids = votesWithUsedNfts.map((vote) => vote.nft_uuid as string);
+		} else {
+			const { data: usedNfts, error } = await supabase
+				.from('votes')
+				.select('nft_uuid')
+				.eq('voting_round_id', votingRound.id)
+				.in('nft_uuid', eligibleNftsIds);
+
+			if (error) {
+				console.error('Error fetching used NFTs', error);
+				throw error;
+			}
+
+			usedNftsUuids = usedNfts.map((usedNft) => usedNft.nft_uuid as string);
 		}
 
 		const availableNfts = eligibleNftsIds.filter(
-			(nftId) => !usedNfts.some((usedNft) => usedNft.nft_uuid === nftId)
+			(nftId) => !usedNftsUuids.some((usedNftUuid) => usedNftUuid === nftId)
 		);
 
 		if (availableNfts.length === 0) {
@@ -90,18 +104,26 @@ export const getUserVotingEligibility = async (
 		};
 	}
 
-	const { error, count } = await supabase
-		.from('votes')
-		.select('*', { count: 'exact', head: true })
-		.eq('voting_round_id', votingRound.id)
-		.eq('wallet_address', userAddress);
+	let userVotes = 0;
 
-	if (error) {
-		console.error('Error fetching votes', error);
-		throw error;
+	if (votes) {
+		userVotes = votes.filter((vote) => vote.wallet_address === userAddress).length;
+	} else {
+		const { error, count } = await supabase
+			.from('votes')
+			.select('*', { count: 'exact', head: true })
+			.eq('voting_round_id', votingRound.id)
+			.eq('wallet_address', userAddress);
+
+		if (error) {
+			console.error('Error fetching votes', error);
+			throw error;
+		}
+
+		userVotes = count ?? 0;
 	}
 
-	if (count !== null && count > 0) {
+	if (userVotes !== null && userVotes > 0) {
 		return {
 			eligible: false,
 			reason: 'already-voted'

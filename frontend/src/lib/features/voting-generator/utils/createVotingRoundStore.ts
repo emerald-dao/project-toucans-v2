@@ -1,4 +1,4 @@
-import { derived, readable, writable, get } from 'svelte/store';
+import { derived, readable, writable } from 'svelte/store';
 import type {
 	RemainingTime,
 	VotingRoundStatus
@@ -9,12 +9,7 @@ import { getUserVotingEligibility } from './getUserVotingEligibility';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 import { user } from '../../../stores/flow/FlowStore';
 import { supabase } from '$lib/supabaseClient';
-
-export type UserVote = {
-	selected_option: number;
-	nft_uuid: string | null;
-	wallet_address: string;
-};
+import type { Vote } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
 
 export const createVotingRoundStore = (votingRound: VotingRound, userAddress: string | null) => {
 	const formattedEndTimestamp = postgreTimestampToDateTime(votingRound.end_date);
@@ -46,11 +41,16 @@ export const createVotingRoundStore = (votingRound: VotingRound, userAddress: st
 		}
 	);
 
-	const votingElegibility = derived(votingStatus, ($votingStatus) => {
-		return getUserVotingEligibility(userAddress, votingRound, $votingStatus);
-	});
-
 	const allVotes = createAllVotesStore(votingRound);
+
+	const votingElegibility = derived(
+		[votingStatus, allVotes],
+		async ([$votingStatus, $allVotes]) => {
+			const votes = await $allVotes;
+
+			return getUserVotingEligibility(userAddress, votingRound, $votingStatus, votes);
+		}
+	);
 
 	const userVotes = derived([user, allVotes], async ([$user, $allVotes]) => {
 		const votes = await $allVotes;
@@ -123,7 +123,7 @@ export type VotingRoundStore = ReturnType<typeof createVotingRoundStore>;
 const createAllVotesStore = (votingRound: VotingRound) => {
 	const { subscribe, update } = writable(getVotingRoundVotes(votingRound));
 
-	const addVote = (vote: UserVote) => {
+	const addVote = (vote: Vote) => {
 		update(async (votesPromise) => {
 			const votes = await votesPromise;
 			return [...votes, vote];
@@ -193,7 +193,7 @@ const getVotingRoundVotes = async (votingRound: VotingRound) => {
 const getVotes = async (votingRound: VotingRound) => {
 	const { data, error } = await supabase
 		.from('votes')
-		.select('selected_option, nft_uuid, wallet_address')
+		.select('*')
 		.eq('voting_round_id', votingRound.id);
 
 	if (error) {

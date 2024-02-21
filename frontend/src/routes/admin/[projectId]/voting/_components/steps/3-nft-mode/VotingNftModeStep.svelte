@@ -31,6 +31,8 @@
 	let pageEnd: number;
 
 	$: currentPageCollections = filteredCollections.slice(pageStart, pageEnd);
+
+	$: $votingGeneratorNftMode === 'no-nfts' && ($votingGeneratorRequiredCollection = ['']);
 </script>
 
 <div class="column-5">
