@@ -1,69 +1,81 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import type { VotingRoundStatus } from './voting-round-status.type';
 	import type { VotingOption } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
+	import type { VotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
 
 	export let votingOption: VotingOption;
-	export let votesPercentage: string;
-	export let selectedOption: number | undefined;
-	export let isUserEligible: boolean;
-	export let votingRoundStatus: VotingRoundStatus;
-	export let mostVotedOptions: string[];
-	export let userVotedOption: number;
-	export let amountOfVotes: number;
+	export let selectedOptionId: number | undefined;
+	export let votingRoundStore: VotingRoundStore;
 
-	$: votingEnabled =
-		votingRoundStatus === 'active' && isUserEligible && userVotedOption === undefined;
-
-	const handleSelectOption = () => {
+	const handleSelectOption = (votingEnabled: boolean) => {
 		if (!votingEnabled) return;
 
-		selectedOption = votingOption.option_number;
+		selectedOptionId = votingOption.id;
 	};
 
-	$: isSelected = selectedOption === votingOption.option_number;
-	$: isWinner =
-		mostVotedOptions.includes(votingOption.id.toString()) && votingRoundStatus === 'ended';
+	$: isSelected = selectedOptionId === votingOption.id;
 </script>
 
-<div
-	class="card"
-	class:active={isSelected}
-	class:eligible={votingEnabled}
-	class:winner={isWinner}
-	on:click={handleSelectOption}
->
-	{#if userVotedOption === votingOption.option_number}
-		<div class="voted-option">
-			<span class="xsmall row-1 align-center">
-				<Icon icon="lucide:vote" color="var(--clr-primary-main)" />
-				Your vote
-			</span>
-		</div>
-	{/if}
-	<div class="column-1">
-		<div class="row-2 align-center">
-			{#if isWinner}
-				<Icon icon="tabler:trophy" color="var(--clr-primary-main)" />
-			{:else if votingEnabled}
-				{#if isSelected}
-					<Icon icon="tabler:circle-check-filled" color="var(--clr-primary-main)" />
-				{:else}
-					<Icon icon="tabler:circle" />
-				{/if}
-			{/if}
-			<h5 class="text-small w-medium">{votingOption.name}</h5>
-		</div>
-		<span class="text-xsmall off">{`Option ${votingOption.option_number}`}</span>
-	</div>
-	<div class="column-1 align-end">
-		<span class="votes text-small">
-			{amountOfVotes}
-			<span>votes</span>
-		</span>
-		<span class="text-xsmall">{votesPercentage}</span>
-	</div>
-</div>
+{#await $votingRoundStore.votingEligibility then votingEligibility}
+	{#await $votingRoundStore.mostVotedOptions then mostVotedOptions}
+		{#await $votingRoundStore.userVotes then userVotes}
+			{#await $votingRoundStore.allVotes then allVotes}
+				{#await $votingRoundStore.votesResults then votesResults}
+					{@const votingEnabled =
+						$votingRoundStore.votingStatus === 'active' && votingEligibility.eligible}
+					{@const isWinner =
+						mostVotedOptions.includes(votingOption.id.toString()) &&
+						$votingRoundStore.votingStatus === 'ended'}
+					{@const userVotesIds = userVotes.map((vote) => vote.selected_option)}
+					{@const totalAmountOfVotes = allVotes.length}
+					{@const thisOptionVotes = votesResults[votingOption.id]}
+					{@const votesPercentage = ((thisOptionVotes / totalAmountOfVotes) * 100).toFixed(2)}
+					<div
+						class="card"
+						class:active={isSelected}
+						class:eligible={votingEnabled}
+						class:winner={isWinner}
+						on:click={() => handleSelectOption(votingEnabled)}
+						on:keydown
+					>
+						{#if userVotesIds.includes(votingOption.id)}
+							<div class="voted-option">
+								<span class="xsmall row-1 align-center">
+									<Icon icon="lucide:vote" color="var(--clr-primary-main)" />
+									Your vote
+								</span>
+							</div>
+						{/if}
+						<div class="column-1">
+							<div class="row-2 align-center">
+								{#if isWinner}
+									<Icon icon="tabler:trophy" color="var(--clr-primary-main)" />
+								{:else if votingEnabled}
+									{#if isSelected}
+										<Icon icon="tabler:circle-check-filled" color="var(--clr-primary-main)" />
+									{:else}
+										<Icon icon="tabler:circle" />
+									{/if}
+								{/if}
+								<h5 class="text-small w-medium">{votingOption.name}</h5>
+							</div>
+							<span class="text-xsmall off">{`Option ${votingOption.option_number}`}</span>
+						</div>
+						<div class="column-1 align-end">
+							<span class="votes text-small">
+								{thisOptionVotes}
+								<span>votes</span>
+							</span>
+							<span class="text-xsmall"
+								>{`${isNaN(Number(votesPercentage)) ? 0 : votesPercentage}%`}</span
+							>
+						</div>
+					</div>
+				{/await}
+			{/await}
+		{/await}
+	{/await}
+{/await}
 
 <style lang="scss">
 	.card {

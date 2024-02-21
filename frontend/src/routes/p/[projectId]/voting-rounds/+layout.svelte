@@ -19,19 +19,15 @@
 <div class="container header-wrapper row-14 align-center justify-center">
 	<div class="column align-start">
 		{#if $page.params.votingRoundId}
-			<Button
-				href={`/p/${$page.params.projectId}/voting-rounds`}
-				color="neutral"
-				type="transparent"
-			>
+			<a href={`/p/${$page.params.projectId}/voting-rounds`} class="header-link row-1 align-center">
 				<Icon icon="tabler:arrow-left" />
 				All Voting Rounds
-			</Button>
+			</a>
 		{:else}
-			<Button href={`/p/${$page.params.projectId}`} color="neutral" type="transparent">
+			<a href={`/p/${$page.params.projectId}`} class="header-link row-1 align-center">
 				<Icon icon="tabler:arrow-left" />
 				DAO Profile
-			</Button>
+			</a>
 		{/if}
 	</div>
 	<div class="column-2 align-center">

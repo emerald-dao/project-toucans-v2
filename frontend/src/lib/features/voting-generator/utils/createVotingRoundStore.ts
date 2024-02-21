@@ -5,18 +5,10 @@ import type {
 } from '../../../../routes/p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
 import { getLocalTimeZone, now as getNow, ZonedDateTime } from '@internationalized/date';
 import { postgreTimestampToDateTime } from './postgreTimestampToDateTime';
-import { getUserVotingEligibility, type VotingEligibility } from './getUserVotingEligibility';
+import { getUserVotingEligibility } from './getUserVotingEligibility';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 import { user } from '../../../stores/flow/FlowStore';
 import { supabase } from '$lib/supabaseClient';
-
-export type VotingRoundStoreData = {
-	votingStatus: VotingRoundStatus;
-	votingElegibility: Promise<VotingEligibility>;
-	remainingTime: RemainingTime;
-	allVotes: Promise<UserVote[]>;
-	userVotes: Promise<UserVote[]>;
-};
 
 export type UserVote = {
 	selected_option: number;
@@ -104,14 +96,14 @@ export const createVotingRoundStore = (votingRound: VotingRound, userAddress: st
 		([
 			$votingStatus,
 			$remainingTime,
-			$votingElegibility,
+			$votingEligibility,
 			$allVotes,
 			$userVotes,
 			$votesResults,
 			$mostVotedOptions
 		]) => ({
 			votingStatus: $votingStatus,
-			votingElegibility: $votingElegibility,
+			votingEligibility: $votingEligibility,
 			remainingTime: $remainingTime,
 			allVotes: $allVotes,
 			userVotes: $userVotes,

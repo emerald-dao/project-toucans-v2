@@ -21,7 +21,7 @@
 		<h3>{votingRound.name}</h3>
 		<VotingElegibility
 			votingStatus={$votingRoundStore.votingStatus}
-			votingEligibilityPromise={$votingRoundStore.votingElegibility}
+			votingEligibilityPromise={$votingRoundStore.votingEligibility}
 		/>
 		{#if $votingRoundStore.votingStatus === 'upcoming' || $votingRoundStore.votingStatus === 'active'}
 			<VotingRoundTimer

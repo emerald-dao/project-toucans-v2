@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Image from '$components/Image.svelte';
 	import { getCatalogByCollectionIDs } from '$flow/actions';
-	import type { VotingRoundStoreData } from '$lib/features/voting-generator/utils/createVotingRoundStore';
+	import type { VotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { VOTING_NFT_MODES } from '../../../../../../admin/[projectId]/voting/_components/steps/3-nft-mode/votingNftModes';
 	import VotingRoundTimer from './VotingRoundTimer.svelte';
 
 	export let votingRound: VotingRound;
-	export let votingRoundStore: VotingRoundStoreData;
+	export let votingRoundStore: VotingRoundStore;
 </script>
 
 <div class="card">
@@ -21,19 +21,17 @@
 					<p class="small">{votingRound.description}</p>
 				{/if}
 			</div>
-			{#await votingRoundStore then votingRoundStoreData}
-				{#if votingRoundStoreData.votingStatus === 'active' && votingRoundStoreData.remainingTime}
-					<VotingRoundTimer
-						remainingTime={votingRoundStoreData.remainingTime}
-						votingStatus={votingRoundStoreData.votingStatus}
-					/>
-				{:else if votingRoundStoreData.votingStatus === 'upcoming' && votingRoundStoreData.remainingTime}
-					<VotingRoundTimer
-						remainingTime={votingRoundStoreData.remainingTime}
-						votingStatus={votingRoundStoreData.votingStatus}
-					/>
-				{/if}
-			{/await}
+			{#if $votingRoundStore.votingStatus === 'active' && $votingRoundStore.remainingTime}
+				<VotingRoundTimer
+					remainingTime={$votingRoundStore.remainingTime}
+					votingStatus={$votingRoundStore.votingStatus}
+				/>
+			{:else if $votingRoundStore.votingStatus === 'upcoming' && $votingRoundStore.remainingTime}
+				<VotingRoundTimer
+					remainingTime={$votingRoundStore.remainingTime}
+					votingStatus={$votingRoundStore.votingStatus}
+				/>
+			{/if}
 			<div class="nft-mode-wrapper">
 				<div class="nft-mode-data-wrapper">
 					<div class="voting-mode-label">

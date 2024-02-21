@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { postVote } from './../../../../../../admin/[projectId]/voting/_api/postVote';
+	import { page } from '$app/stores';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import { createVotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
@@ -8,10 +10,11 @@
 	import VotingOptionCard from './VotingOptionCard.svelte';
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
 	import { supabase } from '$lib/supabaseClient';
+	import { Button } from '@emerald-dao/component-library';
 
 	export let votingRound: VotingRound;
 
-	let selectedOption: number | undefined = undefined;
+	let selectedOptionId: number | undefined = undefined;
 
 	let votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
 	$: votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
@@ -43,38 +46,48 @@
 		return () => supabase.removeChannel(subscription);
 	});
 
-	$: isUserEligible = true;
-	// $: userHasVoted = false;
+	let submittingVote = false;
+	const handleSubmitVote = async () => {
+		submittingVote = true;
+		if (selectedOptionId && $user.addr) {
+			await postVote(
+				$page.params.projectId,
+				$user,
+				votingRound,
+				selectedOptionId,
+				$votingRoundStore.votingStatus,
+				'0zxnjfekw'
+			);
+		}
 
-	let userVotedOption = 1;
+		submittingVote = false;
+	};
 </script>
 
 <div class="column-3">
 	{#await $votingRoundStore.allVotes then votes}
-		<VotingWidgetCard {votingRound} votingRoundStore={$votingRoundStore}>
+		<VotingWidgetCard {votingRound} {votingRoundStore}>
 			<div class="voting-data-wrapper">
-				<div class="options-wrapper">
+				<div class="column-6">
 					<VotingElegibility
 						votingStatus={$votingRoundStore.votingStatus}
-						votingEligibilityPromise={$votingRoundStore.votingElegibility}
+						votingEligibilityPromise={$votingRoundStore.votingEligibility}
 					/>
-					{#await $votingRoundStore.votesResults then results}
-						{#await $votingRoundStore.allVotes then votes}
-							{#await $votingRoundStore.mostVotedOptions then mostVotedOptions}
-								{#each votingRound.voting_options as option}
-									<VotingOptionCard
-										votingOption={option}
-										votesPercentage={((results[option.id] / votes.length) * 100).toFixed(2) + '%'}
-										bind:selectedOption
-										{isUserEligible}
-										votingRoundStatus={$votingRoundStore.votingStatus}
-										{mostVotedOptions}
-										{userVotedOption}
-										amountOfVotes={results[option.id]}
-									/>
-								{/each}
-							{/await}
-						{/await}
+					<div class="options-wrapper">
+						{#each votingRound.voting_options as option}
+							<VotingOptionCard {votingRoundStore} votingOption={option} bind:selectedOptionId />
+						{/each}
+					</div>
+					{#await $votingRoundStore.votingEligibility then votingEligibility}
+						{#if votingEligibility.eligible}
+							<Button
+								width="full-width"
+								state={submittingVote ? 'loading' : selectedOptionId ? 'active' : 'disabled'}
+								on:click={handleSubmitVote}
+							>
+								{selectedOptionId ? 'Vote' : 'Select an option to vote'}
+							</Button>
+						{/if}
 					{/await}
 				</div>
 				<div class="chart-wrapper">

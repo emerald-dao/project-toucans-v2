@@ -53,8 +53,6 @@ export const getUserVotingEligibility = async (
 				votingRound.start_date ?? votingRound.created_at,
 				votingRound.end_date
 			);
-
-			console.log(eligibleNftsIds);
 		}
 
 		if (eligibleNftsIds.length === 0) {
