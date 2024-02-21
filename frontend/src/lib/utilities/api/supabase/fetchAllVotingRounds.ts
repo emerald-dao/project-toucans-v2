@@ -1,10 +1,14 @@
 import { supabase } from '$lib/supabaseClient';
-import type { Database } from '../../../../../supabase/database.types';
 
-export async function fetchAllVotingRounds(projectId: string): Promise<VotingRound[]> {
+export async function fetchAllVotingRounds(projectId: string) {
 	const { data } = await supabase
 		.from('voting_rounds')
-		.select('*')
+		.select(
+			`*,
+			voting_options (
+        *
+      )`
+		)
 		.eq('project_id', projectId)
 		.order('end_date', { ascending: false });
 
@@ -15,4 +19,8 @@ export async function fetchAllVotingRounds(projectId: string): Promise<VotingRou
 	return data;
 }
 
-export type VotingRound = Database['public']['Tables']['voting_rounds']['Row'];
+export type VotingRound = ArrayElement<Awaited<ReturnType<typeof fetchAllVotingRounds>>>;
+export type VotingOption = ArrayElement<VotingRound['voting_options']>;
+
+type ArrayElement<ArrayType extends readonly unknown[]> =
+	ArrayType extends readonly (infer ElementType)[] ? ElementType : never;

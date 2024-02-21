@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { VotingRoundVotes } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
 	import Icon from '@iconify/svelte';
 	import type { VotingRoundStatus } from './voting-round-status.type';
-	import { user } from '$stores/flow/FlowStore';
+	import type { VotingOption } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
-	export let votingOption: VotingRoundVotes;
+	export let votingOption: VotingOption;
 	export let votesPercentage: string;
 	export let selectedOption: number | undefined;
 	export let isUserEligible: boolean;
 	export let votingRoundStatus: VotingRoundStatus;
-	export let mostVotedOptions: number[];
+	export let mostVotedOptions: string[];
 	export let userVotedOption: number;
+	export let amountOfVotes: number;
 
 	$: votingEnabled =
 		votingRoundStatus === 'active' && isUserEligible && userVotedOption === undefined;
@@ -23,7 +23,7 @@
 
 	$: isSelected = selectedOption === votingOption.option_number;
 	$: isWinner =
-		mostVotedOptions.includes(votingOption.option_number) && votingRoundStatus === 'ended';
+		mostVotedOptions.includes(votingOption.id.toString()) && votingRoundStatus === 'ended';
 </script>
 
 <div
@@ -58,7 +58,7 @@
 	</div>
 	<div class="column-1 align-end">
 		<span class="votes text-small">
-			{votingOption.votes.length}
+			{amountOfVotes}
 			<span>votes</span>
 		</span>
 		<span class="text-xsmall">{votesPercentage}</span>
