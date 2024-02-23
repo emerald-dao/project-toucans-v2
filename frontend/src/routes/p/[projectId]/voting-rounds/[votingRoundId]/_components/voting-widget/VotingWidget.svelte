@@ -6,7 +6,7 @@
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { user } from '$stores/flow/FlowStore';
 	import { onMount } from 'svelte';
-	import VotingElegibility from './VotingElegibility.svelte';
+	import VotingEligibilityLabel from './VotingEligibilityLabel.svelte';
 	import VotingOptionCard from './VotingOptionCard.svelte';
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
 	import { supabase } from '$lib/supabaseClient';
@@ -31,14 +31,12 @@
 					filter: `voting_round_id=eq.${votingRound.id}`
 				},
 				async (payload) => {
-					const selectedOption = payload.new?.selected_option;
-					const nftUuid = payload.new?.nft_uuid;
-					const walletAddress = payload.new?.wallet_address;
-
 					votingRoundStore.allVotes.addVote({
-						selected_option: selectedOption,
-						nft_uuid: nftUuid,
-						wallet_address: walletAddress
+						selected_option: payload.new?.selected_option,
+						nft_uuid: payload.new?.nft_uuid,
+						wallet_address: payload.new?.wallet_address,
+						voting_round_id: votingRound.id,
+						created_at: payload.new?.created_at
 					});
 				}
 			)
@@ -62,14 +60,17 @@
 
 		submittingVote = false;
 	};
+
+	let innerWidth: number;
 </script>
 
+<svelte:window bind:innerWidth />
 <div class="column-3">
 	{#await $votingRoundStore.allVotes then votes}
 		<VotingWidgetCard {votingRound} {votingRoundStore}>
 			<div class="voting-data-wrapper">
 				<div class="column-6">
-					<VotingElegibility
+					<VotingEligibilityLabel
 						votingStatus={$votingRoundStore.votingStatus}
 						votingEligibilityPromise={$votingRoundStore.votingEligibility}
 					/>
@@ -90,19 +91,21 @@
 						{/if}
 					{/await}
 				</div>
-				<div class="chart-wrapper">
-					{#if $votingRoundStore.votingStatus === 'upcoming'}
-						<em class="text-small">Chart will be available once the round starts</em>
-					{:else if votes.length === 0}
-						<em class="text-small">No votes yet</em>
-					{:else}
-						{#await $votingRoundStore.votesResults then results}
-							{@const options = Object.keys(results)}
-							{@const totalVotes = Object.values(results)}
-							<PieChart title={votingRound.name} chartData={totalVotes} labels={options} />
-						{/await}
-					{/if}
-				</div>
+				{#if innerWidth > 1040}
+					<div class="chart-wrapper">
+						{#if $votingRoundStore.votingStatus === 'upcoming'}
+							<em class="text-small">Chart will be available once the round starts</em>
+						{:else if votes.length === 0}
+							<em class="text-small">No votes yet</em>
+						{:else}
+							{#await $votingRoundStore.votesResults then results}
+								{@const options = Object.keys(results)}
+								{@const totalVotes = Object.values(results)}
+								<PieChart title={votingRound.name} chartData={totalVotes} labels={options} />
+							{/await}
+						{/if}
+					</div>
+				{/if}
 			</div>
 		</VotingWidgetCard>
 	{/await}
@@ -111,8 +114,12 @@
 <style lang="scss">
 	.voting-data-wrapper {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
 		gap: var(--space-10);
+		grid-template-columns: 1fr;
+
+		@include mq('medium') {
+			grid-template-columns: 1fr 1fr;
+		}
 
 		.options-wrapper {
 			display: flex;

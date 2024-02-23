@@ -2,6 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import type { VotingRoundStatus } from './voting-round-status.type';
 	import type { VotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let votingStatus: VotingRoundStatus;
 	export let votingEligibilityPromise: Promise<VotingEligibility>;
@@ -10,48 +11,48 @@
 <div class="main-wrapper">
 	<div class="status-label" class:active={votingStatus === 'active'}>
 		{#if votingStatus === 'active'}
-			<span class="row-1 align-center">
+			<span class="row-1 align-start">
 				<Icon icon="tabler:check" />
-				Round is active
+				Active
 			</span>
 		{:else if votingStatus === 'upcoming'}
-			<span class="row-1 align-center">
+			<span class="row-1 align-start">
 				<Icon icon="tabler:clock" />
-				Round is upcoming
+				Upcoming
 			</span>
 		{:else if votingStatus === 'ended'}
-			<span class="row-1 align-center">
+			<span class="row-1 align-start">
 				<Icon icon="tabler:clock-check" />
-				Round has finished
+				Finished
 			</span>
 		{/if}
 	</div>
 	{#if votingStatus !== 'ended'}
-		{#await votingEligibilityPromise then votingEligibility}
-			{#if votingEligibility.reason && (votingEligibility.reason === 'already-voted' || votingEligibility.reason === 'required-nfts-already-used')}
-				<div class="elegibility-label">
-					<span class="row-1 align-center">
-						<Icon icon="tabler:check" />
-						You have already voted
-					</span>
-				</div>
-			{:else}
-				<div
-					class="elegibility-label"
-					class:active={votingEligibility.eligible && votingStatus === 'active'}
-					class:upcoming={votingEligibility.eligible && votingStatus === 'upcoming'}
-				>
-					{#if votingEligibility.eligible}
-						<span class="row-1 align-center">
-							<Icon icon="tabler:check" />
-							You are eligible
-						</span>
-					{:else}
-						<span>You are not eligible</span>
-					{/if}
-				</div>
-			{/if}
-		{/await}
+		{#if $user.addr}
+			{#await votingEligibilityPromise then votingEligibility}
+				{#if votingEligibility.reason && (votingEligibility.reason === 'already-voted' || votingEligibility.reason === 'required-nfts-already-used')}
+					<div class="elegibility-label">
+						<span> Already voted </span>
+					</div>
+				{:else}
+					<div
+						class="elegibility-label"
+						class:active={votingEligibility.eligible && votingStatus === 'active'}
+						class:upcoming={votingEligibility.eligible && votingStatus === 'upcoming'}
+					>
+						{#if votingEligibility.eligible}
+							<span> Eligible </span>
+						{:else}
+							<span> Not eligible </span>
+						{/if}
+					</div>
+				{/if}
+			{/await}
+		{:else}
+			<div class="elegibility-label">
+				<span> Connect wallet </span>
+			</div>
+		{/if}
 	{/if}
 </div>
 
@@ -59,19 +60,19 @@
 	.main-wrapper {
 		display: flex;
 		flex-direction: row;
+		line-height: 1.2;
 
 		.status-label,
 		.elegibility-label {
 			color: var(--clr-heading-inverse);
-			padding-inline: var(--space-2);
 			border-radius: var(--radius-0);
 			font-size: var(--font-size-0);
+			padding: 0.4em 1em;
 		}
 
 		.status-label {
 			background-color: var(--clr-tertiary-badge);
 			color: var(--clr-tertiary-main);
-			border: 1px solid var(--clr-tertiary-badge);
 
 			&:not(:last-child) {
 				border-top-right-radius: 0;
@@ -85,14 +86,10 @@
 		}
 
 		.elegibility-label {
-			background-color: var(--clr-surface-primary);
+			background-color: var(--clr-surface-secondary);
 			color: var(--clr-text-main);
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
-			padding-left: var(--space-1);
-			border-style: solid;
-			border-color: var(--clr-neutral-badge);
-			border-width: 1px 1px 1px 0;
 
 			&.active {
 				background-color: var(--clr-primary-main);

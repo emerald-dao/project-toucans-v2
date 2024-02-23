@@ -25,6 +25,7 @@
 				on:click={() => goto(`/p/${$page.params.projectId}/voting-rounds/${previousVotingRoundId}`)}
 				color="neutral"
 				type="ghost"
+				size="x-small"
 				state={roundIndex === 0 ? 'disabled' : 'active'}
 			>
 				<Icon icon="tabler:arrow-left" />
@@ -34,6 +35,7 @@
 				on:click={() => goto(`/p/${$page.params.projectId}/voting-rounds/${nextVotingRoundId}`)}
 				color="neutral"
 				type="ghost"
+				size="x-small"
 				state={roundIndex === data.votingRounds.length - 1 ? 'disabled' : 'active'}
 			>
 				Next round

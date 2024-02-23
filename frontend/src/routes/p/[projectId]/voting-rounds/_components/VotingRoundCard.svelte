@@ -2,7 +2,7 @@
 	import { fly } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
-	import VotingElegibility from '../[votingRoundId]/_components/voting-widget/VotingElegibility.svelte';
+	import VotingEligibilityLabel from '../[votingRoundId]/_components/voting-widget/VotingEligibilityLabel.svelte';
 	import { createVotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore.js';
 	import { user } from '$stores/flow/FlowStore';
 	import VotingRoundTimer from '../[votingRoundId]/_components/voting-widget/VotingRoundTimer.svelte';
@@ -17,38 +17,20 @@
 	class="card-primary"
 	in:fly={{ y: 20, duration: 100 }}
 >
-	<div class="card-header">
-		<h3>{votingRound.name}</h3>
-		<VotingElegibility
+	<h3>{votingRound.name}</h3>
+	<VotingEligibilityLabel
+		votingStatus={$votingRoundStore.votingStatus}
+		votingEligibilityPromise={$votingRoundStore.votingEligibility}
+	/>
+	{#if votingRound.description}
+		<p class="small">{votingRound.description}</p>
+	{/if}
+	{#if $votingRoundStore.votingStatus === 'upcoming' || $votingRoundStore.votingStatus === 'active'}
+		<VotingRoundTimer
+			remainingTime={$votingRoundStore.remainingTime}
 			votingStatus={$votingRoundStore.votingStatus}
-			votingEligibilityPromise={$votingRoundStore.votingEligibility}
 		/>
-		{#if $votingRoundStore.votingStatus === 'upcoming' || $votingRoundStore.votingStatus === 'active'}
-			<VotingRoundTimer
-				remainingTime={$votingRoundStore.remainingTime}
-				votingStatus={$votingRoundStore.votingStatus}
-			/>
-		{/if}
-		<p>{votingRound.description}</p>
-	</div>
-	<div class="card-body">
-		<div class="row-10">
-			{#if votingRound.start_date}
-				<div>
-					<p class="date-label w-medium xsmall">Start date</p>
-					<p class="small">{new Date(votingRound.start_date).toLocaleDateString()}</p>
-				</div>
-			{/if}
-			<div>
-				<p class="date-label w-medium xsmall">End date</p>
-				<p class="small">
-					{votingRound.end_date
-						? new Date(votingRound.end_date).toLocaleDateString()
-						: 'No end date'}
-				</p>
-			</div>
-		</div>
-	</div>
+	{/if}
 </a>
 
 <style lang="scss">
@@ -56,25 +38,21 @@
 		text-decoration: none;
 		color: inherit;
 		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		gap: var(--space-8);
 		border-radius: var(--radius-1);
+		flex-direction: column;
+		gap: var(--space-5);
+		padding: var(--space-5);
 
-		.card-header {
-			display: flex;
-			flex-direction: column;
-			gap: var(--space-4);
-
-			h3 {
-				font-size: var(--font-size-5);
-			}
+		@include mq('medium') {
+			padding: var(--space-7);
 		}
 
-		.date-label {
-			color: var(--clr-text-off);
-			text-transform: uppercase;
-			letter-spacing: 0.03em;
+		h3 {
+			font-size: var(--font-size-4);
+
+			@include mq('medium') {
+				font-size: var(--font-size-5);
+			}
 		}
 	}
 </style>

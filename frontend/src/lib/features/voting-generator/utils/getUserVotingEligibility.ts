@@ -141,6 +141,10 @@ const getUserNftsFromCollection = async (
 ): Promise<string[]> => {
 	const nfts = await getCatalogNFTs([collectionId], walletAddress);
 
+	if (!nfts[collectionId]) {
+		return [];
+	}
+
 	return Object.values(nfts[collectionId]).map((nft) => nft.id);
 };
 

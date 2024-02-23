@@ -4,6 +4,7 @@
 	import type { VotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { VOTING_NFT_MODES } from '../../../../../../admin/[projectId]/voting/_components/steps/3-nft-mode/votingNftModes';
+	import VotingEligibilityLabel from './VotingEligibilityLabel.svelte';
 	import VotingRoundTimer from './VotingRoundTimer.svelte';
 
 	export let votingRound: VotingRound;
@@ -17,6 +18,10 @@
 				<h4 class="w-medium">
 					{votingRound.name}
 				</h4>
+				<VotingEligibilityLabel
+					votingStatus={$votingRoundStore.votingStatus}
+					votingEligibilityPromise={$votingRoundStore.votingEligibility}
+				/>
 				{#if votingRound.description}
 					<p class="small">{votingRound.description}</p>
 				{/if}
@@ -70,16 +75,21 @@
 <style lang="scss">
 	.card {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
+		grid-template-columns: 1fr;
 		padding: 0;
 		overflow: hidden;
+		border-radius: var(--radius-1);
+
+		@include mq('medium') {
+			grid-template-columns: 1fr 2fr;
+		}
 
 		.voting-round-data-wrapper {
 			background-color: var(--clr-background-secondary);
 			border-right: 0.5px solid var(--clr-border-primary);
 
 			h4 {
-				font-size: var(--font-size-6);
+				font-size: var(--font-size-5);
 
 				span {
 					color: var(--clr-text-off);
@@ -90,7 +100,11 @@
 
 		.voting-round-results-wrapper,
 		.voting-round-data-wrapper {
-			padding: var(--space-10);
+			padding: var(--space-7);
+
+			@include mq('medium') {
+				padding: var(--space-9);
+			}
 		}
 
 		.nft-mode-wrapper {

@@ -10,7 +10,7 @@ export async function fetchAllVotingRounds(projectId: string) {
       )`
 		)
 		.eq('project_id', projectId)
-		.order('end_date', { ascending: false });
+		.order('end_date', { ascending: true });
 
 	if (!data || !data.length) {
 		return [];

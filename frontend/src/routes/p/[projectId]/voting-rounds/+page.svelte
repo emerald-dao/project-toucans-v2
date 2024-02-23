@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { include } from 'vest';
 	import Pagination from '$components/atoms/Pagination.svelte';
 	import SearchBar from '$components/search-bar/SearchBar.svelte';
 	import { postgreTimestampToDateTime } from '$lib/features/voting-generator/utils/postgreTimestampToDateTime';
@@ -23,7 +24,7 @@
 </script>
 
 <div class="column-8">
-	<div class="row-8 align-center">
+	<div class="search-wrapper">
 		<SearchBar
 			items={data.votingRounds}
 			bind:filteredItems={filteredRounds}
@@ -53,5 +54,18 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: var(--space-8);
+	}
+
+	.search-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		align-items: flex-start;
+
+		@include mq('medium') {
+			flex-direction: row;
+			gap: var(--space-6);
+			align-items: center;
+		}
 	}
 </style>
