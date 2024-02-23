@@ -114,11 +114,17 @@
 	{/if}
 </section>
 
-<Seo
+<!-- <Seo
 	title={`${data.generalInfo.name} | Toucans`}
 	description={`${data.generalInfo.description}`}
 	type="WebPage"
 	image={data.generalInfo.logo}
+/> -->
+<Seo
+	title={'Toucans - Community Management'}
+	description={'Manage your community with no-code fungible token & DAO creation. Built-in airdrops, leaderboards, and transparently tracked activity. Completely free.'}
+	type="WebSite"
+	image={'/dashboard-screenshot.png'}
 />
 
 <style type="scss">
