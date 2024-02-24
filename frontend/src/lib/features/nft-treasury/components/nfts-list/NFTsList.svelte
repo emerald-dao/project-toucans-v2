@@ -46,8 +46,8 @@
 <AnimatedSearchBar
 	items={NFTs}
 	bind:filteredItems={filteredNfts}
-	searchTerms={['name']}
-	placeholder="Search NFT name..."
+	searchTerms={['name', 'serial']}
+	placeholder="Search NFT name or serial..."
 />
 {#if currentPageNFTs.length === 0}
 	<p class="small off">
