@@ -2,7 +2,7 @@
 	import { postVote } from './../../../../../../admin/[projectId]/voting/_api/postVote';
 	import { page } from '$app/stores';
 	import PieChart from '$components/charts/PieChart.svelte';
-	import { createVotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
+	import { createVotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { user } from '$stores/flow/FlowStore';
 	import { onMount } from 'svelte';

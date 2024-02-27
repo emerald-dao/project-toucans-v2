@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Image from '$components/Image.svelte';
 	import { getCatalogByCollectionIDs } from '$flow/actions';
-	import type { VotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
+	import type { VotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { VOTING_NFT_MODES } from '../../../../../../admin/[projectId]/voting/_components/steps/3-nft-mode/votingNftModes';
 	import VotingEligibilityLabel from './VotingEligibilityLabel.svelte';

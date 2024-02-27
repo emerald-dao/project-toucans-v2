@@ -7,7 +7,7 @@ import type { CurrentUserObject } from '@onflow/fcl';
 import type { Database } from '../../../../../../../supabase/database.types.js';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds.js';
 import type { VotingRoundStatus } from '../../../../../p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type.js';
-import { getUserVotingEligibility } from '$lib/features/voting-generator/utils/getUserVotingEligibility.js';
+import { getUserVotingEligibility } from '$lib/features/voting/utils/getUserVotingEligibility.js';
 
 const supabase = createClient<Database>(
 	PublicEnv.PUBLIC_SUPABASE_URL,

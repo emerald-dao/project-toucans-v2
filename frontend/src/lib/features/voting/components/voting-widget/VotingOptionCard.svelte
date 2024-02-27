@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import type { VotingOption } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
-	import type { VotingRoundStore } from '$lib/features/voting-generator/utils/createVotingRoundStore';
+	import type { VotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore';
 
 	export let votingOption: VotingOption;
 	export let selectedOptionId: number | undefined;
