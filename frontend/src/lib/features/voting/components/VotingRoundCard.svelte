@@ -34,6 +34,24 @@
 			remainingTime={$votingRoundStore.remainingTime}
 			votingStatus={$votingRoundStore.votingStatus}
 		/>
+	{:else}
+		{#await $votingRoundStore.mostVotedOptions then mostVotedOptions}
+			<div class="column-2">
+				WINNERS
+				<div class="row-3">
+					{#each mostVotedOptions as mostVotedOption}
+						{@const mostVotedOptionData = votingRound.voting_options.find(
+							(option) => option.id === Number(mostVotedOption)
+						)}
+						{#if mostVotedOptionData}
+							<div class="card">
+								{mostVotedOptionData.name}
+							</div>
+						{/if}
+					{/each}
+				</div>
+			</div>
+		{/await}
 	{/if}
 </a>
 

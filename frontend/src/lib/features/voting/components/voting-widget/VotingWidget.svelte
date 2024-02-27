@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { postVote } from './../../../../../../admin/[projectId]/voting/_api/postVote';
 	import { page } from '$app/stores';
 	import PieChart from '$components/charts/PieChart.svelte';
 	import { createVotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore';
@@ -11,6 +10,7 @@
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { Button } from '@emerald-dao/component-library';
+	import { postVote } from '../../../../../routes/admin/[projectId]/voting/_api/postVote';
 
 	export let votingRound: VotingRound;
 
