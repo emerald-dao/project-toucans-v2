@@ -38,7 +38,9 @@
 	{:else}
 		{#await $votingRoundStore.mostVotedOptions then mostVotedOptions}
 			<div class="column-2">
-				<span class="xsmall w-medium title">Winners</span>
+				<span class="xsmall w-medium title">
+					{mostVotedOptions.length === 1 ? 'Winner' : 'Winners'}
+				</span>
 				<div class="winners-cards-wrapper row-3">
 					{#each mostVotedOptions as mostVotedOption}
 						{@const mostVotedOptionData = votingRound.voting_options.find(

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
 	import type { VotingRoundStatus } from './voting-round-status.type';
 	import type { VotingEligibility } from '$lib/features/voting/utils/getUserVotingEligibility';
 	import { user } from '$stores/flow/FlowStore';
@@ -11,20 +10,11 @@
 <div class="main-wrapper">
 	<div class="status-label" class:active={votingStatus === 'active'}>
 		{#if votingStatus === 'active'}
-			<span class="row-1 align-start">
-				<Icon icon="tabler:check" />
-				Active
-			</span>
+			<span class="row-1 align-start"> Active </span>
 		{:else if votingStatus === 'upcoming'}
-			<span class="row-1 align-start">
-				<Icon icon="tabler:clock" />
-				Upcoming
-			</span>
+			<span class="row-1 align-start"> Upcoming </span>
 		{:else if votingStatus === 'ended'}
-			<span class="row-1 align-start">
-				<Icon icon="tabler:clock-check" />
-				Finished
-			</span>
+			<span class="row-1 align-start"> Finished </span>
 		{/if}
 	</div>
 	{#if votingStatus !== 'ended'}

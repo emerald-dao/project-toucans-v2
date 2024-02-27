@@ -105,7 +105,7 @@
 					<div class="sidebar-link-icon">
 						<Icon icon="tabler:pig-money" />
 					</div>
-					Rounds
+					Funding Rounds
 				</a>
 			{/if}
 			<a
