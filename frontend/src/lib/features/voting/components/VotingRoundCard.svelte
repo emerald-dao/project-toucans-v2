@@ -6,6 +6,7 @@
 	import { createVotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore.js';
 	import { user } from '$stores/flow/FlowStore';
 	import VotingRoundTimer from '$lib/features/voting/components/voting-widget/VotingRoundTimer.svelte';
+	import Icon from '@iconify/svelte';
 
 	export let votingRound: VotingRound;
 
@@ -37,15 +38,18 @@
 	{:else}
 		{#await $votingRoundStore.mostVotedOptions then mostVotedOptions}
 			<div class="column-2">
-				WINNERS
-				<div class="row-3">
+				<span class="xsmall w-medium title">Winners</span>
+				<div class="winners-cards-wrapper row-3">
 					{#each mostVotedOptions as mostVotedOption}
 						{@const mostVotedOptionData = votingRound.voting_options.find(
 							(option) => option.id === Number(mostVotedOption)
 						)}
 						{#if mostVotedOptionData}
-							<div class="card">
-								{mostVotedOptionData.name}
+							<div class="card winner-card">
+								<Icon icon="tabler:trophy" color="var(--clr-primary-main)" />
+								<span>
+									{mostVotedOptionData.name}
+								</span>
 							</div>
 						{/if}
 					{/each}
@@ -92,6 +96,31 @@
 					-webkit-box-orient: vertical;
 					overflow: hidden;
 					text-overflow: ellipsis;
+				}
+			}
+		}
+
+		.title {
+			text-transform: uppercase;
+			letter-spacing: 0.09em;
+		}
+
+		.winners-cards-wrapper {
+			flex-wrap: wrap;
+
+			.winner-card {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: var(--space-1);
+				padding: var(--space-2);
+				border-radius: var(--radius-0);
+				background-color: var(--clr-surface-secondary);
+
+				span {
+					line-height: 1;
+					font-size: var(--font-size-1);
+					color: var(--clr-heading-main);
 				}
 			}
 		}
