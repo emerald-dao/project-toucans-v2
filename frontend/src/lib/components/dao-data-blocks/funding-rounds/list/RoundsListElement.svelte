@@ -4,7 +4,6 @@
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import SeeRoundDetailsModal from '../atoms/SeeRoundDetailsModal.svelte';
 	import GoalReached from '$components/atoms/GoalReached.svelte';
-	import type { ECurrencies } from '$lib/types/common/enums';
 	import RoundStatusLabel from '../atoms/RoundStatusLabel.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
@@ -12,12 +11,11 @@
 	import { getRoundStatus } from '../helpers/getRoundStatus';
 	import { togglePurchasingExecution } from '$flow/actions';
 	import EditRoundModal from '$lib/features/edit-round/components/EditRoundModal.svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	export let round: FundingCycle;
+	export let daoData: DAOProject;
 	export let roundNumber: number;
-	export let projectToken: string;
-	export let paymentToken: ECurrencies;
-	export let projectId: string;
 	export let activeRound: number | null;
 	export let admin: boolean = false;
 	export let paused: boolean = true;
@@ -45,14 +43,14 @@
 				? 'tertiary'
 				: 'alert'}
 		/>
-		<FundingNumbers {goal} {funding} {paymentToken} />
+		<FundingNumbers {goal} {funding} paymentToken={daoData.onChainData.paymentCurrency} />
 		{#if endDate == null && roundStatus === 'active' && admin}
 			{#if paused}
 				<Button
 					color="neutral"
 					type="ghost"
 					size="x-small"
-					on:click={() => togglePurchasingExecution(projectId)}
+					on:click={() => togglePurchasingExecution(daoData.generalInfo.project_id)}
 				>
 					<Icon icon="tabler:player-play-filled" />
 					Start
@@ -62,7 +60,7 @@
 					color="neutral"
 					type="ghost"
 					size="x-small"
-					on:click={() => togglePurchasingExecution(projectId)}
+					on:click={() => togglePurchasingExecution(daoData.generalInfo.project_id)}
 				>
 					<Icon icon="tabler:player-pause-filled" />
 					Pause
@@ -80,16 +78,18 @@
 		<RoundStatusLabel status={roundStatus} />
 		<div class="row-2">
 			{#if roundStatus !== 'finished' && admin}
-				<EditRoundModal {round} cycleIndex={roundNumber} />
+				<EditRoundModal {round} cycleIndex={roundNumber} {daoData} />
 			{/if}
-			<SeeRoundDetailsModal
-				{round}
-				{roundNumber}
-				{projectToken}
-				{paymentToken}
-				{projectId}
-				{activeRound}
-			/>
+			{#if daoData.generalInfo.token_symbol}
+				<SeeRoundDetailsModal
+					{round}
+					{roundNumber}
+					projectToken={daoData.generalInfo.token_symbol}
+					paymentToken={daoData.onChainData.paymentCurrency}
+					projectId={daoData.generalInfo.project_id}
+					{activeRound}
+				/>
+			{/if}
 		</div>
 	</div>
 </div>
