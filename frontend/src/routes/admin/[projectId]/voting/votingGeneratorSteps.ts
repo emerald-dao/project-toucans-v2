@@ -3,8 +3,9 @@ import { createSteps } from '$stores/custom/steps/Steps';
 import VotingGeneralDataStep from './_components/steps/1-general-data/VotingGeneralDataStep.svelte';
 import VotingOptionsStep from './_components/steps/2-voting-options/VotingOptionsStep.svelte';
 import VotingNftModeStep from './_components/steps/3-nft-mode/VotingNftModeStep.svelte';
-import VotingTimeframeStep from './_components/steps/4-timeframe/VotingTimeframeStep.svelte';
-import VotingThanksStep from './_components/steps/5-thanks/VotingThanksStep.svelte';
+import VotingActionLinkingStep from './_components/steps/4-action-linking/VotingActionLinkingStep.svelte';
+import VotingTimeframeStep from './_components/steps/5-timeframe/VotingTimeframeStep.svelte';
+import VotingThanksStep from './_components/steps/6-thanks/VotingThanksStep.svelte';
 import { createVotingRound } from './_actions/createVotingRound';
 
 export const votingGeneratorSteps = createSteps([
@@ -47,6 +48,18 @@ export const votingGeneratorSteps = createSteps([
 		}
 	},
 	{
+		name: 'Action linking',
+		description: `Link the voting round to a DAO treasury action.`,
+		component: VotingActionLinkingStep,
+		action: null,
+		form: false,
+		state: 'inactive',
+		button: {
+			text: 'Next',
+			icon: 'tabler:arrow-right'
+		}
+	},
+	{
 		name: 'Timeframe',
 		description: `Select the timeframe for your voting round. You can't change this later.`,
 		component: VotingTimeframeStep,
@@ -59,16 +72,11 @@ export const votingGeneratorSteps = createSteps([
 		}
 	},
 	{
-		name: 'Thanks',
-		description: 'Thanks for launching your round!',
+		name: 'Voting round created',
 		component: VotingThanksStep,
 		action: null,
 		form: false,
-		state: 'inactive',
-		button: {
-			text: 'Next',
-			icon: 'tabler:arrow-right'
-		}
+		state: 'inactive'
 	}
 ]);
 
