@@ -5,14 +5,15 @@
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { user } from '$stores/flow/FlowStore';
 	import { onMount } from 'svelte';
-	import VotingEligibilityLabel from './VotingEligibilityLabel.svelte';
 	import VotingOptionCard from './VotingOptionCard.svelte';
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { Button } from '@emerald-dao/component-library';
 	import { postVote } from '../../../../../routes/admin/[projectId]/voting/_api/postVote';
+	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
 
 	export let votingRound: VotingRound;
+	export let daoActions: ActionData[];
 
 	let selectedOptionId: number | undefined = undefined;
 
@@ -67,13 +68,9 @@
 <svelte:window bind:innerWidth />
 <div class="column-3">
 	{#await $votingRoundStore.allVotes then votes}
-		<VotingWidgetCard {votingRound} {votingRoundStore}>
+		<VotingWidgetCard {votingRound} {votingRoundStore} {daoActions}>
 			<div class="voting-data-wrapper">
 				<div class="column-6">
-					<VotingEligibilityLabel
-						votingStatus={$votingRoundStore.votingStatus}
-						votingEligibilityPromise={$votingRoundStore.votingEligibility}
-					/>
 					<div class="options-wrapper">
 						{#each votingRound.voting_options as option}
 							<VotingOptionCard {votingRoundStore} votingOption={option} bind:selectedOptionId />

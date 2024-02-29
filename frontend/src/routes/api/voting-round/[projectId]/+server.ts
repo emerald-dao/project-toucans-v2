@@ -5,7 +5,6 @@ import { verifyAccountOwnership } from '$flow/utils.js';
 import { json } from '@sveltejs/kit';
 import type { CurrentUserObject } from '@onflow/fcl';
 import type { Database } from '../../../../../supabase/database.types.js';
-import type { VotingOption } from '../../../admin/[projectId]/voting/_components/steps/2-voting-options/voting-option.interface.js';
 import type { VotingRoundData } from '../../../admin/[projectId]/voting/_types/voting-round-data.type.js';
 
 const supabase = createClient<Database>(
@@ -17,10 +16,9 @@ export async function POST({ request, params }) {
 	const requestData: {
 		user: CurrentUserObject;
 		votingRoundData: VotingRoundData;
-		votingOptions: VotingOption[];
 	} = await request.json();
 
-	const { user, votingRoundData, votingOptions } = requestData;
+	const { user, votingRoundData } = requestData;
 	const projectId = params.projectId;
 
 	try {
@@ -36,10 +34,11 @@ export async function POST({ request, params }) {
 				project_id: projectId,
 				name: votingRoundData.name,
 				description: votingRoundData.description,
-				start_date: votingRoundData.startDate,
-				end_date: votingRoundData.endDate ? votingRoundData.endDate : null,
+				start_date: votingRoundData.startDate ? votingRoundData.startDate : null,
+				end_date: votingRoundData.endDate,
 				nft_mode: votingRoundData.nftMode,
-				required_nft_collection_id: votingRoundData.requiredCollection[0]
+				required_nft_collection_id: votingRoundData.requiredCollection[0],
+				linked_action_id: votingRoundData.linkedAction
 			})
 			.select()
 			.single();
@@ -52,7 +51,7 @@ export async function POST({ request, params }) {
 			});
 		}
 
-		const votingOptionsData = votingOptions.map((option, i) => {
+		const votingOptionsData = votingRoundData.options.map((option, i) => {
 			return {
 				voting_round_id: votingRound.id,
 				name: option.name,

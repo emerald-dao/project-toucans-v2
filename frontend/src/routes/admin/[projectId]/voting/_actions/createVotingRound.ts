@@ -20,8 +20,7 @@ export const createVotingRound = async (): Promise<ActionExecutionResult> => {
 	const result = await postVotingRound(
 		get(page).params.projectId,
 		get(user),
-		get(votingGeneratorData),
-		get(votingGeneratorOptions)
+		get(votingGeneratorData)
 	);
 
 	if (result === 'success') {

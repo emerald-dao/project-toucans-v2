@@ -1,12 +1,10 @@
 import type { CurrentUserObject } from '@onflow/fcl';
-import type { VotingOption } from '../_components/steps/2-voting-options/voting-option.interface';
 import type { VotingRoundData } from '../_types/voting-round-data.type';
 
 export const postVotingRound = async (
 	projectId: string,
 	user: CurrentUserObject,
-	votingRoundData: VotingRoundData,
-	votingOptions: VotingOption[]
+	votingRoundData: VotingRoundData
 ) => {
 	try {
 		const response = await fetch(`/api/voting-round/${projectId}`, {
@@ -16,7 +14,6 @@ export const postVotingRound = async (
 			},
 			body: JSON.stringify({
 				user,
-				votingOptions,
 				votingRoundData
 			})
 		});

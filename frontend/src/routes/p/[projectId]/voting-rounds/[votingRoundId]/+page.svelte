@@ -19,7 +19,10 @@
 
 {#if roundData}
 	<div class="main-wrapper" in:fly={{ duration: 200, y: 20 }} id={`${roundData.id}`}>
-		<VotingWidget votingRound={data.votingRounds[roundIndex]} />
+		<VotingWidget
+			votingRound={data.votingRounds[roundIndex]}
+			daoActions={data.onChainData.actions}
+		/>
 		<div class="row-3 row-space-between">
 			<Button
 				on:click={() => goto(`/p/${$page.params.projectId}/voting-rounds/${previousVotingRoundId}`)}

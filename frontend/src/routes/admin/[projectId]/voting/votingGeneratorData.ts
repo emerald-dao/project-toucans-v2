@@ -73,27 +73,46 @@ export const votingGeneratorDatesWithTimezone = derived(
 	}
 );
 
+export const votingGeneratorLinkedAction = createVotingGeneratorDataStore<null | string>(null);
+
+const OPTIONS_IF_LINKED_ACTION = [
+	{
+		name: 'Action should be approved',
+		description: '',
+		id: '1'
+	},
+	{
+		name: 'Action should be disapproved',
+		description: '',
+		id: '2'
+	}
+];
+
 export const votingGeneratorData: Readable<VotingRoundData> = derived(
 	[
 		votingGeneratorGeneralData,
 		votingGeneratorOptions,
 		votingGeneratorNftMode,
 		votingGeneratorRequiredCollection,
-		votingGeneratorDatesWithTimezone
+		votingGeneratorDatesWithTimezone,
+		votingGeneratorLinkedAction
 	],
 	([
 		$votingGeneratorGeneralData,
 		$votingGeneratorOptions,
 		$votingGeneratorNftMode,
 		$votingGeneratorRequiredCollection,
-		$votingGeneratorDatesWithTimeZone
+		$votingGeneratorDatesWithTimeZone,
+		$votingGeneratorLinkedAction
 	]) => {
 		return {
 			...$votingGeneratorGeneralData,
-			options: $votingGeneratorOptions,
+			options:
+				$votingGeneratorLinkedAction !== null ? OPTIONS_IF_LINKED_ACTION : $votingGeneratorOptions,
 			nftMode: $votingGeneratorNftMode,
 			requiredCollection: $votingGeneratorRequiredCollection,
-			...$votingGeneratorDatesWithTimeZone
+			...$votingGeneratorDatesWithTimeZone,
+			linkedAction: $votingGeneratorLinkedAction
 		};
 	}
 );
@@ -104,4 +123,5 @@ export const resetVotingGeneratorStores = () => {
 	votingGeneratorNftMode.reset();
 	votingGeneratorRequiredCollection.reset();
 	votingGeneratorDates.reset();
+	votingGeneratorLinkedAction.reset();
 };

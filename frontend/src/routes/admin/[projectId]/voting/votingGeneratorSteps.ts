@@ -49,7 +49,7 @@ export const votingGeneratorSteps = createSteps([
 	},
 	{
 		name: 'Action linking',
-		description: `Link the voting round to a DAO treasury action.`,
+		description: `Ask community members opinion about a treasury action.`,
 		component: VotingActionLinkingStep,
 		action: null,
 		form: false,

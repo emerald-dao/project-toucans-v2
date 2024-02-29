@@ -322,6 +322,7 @@ export type Database = {
           description: string | null
           end_date: string
           id: number
+          linked_action_id: string | null
           name: string
           nft_mode: Database["public"]["Enums"]["voting_nft_modes"]
           project_id: string
@@ -333,6 +334,7 @@ export type Database = {
           description?: string | null
           end_date: string
           id?: number
+          linked_action_id?: string | null
           name: string
           nft_mode?: Database["public"]["Enums"]["voting_nft_modes"]
           project_id: string
@@ -344,6 +346,7 @@ export type Database = {
           description?: string | null
           end_date?: string
           id?: number
+          linked_action_id?: string | null
           name?: string
           nft_mode?: Database["public"]["Enums"]["voting_nft_modes"]
           project_id?: string

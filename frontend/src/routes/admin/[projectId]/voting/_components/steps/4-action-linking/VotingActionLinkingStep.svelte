@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { votingGeneratorLinkedAction } from './../../../votingGeneratorData';
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/list/PendingActionsListElement.svelte';
 	import Pagination from '$components/atoms/Pagination.svelte';
 
 	export let daoData: DAOProject;
-
-	let selectedActionId: string | undefined = undefined;
 
 	let pageStart: number;
 	let pageEnd: number;
@@ -20,10 +19,10 @@
 	{:else}
 		{#each currentPageActions as action (action.id)}
 			<div
-				on:click={() => (selectedActionId = action.id)}
+				on:click={() => ($votingGeneratorLinkedAction = action.id)}
 				on:keydown
 				class="action-wrapper"
-				class:selected={action.id === selectedActionId}
+				class:selected={action.id === $votingGeneratorLinkedAction}
 			>
 				<PendingActionsListElement
 					projectOwner={daoData.generalInfo.owner}
@@ -34,8 +33,8 @@
 					isSigner={false}
 					showDao={false}
 				/>
-				{#if action.id === selectedActionId}
-					<button on:click|stopPropagation={() => (selectedActionId = undefined)}>
+				{#if action.id === $votingGeneratorLinkedAction}
+					<button on:click|stopPropagation={() => ($votingGeneratorLinkedAction = null)}>
 						<Icon icon="tabler:x" />
 					</button>
 				{/if}
