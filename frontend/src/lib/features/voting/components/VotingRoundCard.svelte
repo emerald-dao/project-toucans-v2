@@ -7,6 +7,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import VotingRoundTimer from '$lib/features/voting/components/voting-widget/VotingRoundTimer.svelte';
 	import Icon from '@iconify/svelte';
+	import VotingModeLabel from './voting-widget/votingModesCard/atoms/VotingModeLabel.svelte';
 
 	export let votingRound: VotingRound;
 
@@ -24,6 +25,12 @@
 			votingStatus={$votingRoundStore.votingStatus}
 			votingEligibilityPromise={$votingRoundStore.votingEligibility}
 		/>
+		{#if votingRound.linked_action_id !== null}
+			<VotingModeLabel>
+				<Icon icon="tabler:link" />
+				Linked Action
+			</VotingModeLabel>
+		{/if}
 		<div class="description-wrapper">
 			{#if votingRound.description}
 				<p class="small">{votingRound.description}</p>
