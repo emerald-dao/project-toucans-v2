@@ -11,6 +11,7 @@
 	import { Button } from '@emerald-dao/component-library';
 	import { postVote } from '../../../../../routes/admin/[projectId]/voting/_api/postVote';
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
+	import Icon from '@iconify/svelte';
 
 	export let votingRound: VotingRound;
 	export let daoActions: ActionData[];
@@ -66,8 +67,12 @@
 </script>
 
 <svelte:window bind:innerWidth />
-<div class="column-3">
-	{#await $votingRoundStore.allVotes then votes}
+<div class="column-3 main-wrapper">
+	{#await $votingRoundStore.allVotes}
+		<div class="loading-wrapper">
+			<Icon icon="svg-spinners:180-ring-with-bg" width="2rem" />
+		</div>
+	{:then votes}
 		<VotingWidgetCard {votingRound} {votingRoundStore} {daoActions}>
 			<div class="voting-data-wrapper">
 				<div class="column-6">
@@ -109,30 +114,41 @@
 </div>
 
 <style lang="scss">
-	.voting-data-wrapper {
-		display: grid;
-		gap: var(--space-10);
-		grid-template-columns: 1fr;
+	.main-wrapper {
+		flex: 1;
 
-		@include mq('medium') {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		.options-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: var(--space-4);
-		}
-
-		.chart-wrapper {
+		.loading-wrapper {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			text-align: center;
+			height: 100%;
 		}
-	}
 
-	em {
-		color: var(--clr-text-off);
+		.voting-data-wrapper {
+			display: grid;
+			gap: var(--space-10);
+			grid-template-columns: 1fr;
+
+			@include mq('medium') {
+				grid-template-columns: 1fr 1fr;
+			}
+
+			.options-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-4);
+			}
+
+			.chart-wrapper {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
+			}
+		}
+
+		em {
+			color: var(--clr-text-off);
+		}
 	}
 </style>

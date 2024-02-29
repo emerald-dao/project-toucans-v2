@@ -1,6 +1,5 @@
 <script lang="ts">
 	import VotingWidget from '$lib/features/voting/components/voting-widget/VotingWidget.svelte';
-	import { fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Button } from '@emerald-dao/component-library';
@@ -18,7 +17,7 @@
 </script>
 
 {#if roundData}
-	<div class="main-wrapper" in:fly={{ duration: 200, y: 20 }} id={`${roundData.id}`}>
+	<div class="main-wrapper" id={`${roundData.id}`}>
 		<VotingWidget
 			votingRound={data.votingRounds[roundIndex]}
 			daoActions={data.onChainData.actions}
