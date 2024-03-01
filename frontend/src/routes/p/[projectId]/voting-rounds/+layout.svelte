@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 
 	export let data;

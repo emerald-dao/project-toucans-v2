@@ -1,0 +1,78 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+	import Icon from '@iconify/svelte';
+	import VotingRoundCard from '$lib/features/voting-rounds/components/VotingRoundCard.svelte';
+	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
+
+	export let votingRounds: VotingRound[];
+
+	let activeVotingRoundIndex = 0;
+
+	let activeVotingRound = votingRounds[0];
+	$: activeVotingRound = votingRounds[activeVotingRoundIndex];
+</script>
+
+{#if votingRounds.length > 0 || activeVotingRound}
+	<div class="card">
+		<div class="row-space-between row-6">
+			<h4 class="title w-regular">Voting Rounds</h4>
+			<div class="row-4">
+				<button on:click={() => activeVotingRoundIndex--} disabled={activeVotingRoundIndex === 0}>
+					<Icon icon="tabler:chevron-left" width="1.2em" />
+				</button>
+				<span class="rounds-number">
+					{activeVotingRoundIndex + 1} / {votingRounds.length}
+				</span>
+				<button
+					on:click={() => activeVotingRoundIndex++}
+					disabled={activeVotingRoundIndex === votingRounds.length - 1}
+				>
+					<Icon icon="tabler:chevron-right" width="1.2em" />
+				</button>
+			</div>
+			<a class="header-link row-1 align-center" href={`/p/${$page.params.projectId}/voting-rounds`}>
+				See all
+				<Icon icon="tabler:arrow-right" />
+			</a>
+		</div>
+		<VotingRoundCard votingRound={activeVotingRound} />
+	</div>
+{/if}
+
+<style lang="scss">
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+
+		h4 {
+			font-size: var(--font-size-2);
+			color: var(--clr-font-text);
+		}
+
+		.rounds-number {
+			font-size: var(--font-size-0);
+			color: var(--clr-text-off);
+		}
+
+		button {
+			background-color: transparent;
+			border: none;
+			cursor: pointer;
+			color: var(--clr-text-off);
+
+			&:hover {
+				color: var(--clr-heading-main);
+			}
+
+			&:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+
+				&:hover {
+					color: var(--clr-text-off);
+				}
+			}
+		}
+	}
+</style>

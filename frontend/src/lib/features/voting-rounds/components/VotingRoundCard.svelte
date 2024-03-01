@@ -11,7 +11,7 @@
 
 	export let votingRound: VotingRound;
 
-	const votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
+	$: votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
 </script>
 
 <a
