@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LinkedActionModeCard from './votingModesCard/LinkedActionModeCard.svelte';
 	import NFTModeCard from './votingModesCard/NFTModeCard.svelte';
-	import type { VotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore';
+	import type { VotingRoundStore } from '$lib/features/voting-rounds/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import VotingEligibilityLabel from './VotingEligibilityLabel.svelte';
 	import VotingRoundTimer from './VotingRoundTimer.svelte';

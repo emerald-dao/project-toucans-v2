@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Image from '$lib/components/Image.svelte';
-	import { getCatalogByCollectionIDs } from './../../../../../../flow/actions';
 	import {
 		VOTING_NFT_MODES,
 		type VotingNftModeSlug
-	} from './../../../../../../routes/admin/[projectId]/voting/_components/steps/3-nft-mode/votingNftModes';
+	} from '$lib/features/voting-rounds/constants/votingNftModes';
+	import { getCatalogByCollectionIDs } from './../../../../../../flow/actions';
 	import * as VotingModeCard from './atoms/index';
 
 	export let nftMode: VotingNftModeSlug;

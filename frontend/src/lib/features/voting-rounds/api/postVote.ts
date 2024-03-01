@@ -1,6 +1,6 @@
+import type { VotingRoundStatus } from '$lib/features/voting-rounds/components/voting-widget/voting-round-status.type';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 import type { CurrentUserObject } from '@onflow/fcl';
-import type { VotingRoundStatus } from '../../../../p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
 
 export const postVote = async (
 	projectId: string,

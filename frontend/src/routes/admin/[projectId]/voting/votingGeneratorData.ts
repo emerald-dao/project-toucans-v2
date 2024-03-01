@@ -1,7 +1,7 @@
 import { derived, writable, type Readable } from 'svelte/store';
-import type { VotingOption } from './_components/steps/2-voting-options/voting-option.interface';
-import type { VotingNftModeSlug } from './_components/steps/3-nft-mode/votingNftModes';
-import type { VotingRoundData } from './_types/voting-round-data.type';
+import type { VotingOption } from '../../../../lib/features/voting-rounds/types/voting-option.interface';
+import type { VotingNftModeSlug } from '../../../../lib/features/voting-rounds/constants/votingNftModes';
+import type { VotingRoundData } from '../../../../lib/features/voting-rounds/types/voting-round-data.type';
 import { fromDate, getLocalTimeZone, now, toCalendarDateTime } from '@internationalized/date';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {

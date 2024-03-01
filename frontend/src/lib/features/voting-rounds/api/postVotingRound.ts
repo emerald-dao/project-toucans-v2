@@ -1,5 +1,5 @@
 import type { CurrentUserObject } from '@onflow/fcl';
-import type { VotingRoundData } from '../_types/voting-round-data.type';
+import type { VotingRoundData } from '../types/voting-round-data.type';
 
 export const postVotingRound = async (
 	projectId: string,

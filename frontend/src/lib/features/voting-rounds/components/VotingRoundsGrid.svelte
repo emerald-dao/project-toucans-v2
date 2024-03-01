@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Pagination from '$components/atoms/Pagination.svelte';
 	import SearchBar from '$components/search-bar/SearchBar.svelte';
-	import { postgreTimestampToDateTime } from '$lib/features/voting/utils/postgreTimestampToDateTime';
+	import { postgreTimestampToDateTime } from '$lib/features/voting-rounds/utils/postgreTimestampToDateTime';
 	import { getLocalTimeZone, now } from '@internationalized/date';
-	import VotingRoundCard from '$lib/features/voting/components/VotingRoundCard.svelte';
+	import VotingRoundCard from '$lib/features/voting-rounds/components/VotingRoundCard.svelte';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
 	export let votingRounds: VotingRound[];

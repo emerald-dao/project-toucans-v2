@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import PieChart from '$components/charts/PieChart.svelte';
-	import { createVotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore';
+	import { createVotingRoundStore } from '$lib/features/voting-rounds/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { user } from '$stores/flow/FlowStore';
 	import { onMount } from 'svelte';
@@ -9,7 +9,7 @@
 	import VotingWidgetCard from './VotingWidgetCard.svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { Button } from '@emerald-dao/component-library';
-	import { postVote } from '../../../../../routes/admin/[projectId]/voting/_api/postVote';
+	import { postVote } from '$lib/features/voting-rounds/api/postVote';
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 
@@ -48,6 +48,8 @@
 
 	let submittingVote = false;
 	const handleSubmitVote = async () => {
+		const votingEligibility = await $votingRoundStore.votingEligibility;
+
 		submittingVote = true;
 		if (selectedOptionId && $user.addr) {
 			await postVote(
@@ -56,7 +58,9 @@
 				votingRound,
 				selectedOptionId,
 				$votingRoundStore.votingStatus,
-				'0zxnjfekw'
+				votingEligibility.availableNfts !== undefined
+					? votingEligibility.availableNfts[0]
+					: undefined
 			);
 		}
 

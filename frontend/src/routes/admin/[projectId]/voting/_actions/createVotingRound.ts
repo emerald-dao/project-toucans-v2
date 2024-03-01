@@ -1,12 +1,8 @@
 import { page } from '$app/stores';
 import type { ActionExecutionResult } from '$stores/custom/steps/step.interface';
 import { user } from '$stores/flow/FlowStore';
-import { postVotingRound } from '../_api/postVotingRound';
-import {
-	resetVotingGeneratorStores,
-	votingGeneratorData,
-	votingGeneratorOptions
-} from '../votingGeneratorData';
+import { postVotingRound } from '../../../../../lib/features/voting-rounds/api/postVotingRound';
+import { resetVotingGeneratorStores, votingGeneratorData } from '../votingGeneratorData';
 import { get } from 'svelte/store';
 
 export const createVotingRound = async (): Promise<ActionExecutionResult> => {

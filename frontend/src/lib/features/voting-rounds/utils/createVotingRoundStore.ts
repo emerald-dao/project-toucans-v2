@@ -1,8 +1,4 @@
 import { derived, readable, writable } from 'svelte/store';
-import type {
-	RemainingTime,
-	VotingRoundStatus
-} from '../../../../routes/p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
 import { getLocalTimeZone, now as getNow, ZonedDateTime } from '@internationalized/date';
 import { postgreTimestampToDateTime } from './postgreTimestampToDateTime';
 import { getUserVotingEligibility } from './getUserVotingEligibility';
@@ -10,6 +6,10 @@ import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRoun
 import { user } from '../../../stores/flow/FlowStore';
 import { supabase } from '$lib/supabaseClient';
 import type { Vote } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
+import type {
+	RemainingTime,
+	VotingRoundStatus
+} from '../components/voting-widget/voting-round-status.type';
 
 export const createVotingRoundStore = (votingRound: VotingRound, userAddress: string | null) => {
 	const formattedEndTimestamp = postgreTimestampToDateTime(votingRound.end_date);

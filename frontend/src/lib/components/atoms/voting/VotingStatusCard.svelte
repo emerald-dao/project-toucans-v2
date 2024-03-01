@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import VotingBar from './VotingBar.svelte';
+	import VotingBar from './LegacyVotingBar.svelte';
 
 	export let forVotes: number;
 	export let againstVotes: number;

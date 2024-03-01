@@ -2,7 +2,7 @@ import { getCatalogNFTs } from '$flow/actions';
 import { supabase } from '$lib/supabaseClient';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 import type { Vote } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
-import type { VotingRoundStatus } from '../../../../routes/p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type';
+import type { VotingRoundStatus } from '../components/voting-widget/voting-round-status.type';
 
 export interface VotingEligibility {
 	eligible: boolean;

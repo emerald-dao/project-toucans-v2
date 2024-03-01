@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { VotingRoundStatus } from './voting-round-status.type';
-	import type { VotingEligibility } from '$lib/features/voting/utils/getUserVotingEligibility';
+	import type { VotingEligibility } from '$lib/features/voting-rounds/utils/getUserVotingEligibility';
 	import { user } from '$stores/flow/FlowStore';
 
 	export let votingStatus: VotingRoundStatus;

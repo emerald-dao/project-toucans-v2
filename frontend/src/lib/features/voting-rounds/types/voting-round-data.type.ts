@@ -1,5 +1,5 @@
-import type { VotingOption } from '../_components/steps/2-voting-options/voting-option.interface';
-import type { VotingNftModeSlug } from '../_components/steps/3-nft-mode/votingNftModes';
+import type { VotingOption } from './voting-option.interface';
+import type { VotingNftModeSlug } from '../constants/votingNftModes';
 
 export type VotingRoundData = {
 	name: string;

@@ -5,7 +5,7 @@ import { verifyAccountOwnership } from '$flow/utils.js';
 import { json } from '@sveltejs/kit';
 import type { CurrentUserObject } from '@onflow/fcl';
 import type { Database } from '../../../../../supabase/database.types.js';
-import type { VotingRoundData } from '../../../admin/[projectId]/voting/_types/voting-round-data.type.js';
+import type { VotingRoundData } from '../../../../lib/features/voting-rounds/types/voting-round-data.type.js';
 
 const supabase = createClient<Database>(
 	PublicEnv.PUBLIC_SUPABASE_URL,

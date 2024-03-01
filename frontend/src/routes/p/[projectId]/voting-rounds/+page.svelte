@@ -1,5 +1,5 @@
 <script lang="ts">
-	import VotingRoundsGrid from '$lib/features/voting/components/VotingRoundsGrid.svelte';
+	import VotingRoundsGrid from '$lib/features/voting-rounds/components/VotingRoundsGrid.svelte';
 
 	export let data;
 </script>

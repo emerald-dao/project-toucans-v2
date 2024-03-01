@@ -6,8 +6,8 @@ import { json } from '@sveltejs/kit';
 import type { CurrentUserObject } from '@onflow/fcl';
 import type { Database } from '../../../../../../../supabase/database.types.js';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds.js';
-import type { VotingRoundStatus } from '../../../../../p/[projectId]/voting-rounds/[votingRoundId]/_components/voting-widget/voting-round-status.type.js';
-import { getUserVotingEligibility } from '$lib/features/voting/utils/getUserVotingEligibility.js';
+import type { VotingRoundStatus } from '$lib/features/voting-rounds/components/voting-widget/voting-round-status.type';
+import { getUserVotingEligibility } from '$lib/features/voting-rounds/utils/getUserVotingEligibility';
 
 const supabase = createClient<Database>(
 	PublicEnv.PUBLIC_SUPABASE_URL,

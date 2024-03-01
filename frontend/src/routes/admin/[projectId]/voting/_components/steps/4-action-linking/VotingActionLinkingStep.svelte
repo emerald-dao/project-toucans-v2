@@ -72,8 +72,8 @@
 			cursor: pointer;
 			transition: color 0.2s ease-in-out;
 			position: absolute;
-			top: 4px;
-			right: 4px;
+			top: 1px;
+			right: 0;
 
 			&:hover {
 				color: var(--clr-heading-main);

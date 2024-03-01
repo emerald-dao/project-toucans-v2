@@ -1,7 +1,7 @@
 <script lang="ts">
-	import VotingWidget from '$lib/features/voting/components/voting-widget/VotingWidget.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import VotingWidget from '$lib/features/voting-rounds/components/voting-widget/VotingWidget.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 

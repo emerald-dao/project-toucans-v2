@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
-	import type { VotingOption } from '../voting-option.interface';
+	import type { VotingOption } from '../../../../../../../../lib/types/voting-option.interface';
 	import OptionDescription from './atoms/OptionDescription.svelte';
 	import OptionNumber from './atoms/OptionNumber.svelte';
 	import { createEventDispatcher } from 'svelte';

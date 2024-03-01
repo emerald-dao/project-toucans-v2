@@ -12,7 +12,7 @@
 		votingGeneratorRequiredCollection
 	} from '../../../votingGeneratorData';
 	import VotingNftModeCard from './atoms/VotingNftModeCard.svelte';
-	import { VOTING_NFT_MODES } from './votingNftModes';
+	import { VOTING_NFT_MODES } from '../../../../../../../lib/features/voting-rounds/constants/votingNftModes';
 
 	const daoData = getContext<DAOProject>('activeDao');
 

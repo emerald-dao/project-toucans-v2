@@ -1,11 +1,11 @@
 <script lang="ts">
-	import VotingEligibilityLabel from '$lib/features/voting/components/voting-widget/VotingEligibilityLabel.svelte';
+	import VotingEligibilityLabel from '$lib/features/voting-rounds/components/voting-widget/VotingEligibilityLabel.svelte';
 	import { fly } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
-	import { createVotingRoundStore } from '$lib/features/voting/utils/createVotingRoundStore.js';
+	import { createVotingRoundStore } from '$lib/features/voting-rounds/utils/createVotingRoundStore.js';
 	import { user } from '$stores/flow/FlowStore';
-	import VotingRoundTimer from '$lib/features/voting/components/voting-widget/VotingRoundTimer.svelte';
+	import VotingRoundTimer from '$lib/features/voting-rounds/components/voting-widget/VotingRoundTimer.svelte';
 	import Icon from '@iconify/svelte';
 	import VotingModeLabel from './voting-widget/votingModesCard/atoms/VotingModeLabel.svelte';
 

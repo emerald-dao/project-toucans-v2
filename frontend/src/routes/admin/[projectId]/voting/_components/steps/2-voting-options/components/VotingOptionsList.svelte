@@ -1,6 +1,6 @@
 <script lang="ts">
 	import VotingOptionsListElement from './../../2-voting-options/components/VotingOptionsListElement.svelte';
-	import type { VotingOption } from '../voting-option.interface';
+	import type { VotingOption } from '$lib/features/voting-rounds/types/voting-option.interface';
 	import Pagination from '$components/atoms/Pagination.svelte';
 	import type { Writable } from 'svelte/store';
 

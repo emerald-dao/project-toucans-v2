@@ -8,7 +8,7 @@
 	import UserBalanceWidget from './widgets/UserBalanceWidget.svelte';
 	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
-	import VotingsWidget from './widgets/VotingsWidget.svelte';
+	import VotingsWidget from './widgets/LegacyVotingsWidget.svelte';
 	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
 	import NftsTreasuryWidget from './widgets/NftsTreasuryWidget.svelte';
 	import { getProjectNFTTreasury } from '$flow/actions';
