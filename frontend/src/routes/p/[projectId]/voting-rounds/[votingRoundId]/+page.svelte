@@ -18,10 +18,9 @@
 
 {#if roundData}
 	<div class="main-wrapper" id={`${roundData.id}`}>
-		<VotingWidget
-			votingRound={data.votingRounds[roundIndex]}
-			daoActions={data.onChainData.actions}
-		/>
+		{#key roundData.id}
+			<VotingWidget votingRound={roundData} daoActions={data.onChainData.actions} />
+		{/key}
 		<div class="row-3 row-space-between">
 			<Button
 				on:click={() => goto(`/p/${$page.params.projectId}/voting-rounds/${previousVotingRoundId}`)}

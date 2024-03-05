@@ -11,7 +11,6 @@
 	import { Button } from '@emerald-dao/component-library';
 	import { postVote } from '$lib/features/voting-rounds/api/postVote';
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
-	import Icon from '@iconify/svelte';
 
 	export let votingRound: VotingRound;
 	export let daoActions: ActionData[];
@@ -19,7 +18,6 @@
 	let selectedOptionId: number | undefined = undefined;
 
 	let votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
-	$: votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
 
 	onMount(() => {
 		const subscription = supabase
@@ -43,6 +41,7 @@
 				}
 			)
 			.subscribe();
+
 		return () => supabase.removeChannel(subscription);
 	});
 
