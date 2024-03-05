@@ -9,5 +9,8 @@ export type VotingRoundData = {
 	requiredCollection: string[];
 	startDate?: string;
 	endDate: string;
-	linkedAction: string | null;
+	linkedAction: {
+		type: string;
+		id: string;
+	} | null;
 };

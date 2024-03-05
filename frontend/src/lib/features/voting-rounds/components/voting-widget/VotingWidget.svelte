@@ -1,6 +1,6 @@
 <script lang="ts">
+	import VotingResultsPieChart from './../voting-results-charts/VotingResultsPieChart.svelte';
 	import { page } from '$app/stores';
-	import PieChart from '$components/charts/PieChart.svelte';
 	import { createVotingRoundStore } from '$lib/features/voting-rounds/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { user } from '$stores/flow/FlowStore';
@@ -72,66 +72,46 @@
 
 <svelte:window bind:innerWidth />
 <div class="column-3 main-wrapper">
-	{#await $votingRoundStore.allVotes}
-		<div class="loading-wrapper">
-			<Icon icon="svg-spinners:180-ring-with-bg" width="2rem" />
-		</div>
-	{:then votes}
-		<VotingWidgetCard {votingRound} {votingRoundStore} {daoActions}>
-			<div class="voting-data-wrapper">
-				<div class="column-6">
-					<div class="options-wrapper">
-						{#each votingRound.voting_options as option}
-							<VotingOptionCard {votingRoundStore} votingOption={option} bind:selectedOptionId />
-						{/each}
-					</div>
-					{#await $votingRoundStore.votingEligibility then votingEligibility}
-						{#if votingEligibility.eligible}
-							<Button
-								width="full-width"
-								state={submittingVote ? 'loading' : selectedOptionId ? 'active' : 'disabled'}
-								on:click={handleSubmitVote}
-							>
-								{selectedOptionId ? 'Vote' : 'Select an option to vote'}
-							</Button>
-						{/if}
-					{/await}
+	<VotingWidgetCard {votingRound} {votingRoundStore} {daoActions}>
+		<div class="voting-data-wrapper">
+			<div class="column-6">
+				<div class="options-wrapper">
+					{#each votingRound.voting_options as option}
+						<VotingOptionCard {votingRoundStore} votingOption={option} bind:selectedOptionId />
+					{/each}
 				</div>
-				{#if innerWidth > 1040}
-					<div class="chart-wrapper">
-						{#if $votingRoundStore.votingStatus === 'upcoming'}
-							<em class="text-small">Chart will be available once the round starts</em>
-						{:else if votes.length === 0}
-							<em class="text-small">No votes yet</em>
-						{:else}
-							{#await $votingRoundStore.votesResults then results}
-								{@const options = Object.keys(results)}
-								{@const totalVotes = Object.values(results)}
-								<PieChart title={votingRound.name} chartData={totalVotes} labels={options} />
-							{/await}
-						{/if}
-					</div>
-				{/if}
+				{#await $votingRoundStore.votingEligibility then votingEligibility}
+					{#if votingEligibility.eligible}
+						<Button
+							width="full-width"
+							state={submittingVote ? 'loading' : selectedOptionId ? 'active' : 'disabled'}
+							on:click={handleSubmitVote}
+						>
+							{selectedOptionId ? 'Vote' : 'Select an option to vote'}
+						</Button>
+					{/if}
+				{/await}
 			</div>
-		</VotingWidgetCard>
-	{/await}
+			{#if innerWidth > 1040}
+				<VotingResultsPieChart
+					{votingRoundStore}
+					votingRoundName={votingRound.name}
+					votingOptions={votingRound.voting_options}
+				/>
+			{/if}
+		</div>
+	</VotingWidgetCard>
 </div>
 
 <style lang="scss">
 	.main-wrapper {
 		flex: 1;
 
-		.loading-wrapper {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100%;
-		}
-
 		.voting-data-wrapper {
 			display: grid;
 			gap: var(--space-10);
 			grid-template-columns: 1fr;
+			height: 100%;
 
 			@include mq('medium') {
 				grid-template-columns: 1fr 1fr;
@@ -142,17 +122,6 @@
 				flex-direction: column;
 				gap: var(--space-4);
 			}
-
-			.chart-wrapper {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				text-align: center;
-			}
-		}
-
-		em {
-			color: var(--clr-text-off);
 		}
 	}
 </style>

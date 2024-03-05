@@ -13,9 +13,12 @@
 </script>
 
 {#if votingRounds.length > 0 || activeVotingRound}
-	<div class="card">
+	<div class="main-wrapper">
 		<div class="row-space-between row-6">
-			<h4 class="title w-regular">Voting Rounds</h4>
+			<span class="title">
+				<Icon icon="lucide:vote" />
+				Voting rounds
+			</span>
 			<div class="row-4">
 				<button on:click={() => activeVotingRoundIndex--} disabled={activeVotingRoundIndex === 0}>
 					<Icon icon="tabler:chevron-left" width="1.2em" />
@@ -35,19 +38,22 @@
 				<Icon icon="tabler:arrow-right" />
 			</a>
 		</div>
-		<VotingRoundCard votingRound={activeVotingRound} />
+		<VotingRoundCard votingRound={activeVotingRound} showResults={true} />
 	</div>
 {/if}
 
 <style lang="scss">
-	.card {
+	.main-wrapper {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
 
-		h4 {
-			font-size: var(--font-size-2);
-			color: var(--clr-font-text);
+		.title {
+			font-size: var(--font-size-1);
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: var(--space-1);
 		}
 
 		.rounds-number {

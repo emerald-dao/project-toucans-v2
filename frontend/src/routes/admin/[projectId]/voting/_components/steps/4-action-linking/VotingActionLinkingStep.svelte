@@ -19,10 +19,15 @@
 	{:else}
 		{#each currentPageActions as action (action.id)}
 			<div
-				on:click={() => ($votingGeneratorLinkedAction = action.id)}
+				on:click={() =>
+					($votingGeneratorLinkedAction = {
+						id: action.id,
+						type: action.title
+					})}
 				on:keydown
 				class="action-wrapper"
-				class:selected={action.id === $votingGeneratorLinkedAction}
+				class:selected={$votingGeneratorLinkedAction &&
+					action.id === $votingGeneratorLinkedAction.id}
 			>
 				<PendingActionsListElement
 					projectOwner={daoData.generalInfo.owner}
@@ -33,7 +38,7 @@
 					isSigner={false}
 					showDao={false}
 				/>
-				{#if action.id === $votingGeneratorLinkedAction}
+				{#if $votingGeneratorLinkedAction && action.id === $votingGeneratorLinkedAction.id}
 					<button on:click|stopPropagation={() => ($votingGeneratorLinkedAction = null)}>
 						<Icon icon="tabler:x" />
 					</button>

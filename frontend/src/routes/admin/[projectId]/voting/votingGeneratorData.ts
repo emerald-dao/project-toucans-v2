@@ -1,8 +1,9 @@
 import { derived, writable, type Readable } from 'svelte/store';
-import type { VotingOption } from '../../../../lib/features/voting-rounds/types/voting-option.interface';
-import type { VotingNftModeSlug } from '../../../../lib/features/voting-rounds/constants/votingNftModes';
-import type { VotingRoundData } from '../../../../lib/features/voting-rounds/types/voting-round-data.type';
+import type { VotingOption } from '$lib/features/voting-rounds/types/voting-option.interface';
+import type { VotingNftModeSlug } from '$lib/features/voting-rounds/constants/votingNftModes';
+import type { VotingRoundData } from '$lib/features/voting-rounds/types/voting-round-data.type';
 import { fromDate, getLocalTimeZone, now, toCalendarDateTime } from '@internationalized/date';
+import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(structuredClone(defaultData));
@@ -73,7 +74,10 @@ export const votingGeneratorDatesWithTimezone = derived(
 	}
 );
 
-export const votingGeneratorLinkedAction = createVotingGeneratorDataStore<null | string>(null);
+export const votingGeneratorLinkedAction = createVotingGeneratorDataStore<null | {
+	id: string;
+	type: MultisigActions;
+}>(null);
 
 const OPTIONS_IF_LINKED_ACTION = [
 	{

@@ -38,7 +38,8 @@ export async function POST({ request, params }) {
 				end_date: votingRoundData.endDate,
 				nft_mode: votingRoundData.nftMode,
 				required_nft_collection_id: votingRoundData.requiredCollection[0],
-				linked_action_id: votingRoundData.linkedAction
+				linked_action_id: votingRoundData.linkedAction?.id,
+				linked_action_type: votingRoundData.linkedAction?.type
 			})
 			.select()
 			.single();
