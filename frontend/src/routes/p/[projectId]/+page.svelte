@@ -8,12 +8,13 @@
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
 	import { Seo } from '@emerald-dao/component-library';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
-	export let data;
+	export let data: DAOProject;
 
 	let seeMore = false;
 
-	let daoDataStore: Writable<typeof data> = writable(data, (set) => {
+	let daoDataStore: Writable<DAOProject> = writable(data, (set) => {
 		const subscription = supabase
 			.channel('events')
 			.on(

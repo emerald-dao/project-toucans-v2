@@ -11,7 +11,6 @@
 	import LegacyVotingsWidget from './widgets/LegacyVotingsWidget.svelte';
 	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
 	import NftsTreasuryWidget from './widgets/NftsTreasuryWidget.svelte';
-	import { getProjectNFTTreasury } from '$flow/actions';
 	import NewVotingsWidget from './widgets/NewVotingsWidget.svelte';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
