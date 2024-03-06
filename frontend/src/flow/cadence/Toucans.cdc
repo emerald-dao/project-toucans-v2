@@ -1430,9 +1430,6 @@ pub contract Toucans {
     }
 
     destroy() {
-      pre {
-        false: "Disabled for now."
-      }
       destroy self.treasury
       destroy self.minter
       destroy self.overflow
@@ -1538,6 +1535,10 @@ pub contract Toucans {
       if manager.readyToFinalize(actionUUID: actionUUID) {
         project.finalizeAction(actionUUID: actionUUID)
       }
+    }
+
+    pub fun deleteProject(projectId: String) {
+      destroy self.projects.remove(key: projectId)
     }
 
     init() {

@@ -13,11 +13,17 @@
 	export let daoData: DAOProject;
 	export let downloadable: boolean = false;
 
+	const nftDefaults: { [projectId: string]: string } = {
+		ADUToken: 'NFLAllDay',
+		HOODLUMS: 'SturdyExchange'
+	};
+
 	let projectNFTsCollections = daoData.onChainData.allowedNFTCollections;
-	let selectedCollection: string =
-		daoData.generalInfo.project_id == 'ADUToken'
-			? projectNFTsCollections[Math.max(projectNFTsCollections.indexOf('NFLAllDay'), 0)]
-			: projectNFTsCollections[0];
+	let selectedCollection: string = nftDefaults[daoData.generalInfo.project_id]
+		? projectNFTsCollections[
+				Math.max(projectNFTsCollections.indexOf(nftDefaults[daoData.generalInfo.project_id]), 0)
+		  ]
+		: projectNFTsCollections[0];
 
 	let storedUserNFTs: {
 		[collectionIdentifier: string]: Nft[];
