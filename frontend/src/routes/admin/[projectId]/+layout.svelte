@@ -94,13 +94,6 @@
 	</section>
 {/if}
 
-<Seo
-	title={`Admin | Toucans`}
-	description={`Manage your DAO's`}
-	type="WebPage"
-	image="https://toucans.ecdao.org/favicon.png"
-/>
-
 <style type="scss">
 	section {
 		padding: 0;

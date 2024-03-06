@@ -9,6 +9,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
 	import { Seo } from '@emerald-dao/component-library';
+	import OpenGraph from '$components/OpenGraph.svelte';
 
 	export let data: DAOProject;
 
@@ -89,6 +90,12 @@
 	});
 </script>
 
+<OpenGraph
+	image={data.generalInfo.banner_image}
+	title={data.generalInfo.name}
+	description={data.generalInfo.description}
+/>
+
 <section class="container">
 	<div class="main-wrapper">
 		<div class="project-sidebar-wrapper">
@@ -113,19 +120,6 @@
 		</div>
 	{/if}
 </section>
-
-<!-- <Seo
-	title={`${data.generalInfo.name} | Toucans`}
-	description={`${data.generalInfo.description}`}
-	type="WebPage"
-	image={data.generalInfo.logo}
-/> -->
-<Seo
-	title={'Toucans - Community Management'}
-	description={'Manage your community with no-code fungible token & DAO creation. Built-in airdrops, leaderboards, and transparently tracked activity. Completely free.'}
-	type="WebSite"
-	image={'/dashboard-screenshot.png'}
-/>
 
 <style type="scss">
 	.main-wrapper {
