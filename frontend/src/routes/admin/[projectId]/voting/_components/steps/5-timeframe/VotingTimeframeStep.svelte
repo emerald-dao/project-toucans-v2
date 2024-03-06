@@ -2,16 +2,12 @@
 	import { fly } from 'svelte/transition';
 	import { votingGeneratorDates } from '../../../votingGeneratorData';
 	import validationSuite from './validation';
-	import { votingGeneratorGeneralData } from '../../../votingGeneratorData';
 	import type { SuiteRunResult } from 'vest';
 
 	export let isValid = false;
 
 	const handleChange = () => {
-		res = validationSuite(
-			$votingGeneratorGeneralData.name,
-			$votingGeneratorGeneralData.description
-		);
+		res = validationSuite($votingGeneratorDates.startDate, $votingGeneratorDates.endDate);
 
 		(res as SuiteRunResult).done(() => {
 			isValid = res.isValid();
@@ -33,6 +29,9 @@
 				bind:value={$votingGeneratorDates.startDate}
 				on:input={handleChange}
 			/>
+			{#if res.tests['start-date'] && res.tests['start-date'].errors.length > 0}
+				<p in:fly={{ duration: 200, y: 20 }} class="error">{res.tests['start-date'].errors[0]}</p>
+			{/if}
 		</div>
 		<div class="column-1">
 			<label for="end-date">End date</label>
@@ -44,6 +43,9 @@
 				bind:value={$votingGeneratorDates.endDate}
 				on:input={handleChange}
 			/>
+			{#if res.tests['end-date'] && res.tests['end-date'].errors.length > 0}
+				<p in:fly={{ duration: 200, y: 20 }} class="error">{res.tests['end-date'].errors[0]}</p>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -59,5 +61,10 @@
 
 	input[type='datetime-local']::-webkit-calendar-picker-indicator {
 		filter: invert(50%);
+	}
+
+	.error {
+		color: var(--clr-alert-main);
+		font-size: var(--font-size-1);
 	}
 </style>

@@ -1,16 +1,41 @@
-import { create, enforce, test } from 'vest';
+import { ZonedDateTime, fromDate, getLocalTimeZone } from '@internationalized/date';
+import { create, enforce, skipWhen, test } from 'vest';
 
-const validationSuite = create((startDate: string, endDate: string) => {
-	test('startDate', 'Your votation needs a start date!', () => {
-		enforce(startDate).isNotBlank();
+const validationSuite = create((startDate: string | undefined, endDate: string | undefined) => {
+	const startDateLocalized = startDate
+		? fromDate(new Date(startDate), getLocalTimeZone())
+		: undefined;
+	const endDateLocalized = endDate ? fromDate(new Date(endDate), getLocalTimeZone()) : undefined;
+	const nowLocalized = fromDate(new Date(), getLocalTimeZone());
+
+	skipWhen(startDateLocalized === undefined, () => {
+		test('start-date', 'Your votation start date must be in the future!', () => {
+			return !((startDateLocalized as ZonedDateTime).compare(nowLocalized) < 0);
+		});
 	});
 
-	test('endDate', 'Your votation needs an end date!', () => {
+	test('end-date', 'Your votation needs an end date!', () => {
 		enforce(endDate).isNotBlank();
 	});
 
-	test('endDate', 'Your votation end date must be after the start date!', () => {
-		enforce(endDate).isAfter(startDate);
+	test('end-date', 'Your votation end date must be at least one hour after now!', () => {
+		if (endDateLocalized) {
+			if (endDateLocalized.compare(nowLocalized.add({ hours: 1 })) < 0) {
+				return false;
+			}
+		}
+
+		return true;
+	});
+
+	skipWhen(startDateLocalized === undefined, () => {
+		test('end-date', 'Your votation end date must be at least one hour after start date', () => {
+			return !(
+				(endDateLocalized as ZonedDateTime).compare(
+					(startDateLocalized as ZonedDateTime).add({ hours: 1 })
+				) < 0
+			);
+		});
 	});
 });
 
