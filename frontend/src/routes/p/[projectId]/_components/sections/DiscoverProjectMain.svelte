@@ -62,11 +62,13 @@
 					: null}
 			/>
 		{/if}
-		{#await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id) then NFTs}
-			{#if Object.keys(NFTs).length > 0}
-				<NftsTreasuryWidget {NFTs} pageSize={4} />
-			{/if}
-		{/await}
+		{#if daoData.onChainData.allowedNFTCollections.length > 0}
+			<NftsTreasuryWidget
+				pageSize={3}
+				nftUuidOwnerMap={daoData.generalInfo.nftUuidOwnerMap}
+				{daoData}
+			/>
+		{/if}
 		<ProjectCharts {daoData} />
 		<ProjectLists {daoData} />
 	</div>

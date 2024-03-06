@@ -70,6 +70,7 @@ pub contract Toucans {
     projectId: String,
     projectOwner: Address, 
     amount: UInt64,
+    uuids: [UInt64],
     collectionIdentifier: String,
     collectionName: String,
     collectionExternalURL: String,
@@ -102,7 +103,8 @@ pub contract Toucans {
     collectionName: String,
     collectionExternalURL: String,
     amount: UInt64,
-    to: Address
+    to: Address,
+    message: String
   )
   pub event Mint(
     projectId: String,
@@ -266,7 +268,7 @@ pub contract Toucans {
     // Some proposals we think make sense to be public initially
     pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
-    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>)
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], message: String, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchMint(recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
     pub fun proposeMintToTreasury(amount: UFix64)
@@ -302,6 +304,8 @@ pub contract Toucans {
     pub fun hasTokenContract(): Bool
     pub fun getCollectionTypesInTreasury(): [Type]
     pub fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT]
+    pub fun getNFTRefsByIDs(collectionType: Type, ids: [UInt64]): [&NonFungibleToken.NFT]
+    pub fun getNFTIDs(collectionType: Type): [UInt64]
   }
 
   pub resource Project: ProjectPublic {
@@ -375,7 +379,7 @@ pub contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
+    pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], message: String, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)
                         ?? panic("This collection type does not exist in the NFT Treasury.")
       let existingIDs: [UInt64] = specificNFTTreasury.getIDs()
@@ -383,7 +387,7 @@ pub contract Toucans {
         assert(existingIDs.contains(id), message: "The NFT ID ".concat(id.toString()).concat(" does not exist in the NFT Treasury."))
       }
       
-      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection, recipientCollectionBackup)
+      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection, recipientCollectionBackup, message)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -489,6 +493,7 @@ pub contract Toucans {
             if withdraw.extra["backupReceiver"] != nil {
               backupReceiver = (withdraw.extra["backupReceiver"]! as! Capability<&{NonFungibleToken.CollectionPublic}>).borrow()
             }
+            let message: String = withdraw.extra["message"] == nil ? "" : withdraw.extra["message"]! as! String
             self.withdrawNFTsFromTreasury(
               collectionType: withdraw.collectionType, 
               collectionReceiver: withdraw.recipientCollection.borrow(), 
@@ -497,6 +502,7 @@ pub contract Toucans {
               collectionName: withdraw.collectionName, 
               collectionExternalURL: withdraw.collectionExternalURL,
               recipientAddr: recipientAddr,
+              message: message,
               backupReceiver
             )
           case Type<ToucansActions.MintTokens>():
@@ -970,17 +976,6 @@ pub contract Toucans {
       let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collection.getType().identifier)
       let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
       assert(self.getAllowedNFTCollections().contains(nftCatalogCollectionIdentifier), message: "This DAO does not accept this NFT type.")
-      
-      emit DonateNFT(
-        projectId: self.projectId,
-        projectOwner: self.owner!.address, 
-        amount: UInt64(collection.getIDs().length),
-        collectionIdentifier: nftCatalogCollectionIdentifier,
-        collectionName: nftCatalogEntry.collectionDisplay.name,
-        collectionExternalURL: nftCatalogEntry.collectionDisplay.externalURL.url,
-        by: sender,
-        message: message
-      )
 
       if self.additions["nftTreasury"] == nil {
         self.additions["nftTreasury"] <-! ({} as @{Type: NonFungibleToken.Collection})
@@ -993,11 +988,26 @@ pub contract Toucans {
       }
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collection.getType())!
 
+      let donatedUUIDs: [UInt64] = []
       for id in collection.getIDs() {
-        specificNFTTreasury.deposit(token: <- collection.withdraw(withdrawID: id))
+        let nft <- collection.withdraw(withdrawID: id)
+        donatedUUIDs.append(nft.uuid)
+        specificNFTTreasury.deposit(token: <- nft)
       }
       assert(collection.getIDs().length == 0, message: "This collection is not empty.")
       destroy collection
+      
+      emit DonateNFT(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        amount: UInt64(donatedUUIDs.length),
+        uuids: donatedUUIDs,
+        collectionIdentifier: nftCatalogCollectionIdentifier,
+        collectionName: nftCatalogEntry.collectionDisplay.name,
+        collectionExternalURL: nftCatalogEntry.collectionDisplay.externalURL.url,
+        by: sender,
+        message: message
+      )
     }
 
     access(self) fun withdrawNFTsFromTreasury(
@@ -1008,6 +1018,7 @@ pub contract Toucans {
       collectionName: String, 
       collectionExternalURL: String, 
       recipientAddr: Address,
+      message: String,
       _ backupReceiver: &{NonFungibleToken.CollectionPublic}?
     ) {
       emit WithdrawNFTs(
@@ -1017,7 +1028,8 @@ pub contract Toucans {
         collectionName: collectionName,
         collectionExternalURL: collectionExternalURL,
         amount: UInt64(nftIDs.length),
-        to: recipientAddr
+        to: recipientAddr,
+        message: message
       )
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)!
       // if main receiver available, use that
@@ -1218,6 +1230,23 @@ pub contract Toucans {
       return ans
     }
 
+    pub fun getNFTRefsByIDs(collectionType: Type, ids: [UInt64]): [&NonFungibleToken.NFT] {
+      let ans: [&NonFungibleToken.NFT] = []
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        for id in ids {
+          ans.append(nftTreasury.borrowNFT(id: id))
+        }
+      }
+      return ans
+    }
+
+    pub fun getNFTIDs(collectionType: Type): [UInt64] {
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        return nftTreasury.getIDs()
+      }
+      return []
+    }
+
     pub fun getCurrentFundingCycleIndex(): Int? {
       var i: Int = self.fundingCycles.length - 1
       let timestamp: UFix64 = getCurrentBlock().timestamp
@@ -1401,9 +1430,6 @@ pub contract Toucans {
     }
 
     destroy() {
-      pre {
-        false: "Disabled for now."
-      }
       destroy self.treasury
       destroy self.minter
       destroy self.overflow
@@ -1509,6 +1535,10 @@ pub contract Toucans {
       if manager.readyToFinalize(actionUUID: actionUUID) {
         project.finalizeAction(actionUUID: actionUUID)
       }
+    }
+
+    pub fun deleteProject(projectId: String) {
+      destroy self.projects.remove(key: projectId)
     }
 
     init() {

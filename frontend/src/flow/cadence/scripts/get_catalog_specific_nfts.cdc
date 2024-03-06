@@ -2,21 +2,14 @@ import NFTCatalog from "../utility/NFTCatalog.cdc"
 import NonFungibleToken from "../utility/NonFungibleToken.cdc"
 import MetadataViews from "../utility/MetadataViews.cdc"
 
-pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]} {
-  let res: {String: [NFTData]} = {}
-  let authAccount = getAuthAccount(user)
-  for collectionID in collectionIdentifiers {
-      if let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionID) {
+pub fun main(collectionIdentifier: String, user: Address): [NFTData] {
+    let res: [NFTData] = []
+    let authAccount = getAuthAccount(user)
+
+    if let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier) {
         let storagePath = data.collectionData.storagePath
         if let userCollection = authAccount.borrow<&{MetadataViews.ResolverCollection}>(from: storagePath) {
-            if userCollection.getIDs().length == 0 {
-                continue
-            }
-            let nfts: [NFTData] = []
             for index, id in userCollection.getIDs() {
-                if index == 2000 {
-                    break
-                }
                 let nft = userCollection.borrowViewResolver(id: id)
                 let display = nft.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
                 var serialNum: UInt64? = nil
@@ -26,14 +19,11 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
                     }
                 }
                 let nftData = NFTData(id, display.name, display.thumbnail.uri(), serialNum)
-                nfts.append(nftData)
+                res.append(nftData)
             }
-            res[collectionID] = nfts
         }
-
-      }
-  }
-  return res
+    }
+    return res
 }
 
 pub struct NFTData {

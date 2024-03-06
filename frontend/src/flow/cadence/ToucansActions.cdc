@@ -94,7 +94,7 @@ pub contract ToucansActions {
       return "WithdrawNFTs"
     }
 
-    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
+    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>, _ message: String) {
       pre {
         recipientCollection.check() || recipientCollectionBackup.check(): "Invalid recipient capability."
       }
@@ -106,7 +106,10 @@ pub contract ToucansActions {
       self.collectionIdentifier = nftCatalogCollectionIdentifier
       self.collectionName = nftCatalogEntry.collectionDisplay.name
       self.collectionExternalURL = nftCatalogEntry.collectionDisplay.externalURL.url
-      self.extra = {"backupReceiver": recipientCollectionBackup}
+      self.extra = {
+        "backupReceiver": recipientCollectionBackup,
+        "message": message
+      }
     }
   }
 

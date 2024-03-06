@@ -4,20 +4,38 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import NftAddressInput from './atoms/NftAddressInput.svelte';
 	import { Button } from '@emerald-dao/component-library';
-	import { canReceiveNFTCollection } from '$flow/actions';
+	import { canReceiveNFTCollection, getProjectSpecificNFTTreasury } from '$flow/actions';
 	import Icon from '@iconify/svelte';
 	import { withdrawNFTs } from '$lib/features/distribute-tokens/functions/withdrawNFTs';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import SpecialMessage from '$lib/features/payments/components/atoms/SpecialMessage.svelte';
+	import CollectionSelector from '$lib/features/nft-treasury/components/nfts-list/atoms/CollectionSelector.svelte';
 
 	export let activeDaoData: DAOProject;
-	export let NFTs: {
-		[collectionIdentifier: string]: Nft[];
-	};
 
 	let address: string;
 	let isAddressValid: boolean;
-	let selectedCollection: string;
+	let reasonMessage: string = '';
 	let selectedNFTIds: string[] = [];
+
+	let projectNFTsCollections = activeDaoData.onChainData.allowedNFTCollections;
+	let selectedCollection: string = projectNFTsCollections[0];
+
+	let storedUserNFTs: {
+		[collectionIdentifier: string]: Nft[];
+	} = {};
+
+	async function fetchUserNFTs(collectionIdentifier: string) {
+		selectedNFTIds = [];
+		if (!storedUserNFTs[collectionIdentifier]) {
+			storedUserNFTs[collectionIdentifier] = await getProjectSpecificNFTTreasury(
+				activeDaoData.generalInfo.owner,
+				activeDaoData.generalInfo.project_id,
+				collectionIdentifier
+			);
+		}
+		return storedUserNFTs[collectionIdentifier];
+	}
 
 	const resetDistributionForm = () => {
 		address = '';
@@ -33,7 +51,7 @@
 			);
 		}
 
-		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address);
+		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address, reasonMessage);
 		resetDistributionForm();
 	};
 
@@ -48,13 +66,26 @@
 			bind:handleChange={resetAddressValidation}
 			collectionId={selectedCollection}
 		/>
-		<NFTsList
-			bind:selectedNFTIds
-			bind:selectedCollection
-			{NFTs}
-			clickable={true}
-			on:collectionChange={resetAddressValidation}
-		/>
+		<div class="column-3">
+			<CollectionSelector
+				bind:selectedCollection
+				collectionIdentifiers={projectNFTsCollections}
+				on:collectionChange={resetAddressValidation}
+			/>
+			{#await fetchUserNFTs(selectedCollection)}
+				<span class="small"><i>Loading...</i></span>
+			{:then userCatalogNFTs}
+				<NFTsList
+					bind:selectedNFTIds
+					{selectedCollection}
+					NFTs={userCatalogNFTs}
+					clickable={true}
+				/>
+			{/await}
+		</div>
+		<div class="special-message">
+			<SpecialMessage bind:message={reasonMessage} messageText="Add a reason for withdrawl" />
+		</div>
 	</div>
 	<Button
 		on:click={handleCreateWithdrawNftsAction}
@@ -84,6 +115,10 @@
 
 		.content-wrapper {
 			width: 100%;
+
+			.special-message {
+				margin-top: var(--space-3);
+			}
 		}
 	}
 </style>

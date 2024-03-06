@@ -115,7 +115,7 @@
 		</div>
 	</div>
 	<div class="row-3">
-		{#if (event.type === 'Purchase' || event.type === 'Donate' || event.type === 'DonateNFT') && event.data.message}
+		{#if (event.type === 'Purchase' || event.type === 'Donate' || event.type === 'DonateNFT' || event.type === 'WithdrawNFTs') && event.data.message}
 			<div class="header-link" on:click={() => getModal(`message-${i}`).open()} on:keydown>
 				<Icon icon="tabler:message" />
 			</div>

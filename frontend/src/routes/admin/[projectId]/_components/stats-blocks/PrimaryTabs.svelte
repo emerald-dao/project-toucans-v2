@@ -4,20 +4,9 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { Tab, TabList, TabPanel, Tabs } from '@emerald-dao/component-library';
 	import RoundsCard from '$components/dao-data-blocks/funding-rounds/widget/RoundsWidget.svelte';
-	import { getProjectNFTTreasury } from '$flow/actions';
 	import NftsTreasuryWidget from '../../../../p/[projectId]/_components/sections/widgets/NftsTreasuryWidget.svelte';
-	import { onMount } from 'svelte';
-	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 
 	export let daoData: DAOProject;
-
-	let NFTs: {
-		[collectionIdentifier: string]: Nft[];
-	};
-
-	onMount(async () => {
-		NFTs = await getProjectNFTTreasury(daoData.generalInfo.owner, daoData.generalInfo.project_id);
-	});
 </script>
 
 <div class="main-wrapper">
@@ -30,7 +19,7 @@
 			{#if daoData.onChainData.fundingCycles.length > 0}
 				<Tab>Rounds</Tab>
 			{/if}
-			{#if NFTs && Object.keys(NFTs).length > 0}
+			{#if daoData.onChainData.allowedNFTCollections.length > 0}
 				<Tab>NFTs</Tab>
 			{/if}
 		</TabList>
@@ -56,10 +45,10 @@
 				<RoundsList {daoData} finishedFilter={false} />
 			</TabPanel>
 		{/if}
-		{#if NFTs && Object.keys(NFTs).length > 0}
+		{#if daoData.onChainData.allowedNFTCollections.length > 0}
 			<TabPanel>
 				<div class="card-wrapper">
-					<NftsTreasuryWidget {NFTs} hasTitle={false} pageSize={3} />
+					<NftsTreasuryWidget hasTitle={false} pageSize={3} {daoData} downloadable={true} />
 				</div>
 			</TabPanel>
 		{/if}

@@ -7,7 +7,7 @@ import NonFungibleToken from "../../utility/NonFungibleToken.cdc"
 // Proposed ACTION: Withdraw `nftIDs` from the treasury
 // at `projectOwner` to `recipientAddr`
 
-transaction(projectOwner: Address, projectId: String, collectionIdentifier: String, nftIDs: [UInt64], recipientAddr: Address) {
+transaction(projectOwner: Address, projectId: String, collectionIdentifier: String, nftIDs: [UInt64], recipientAddr: Address, message: String) {
 
   let Project: &Toucans.Project{Toucans.ProjectPublic}
   let RecipientCollectionReceiver: Capability<&{NonFungibleToken.Receiver}>
@@ -37,6 +37,6 @@ transaction(projectOwner: Address, projectId: String, collectionIdentifier: Stri
       .concat(self.CatalogEntry.contractName)
       .concat(".Collection")
     )!
-    self.Project.proposeWithdrawNFTs(collectionType: collectionType, recipientCollection: self.RecipientCollectionReceiver, nftIDs: nftIDs, self.RecipientCollectionPublic)
+    self.Project.proposeWithdrawNFTs(collectionType: collectionType, recipientCollection: self.RecipientCollectionReceiver, nftIDs: nftIDs, message: message, self.RecipientCollectionPublic)
   }
 }

@@ -1,10 +1,14 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
-	import { paymentData } from '$lib/features/payments/stores/PaymentData';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import { onDestroy } from 'svelte';
+	import { createSearchStore, searchHandler } from './searchStore';
 
-	export let message: string;
-	export let messageText: string = 'Add a special message';
+	export let items: any[];
+	export let searchTerms: string[];
+	export let filteredItems;
+	export let placeholder = 'Search';
+
 	let viewSpecialMessage = false;
 	let specialMessageInput: HTMLInputElement;
 
@@ -19,31 +23,52 @@
 	};
 
 	const inputFocusOut = () => {
-		if (message === '') {
+		if ($searchStore.search === '') {
 			viewSpecialMessage = false;
 		}
 	};
+
+	$: searchStore = createSearchStore(searchItem);
+
+	$: filteredItems = $searchStore.filtered;
+
+	const resolveSearchTerm = (item: any) => {
+		let resolvedSearchTerms = searchTerms.map((term) => item[term]);
+		return resolvedSearchTerms.join(' ').toLowerCase();
+	};
+
+	$: searchItem = items.map((item) => ({
+		...item,
+		searchTerms: resolveSearchTerm(item)
+	}));
+
+	$: unsubscribe = searchStore.subscribe((model) => searchHandler(model));
+
+	onDestroy(() => {
+		unsubscribe();
+	});
 </script>
 
 <div class="main-wrapper row-1 align-center">
 	{#if !viewSpecialMessage}
 		<button on:click|preventDefault={onToggleSpecialMessage} class="row-2">
 			<div in:fly|local={{ duration: 200, x: -10 }}>
-				<IconCircle icon="tabler:plus" color="neutral" />
+				<IconCircle icon="tabler:search" color="neutral" />
 			</div>
-			{messageText}
+			{placeholder}
 		</button>
 	{/if}
 	{#if viewSpecialMessage}
 		<div class="message-wrapper" in:fly|local={{ x: 20, duration: 200 }}>
 			<input
+				type="text"
 				name="message"
-				placeholder={messageText}
 				id="special-message"
-				maxLength="70"
-				bind:value={message}
-				bind:this={specialMessageInput}
+				maxlength="70"
 				on:focusout={inputFocusOut}
+				{placeholder}
+				bind:this={specialMessageInput}
+				bind:value={$searchStore.search}
 			/>
 		</div>
 	{/if}

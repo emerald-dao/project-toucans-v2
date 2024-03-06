@@ -13,7 +13,7 @@
 		{description}
 	</span>
 	<span class="data">
-		{#if type === 'highTokenPrice' || type === 'mostFunded'}
+		{#if type === 'totalFunding'}
 			$
 		{/if}
 		{data}

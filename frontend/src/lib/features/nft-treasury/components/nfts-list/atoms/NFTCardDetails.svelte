@@ -13,6 +13,7 @@
 		width: 100%;
 		padding: var(--space-4) var(--space-2);
 		border-top: 1px solid var(--clr-neutral-badge);
+		flex-grow: 1;
 
 		.heading {
 			font-size: var(--font-size-1);

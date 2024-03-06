@@ -10,9 +10,13 @@
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import FeeWarning from '../../atoms/FeeWarning.svelte';
-	import { getCatalogNFTs } from '$flow/actions';
+	import { getCatalogSpecificNFTs } from '$flow/actions';
 	import NFTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import { user } from '$stores/flow/FlowStore';
+	import IconCircle from '$components/atoms/IconCircle.svelte';
+	import { onMount } from 'svelte';
+	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
+	import CollectionSelector from '$lib/features/nft-treasury/components/nfts-list/atoms/CollectionSelector.svelte';
 
 	export let isValid = false;
 	export let daoData: DAOProject;
@@ -43,6 +47,32 @@
 			isValid = false;
 		}
 	}
+
+	let storedUserNFTs: {
+		[collectionIdentifier: string]: Nft[];
+	} = {};
+	let userNFTs: Promise<{
+		[collectionIdentifier: string]: Nft[];
+	}>;
+	onMount(async () => {
+		if (projectNFTsCollections.length > 0) {
+			$paymentData.NFTCollection = projectNFTsCollections[0];
+			fetchUserNFTs();
+		}
+	});
+
+	async function fetchUserNFTs() {
+		$paymentData.NFTs = [];
+		userNFTs = new Promise(async (resolve, reject) => {
+			if (!storedUserNFTs[$paymentData.NFTCollection]) {
+				storedUserNFTs[$paymentData.NFTCollection] = await getCatalogSpecificNFTs(
+					$paymentData.NFTCollection,
+					$user.addr
+				);
+			}
+			resolve(storedUserNFTs[$paymentData.NFTCollection]);
+		});
+	}
 </script>
 
 <form
@@ -67,24 +97,25 @@
 				<em> Please log in to your account to view your NFTs collections! </em>
 			</p>
 		{:else if projectNFTsCollections.length > 0}
-			{#await getCatalogNFTs(projectNFTsCollections, $user.addr)}
-				<span class="small"><i>Loading...</i></span>
-			{:then userCatalogNFTs}
-				{#if Object.keys(userCatalogNFTs).length > 0}
+			<div class="column-3">
+				<CollectionSelector
+					bind:selectedCollection={$paymentData.NFTCollection}
+					collectionIdentifiers={projectNFTsCollections}
+					on:collectionChange={fetchUserNFTs}
+				/>
+				{#await userNFTs}
+					<span class="small"><i>Loading...</i></span>
+				{:then userCatalogNFTs}
 					<NFTsList
 						bind:selectedNFTIds={$paymentData.NFTs}
-						bind:selectedCollection={$paymentData.NFTCollection}
+						selectedCollection={$paymentData.NFTCollection}
 						NFTs={userCatalogNFTs}
+						pageSize={3}
 						clickable={true}
+						sortNFTs={false}
 					/>
-				{:else}
-					<span class="small"><i>You have no NFTs to deposit.</i></span>
-				{/if}
-			{:catch}
-				<span class="small">
-					<i> There was an error. Please reach out to us in the Emerald City Discord. </i>
-				</span>
-			{/await}
+				{/await}
+			</div>
 		{:else}
 			<span class="small"><i>This DAO has not set up any NFT collections yet.</i></span>
 		{/if}
@@ -100,7 +131,13 @@
 			bind:value={$paymentData.amount}
 		/>
 	{/if}
-	<SpecialMessage />
+	{#if $paymentData.currency === 'NFTs' && $paymentData.NFTs}
+		<div class="row-2">
+			<IconCircle icon={$paymentData.NFTs.length} color="neutral" />
+			{$paymentData.NFTs.length == 1 ? 'NFT' : 'NFTs'} selected
+		</div>
+	{/if}
+	<SpecialMessage bind:message={$paymentData.specialMessage} />
 	{#if $paymentData.type === 'fund' && $paymentData.issuanceRate}
 		<div class="funding-data-wrapper">
 			<div class="row-2 align-center">
@@ -170,6 +207,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
+
+		.row-2 {
+			font-size: var(--font-size-0);
+			gap: var(--space-2);
+			align-items: center;
+			padding: 1px 6px;
+		}
 
 		.funding-data-wrapper {
 			margin-top: var(--space-8);
