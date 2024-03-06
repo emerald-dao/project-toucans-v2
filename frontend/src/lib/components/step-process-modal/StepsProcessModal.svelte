@@ -47,6 +47,7 @@
 		border-radius: var(--radius-5);
 		background-color: var(--clr-background-secondary);
 		width: 90vw;
+		max-width: 80rem;
 		overflow: hidden;
 
 		@include mq('small') {
@@ -54,8 +55,9 @@
 		}
 
 		@include mq('medium') {
-			min-height: 85vh;
 			display: grid;
+			height: 85vh;
+			max-height: 80rem;
 			grid-template-columns: 2fr 5fr;
 		}
 

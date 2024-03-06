@@ -16,7 +16,7 @@ export const votingGeneratorSteps = createSteps([
 		action: null,
 		form: true,
 		isValid: false,
-		state: 'inactive',
+		state: 'active',
 		button: {
 			text: 'Next',
 			icon: 'tabler:arrow-right'

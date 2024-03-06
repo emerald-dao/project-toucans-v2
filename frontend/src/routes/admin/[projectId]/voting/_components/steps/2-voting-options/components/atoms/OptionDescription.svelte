@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let description: string;
+	export let optionId: string;
 
 	let viewDescription = false;
 	let specialMessageInput: HTMLInputElement;
@@ -34,13 +35,14 @@
 	{#if viewDescription}
 		<div class="description-wrapper" in:fly|local={{ x: 20, duration: 200 }}>
 			<input
-				name="option-description"
+				name={`option-description-${optionId}`}
+				id={`option-namdescriptione-${optionId}`}
 				placeholder="Write a description for this option"
-				id="option-description"
 				maxLength="70"
 				bind:value={description}
 				bind:this={specialMessageInput}
 				on:focusout={inputFocusOut}
+				on:input
 			/>
 		</div>
 	{/if}

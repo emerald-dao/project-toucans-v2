@@ -2,18 +2,20 @@
 	import VotingOptionsListElement from './../../2-voting-options/components/VotingOptionsListElement.svelte';
 	import type { VotingOption } from '$lib/features/voting-rounds/types/voting-option.interface';
 	import Pagination from '$components/atoms/Pagination.svelte';
-	import type { Writable } from 'svelte/store';
+	import type { SuiteResult } from 'vest';
 
-	export let votingOptions: Writable<VotingOption[]>;
+	export let votingOptions: VotingOption[];
 
 	export let pageStart: number;
 	export let pageEnd: number;
 	export let pageSize = 4;
 
-	$: currentPageVotingOptions = $votingOptions.slice(pageStart, pageEnd);
+	export let validationRes: SuiteResult;
+
+	$: currentPageVotingOptions = votingOptions.slice(pageStart, pageEnd);
 
 	const handleDeleteOption = (event: CustomEvent<{ id: string }>) => {
-		votingOptions.update((options) => options.filter((option) => option.id !== event.detail.id));
+		votingOptions = votingOptions.filter((option) => option.id !== event.detail.id);
 	};
 </script>
 
@@ -23,11 +25,13 @@
 			<VotingOptionsListElement
 				{votingOption}
 				optionNumber={i + 1 + (pageStart > 0 ? pageStart : 0)}
+				on:input
 				on:delete={handleDeleteOption}
+				{validationRes}
 			/>
 		{/each}
 	</div>
-	<Pagination amountOfItems={$votingOptions.length} bind:pageStart bind:pageEnd {pageSize} />
+	<Pagination amountOfItems={votingOptions.length} bind:pageStart bind:pageEnd {pageSize} />
 </div>
 
 <style lang="scss">
@@ -45,7 +49,7 @@
 			display: grid;
 			gap: var(--space-3);
 			grid-template-columns: repeat(2, 1fr);
-			grid-template-rows: repeat(2, 1fr);
+			grid-template-rows: repeat(2, auto);
 		}
 	}
 </style>

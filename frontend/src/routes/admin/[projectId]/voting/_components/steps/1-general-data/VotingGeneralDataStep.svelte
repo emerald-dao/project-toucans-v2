@@ -6,15 +6,19 @@
 	import { votingGeneratorGeneralData } from '../../../votingGeneratorData';
 	import { votingGeneratorActiveStep } from '../../../votingGeneratorSteps';
 	import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../votingGeneratorConfig';
+	import type { SuiteRunResult } from 'vest';
 
-	const handleChange = (input: Event) => {
-		const target = input.target as HTMLInputElement;
+	export let isValid = false;
 
+	const handleChange = () => {
 		res = validationSuite(
 			$votingGeneratorGeneralData.name,
-			$votingGeneratorGeneralData.description,
-			target.name
+			$votingGeneratorGeneralData.description
 		);
+
+		(res as SuiteRunResult).done(() => {
+			isValid = res.isValid();
+		});
 	};
 
 	let res = validationSuite.get();
