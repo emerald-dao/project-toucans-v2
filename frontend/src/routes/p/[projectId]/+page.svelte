@@ -8,8 +8,6 @@
 	import { getProjectInfo, getTokenBalance, hasProjectVaultSetup } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
-	import { Seo } from '@emerald-dao/component-library';
-	import OpenGraph from '$components/OpenGraph.svelte';
 
 	export let data: DAOProject;
 
@@ -89,12 +87,6 @@
 		$daoDataStore.generalInfo.nftUuidOwnerMap = uuidsMap;
 	});
 </script>
-
-<OpenGraph
-	image={data.generalInfo.banner_image}
-	title={data.generalInfo.name}
-	description={data.generalInfo.description}
-/>
 
 <section class="container">
 	<div class="main-wrapper">
