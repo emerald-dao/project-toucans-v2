@@ -183,7 +183,6 @@
 
 		.action-message {
 			max-width: 50ch;
-			color: var(--clr-text-off);
 		}
 
 		.action-wrapper {

@@ -2,22 +2,17 @@
 	import { Button, Modal, getModal, InputWrapper, Range } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
-	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { onMount } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
 	import validationSuite from '../validation/validation';
 	import submitRoundChanges, { type RoundChangesData } from '../functions/submitRoundChanges';
 	import EditRoundDatePicker from './EditRoundDatePicker.svelte';
+	import { page } from '$app/stores';
 
 	export let round: FundingCycle;
 	export let cycleIndex: number;
-
-	$: adminData = getContext('admin-data') as {
-		userDaos: Writable<DAOProject[]>;
-	};
-
-	$: userDaos = adminData.userDaos;
+	export let daoData: DAOProject;
 
 	$: issuanceRate = Number(round.details.issuanceRate);
 	$: fundingTarget = Number(round.details.fundingTarget);
@@ -43,7 +38,7 @@
 		formData.startDate = round.details.timeframe.startTime;
 		formData.endDate = round.details.timeframe.endTime || '0';
 		formData.reserveRate = reserveRate;
-		formData.projectId = $userDaos[0].generalInfo.project_id;
+		formData.projectId = $page.params.projectId;
 		formData.cycleIndex = cycleIndex;
 
 		infiniteRound = round.details.timeframe.endTime === null;
@@ -84,7 +79,7 @@
 		<div class="content-wrapper">
 			<div class="column-4">
 				<EditRoundDatePicker
-					rounds={$userDaos[0].onChainData.fundingCycles}
+					rounds={daoData.onChainData.fundingCycles}
 					bind:infiniteDuration={infiniteRound}
 					cycleId={round.details.cycleId}
 					minStartTimePlus5Minutes={new Date()}
@@ -109,12 +104,12 @@
 				<label for="issuance-rate">
 					Issuance rate
 					<em>
-						(current rate: {issuanceRate} ${$userDaos[0].generalInfo.token_symbol})
+						(current rate: {issuanceRate} ${daoData.generalInfo.token_symbol})
 					</em>
 				</label>
 				<CurrencyInput
 					name="issuance-rate"
-					currency={$userDaos[0].generalInfo.token_symbol}
+					currency={daoData.generalInfo.token_symbol}
 					bind:value={formData.issuanceRate}
 					on:input={handleChange}
 					isValid={res.isValid('issuance-rate')}
@@ -133,13 +128,13 @@
 					>Funding target
 					<em>
 						(current target: {fundingTarget === 0 ? '∞' : fundingTarget}
-						${$userDaos[0].onChainData.paymentCurrency})
+						${daoData.onChainData.paymentCurrency})
 					</em>
 				</label>
 				<span class="xsmall"><em>* Put a 0 to make the target infinite</em></span>
 				<CurrencyInput
 					name="funding-target"
-					currency={$userDaos[0].onChainData.paymentCurrency}
+					currency={daoData.onChainData.paymentCurrency}
 					bind:value={formData.fundingTarget}
 					on:input={handleChange}
 					isValid={res.isValid('funding-target')}

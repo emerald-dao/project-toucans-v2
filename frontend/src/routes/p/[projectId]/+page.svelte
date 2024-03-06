@@ -1,5 +1,6 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
+	import { setContext } from 'svelte';
 	import { onMount, setContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
@@ -10,11 +11,11 @@
 	import Icon from '@iconify/svelte';
 	import { Seo } from '@emerald-dao/component-library';
 
-	export let data: DAOProject;
+	export let data;
 
 	let seeMore = false;
 
-	let daoDataStore: Writable<DAOProject> = writable(data, (set) => {
+	let daoDataStore: Writable<typeof data> = writable(data, (set) => {
 		const subscription = supabase
 			.channel('events')
 			.on(
@@ -95,7 +96,7 @@
 			<DiscoverProjectSidebar daoData={$daoDataStore} />
 		</div>
 		<div class="secondary-wrapper">
-			<DiscoverProjectMain daoData={$daoDataStore} />
+			<DiscoverProjectMain daoData={$daoDataStore} votingRounds={data.votingRounds} />
 		</div>
 	</div>
 	{#if data.generalInfo.long_description}
