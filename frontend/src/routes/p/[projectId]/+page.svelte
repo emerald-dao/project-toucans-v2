@@ -1,13 +1,13 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
 	import { onMount, setContext } from 'svelte';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { writable, type Writable } from 'svelte/store';
 	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
 	import { supabase } from '$lib/supabaseClient';
 	import { getProjectInfo, getTokenBalance, hasProjectVaultSetup } from '$flow/actions';
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	export let data: DAOProject;
 
@@ -94,7 +94,7 @@
 			<DiscoverProjectSidebar daoData={$daoDataStore} />
 		</div>
 		<div class="secondary-wrapper">
-			<DiscoverProjectMain daoData={$daoDataStore} />
+			<DiscoverProjectMain daoData={$daoDataStore} votingRounds={data.votingRounds} />
 		</div>
 	</div>
 	{#if data.generalInfo.long_description}

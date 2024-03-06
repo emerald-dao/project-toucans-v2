@@ -4,8 +4,8 @@
 	import { formatDate } from '$lib/utilities/formatDate';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
-	import VotingBar from '$components/atoms/voting/VotingBar.svelte';
-	import VotingsWidget from '../../../../../routes/p/[projectId]/_components/sections/widgets/VotingsWidget.svelte';
+	import LegacyVotingBar from '$components/atoms/voting/LegacyVotingBar.svelte';
+	import LegacyVotingsWidget from '../../../../../routes/p/[projectId]/_components/sections/widgets/LegacyVotingsWidget.svelte';
 
 	export let vote: Vote;
 	export let i: number;
@@ -35,11 +35,11 @@
 			<Icon icon="tabler:info-circle" />
 		</div>
 		<Modal background="var(--clr-background-secondary)" id={`message-${i}`}>
-			<VotingsWidget votingData={[vote]} transparent={true} title="Votation" {discordLink} />
+			<LegacyVotingsWidget votingData={[vote]} transparent={true} title="Votation" {discordLink} />
 		</Modal>
 		{#if total}
 			<div class="voting-bar-wrapper">
-				<VotingBar votingData={vote} size="x-small" />
+				<LegacyVotingBar votingData={vote} size="x-small" />
 			</div>
 		{:else}
 			<span class="xsmall">No votes yet</span>

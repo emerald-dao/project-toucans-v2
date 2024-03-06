@@ -2,7 +2,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import NotableMemberAvatar from './atoms/NotableMemberAvatar.svelte';
-	import { Currency, TooltipIcon } from '@emerald-dao/component-library';
+	import { Currency } from '@emerald-dao/component-library';
 	import { getAccountFromDiscordBatch } from '$flow/utils';
 
 	export let daoData: DAOProject;
@@ -43,7 +43,7 @@
 	const mainVotersAddresses = getAccountFromDiscordBatch(mainVotersDiscordIds);
 </script>
 
-{#if mainFunderEntries.length > 0 || (daoData.hasToken && holdersEntries.length > 0) || mainVoters.length > 0}
+{#if mainFunderEntries.length > 0 || (daoData.hasToken && holdersEntries != undefined && holdersEntries.length > 0) || mainVoters.length > 0}
 	<div class="main-wrapper">
 		<span class="title">
 			<Icon icon="tabler:medal" />
@@ -68,7 +68,7 @@
 					</div>
 				</div>
 			{/if}
-			{#if daoData.generalInfo.token_symbol && holdersEntries.length > 0}
+			{#if daoData.generalInfo.token_symbol && holdersEntries != undefined && holdersEntries.length > 0}
 				<div class="card prize-wrapper">
 					<div class="column-4 align-center">
 						<span class="small title">Token holders</span>

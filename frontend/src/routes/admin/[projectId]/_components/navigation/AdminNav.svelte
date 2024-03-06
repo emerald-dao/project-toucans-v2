@@ -37,7 +37,7 @@
 </script>
 
 <nav>
-	<div class="column-10">
+	<div class="column-6">
 		<div class="row-3 align-center">
 			<img
 				src={activeDaoData.generalInfo.logo}
@@ -72,7 +72,7 @@
 				</div>
 			</DropDownHeading>
 		</div>
-		<div class="column-5">
+		<div class="column-4">
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}`}
 				class="sidebar-link"
@@ -85,7 +85,7 @@
 			</a>
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/actions`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('actions')}
 			>
 				<div class="sidebar-link-icon">
@@ -105,12 +105,12 @@
 					<div class="sidebar-link-icon">
 						<Icon icon="tabler:pig-money" />
 					</div>
-					Rounds
+					Funding Rounds
 				</a>
 			{/if}
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/multisig`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('multisig')}
 			>
 				<div class="sidebar-link-icon">
@@ -121,7 +121,7 @@
 			{#if activeDaoData.hasToken}
 				<a
 					href={`/admin/${activeDaoData.generalInfo.project_id}/overflow`}
-					class="sidebar-link distribute-display"
+					class="sidebar-link"
 					class:active={$page.url.pathname.includes('overflow')}
 				>
 					<div class="sidebar-link-icon">
@@ -132,7 +132,7 @@
 			{/if}
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/nft-collections`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('nft-collections')}
 			>
 				<div class="sidebar-link-icon">
@@ -140,10 +140,20 @@
 				</div>
 				NFT Collections
 			</a>
+			<a
+				href={`/admin/${activeDaoData.generalInfo.project_id}/voting`}
+				class="sidebar-link"
+				class:active={$page.url.pathname.includes('voting')}
+			>
+				<div class="sidebar-link-icon">
+					<Icon icon="lucide:vote" />
+				</div>
+				Voting Rounds
+			</a>
 			<span class="sidebar-divider">Funds management</span>
 			<a
 				href={`/admin/${activeDaoData.generalInfo.project_id}/withdraw`}
-				class="sidebar-link distribute-display"
+				class="sidebar-link"
 				class:active={$page.url.pathname.includes('withdraw')}
 			>
 				<div class="sidebar-link-icon">
@@ -166,7 +176,7 @@
 			{#if activeDaoData.hasToken}
 				<a
 					href={`/admin/${activeDaoData.generalInfo.project_id}/lock`}
-					class="sidebar-link distribute-display"
+					class="sidebar-link"
 					class:active={$page.url.pathname.includes('lock')}
 				>
 					<div class="sidebar-link-icon">
@@ -188,7 +198,7 @@
 			{#if network === 'mainnet'}
 				<a
 					href={`/admin/${activeDaoData.generalInfo.project_id}/staking`}
-					class="sidebar-link distribute-display"
+					class="sidebar-link"
 					class:active={$page.url.pathname.includes('staking')}
 				>
 					<div class="sidebar-link-icon">
@@ -225,14 +235,6 @@
 			border-right: 0.5px var(--clr-border-primary) solid;
 		}
 
-		.distribute-display {
-			display: none;
-
-			@include mq('medium') {
-				display: block;
-			}
-		}
-
 		.top-dropdown-wapper {
 			cursor: pointer;
 			padding-bottom: var(--space-3);
@@ -258,7 +260,7 @@
 			border-bottom: 1px solid var(--clr-surface-primary);
 			font-size: var(--font-size-1);
 			color: var(--clr-text-off);
-			margin-top: var(--space-3);
+			margin-top: var(--space-1);
 			margin-bottom: -4px;
 			padding-bottom: var(--space-1);
 			padding-inline: var(--space-1);

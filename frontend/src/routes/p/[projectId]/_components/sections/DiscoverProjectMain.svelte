@@ -8,11 +8,14 @@
 	import UserBalanceWidget from './widgets/UserBalanceWidget.svelte';
 	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
-	import VotingsWidget from './widgets/VotingsWidget.svelte';
+	import LegacyVotingsWidget from './widgets/LegacyVotingsWidget.svelte';
 	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
 	import NftsTreasuryWidget from './widgets/NftsTreasuryWidget.svelte';
+	import NewVotingsWidget from './widgets/NewVotingsWidget.svelte';
+	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
 	export let daoData: DAOProject;
+	export let votingRounds: VotingRound[];
 
 	$: activeVotings = daoData.votes.filter((vote) => vote.pending === true);
 
@@ -36,14 +39,13 @@
 				<ProjectFundingWidget {daoData} />
 				{#if daoData.hasToken}
 					<TokenAnalysisWidget {daoData} />
-					<!-- {:else}
-					<MainFundersWidget {daoData} /> -->
 				{/if}
 			</div>
 		</div>
 		<NotableMembersWidget {daoData} />
+		<NewVotingsWidget {votingRounds} />
 		{#if activeVotings.length > 0}
-			<VotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
+			<LegacyVotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
 		{/if}
 		{#if daoData.hasToken && currentFundingCycleData && daoData.generalInfo.token_symbol}
 			<RoundsWidget

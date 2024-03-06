@@ -5,6 +5,7 @@
 	export let nftCollection: NftCollection;
 	export let selectedCollections: string[];
 	export let isCollectionActive = false;
+	export let singleCollectionSelect = false;
 
 	$: isCollectionSelected = selectedCollections.includes(nftCollection.identifier);
 
@@ -20,7 +21,11 @@
 			return;
 		}
 
-		selectedCollections = [...selectedCollections, nftCollection.identifier];
+		if (singleCollectionSelect) {
+			selectedCollections = [nftCollection.identifier];
+		} else {
+			selectedCollections = [...selectedCollections, nftCollection.identifier];
+		}
 	};
 
 	let imgSrc = nftCollection.image ?? '/toucans-illustration.png';

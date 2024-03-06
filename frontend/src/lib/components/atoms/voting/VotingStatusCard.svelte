@@ -1,25 +1,26 @@
 <script lang="ts">
-	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
 	import Icon from '@iconify/svelte';
-	import VotingBar from './VotingBar.svelte';
+	import VotingBar from './LegacyVotingBar.svelte';
 
-	export let votingData: Vote;
+	export let forVotes: number;
+	export let againstVotes: number;
+	export let isPending: boolean;
 </script>
 
 <div class="card column-4">
 	<div class="row-2 align-center">
-		{#if votingData.pending === true}
+		{#if isPending}
 			<p class="small">Current result</p>
 		{/if}
 		<div
 			class="label row-1 align-center"
-			class:success={votingData.for_total > votingData.against_total}
-			class:alert={votingData.for_total < votingData.against_total}
+			class:success={forVotes > againstVotes}
+			class:alert={forVotes < againstVotes}
 		>
-			{#if votingData.for_total > votingData.against_total}
+			{#if forVotes > againstVotes}
 				<Icon icon="tabler:check" />
 				<span class="small success">Approved</span>
-			{:else if votingData.for_total == votingData.against_total}
+			{:else if forVotes == againstVotes}
 				<span class="small">Tie</span>
 			{:else}
 				<Icon icon="tabler:x" />
@@ -27,7 +28,7 @@
 			{/if}
 		</div>
 	</div>
-	<VotingBar {votingData} />
+	<VotingBar {forVotes} {againstVotes} />
 </div>
 
 <style lang="scss">

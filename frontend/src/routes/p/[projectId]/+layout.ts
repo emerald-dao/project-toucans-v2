@@ -4,6 +4,7 @@ import { fetchProjectDatabaseData } from '$lib/utilities/api/supabase/fetchProje
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 import { fetchDaoVotes } from '$lib/utilities/api/supabase/fetchDaoVotes';
 import { fetchDaoFundingInfo } from '$lib/utilities/api/supabase/fetchDaoFundingInfo';
+import { fetchAllVotingRounds } from '$lib/utilities/api/supabase/fetchAllVotingRounds.js';
 
 export const ssr = false;
 
@@ -19,6 +20,7 @@ export const load = async ({ params, depends }) => {
 		events: fetchProjectEvents(params.projectId),
 		votes: fetchDaoVotes(params.projectId),
 		hasToken,
-		funding: fetchDaoFundingInfo(params.projectId)
+		funding: fetchDaoFundingInfo(params.projectId),
+		votingRounds: await fetchAllVotingRounds(params.projectId)
 	};
 };
