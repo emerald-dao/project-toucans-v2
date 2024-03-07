@@ -1,4 +1,4 @@
-import { create, enforce, test, only, skipWhen } from 'vest';
+import { create, enforce, test, only } from 'vest';
 import { isPositiveInteger } from '$lib/utilities/validations/isPositiveIntegerValidation';
 
 enforce.extend({ isPositiveInteger });
@@ -14,7 +14,7 @@ const validationSuite = create((data = {}, currentField) => {
 		if (data.projectId == 'BallerzFC') {
 			enforce(data.amount).isPositiveInteger();
 		}
-	})
+	});
 
 	// skipWhen(
 	// 	data.projectId != 'BallerzFC',
