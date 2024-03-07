@@ -5,16 +5,16 @@ export const VOTING_NFT_MODES: {
 	};
 } = {
 	'no-nfts': {
-		title: 'Open votation',
-		description: 'Anyone can participate in the voting round.'
+		title: 'Open Vote',
+		description: 'Every user counts as 1 vote.'
 	},
 	'nft-holders': {
-		title: 'NFT holders',
-		description: 'Users holding an NFT of a selected collection can vote.'
+		title: 'NFT Holders',
+		description: 'Every NFT a user holds in their wallet from a selected collection counts as 1 vote.'
 	},
 	'nft-donators': {
-		title: 'NFT donators',
-		description: 'Users that donated an NFT of a selected collection can vote.'
+		title: 'NFT Donators',
+		description: 'Every NFT a user donated to the DAO from a selected collection counts as 1 vote.'
 	}
 };
 

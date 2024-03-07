@@ -38,7 +38,7 @@
 >
 	<InputWrapper
 		name="title"
-		label="Votation title"
+		label="Title"
 		errors={res.getErrors('title')}
 		isValid={res.isValid('title')}
 		required={true}
@@ -55,7 +55,7 @@
 	</InputWrapper>
 	<InputWrapper
 		name="description"
-		label="Votation description"
+		label="Description"
 		errors={res.getErrors('description')}
 		isValid={res.isValid('description')}
 		required={true}
