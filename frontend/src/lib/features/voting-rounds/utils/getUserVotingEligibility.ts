@@ -64,27 +64,30 @@ export const getUserVotingEligibility = async (
 			};
 		}
 
-		let usedNftsUuids: string[];
+		let usedNftsUuids: string[] = [];
 
 		if (votes) {
-			const votesWithUsedNfts = votes.filter((vote) =>
-				vote.nft_uuid ? eligibleNftsIds.includes(vote.nft_uuid) : false
-			);
-
-			usedNftsUuids = votesWithUsedNfts.map((vote) => vote.nft_uuid as string);
+			votes.forEach((vote) => {
+				if (vote.nft_uuids) {
+					usedNftsUuids = usedNftsUuids.concat(vote.nft_uuids);
+				}
+			})
 		} else {
 			const { data: usedNfts, error } = await supabase
 				.from('votes')
-				.select('nft_uuid')
-				.eq('voting_round_id', votingRound.id)
-				.in('nft_uuid', eligibleNftsIds);
+				.select('nft_uuids')
+				.eq('voting_round_id', votingRound.id);
 
 			if (error) {
 				console.error('Error fetching used NFTs', error);
 				throw error;
 			}
 
-			usedNftsUuids = usedNfts.map((usedNft) => usedNft.nft_uuid as string);
+			usedNfts.map((vote) => {
+				if (vote.nft_uuids) {
+					usedNftsUuids = usedNftsUuids.concat(vote.nft_uuids);
+				}
+			})
 		}
 
 		const availableNfts = eligibleNftsIds.filter(
