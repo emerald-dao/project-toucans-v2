@@ -11,7 +11,7 @@ import { createVotingRound } from './_actions/createVotingRound';
 export const votingGeneratorSteps = createSteps([
 	{
 		name: 'Voting information',
-		description: 'Tell us the basic information about your round',
+		description: 'Tell us the basic information about your vote.',
 		component: VotingGeneralDataStep,
 		action: null,
 		form: true,
@@ -37,7 +37,7 @@ export const votingGeneratorSteps = createSteps([
 	},
 	{
 		name: 'Required NFTs',
-		description: 'Optionally require an NFT to participate in the round',
+		description: 'Optionally require an NFT to participate in the round.',
 		component: VotingNftModeStep,
 		action: null,
 		form: false,

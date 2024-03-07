@@ -33,8 +33,8 @@
 			<SearchBar
 				items={firstFilteredRounds}
 				bind:filteredItems={filteredRounds}
-				searchTerms={['name', 'project_id']}
-				placeholder="Search collections..."
+				searchTerms={['name']}
+				placeholder="Search votes..."
 			/>
 			<label for="show-finished" class="switch">
 				<input

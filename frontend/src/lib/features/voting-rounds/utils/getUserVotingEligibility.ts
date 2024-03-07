@@ -7,12 +7,12 @@ import type { VotingRoundStatus } from '../components/voting-widget/voting-round
 export interface VotingEligibility {
 	eligible: boolean;
 	reason?:
-		| 'required-nfts-not-owned'
-		| 'required-nfts-already-used'
-		| 'already-voted'
-		| 'not-connected'
-		| 'voting-round-ended'
-		| null;
+	| 'required-nfts-not-owned'
+	| 'required-nfts-already-used'
+	| 'already-voted'
+	| 'not-connected'
+	| 'voting-round-ended'
+	| null;
 	availableNfts?: string[];
 }
 
@@ -161,9 +161,9 @@ const getUserDonatedNftsFromCollection = async (
 		.eq('type', 'DonateNFT')
 		.eq('project_id', projectId)
 		.eq('data->>by', walletAddress)
-		.eq('data->>collectionIdentifier', collectionId)
-		.gte('timestamp', startDate)
-		.lte('timestamp', endDate);
+		.eq('data->>collectionIdentifier', collectionId);
+	// .gte('timestamp', startDate)
+	// .lte('timestamp', endDate);
 
 	if (error) {
 		console.log(error);

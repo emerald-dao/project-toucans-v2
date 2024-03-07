@@ -22,7 +22,7 @@
 				{@const nftCollection = Object.values(nftCollections)[0]}
 				<VotingModeCard.Details>
 					<VotingModeCard.DetailsTitle>
-						{nftCollection.name}
+						{nftCollection.identifier}
 					</VotingModeCard.DetailsTitle>
 					<Image
 						src={nftCollection.image}
