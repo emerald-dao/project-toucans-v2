@@ -4,7 +4,7 @@
 
 	export let title: string | undefined = undefined;
 	export let description = dappInfo.description;
-	export let image = 'https://toucans.ecdao.org/toucans-illustration.png';
+	export let image = `${$page.url.origin}/open-graph.jpg`;
 
 	$: resolvedTitle = title ? ` ${title} | ${dappInfo.title}` : `${dappInfo.title}`;
 </script>
