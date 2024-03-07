@@ -4,6 +4,7 @@
 	import UserSidebar from './_components/sections/sidebar/UserSidebar.svelte';
 	import UserMain from './_components/sections/main/UserMain.svelte';
 	import VaultDetail from './_components/sections/vaultDetail/VaultDetail.svelte';
+	import OpenGraph from '$components/OpenGraph.svelte';
 
 	export let data;
 
@@ -12,6 +13,8 @@
 	setContext('userData', data);
 	setContext('selectedVault', selectedVault);
 </script>
+
+<OpenGraph title={data.profile.name} />
 
 <div class="container section">
 	<UserSidebar />

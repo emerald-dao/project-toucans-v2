@@ -9,11 +9,14 @@
 	export let step: Step;
 
 	$: buttonState = {
-		loading: 'loading',
-		active: step.isValid === undefined || step.isValid === true ? 'active' : 'disabled',
-		success: 'done',
-		error: 'active',
-		inactive: 'disabled'
+		loading: 'loading' as const,
+		active:
+			step.isValid === undefined || step.isValid === true
+				? ('active' as const)
+				: ('disabled' as const),
+		success: 'done' as const,
+		error: 'active' as const,
+		inactive: 'disabled' as const
 	};
 </script>
 

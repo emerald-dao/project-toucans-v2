@@ -6,7 +6,7 @@
 
 	export let votingData: Vote[];
 	export let transparent = false;
-	export let title = 'Active votations';
+	export let title = 'Legact active votations';
 	export let discordLink: string | null = null;
 
 	let activeVotation = 0;
@@ -68,7 +68,11 @@
 			<p class="small">{votingData[activeVotation].description}</p>
 		</div>
 
-		<VotingStatusCard votingData={votingData[activeVotation]} />
+		<VotingStatusCard
+			forVotes={votingData[activeVotation].for_total}
+			againstVotes={votingData[activeVotation].against_total}
+			isPending={votingData[activeVotation].pending}
+		/>
 	</div>
 </div>
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Vote } from '$lib/types/dao-project/bot-votes/votes.interface';
 	import { ProgressBar } from '@emerald-dao/component-library';
 
-	export let votingData: Vote;
+	export let forVotes: number;
+	export let againstVotes: number;
 	export let size: 'x-small' | 'small' | 'medium' | 'large' = 'small';
 
 	$: fontSize =
@@ -26,13 +26,13 @@
 
 <div style={`font-size: ${fontSize}`}>
 	<div class="row-space-between">
-		<span class="success">{votingData.for_total} votes</span>
-		<span class="alert right">{votingData.against_total} votes</span>
+		<span class="success">{forVotes} votes</span>
+		<span class="alert right">{againstVotes} votes</span>
 	</div>
 	<ProgressBar
-		value={votingData.for_total}
-		max={votingData.for_total + votingData.against_total}
-		verticalLine={(votingData.for_total + votingData.against_total) / 2}
+		value={forVotes}
+		max={forVotes + againstVotes}
+		verticalLine={(forVotes + againstVotes) / 2}
 		{verticalLineHeight}
 		backgroundColor="var(--clr-alert-main)"
 		{size}

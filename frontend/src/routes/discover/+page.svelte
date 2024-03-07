@@ -6,6 +6,7 @@
 	import ProjectsGridSection from './_components/sections/ProjectsGridSection.svelte';
 	import { PUBLIC_FLOW_NETWORK } from '$env/static/public';
 	import { Seo } from '@emerald-dao/component-library';
+	import OpenGraph from '$components/OpenGraph.svelte';
 
 	export let data;
 
@@ -42,12 +43,7 @@
 	$: thisMonth = new Date().toLocaleString('default', { month: 'long' });
 </script>
 
-<Seo
-	title={`Discover | Toucans`}
-	description={`Discover all the DAO projects generated in Toucans`}
-	type="WebPage"
-	image="https://toucans.ecdao.org/favicon.png"
-/>
+<OpenGraph title="Discover" description="Discover communities created on Toucans." />
 
 <HeroSection />
 <HotestProjectsSection daoRankings={data.daoRankings} tokenRankings={data.tokenRankings} />

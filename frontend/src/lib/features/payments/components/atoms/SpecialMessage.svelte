@@ -1,5 +1,6 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
+	import { paymentData } from '$lib/features/payments/stores/PaymentData';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 
 	export let message: string;

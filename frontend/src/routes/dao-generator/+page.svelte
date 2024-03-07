@@ -62,13 +62,6 @@
 	</div>
 </section>
 
-<Seo
-	title={`Generato DAO | Toucans`}
-	description={`Generate your own DAO in Toucans`}
-	type="WebPage"
-	image="https://toucans.ecdao.org/favicon.png"
-/>
-
 <style type="scss">
 	section {
 		flex: 1;
