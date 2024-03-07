@@ -251,21 +251,21 @@ export type Database = {
       votes: {
         Row: {
           created_at: string
-          nft_uuid: string | null
+          nft_uuids: string[] | null
           selected_option: number
           voting_round_id: number
           wallet_address: string
         }
         Insert: {
           created_at?: string
-          nft_uuid?: string | null
+          nft_uuids?: string[] | null
           selected_option: number
           voting_round_id: number
           wallet_address: string
         }
         Update: {
           created_at?: string
-          nft_uuid?: string | null
+          nft_uuids?: string[] | null
           selected_option?: number
           voting_round_id?: number
           wallet_address?: string

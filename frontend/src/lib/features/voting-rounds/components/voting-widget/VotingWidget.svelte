@@ -33,7 +33,7 @@
 				async (payload) => {
 					votingRoundStore.allVotes.addVote({
 						selected_option: payload.new?.selected_option,
-						nft_uuid: payload.new?.nft_uuid,
+						nft_uuids: payload.new?.nft_uuids,
 						wallet_address: payload.new?.wallet_address,
 						voting_round_id: votingRound.id,
 						created_at: payload.new?.created_at
@@ -57,9 +57,7 @@
 				votingRound,
 				selectedOptionId,
 				$votingRoundStore.votingStatus,
-				votingEligibility.availableNfts !== undefined
-					? votingEligibility.availableNfts[0]
-					: undefined
+				votingEligibility.availableNfts
 			);
 		}
 

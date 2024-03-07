@@ -20,10 +20,10 @@ export async function POST({ request, params }) {
 		votingRound: VotingRound;
 		votingOptionId: number;
 		votingRoundStatus: VotingRoundStatus;
-		nftUuid: string | undefined;
+		nftUuids: string[] | undefined;
 	} = await request.json();
 
-	const { user, votingOptionId, nftUuid } = requestData;
+	const { user, votingOptionId, nftUuids } = requestData;
 	const votingRoundId = params.votingRoundId;
 
 	try {
@@ -52,7 +52,7 @@ export async function POST({ request, params }) {
 			.insert({
 				voting_round_id: Number(votingRoundId),
 				selected_option: Number(votingOptionId),
-				nft_uuid: nftUuid,
+				nft_uuids: nftUuids,
 				wallet_address: user.addr
 			})
 			.select()
