@@ -16,6 +16,10 @@
 	<meta name="description" content={description} />
 	<meta name="image" content={image} />
 
+	<meta itemprop="name" content={resolvedTitle} />
+	<meta itemprop="description" content={description} />
+	<meta itemprop="image" content={image} />
+
 	<meta property="og:title" content={resolvedTitle} />
 	<meta property="og:description" content={description} />
 	<meta property="og:image" content={image} />
