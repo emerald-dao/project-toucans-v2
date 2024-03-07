@@ -26,8 +26,8 @@
 		notifications,
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
-	import dappInfo from '$lib/config/config';
 	import getProfile from '$lib/utilities/api/getProfile';
+	import dappInfo from '$lib/config/config';
 
 	const connect = async () => {
 		logIn().then(async () => {
@@ -115,13 +115,6 @@
 	transactionId={$transactionStore.transactionId}
 	{network}
 	on:close={() => transactionStore.resetTransaction()}
-/>
-
-<Seo
-	title={'Toucans - Community Management'}
-	description={'Manage your community with no-code fungible token & DAO creation. Built-in airdrops, leaderboards, and transparently tracked activity. Completely free.'}
-	type="WebSite"
-	image={'/dashboard-screenshot.png'}
 />
 
 <style type="scss">

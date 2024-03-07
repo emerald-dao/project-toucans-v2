@@ -8,6 +8,7 @@
 	import type { ActionData } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import { Button, Seo } from '@emerald-dao/component-library';
+	import OpenGraph from '$components/OpenGraph.svelte';
 
 	let allNotifications: { project: string; notification: ActionData }[] = [];
 	let currentPage = 1;
@@ -53,6 +54,8 @@
 	$: pagesNumbers = Array.from(Array(Math.ceil(allNotifications.length / pageSize)).keys());
 	$: currentPageNotifications = allNotifications.slice(pageStart, pageEnd);
 </script>
+
+<OpenGraph title="Signatures Queue" />
 
 {#if !$user.addr}
 	<ConnectPage />
@@ -104,13 +107,6 @@
 		{/if}
 	</section>
 {/if}
-
-<Seo
-	title="Signatures Queue | Toucans"
-	description="Actions waiting for signatures"
-	type="WebPage"
-	image="https://toucans.ecdao.org/favicon.png"
-/>
 
 <style lang="scss">
 	h5 {

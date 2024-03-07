@@ -7,9 +7,14 @@
 	import CreateYourDaoSection from './_components/sections/create-your-dao-section/CreateYourDaoSection.svelte';
 	import CommunityToolboxSection from './_components/sections/community-toolbox-section/CommunityToolboxSection.svelte';
 	import { getToucansStats } from './_data/getToucansStats';
+	import OpenGraph from '$components/OpenGraph.svelte';
 
 	export let data;
 </script>
+
+<svelte:head>
+	<OpenGraph />
+</svelte:head>
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
 <div class="no-overflow-x">

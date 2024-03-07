@@ -39,6 +39,7 @@
 	.main-wrapper {
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 
 		.username-wrapper {
 			display: flex;
@@ -46,11 +47,16 @@
 			align-items: center;
 			gap: 0.3em;
 			margin-bottom: 0.3em;
+			overflow: hidden;
 
 			.username {
 				color: var(--clr-heading-main);
 				font-size: 1em;
 				line-height: 1.1;
+				text-align: left;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 
 			.create-profile {
