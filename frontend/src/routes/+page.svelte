@@ -12,9 +12,7 @@
 	export let data;
 </script>
 
-<svelte:head>
-	<OpenGraph />
-</svelte:head>
+<OpenGraph />
 
 <!-- The .no-overflow-x div is a css hack to hide the overflow-x of Hero section without generating a vertical scrollbar -->
 <div class="no-overflow-x">
