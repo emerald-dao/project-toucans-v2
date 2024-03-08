@@ -1,7 +1,7 @@
 <script lang="ts">
+	import VotingRoundCard from '$lib/features/voting-rounds/components/voting-round-card/VotingRoundCard.svelte';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
-	import VotingRoundCard from '$lib/features/voting-rounds/components/VotingRoundCard.svelte';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
 	export let votingRounds: VotingRound[];

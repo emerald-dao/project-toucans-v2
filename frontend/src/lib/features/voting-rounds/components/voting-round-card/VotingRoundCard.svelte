@@ -7,8 +7,9 @@
 	import { user } from '$stores/flow/FlowStore';
 	import VotingRoundTimer from '$lib/features/voting-rounds/components/voting-widget/VotingRoundTimer.svelte';
 	import Icon from '@iconify/svelte';
-	import VotingModeLabel from './voting-widget/votingModesCard/atoms/VotingModeLabel.svelte';
-	import VotingResultsPieChart from './voting-results-charts/VotingResultsPieChart.svelte';
+	import VotingModeLabel from '../voting-widget/votingModesCard/atoms/VotingModeLabel.svelte';
+	import VotingResultsPieChart from '../voting-results-charts/VotingResultsPieChart.svelte';
+	import DeleteVotingRoundModal from './DeleteVotingRoundModal.svelte';
 
 	export let votingRound: VotingRound;
 	export let showResults = false;
@@ -23,6 +24,7 @@
 	in:fly={{ y: 20, duration: 100 }}
 >
 	<div class="card-content">
+		<DeleteVotingRoundModal />
 		<div class="general-data">
 			<h3>{votingRound.name}</h3>
 			<VotingEligibilityLabel
@@ -104,6 +106,7 @@
 		.card-content {
 			display: flex;
 			flex-direction: column;
+			position: relative;
 			gap: var(--space-10);
 			justify-content: space-between;
 			background-color: var(--clr-surface-primary);

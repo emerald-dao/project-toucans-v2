@@ -3,7 +3,7 @@
 	import SearchBar from '$components/search-bar/SearchBar.svelte';
 	import { postgreTimestampToDateTime } from '$lib/features/voting-rounds/utils/postgreTimestampToDateTime';
 	import { getLocalTimeZone, now } from '@internationalized/date';
-	import VotingRoundCard from '$lib/features/voting-rounds/components/VotingRoundCard.svelte';
+	import VotingRoundCard from '$lib/features/voting-rounds/components/voting-round-card/VotingRoundCard.svelte';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
 	export let votingRounds: VotingRound[];

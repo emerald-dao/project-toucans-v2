@@ -4,7 +4,7 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import * as AdminPage from '../_components/admin-page';
-	import VotingRoundsGrid from '$lib/features/voting-rounds/components/VotingRoundsGrid.svelte';
+	import VotingRoundsGrid from '$lib/features/voting-rounds/components/voting-round-card/VotingRoundsGrid.svelte';
 
 	export let data;
 
