@@ -8,6 +8,7 @@
 	import { user } from '$stores/flow/FlowStore';
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import OpenGraph from '$components/OpenGraph.svelte';
 
 	export let data: DAOProject;
 
@@ -87,6 +88,12 @@
 		$daoDataStore.generalInfo.nftUuidOwnerMap = uuidsMap;
 	});
 </script>
+
+<OpenGraph
+	image={data.generalInfo.banner_image}
+	title={data.generalInfo.name}
+	description={data.generalInfo.description}
+/>
 
 <section class="container">
 	<div class="main-wrapper">
