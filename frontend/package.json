@@ -20,7 +20,7 @@
 		"@mateoroldos/svelte.bones": "^1.0.0",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/adapter-vercel": "3.1.0",
-		"@sveltejs/kit": "^1.0.0",
+		"@sveltejs/kit": "^1.30.0",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"autoprefixer": "^10.4.7",
