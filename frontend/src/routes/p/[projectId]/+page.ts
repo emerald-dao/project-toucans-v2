@@ -6,8 +6,6 @@ import { fetchDaoVotes } from '$lib/utilities/api/supabase/fetchDaoVotes';
 import { fetchDaoFundingInfo } from '$lib/utilities/api/supabase/fetchDaoFundingInfo';
 import { fetchAllVotingRounds } from '$lib/utilities/api/supabase/fetchAllVotingRounds.js';
 
-export const ssr = false;
-
 export const load = async ({ params, depends }) => {
 	depends('app:discover');
 
