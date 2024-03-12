@@ -52,13 +52,10 @@
 						isDeleting = true;
 
 						return async ({ result, update }) => {
-							console.log(result);
-
 							if (result.type === 'success') {
+								await update();
 								isDeleting = false;
 								getModal(modalId).close();
-
-								update();
 							}
 
 							if (result.type === 'failure') {
@@ -84,7 +81,7 @@
 						state={isDeleting ? 'loading' : 'active'}
 					>
 						{#if isDeleting}
-							Deleting...
+							Deleting
 						{:else}
 							Delete
 						{/if}
