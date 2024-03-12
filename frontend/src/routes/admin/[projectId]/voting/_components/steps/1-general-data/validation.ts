@@ -1,5 +1,5 @@
 import { create, enforce, test } from 'vest';
-import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../votingGeneratorConfig';
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../_config/votingGeneratorConfig';
 
 const validationSuite = create((title: string, description: string) => {
 	test('title', 'Your votation needs a title!', () => {

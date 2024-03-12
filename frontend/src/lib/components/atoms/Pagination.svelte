@@ -36,11 +36,13 @@
 </script>
 
 <div class="main-wrapper row-space-between row-4 align-center">
-	<button on:click={prevPage} disabled={currentPage === 1} type="button" color="neutral">
-		<Icon
-			icon="tabler:arrow-left"
-			color={currentPage === 1 ? 'var(--clr-text-off)' : 'var(--clr-heading-main)'}
-		/>
+	<button
+		on:click={prevPage}
+		disabled={currentPage === 1 || currentPage === 0}
+		type="button"
+		color="neutral"
+	>
+		<Icon icon="tabler:arrow-left" />
 	</button>
 	<p class="xsmall">
 		{currentPage}
@@ -49,10 +51,7 @@
 		</span>
 	</p>
 	<button on:click={nextPage} disabled={pageEnd >= amountOfItems} type="button" color="neutral">
-		<Icon
-			icon="tabler:arrow-right"
-			color={pageEnd >= amountOfItems ? 'var(--clr-text-off)' : 'var(--clr-heading-main)'}
-		/>
+		<Icon icon="tabler:arrow-right" />
 	</button>
 </div>
 
@@ -66,9 +65,11 @@
 			background: none;
 			cursor: pointer;
 			outline: none;
+			color: var(--clr-heading-main);
 
 			&:disabled {
 				cursor: not-allowed;
+				color: var(--clr-text-off);
 			}
 		}
 

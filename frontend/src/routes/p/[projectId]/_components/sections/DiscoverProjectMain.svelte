@@ -43,7 +43,7 @@
 			</div>
 		</div>
 		<NotableMembersWidget {daoData} />
-		<NewVotingsWidget {votingRounds} />
+		<NewVotingsWidget {votingRounds} daoSigners={daoData.onChainData.signers} />
 		{#if activeVotings.length > 0}
 			<LegacyVotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
 		{/if}

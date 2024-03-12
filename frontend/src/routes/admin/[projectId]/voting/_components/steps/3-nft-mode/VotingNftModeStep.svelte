@@ -7,12 +7,12 @@
 	import { getCatalogByCollectionIDs } from '$flow/actions';
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import VotingNftModeCard from './atoms/VotingNftModeCard.svelte';
+	import { VOTING_NFT_MODES } from '../../../../../../../lib/features/voting-rounds/constants/votingNftModes';
 	import {
 		votingGeneratorNftMode,
 		votingGeneratorRequiredCollection
-	} from '../../../votingGeneratorData';
-	import VotingNftModeCard from './atoms/VotingNftModeCard.svelte';
-	import { VOTING_NFT_MODES } from '../../../../../../../lib/features/voting-rounds/constants/votingNftModes';
+	} from '../../../_config/votingGeneratorData';
 
 	const daoData = getContext<DAOProject>('activeDao');
 

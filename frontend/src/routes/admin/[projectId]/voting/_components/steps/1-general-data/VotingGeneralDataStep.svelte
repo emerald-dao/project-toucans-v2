@@ -3,10 +3,10 @@
 	import { fly } from 'svelte/transition';
 	import validationSuite from './validation';
 	import { onMount } from 'svelte';
-	import { votingGeneratorGeneralData } from '../../../votingGeneratorData';
-	import { votingGeneratorActiveStep } from '../../../votingGeneratorSteps';
-	import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../votingGeneratorConfig';
 	import type { SuiteRunResult } from 'vest';
+	import { votingGeneratorGeneralData } from '../../../_config/votingGeneratorData';
+	import { votingGeneratorActiveStep } from '../../../_config/votingGeneratorSteps';
+	import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../../../_config/votingGeneratorConfig';
 
 	export let isValid = false;
 

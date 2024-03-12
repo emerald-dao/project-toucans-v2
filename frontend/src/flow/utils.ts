@@ -5,6 +5,7 @@ import { network } from './config';
 import type { TransactionStatusObject } from '@onflow/fcl';
 import type { ActionExecutionResult } from '$lib/stores/custom/steps/step.interface';
 import { ECurrencies } from '$lib/types/common/enums';
+import type { CurrentUserObject } from '@onflow/fcl';
 
 import getAccountFromDiscordBatchScript from './cadence/scripts/get_account_from_discord_batch.cdc?raw';
 
@@ -124,14 +125,17 @@ export const executeTransaction: (
 			} as ActionExecutionResult;
 		}
 	} catch (e) {
-		transactionStore.subscribeTransaction({
-			blockId: '',
-			events: [],
-			status: 4,
-			statusString: '',
-			errorMessage: e as string,
-			statusCode: 1
-		}, '');
+		transactionStore.subscribeTransaction(
+			{
+				blockId: '',
+				events: [],
+				status: 4,
+				statusString: '',
+				errorMessage: e as string,
+				statusCode: 1
+			},
+			''
+		);
 
 		setTimeout(() => {
 			transactionStore.resetTransaction();
@@ -395,7 +399,7 @@ export const getAccountFromDiscordBatch = async (
 	}
 };
 
-export const verifyAccountOwnership = async (userObject) => {
+export const verifyAccountOwnership = async (userObject: CurrentUserObject) => {
 	if (!userObject.loggedIn) {
 		return false;
 	}
@@ -403,9 +407,9 @@ export const verifyAccountOwnership = async (userObject) => {
 		(services) => services.type === 'account-proof'
 	);
 	const fclCryptoContract = {
-		emulator: "0xf8d6e0586b0a20c7",
-		testnet: "0x5b250a8a85b44a67",
-		mainnet: "0xdb6b70764af4ff68"
+		emulator: '0xf8d6e0586b0a20c7',
+		testnet: '0x5b250a8a85b44a67',
+		mainnet: '0xdb6b70764af4ff68'
 	}[network];
 	return await fcl.AppUtils.verifyAccountProof('Toucans', accountProofService.data, {
 		fclCryptoContract

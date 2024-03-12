@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import { votingGeneratorDates } from '../../../votingGeneratorData';
 	import validationSuite from './validation';
 	import type { SuiteRunResult } from 'vest';
 	import { onMount } from 'svelte';
+	import { votingGeneratorDates } from '../../../_config/votingGeneratorData';
 
 	export let isValid = false;
 

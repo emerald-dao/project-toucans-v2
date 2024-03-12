@@ -4,7 +4,7 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import * as AdminPage from '../_components/admin-page';
-	import VotingRoundsGrid from '$lib/features/voting-rounds/components/VotingRoundsGrid.svelte';
+	import VotingRoundsGrid from '$lib/features/voting-rounds/components/voting-round-card/VotingRoundsGrid.svelte';
 
 	export let data;
 
@@ -24,7 +24,12 @@
 	<AdminPage.Container grid={false}>
 		<AdminPage.Content>
 			<div class="grid-wrapper">
-				<VotingRoundsGrid votingRounds={data.votingRounds} cardsPerPage={3} />
+				<VotingRoundsGrid
+					votingRounds={data.votingRounds}
+					cardsPerPage={3}
+					daoSigners={activeDaoData.onChainData.signers}
+					showDeleteButton={true}
+				/>
 			</div>
 			<VotingGeneratorModal daoData={activeDaoData} />
 		</AdminPage.Content>
