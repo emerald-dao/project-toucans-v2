@@ -4,7 +4,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
 	import { setContext } from 'svelte';
-	import { votingGeneratorActiveStep, votingGeneratorSteps } from '../votingGeneratorSteps';
+	import { votingGeneratorActiveStep, votingGeneratorSteps } from '../_config/votingGeneratorSteps';
 
 	export let daoData: DAOProject;
 

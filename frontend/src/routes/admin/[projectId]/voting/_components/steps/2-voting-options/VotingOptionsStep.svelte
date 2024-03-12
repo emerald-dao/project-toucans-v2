@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Button } from '@emerald-dao/component-library';
-	import { votingGeneratorOptions } from '../../../votingGeneratorData';
 	import VotingOptionsList from './components/VotingOptionsList.svelte';
 	import Icon from '@iconify/svelte';
 	import validationSuite from './validation';
 	import { onMount } from 'svelte';
+	import { votingGeneratorOptions } from '../../../_config/votingGeneratorData';
 
 	export let isValid = false;
 

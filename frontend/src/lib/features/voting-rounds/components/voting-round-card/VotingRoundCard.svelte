@@ -13,6 +13,7 @@
 
 	export let votingRound: VotingRound;
 	export let showResults = false;
+	export let daoSigners: string[] = [];
 
 	$: votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
 </script>
@@ -24,7 +25,11 @@
 	in:fly={{ y: 20, duration: 100 }}
 >
 	<div class="card-content">
-		<DeleteVotingRoundModal />
+		<DeleteVotingRoundModal
+			votingRoundId={votingRound.id}
+			projectId={votingRound.project_id}
+			{daoSigners}
+		/>
 		<div class="general-data">
 			<h3>{votingRound.name}</h3>
 			<VotingEligibilityLabel

@@ -8,6 +8,7 @@
 
 	export let votingRounds: VotingRound[];
 	export let cardsPerPage = 9;
+	export let daoSigners: string[];
 
 	let showFinished = false;
 
@@ -50,7 +51,7 @@
 		<div class="cards-wrapper">
 			{#if currentPageVotingRounds.length > 0}
 				{#each currentPageVotingRounds as round (round.id)}
-					<VotingRoundCard votingRound={round} />
+					<VotingRoundCard votingRound={round} {daoSigners} />
 				{/each}
 			{:else}
 				<em>No voting rounds available</em>

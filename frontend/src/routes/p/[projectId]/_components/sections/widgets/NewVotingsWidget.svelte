@@ -5,6 +5,7 @@
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 
 	export let votingRounds: VotingRound[];
+	export let daoSigners: string[];
 
 	let activeVotingRoundIndex = 0;
 
@@ -38,7 +39,7 @@
 				<Icon icon="tabler:arrow-right" />
 			</a>
 		</div>
-		<VotingRoundCard votingRound={activeVotingRound} showResults={true} />
+		<VotingRoundCard votingRound={activeVotingRound} showResults={true} {daoSigners} />
 	</div>
 {/if}
 

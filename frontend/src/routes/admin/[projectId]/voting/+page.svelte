@@ -24,7 +24,11 @@
 	<AdminPage.Container grid={false}>
 		<AdminPage.Content>
 			<div class="grid-wrapper">
-				<VotingRoundsGrid votingRounds={data.votingRounds} cardsPerPage={3} />
+				<VotingRoundsGrid
+					votingRounds={data.votingRounds}
+					cardsPerPage={3}
+					daoSigners={activeDaoData.onChainData.signers}
+				/>
 			</div>
 			<VotingGeneratorModal daoData={activeDaoData} />
 		</AdminPage.Content>
