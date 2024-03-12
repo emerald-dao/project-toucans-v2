@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { votingGeneratorLinkedAction } from './../../../votingGeneratorData';
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import PendingActionsListElement from '$components/dao-data-blocks/pending-actions/list/PendingActionsListElement.svelte';
 	import Pagination from '$components/atoms/Pagination.svelte';
+	import { votingGeneratorLinkedAction } from '../../../_config/votingGeneratorData';
 
 	export let daoData: DAOProject;
 

@@ -62,11 +62,11 @@
 							<span class="text-xsmall off">{`Option ${votingOption.option_number}`}</span>
 						</div>
 						<div class="column-1 align-end">
-							<span class="votes text-small">
+							<span class="votes text-small text-right">
 								{thisOptionVotes}
 								<span>votes</span>
 							</span>
-							<span class="text-xsmall"
+							<span class="text-xsmall text-right"
 								>{`${isNaN(Number(votesPercentage)) ? 0 : votesPercentage}%`}</span
 							>
 						</div>
@@ -122,6 +122,10 @@
 			left: 50%;
 			transform: translateX(-50%);
 			padding-inline: var(--space-2);
+		}
+
+		.text-right {
+			text-align: right;
 		}
 	}
 </style>

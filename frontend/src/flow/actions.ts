@@ -642,7 +642,14 @@ export const proposeWithdrawNFTsExecution = (
 	reasonMessage: string
 ) =>
 	executeTransaction(() =>
-		proposeWithdrawNFTs(projectOwner, projectId, collectionIdentifier, nftIDs, recipient, reasonMessage)
+		proposeWithdrawNFTs(
+			projectOwner,
+			projectId,
+			collectionIdentifier,
+			nftIDs,
+			recipient,
+			reasonMessage
+		)
 	);
 
 const updateMultisig = async (
@@ -1051,12 +1058,11 @@ export const getProjectActions = async (owner: string, projectId: string) => {
 
 function convertTraitsForSpecific(response) {
 	for (let i = 0; i < response.length; i++) {
-		let nft = response[i]
+		let nft = response[i];
 		nft.traits = nft.traits
 			? nft.traits.reduce((obj, item) => Object.assign(obj, { [item.name]: item.value }), {})
-			: undefined
+			: undefined;
 	}
-
 }
 
 export const getProjectSpecificNFTTreasury: (
@@ -1065,20 +1071,26 @@ export const getProjectSpecificNFTTreasury: (
 	collectionIdentifier: string
 ) => Promise<Nft[]> = async (owner: string, projectId: string, collectionIdentifier: string) => {
 	try {
-		const collectionIDs = await getProjectSpecificNFTTreasuryIDs(owner, projectId, collectionIdentifier);
+		const collectionIDs = await getProjectSpecificNFTTreasuryIDs(
+			owner,
+			projectId,
+			collectionIdentifier
+		);
 		const chunkSize = 300;
-		let promises = []
+		let promises = [];
 		for (let i = 0; i < collectionIDs.length; i += chunkSize) {
 			const chunk = collectionIDs.slice(i, i + chunkSize);
-			promises.push(fcl.query({
-				cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
-				args: (arg, t) => [
-					arg(owner, t.Address),
-					arg(projectId, t.String),
-					arg(collectionIdentifier, t.String),
-					arg(chunk, t.Array(t.UInt64))
-				]
-			}));
+			promises.push(
+				fcl.query({
+					cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
+					args: (arg, t) => [
+						arg(owner, t.Address),
+						arg(projectId, t.String),
+						arg(collectionIdentifier, t.String),
+						arg(chunk, t.Array(t.UInt64))
+					]
+				})
+			);
 		}
 		let nfts = await Promise.all(promises);
 		let ans: Nft[] = [].concat(...nfts);
@@ -1098,7 +1110,11 @@ export const getProjectSpecificNFTTreasuryIDs: (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryIDsScript),
-			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String), arg(collectionIdentifier, t.String)]
+			args: (arg, t) => [
+				arg(owner, t.Address),
+				arg(projectId, t.String),
+				arg(collectionIdentifier, t.String)
+			]
 		});
 		return response;
 	} catch (e) {
@@ -1110,10 +1126,10 @@ export const getProjectSpecificNFTTreasuryIDs: (
 function convertTraits(response, collectionType: string) {
 	if (response[collectionType]) {
 		for (let i = 0; i < response[collectionType].length; i++) {
-			let nft = response[collectionType][i]
+			let nft = response[collectionType][i];
 			nft.traits = nft.traits
 				? nft.traits.reduce((obj, item) => Object.assign(obj, { [item.name]: item.value }), {})
-				: undefined
+				: undefined;
 		}
 	}
 }
@@ -1129,8 +1145,8 @@ export const getProjectNFTTreasury: (
 			cadence: replaceWithProperValues(getProjectNFTTreasuryScript),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
-		convertTraits(response, "NFLAllDay");
-		convertTraits(response, "NBATopShot");
+		convertTraits(response, 'NFLAllDay');
+		convertTraits(response, 'NBATopShot');
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectNFTTreasury');
@@ -1302,8 +1318,6 @@ export const canReceiveNFTCollection = async (
 export const getCatalogByCollectionIDs = async (
 	group: string[]
 ): Promise<{ [collectionIdentifier: string]: NftCollection } | undefined> => {
-	console.log('va');
-
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogListScript),

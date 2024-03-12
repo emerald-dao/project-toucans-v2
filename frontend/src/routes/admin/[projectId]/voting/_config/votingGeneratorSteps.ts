@@ -1,12 +1,12 @@
 import { createActiveStep } from '$stores/custom/steps/ActiveStep';
 import { createSteps } from '$stores/custom/steps/Steps';
-import VotingGeneralDataStep from './_components/steps/1-general-data/VotingGeneralDataStep.svelte';
-import VotingOptionsStep from './_components/steps/2-voting-options/VotingOptionsStep.svelte';
-import VotingNftModeStep from './_components/steps/3-nft-mode/VotingNftModeStep.svelte';
-import VotingActionLinkingStep from './_components/steps/4-action-linking/VotingActionLinkingStep.svelte';
-import VotingTimeframeStep from './_components/steps/5-timeframe/VotingTimeframeStep.svelte';
-import VotingThanksStep from './_components/steps/6-thanks/VotingThanksStep.svelte';
-import { createVotingRound } from './_actions/createVotingRound';
+import { createVotingRound } from '../_actions/createVotingRound';
+import VotingGeneralDataStep from '../_components/steps/1-general-data/VotingGeneralDataStep.svelte';
+import VotingOptionsStep from '../_components/steps/2-voting-options/VotingOptionsStep.svelte';
+import VotingNftModeStep from '../_components/steps/3-nft-mode/VotingNftModeStep.svelte';
+import VotingActionLinkingStep from '../_components/steps/4-action-linking/VotingActionLinkingStep.svelte';
+import VotingTimeframeStep from '../_components/steps/5-timeframe/VotingTimeframeStep.svelte';
+import VotingThanksStep from '../_components/steps/6-thanks/VotingThanksStep.svelte';
 
 export const votingGeneratorSteps = createSteps([
 	{

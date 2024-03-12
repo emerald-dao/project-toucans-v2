@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Button, Modal, getModal, InputWrapper, Range } from '@emerald-dao/component-library';
+	import { Button, Modal, getModal, Range } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { FundingCycle } from '$lib/types/dao-project/funding-rounds/funding-cycle.interface';
 	import { onMount } from 'svelte';
