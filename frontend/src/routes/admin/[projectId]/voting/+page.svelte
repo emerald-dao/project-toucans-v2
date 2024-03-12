@@ -28,6 +28,7 @@
 					votingRounds={data.votingRounds}
 					cardsPerPage={3}
 					daoSigners={activeDaoData.onChainData.signers}
+					showDeleteButton={true}
 				/>
 			</div>
 			<VotingGeneratorModal daoData={activeDaoData} />
