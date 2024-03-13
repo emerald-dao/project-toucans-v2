@@ -64,6 +64,8 @@ import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
 import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
 import getProjectBalancesScript from './cadence/scripts/get_project_balances.cdc?raw';
 import getStableSwapPoolInfoScript from './cadence/scripts/get_stable_swap_pool_info.cdc?raw';
+import getCatalogSpecificNFTsByIDScript from './cadence/scripts/get_catalog_specific_nfts_by_id.cdc?raw';
+import getCatalogSpecificNFTsIDsScript from './cadence/scripts/get_catalog_specific_nfts_ids.cdc?raw';
 // NFTCatalog
 import getCatalogKeysScript from './cadence/scripts/get_catalog_keys.cdc?raw';
 import getCatalogListScript from './cadence/scripts/get_catalog_list.cdc?raw';
@@ -1331,20 +1333,82 @@ export const getCatalogByCollectionIDs = async (
 	}
 };
 
+const getCatalogSpecificNFTsIDs = async (
+	user: string,
+	collectionIdentifier: string
+): Promise<string[]> => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogSpecificNFTsIDsScript),
+			args: (arg, t) => [
+				arg(collectionIdentifier, t.String),
+				arg(user, t.Address)
+			]
+		});
+
+		return response;
+	} catch (e) {
+		console.log('Error in getCatalogSpecificNFTsIDs');
+		console.log(e);
+		return []
+	}
+};
+
+const getCatalogSpecificNFTsByID = async (
+	user: string,
+	collectionIdentifier: string,
+	ids: string[]
+): Promise<Nft[]> => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getCatalogSpecificNFTsByIDScript),
+			args: (arg, t) => [
+				arg(collectionIdentifier, t.String),
+				arg(user, t.Address),
+				arg(ids, t.Array(t.UInt64))
+			]
+		});
+
+		return response;
+	} catch (e) {
+		console.log('Error in getCatalogSpecificNFTsByID');
+		console.log(e);
+		return []
+	}
+};
+
 export const getCatalogSpecificNFTs: (
 	collectionIdentifier: string,
 	user: string
 ) => Promise<Nft[]> = async (collectionIdentifier: string, user: string) => {
 	try {
-		let res = await fcl.query({
-			cadence: replaceWithProperValues(getCatalogSpecificNFTsScript),
-			args: (arg, t) => [arg(collectionIdentifier, t.String), arg(user, t.Address)],
-			limit: 9999
-		});
-		return res;
+		const nftIds = await getCatalogSpecificNFTsIDs(
+			user,
+			collectionIdentifier
+		);
+		console.log(nftIds)
+		const chunkSize = 300;
+		let promises = [];
+		for (let i = 0; i < nftIds.length; i += chunkSize) {
+			const chunk = nftIds.slice(i, i + chunkSize);
+			promises.push(
+				fcl.query({
+					cadence: replaceWithProperValues(getCatalogSpecificNFTsByIDScript),
+					args: (arg, t) => [
+						arg(collectionIdentifier, t.String),
+						arg(user, t.Address),
+						arg(chunk, t.Array(t.UInt64))
+					]
+				})
+			);
+		}
+		let nfts = await Promise.all(promises);
+		let ans: Nft[] = [].concat(...nfts);
+		return ans;
 	} catch (e) {
 		console.log('Error in getCatalogSpecificNFTs');
 		console.log(e);
+		return []
 	}
 };
 
@@ -1376,6 +1440,7 @@ export const getCatalogNFTs: (
 	} catch (e) {
 		console.log('Error in getCatalogNFTs');
 		console.log(e);
+		return []
 	}
 };
 
