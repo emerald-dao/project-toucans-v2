@@ -8,6 +8,10 @@ const validationSuite = create((data = {}) => {
 				enforce(data.maxSupply).greaterThan(0);
 			});
 
+			test('maxSupply', 'Max supply should be less than 180 billion.', () => {
+				enforce(data.maxSupply).lessThan(180000000000);
+			})
+
 			test('initialSupply', 'Initial supply should be less than max supply', () => {
 				enforce(data.initialSupply).lessThanOrEquals(data.maxSupply);
 			});

@@ -20,7 +20,7 @@ transaction(
   // Supply
   initialTreasurySupply: UFix64,
   maxSupply: UFix64?,
-  initialAllowedNFTCollections: [String],
+  initialAllowedNFTCollections: [String]
 ) {
 
   prepare(deployer: AuthAccount) {
