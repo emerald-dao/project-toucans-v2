@@ -29,7 +29,7 @@
 				<h1>
 					{data.generalInfo.name}
 				</h1>
-				<span> Voting Rounds </span>
+				<span> Voting rounds </span>
 			</div>
 		</div>
 	</div>
@@ -58,7 +58,7 @@
 			span {
 				color: var(--clr-text-off);
 				font-size: var(--font-size-2);
-				text-align: center;
+				text-align: left;
 			}
 		}
 	}

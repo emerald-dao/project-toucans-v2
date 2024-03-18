@@ -57,6 +57,11 @@
 		overflow: hidden;
 		border-radius: var(--radius-1);
 
+		p,
+		h4 {
+			word-break: break-word;
+		}
+
 		@include mq('medium') {
 			grid-template-columns: 1fr 2fr;
 		}
