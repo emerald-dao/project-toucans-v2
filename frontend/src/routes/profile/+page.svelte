@@ -40,13 +40,16 @@
 			}}
 		>
 			<input type="hidden" name="user" value={JSON.stringify($user)} />
-
 			<div class="column-1">
 				<label for="user-name">Username</label>
 				<input type="text" name="user-name" id="user-name" />
 			</div>
-
-			<DropZone name="user-avatar" maxAmountOfFiles={1} bind:bindValue={image} />
+			<DropZone
+				name="user-avatar"
+				maxAmountOfFiles={1}
+				bind:bindValue={image}
+				accept={['image/png']}
+			/>
 
 			{#if errorMessage}
 				<p class="error">{errorMessage}</p>

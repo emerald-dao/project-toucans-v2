@@ -13,11 +13,11 @@ const supabase = createClient<Database>(
 
 export const actions = {
 	default: async ({ request }) => {
-		const data = await request.formData();
+		const formData = await request.formData();
 
-		const user = data.get('user') as string | null;
-		const avatarImage = data.get('avatar-image') as string | null;
-		const userName = data.get('user-name') as string | null;
+		const user = formData.get('user') as string | null;
+		const avatarImage = formData.get('user-avatar') as File | null;
+		const userName = formData.get('user-name') as string | null;
 
 		if (user === null) {
 			console.log('User not found');
@@ -38,14 +38,29 @@ export const actions = {
 			return fail(400, { error: 'User not verified' });
 		}
 
-		const { error } = await supabase.from('profiles').upsert({
+		if (avatarImage) {
+			const { error: imgError } = await supabase.storage
+				.from('avatars')
+				.upload(`static/${userObject.addr}.png`, avatarImage, {
+					cacheControl: '3600',
+					upsert: true
+				});
+
+			if (imgError) {
+				console.log('Error uploading image', imgError);
+				return fail(500, { error: 'Error uploading image' });
+			}
+		}
+
+		const { error: dataError } = await supabase.from('profiles').upsert({
 			wallet_address: userObject.addr,
-			avatar_image: avatarImage,
-			user_name: userName
+			avatar_url: `static/${userObject.addr}.png`,
+			user_name: userName,
+			use_find: false
 		});
 
-		if (error) {
-			console.log('Error upserting profile', error);
+		if (dataError) {
+			console.log('Error upserting profile', dataError);
 			return fail(500, { error: 'Error uploading profile' });
 		}
 
