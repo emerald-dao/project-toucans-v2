@@ -18,7 +18,13 @@ export async function GET({ params, setHeaders, url }) {
 const fetchProfile = async (
 	walletAddress: string,
 	allProfiles: boolean
-): Promise<Profile | Profile[]> => {
+): Promise<
+	| Profile
+	| {
+			profiles: Profile[];
+			useFind: boolean;
+	  }
+> => {
 	const profilesArray = [];
 
 	const { data: toucansProfile, error } = await supabase
@@ -51,6 +57,7 @@ const fetchProfile = async (
 	if (findProfile) {
 		const profile = {
 			...findProfile,
+			name: `${findProfile.name}.find`,
 			type: 'find' as const
 		};
 
@@ -75,5 +82,8 @@ const fetchProfile = async (
 
 	profilesArray.push(randomProfile);
 
-	return profilesArray;
+	return {
+		profiles: profilesArray,
+		useFind: toucansProfile?.use_find ?? true
+	};
 };

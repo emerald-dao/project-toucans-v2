@@ -1,18 +1,49 @@
 <script lang="ts">
+	import { fetchAllUserProfiles } from './fetchAllUserProfiles';
+	import type { Profile } from '$lib/types/common/profile.interface.ts';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import { profile, user } from '$stores/flow/FlowStore';
-	import { Button, DropZone } from '@emerald-dao/component-library';
+	import { Button } from '@emerald-dao/component-library';
+	import { onMount } from 'svelte';
+
+	export let form;
 
 	let isUploading = false;
 	let errorMessage = '';
 
+	let allUserProfiles: Profile[] = [];
+
+	onMount(async () => {
+		if (!$user.addr) return;
+
+		const profilesData = await fetchAllUserProfiles($user.addr);
+
+		allUserProfiles = profilesData.profiles;
+
+		initialProfileName =
+			allUserProfiles.find((p) => p.type === (useFind ? 'find' : 'toucans'))?.name ?? '';
+		inputProfileName = initialProfileName;
+
+		initialUseFind = profilesData.useFind;
+		useFind = initialUseFind;
+	});
+
 	let image: File[] = [];
 
-	let profileName: string;
-	let profileAvatar: string;
+	let initialProfileName = '';
+	let inputProfileName: string;
+
+	let initialUseFind: boolean;
 	let useFind: boolean;
+
+	$: dataHasChanges = inputProfileName !== initialProfileName || useFind !== initialUseFind;
+
+	let profileAvatar: string;
+
+	$: findProfile = allUserProfiles.find((p) => p.type === 'find');
+	console.log('findProfile', findProfile);
 </script>
 
 {#if !$user.addr}
@@ -26,6 +57,10 @@
 					<Icon icon="tabler:wallet" inline />
 					{$user.addr}
 				</span>
+				{#if findProfile !== undefined}
+					<span>{findProfile.name}</span>
+				{/if}
+				<span />
 				<div class="image-wrapper">
 					<img src={$profile?.avatar} alt="User avatar" />
 					<button>
@@ -41,7 +76,9 @@
 
 					return async ({ result, update }) => {
 						if (result.type === 'success') {
-							await update();
+							await update({ reset: false });
+							initialProfileName = inputProfileName;
+
 							isUploading = false;
 						}
 
@@ -59,33 +96,54 @@
 			>
 				<input type="hidden" name="user" value={JSON.stringify($user)} />
 
-				<label for="use-find" class="switch">
-					<input type="checkbox" name="use-find" id="use-find" bind:checked={useFind} />
-					<span class="slider" />
-					Use .find profile
-				</label>
-
-				<div class="column-1">
-					<label for="user-name">Username</label>
-					<input type="text" name="user-name" id="user-name" />
-				</div>
-
-				{#if errorMessage}
-					<p class="error">{errorMessage}</p>
+				{#if allUserProfiles.length > 0 && findProfile}
+					<label for="use-find" class="switch">
+						<input type="checkbox" name="use-find" id="use-find" bind:checked={useFind} />
+						<span class="slider" />
+						Use .find profile
+					</label>
+				{:else}
+					<p>You don't have .find profile</p>
 				{/if}
 
-				<Button
-					color="neutral"
-					size="small"
-					width="extended"
-					state={isUploading ? 'loading' : 'active'}
-				>
-					{#if isUploading}
-						Uploading
-					{:else}
-						Upload
-					{/if}
-				</Button>
+				{#if !useFind}
+					<div class="column-1">
+						<label for="user-name">Username</label>
+						<input
+							type="text"
+							name="user-name"
+							id="user-name"
+							disabled={useFind}
+							bind:value={inputProfileName}
+						/>
+					</div>
+					<Button
+						color="neutral"
+						size="small"
+						width="extended"
+						state={isUploading ? 'loading' : dataHasChanges ? 'active' : 'disabled'}
+					>
+						{#if isUploading}
+							Updating
+						{:else}
+							Update profile
+						{/if}
+					</Button>
+				{/if}
+
+				{#if errorMessage}
+					<p class="error small">
+						<Icon icon="tabler:alert-triangle" inline />
+						{errorMessage}
+					</p>
+				{/if}
+
+				{#if form?.success}
+					<p class="success small">
+						<Icon icon="tabler:check" inline />
+						Name succesfully updated
+					</p>
+				{/if}
 			</form>
 		</div>
 	</section>
@@ -149,10 +207,9 @@
 					}
 				}
 			}
-
-			form {
+			.success {
+				color: var(--clr-primary-main);
 			}
-
 			.error {
 				color: var(--clr-alert-main);
 			}
