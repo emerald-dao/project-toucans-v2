@@ -2,5 +2,5 @@ export interface Profile {
 	address: string;
 	avatar: string;
 	name: string;
-	type: 'find' | 'random';
+	type: 'find' | 'random' | 'toucans';
 }
