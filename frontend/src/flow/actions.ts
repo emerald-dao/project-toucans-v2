@@ -933,11 +933,17 @@ export const lockTokensExecution = (
 		lockTokens(tokenSymbol, projectId, projectOwner, amount, recipient, unlockTimeInUnixSeconds)
 	);
 
-const stakeFlow = async (projectId: string, flowAmount: number, stFlowAmountOutMin: number) => {
+const stakeFlow = async (
+	projectId: string,
+	projectOwner: string,
+	flowAmount: number,
+	stFlowAmountOutMin: number
+) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(stakeFlowTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
 			arg(formatFix(flowAmount, 8), t.UFix64),
 			arg(formatFix(stFlowAmountOutMin, 8), t.UFix64)
 		],
@@ -950,15 +956,22 @@ const stakeFlow = async (projectId: string, flowAmount: number, stFlowAmountOutM
 
 export const stakeFlowExecution = (
 	projectId: string,
+	projectOwner: string,
 	flowAmount: number,
 	stFlowAmountOutMin: number
-) => executeTransaction(() => stakeFlow(projectId, flowAmount, stFlowAmountOutMin));
+) => executeTransaction(() => stakeFlow(projectId, projectOwner, flowAmount, stFlowAmountOutMin));
 
-const unstakeFlow = async (projectId: string, stFlowAmount: number, flowAmountOutMin: number) => {
+const unstakeFlow = async (
+	projectId: string,
+	projectOwner: string,
+	stFlowAmount: number,
+	flowAmountOutMin: number
+) => {
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(unstakeFlowTx),
 		args: (arg, t) => [
 			arg(projectId, t.String),
+			arg(projectOwner, t.Address),
 			arg(formatFix(stFlowAmount, 8), t.UFix64),
 			arg(formatFix(flowAmountOutMin, 8), t.UFix64)
 		],
@@ -971,9 +984,10 @@ const unstakeFlow = async (projectId: string, stFlowAmount: number, flowAmountOu
 
 export const unstakeFlowExecution = (
 	projectId: string,
+	projectOwner: string,
 	stFlowAmount: number,
 	flowAmountOutMin: number
-) => executeTransaction(() => unstakeFlow(projectId, stFlowAmount, flowAmountOutMin));
+) => executeTransaction(() => unstakeFlow(projectId, projectOwner, stFlowAmount, flowAmountOutMin));
 
 const setUpVault = async (projectId: string, contractAddress: string) => {
 	return await fcl.mutate({
@@ -1340,17 +1354,14 @@ const getCatalogSpecificNFTsIDs = async (
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(getCatalogSpecificNFTsIDsScript),
-			args: (arg, t) => [
-				arg(collectionIdentifier, t.String),
-				arg(user, t.Address)
-			]
+			args: (arg, t) => [arg(collectionIdentifier, t.String), arg(user, t.Address)]
 		});
 
 		return response;
 	} catch (e) {
 		console.log('Error in getCatalogSpecificNFTsIDs');
 		console.log(e);
-		return []
+		return [];
 	}
 };
 
@@ -1373,7 +1384,7 @@ const getCatalogSpecificNFTsByID = async (
 	} catch (e) {
 		console.log('Error in getCatalogSpecificNFTsByID');
 		console.log(e);
-		return []
+		return [];
 	}
 };
 
@@ -1382,11 +1393,8 @@ export const getCatalogSpecificNFTs: (
 	user: string
 ) => Promise<Nft[]> = async (collectionIdentifier: string, user: string) => {
 	try {
-		const nftIds = await getCatalogSpecificNFTsIDs(
-			user,
-			collectionIdentifier
-		);
-		console.log(nftIds)
+		const nftIds = await getCatalogSpecificNFTsIDs(user, collectionIdentifier);
+		console.log(nftIds);
 		const chunkSize = 300;
 		let promises = [];
 		for (let i = 0; i < nftIds.length; i += chunkSize) {
@@ -1408,7 +1416,7 @@ export const getCatalogSpecificNFTs: (
 	} catch (e) {
 		console.log('Error in getCatalogSpecificNFTs');
 		console.log(e);
-		return []
+		return [];
 	}
 };
 
@@ -1440,7 +1448,7 @@ export const getCatalogNFTs: (
 	} catch (e) {
 		console.log('Error in getCatalogNFTs');
 		console.log(e);
-		return []
+		return [];
 	}
 };
 
