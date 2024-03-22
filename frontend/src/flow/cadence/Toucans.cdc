@@ -277,6 +277,8 @@ pub contract Toucans {
     pub fun proposeRemoveSigner(signer: Address)
     pub fun proposeUpdateThreshold(threshold: UInt64)
     pub fun proposeLockTokens(recipient: Address, tokenType: Type, amount: UFix64, unlockTime: UFix64)
+    pub fun proposeStakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64)
+    pub fun proposeUnstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64)
     
     // If the action is ready to execute, then allow anyone to do it.
     pub fun finalizeAction(actionUUID: UInt64)

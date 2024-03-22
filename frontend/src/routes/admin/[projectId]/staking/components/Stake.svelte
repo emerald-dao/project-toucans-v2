@@ -48,9 +48,9 @@
 	async function runTransaction() {
 		if (currencyIn === ECurrencies.FLOW) {
 			// stake with 1% slippage
-			await stakeFlowExecution(daoData.generalInfo.project_id, amountIn, amountOut * 0.99);
+			await stakeFlowExecution(daoData.generalInfo.project_id, daoData.generalInfo.owner, amountIn, amountOut * 0.99);
 		} else if (currencyIn === ECurrencies.stFlow) {
-			await unstakeFlowExecution(daoData.generalInfo.project_id, amountIn, amountOut * 0.99);
+			await unstakeFlowExecution(daoData.generalInfo.project_id, daoData.generalInfo.owner, amountIn, amountOut * 0.99);
 		}
 	}
 </script>
