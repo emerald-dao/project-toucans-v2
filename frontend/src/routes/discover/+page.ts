@@ -8,7 +8,7 @@ export const load: PageLoad = async () => {
 	const allProjects = await fetchAllToucansProjects();
 	const rankings = await fetchDaoRankings();
 
-	const daoRankings = rankings.sort((a, b) => b.treasury_value - a.treasury_value);
+	const daoRankings = rankings.sort((a, b) => b.total_funding - a.total_funding);
 	const tokenRankings = rankings.filter((x) => x.price).sort((a, b) => b.price - a.price);
 
 	return {
