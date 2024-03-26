@@ -1,6 +1,6 @@
-import './config';
-import * as fcl from '@onflow/fcl';
-import { formatFix, getCadenceCode, replaceWithProperValues } from './utils';
+import "./config";
+import * as fcl from "@onflow/fcl";
+import { formatFix, getCadenceCode, replaceWithProperValues } from "./utils";
 
 export const getTrendingData = async (
   projectIds: string[],
@@ -8,14 +8,14 @@ export const getTrendingData = async (
 ) => {
   try {
     return await fcl.query({
-      cadence: getCadenceCode('get_trending_data.cdc', undefined, undefined),
+      cadence: getCadenceCode("get_trending_data.cdc", undefined, undefined),
       args: (arg, t) => [
         arg(projectIds, t.Array(t.String)),
-        arg(contractAddresses, t.Array(t.Address))
-      ]
+        arg(contractAddresses, t.Array(t.Address)),
+      ],
     });
   } catch (e) {
-    console.log('Error in getTrendingData', e);
+    console.log("Error in getTrendingData", e);
     return null;
   }
 };
@@ -35,60 +35,58 @@ async function getSwapPairInfo(pairAddr) {
         return pairPublicRef.getPairInfo()
       }
     `,
-    args: (arg, t) => [
-      arg(pairAddr, t.Address)
-    ]
+    args: (arg, t) => [arg(pairAddr, t.Address)],
   });
   return response;
 }
 
 export const calcTokenPrice = {
   FLOW: getQuoteToFlowPriceFromDex,
-  USDC: getQuoteToUSDCPriceFromDex
-}
+  USDC: getQuoteToUSDCPriceFromDex,
+};
 
 function getQuoteToFlowPriceFromDex(info) {
-  let numFlow = 0.0
-  let numQuote = 0.0
-  if (info[0].includes('Flow')) {
-    numFlow = parseFloat(info[2])
-    if (numFlow < 100) {
-      return null;
-    }
-    numQuote = parseFloat(info[3])
-  } else if (info[1].includes('Flow')) {
-    numFlow = parseFloat(info[3])
-    if (numFlow < 100) {
-      return null;
-    }
-    numQuote = parseFloat(info[2])
+  let numFlow = 0.0;
+  let numQuote = 0.0;
+  if (info[0].includes("Flow")) {
+    numFlow = parseFloat(info[2]);
+    // if (numFlow < 100) {
+    //   return null;
+    // }
+    numQuote = parseFloat(info[3]);
+  } else if (info[1].includes("Flow")) {
+    numFlow = parseFloat(info[3]);
+    // if (numFlow < 100) {
+    //   return null;
+    // }
+    numQuote = parseFloat(info[2]);
   } else {
     return null;
   }
   // 1 quote token = xx flow
-  return (numFlow / numQuote) || 0;
+  return numFlow / numQuote || 0;
 }
 
 function getQuoteToUSDCPriceFromDex(info) {
-  let numUsdc = 0.0
-  let numQuote = 0.0
-  if (info[0].includes('FiatToken')) {
-    numUsdc = parseFloat(info[2])
-    if (numUsdc < 100) {
-      return null;
-    }
-    numQuote = parseFloat(info[3])
-  } else if (info[1].includes('FiatToken')) {
-    numUsdc = parseFloat(info[3])
-    if (numUsdc < 100) {
-      return null;
-    }
-    numQuote = parseFloat(info[2])
+  let numUsdc = 0.0;
+  let numQuote = 0.0;
+  if (info[0].includes("FiatToken")) {
+    numUsdc = parseFloat(info[2]);
+    // if (numUsdc < 100) {
+    //   return null;
+    // }
+    numQuote = parseFloat(info[3]);
+  } else if (info[1].includes("FiatToken")) {
+    numUsdc = parseFloat(info[3]);
+    // if (numUsdc < 100) {
+    //   return null;
+    // }
+    numQuote = parseFloat(info[2]);
   } else {
     return null;
   }
   // 1 quote token = xx usdc
-  return (numUsdc / numQuote) || 0;
+  return numUsdc / numQuote || 0;
 }
 
 export const getTrendingDatav2 = async (
@@ -98,26 +96,39 @@ export const getTrendingDatav2 = async (
 ) => {
   try {
     const response = await fcl.query({
-      cadence: replaceWithProperValues(generateGetTrendingDataScript(projectIds, contractAddresses, projectOwners), undefined, undefined),
-      args: (arg, t) => []
+      cadence: replaceWithProperValues(
+        generateGetTrendingDataScript(
+          projectIds,
+          contractAddresses,
+          projectOwners
+        ),
+        undefined,
+        undefined
+      ),
+      args: (arg, t) => [],
     });
     return response;
   } catch (e) {
-    console.log('Error in getTrendingDatav2', e);
+    console.log("Error in getTrendingDatav2", e);
     return null;
   }
 };
 
-function generateGetTrendingDataScript(projectIds: string[], contractAddresses: (string | undefined)[], projectOwners: string[]) {
-  let imports = '';
+function generateGetTrendingDataScript(
+  projectIds: string[],
+  contractAddresses: (string | undefined)[],
+  projectOwners: string[]
+) {
+  let imports = "";
   for (let i = 0; i < projectIds.length; i++) {
     if (contractAddresses[i] !== undefined) {
-      imports += `\nimport ${projectIds[i]} from ${contractAddresses[i]}`
+      imports += `\nimport ${projectIds[i]} from ${contractAddresses[i]}`;
     }
   }
-  let mainCode = projectIds.map((v, i) => {
-    if (contractAddresses[i] !== undefined) {
-      return `\n
+  let mainCode = projectIds
+    .map((v, i) => {
+      if (contractAddresses[i] !== undefined) {
+        return `\n
       let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
                   .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                   ?? panic("User does not have a Toucans Collection")
@@ -148,9 +159,9 @@ function generateGetTrendingDataScript(projectIds: string[], contractAddresses: 
         project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${v}.Vault>()) ?? 0.0
       }
       answer["${v}"] = Info(${v}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, ${v}.maxSupply, project${i}.totalFunding, project${i}.getFunders().keys, ${v}.getBalances().keys)
-      `
-    } else {
-      return `\n
+      `;
+      } else {
+        return `\n
       let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
                   .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
                   ?? panic("User does not have a Toucans Collection")
@@ -166,9 +177,10 @@ function generateGetTrendingDataScript(projectIds: string[], contractAddresses: 
         project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0
       }
       answer["${v}"] = Info(nil, nil, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, nil, project${i}.totalFunding, project${i}.getFunders().keys, [])
-      `
-    }
-  }).join('')
+      `;
+      }
+    })
+    .join("");
   let script = `
   import FungibleToken from "../utility/FungibleToken.cdc"
   import Toucans from "../Toucans.cdc"
@@ -209,6 +221,6 @@ function generateGetTrendingDataScript(projectIds: string[], contractAddresses: 
       self.holders = h
     }
   }
-  `
+  `;
   return script;
 }
