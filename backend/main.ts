@@ -186,7 +186,10 @@ async function gatherTrendingProjects() {
     let mainBalances =
       Number(treasuryBalances["USDC"]) +
       Number(treasuryBalances["FLOW"] * flowPrice);
-    if (projects[projectId].price) {
+    if (
+      projects[projectId].price &&
+      projects[projectId].liquidity_amount >= 50
+    ) {
       mainBalances +=
         Number(treasuryBalances[addressList[projectId].token_symbol]) *
         projects[projectId].price;
