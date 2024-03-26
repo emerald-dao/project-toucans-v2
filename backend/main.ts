@@ -163,8 +163,8 @@ async function gatherTrendingProjects() {
     projects[projectId].num_proposals += Number(numProposals);
     // if there is a price
     if (pairInfo) {
-      projects[projectId].price = roundToUSDPrice(
-        calcTokenPrice[paymentCurrency](pairInfo)
+      projects[projectId].price = Number(
+        calcTokenPrice[paymentCurrency](pairInfo).toFixed(5)
       );
       let liquidityAmount = getLiquidityAmount(pairInfo);
       projects[projectId].liquidity_amount = liquidityAmount;
@@ -176,8 +176,8 @@ async function gatherTrendingProjects() {
 
     if (paymentCurrency === "FLOW") {
       if (projects[projectId].price) {
-        projects[projectId].price = roundToUSDPrice(
-          projects[projectId].price * flowPrice
+        projects[projectId].price = Number(
+          (projects[projectId].price * flowPrice).toFixed(5)
         );
       }
     }

@@ -27,13 +27,23 @@
 	</td>
 	<td>
 		{#if project.price}
-			<Currency
-				amount={project.price}
-				color="heading"
-				fontSize="var(--font-size-1)"
-				moneyPrefix={true}
-				decimalNumbers={2}
-			/>
+			{#if project.price < .01}
+				<Currency
+					amount={project.price}
+					color="heading"
+					fontSize="var(--font-size-1)"
+					moneyPrefix={true}
+					decimalNumbers={5}
+				/>
+			{:else}
+				<Currency
+					amount={project.price}
+					color="heading"
+					fontSize="var(--font-size-1)"
+					moneyPrefix={true}
+					decimalNumbers={2}
+				/>
+			{/if}
 		{:else}
 			N/A
 		{/if}
