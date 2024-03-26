@@ -253,8 +253,8 @@ async function refillUserFunding() {
 
 // refillUserFunding();
 
-gatherTrendingProjects();
-// cron.schedule('*/10 * * * *', () => {
-//   gatherTrendingProjects();
-//   console.log('executing ranking task');
-// });
+// gatherTrendingProjects();
+cron.schedule("*/10 * * * *", () => {
+  gatherTrendingProjects();
+  console.log("executing ranking task");
+});
