@@ -53,7 +53,7 @@
 
 <style type="scss">
 	tr {
-		margin-block: var(--spacce-10);
+		margin-block: var(--space-10);
 
 		th,
 		td {
