@@ -1,6 +1,7 @@
 export interface DaoRankingData {
   project_id: string;
   price: number | null;
+  liquidity_amount: number | null;
   week_funding: number;
   total_supply: number;
   payment_currency: string;
