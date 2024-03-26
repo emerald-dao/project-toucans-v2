@@ -174,12 +174,15 @@ async function gatherTrendingProjects() {
       projects[projectId].week_funding
     );
 
-    if (paymentCurrency === "FLOW") {
-      if (projects[projectId].price) {
-        projects[projectId].price = Number(
-          (projects[projectId].price * flowPrice).toFixed(5)
-        );
-      }
+    if (paymentCurrency === "FLOW" && projects[projectId].price) {
+      projects[projectId].price = Number(
+        (projects[projectId].price * flowPrice).toFixed(5)
+      );
+    }
+
+    // don't accept prices less than 0.00001
+    if (projects[projectId].price && projects[projectId].price < 0.00001) {
+      projects[projectId].price = null;
     }
 
     // figure out treasury balance
@@ -188,6 +191,7 @@ async function gatherTrendingProjects() {
       Number(treasuryBalances["FLOW"] * flowPrice);
     if (
       projects[projectId].price &&
+      projects[projectId].liquidity_amount &&
       projects[projectId].liquidity_amount >= 50
     ) {
       mainBalances +=
