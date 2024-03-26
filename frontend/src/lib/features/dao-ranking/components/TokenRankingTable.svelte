@@ -6,6 +6,7 @@
 </script>
 
 <div class="table-wrap">
+	<p class="note">For your token to be on this list, it must be tradeable on <a href="https://app.increment.fi" target="_blank" style="text-decoration: none;">Increment Fi</a>, have a minimum of 50 FLOW/USDC (depending on your chosen currency) in the liquidity pool, and a minimum price of $0.00001 USD.</p>
 	<table class="table table-bordered table-dark table-hover">
 		<thead>
 			<tr>
@@ -32,6 +33,13 @@
 </div>
 
 <style type="scss">
+	.note {
+		font-size: var(--font-size-0);
+		font-style: italic;
+		line-height: var(--paragraph-small-regular-line-height);
+		margin-top: 5px;
+	}
+
 	.table {
 		width: 100%;
 		border-spacing: 0 var(--space-5);
