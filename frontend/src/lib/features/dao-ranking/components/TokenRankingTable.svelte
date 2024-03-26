@@ -23,7 +23,9 @@
 		</thead>
 		<tbody>
 			{#each projectsData as project, i (project.project_id)}
-				<TokenRankingRow {project} number={i} />
+				{#if project.liquidity_amount && project.liquidity_amount >= 100}
+					<TokenRankingRow {project} number={i} />
+				{/if}
 			{/each}
 		</tbody>
 	</table>

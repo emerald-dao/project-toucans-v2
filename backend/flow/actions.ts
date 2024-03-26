@@ -45,6 +45,20 @@ export const calcTokenPrice = {
   USDC: getQuoteToUSDCPriceFromDex,
 };
 
+export function getLiquidityAmount(info) {
+  if (info[0].includes("Flow")) {
+    return parseFloat(info[2]);
+  } else if (info[1].includes("Flow")) {
+    return parseFloat(info[3]);
+  } else if (info[0].includes("FiatToken")) {
+    return parseFloat(info[2]);
+  } else if (info[1].includes("FiatToken")) {
+    return parseFloat(info[3]);
+  } else {
+    return null;
+  }
+}
+
 function getQuoteToFlowPriceFromDex(info) {
   let numFlow = 0.0;
   let numQuote = 0.0;
