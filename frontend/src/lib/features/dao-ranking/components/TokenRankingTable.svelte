@@ -19,7 +19,7 @@
 				<th>TVL</th>
 				<th>Total Supply</th>
 				<th>Max Supply</th>
-				<th># Holders</th>
+				<th>Holders</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -46,6 +46,7 @@
 			color: var(--clr-text-main);
 			font-size: var(--font-size-0);
 			text-align: right;
+			padding: 2px;
 		}
 
 		.left-align {

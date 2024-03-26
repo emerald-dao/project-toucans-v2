@@ -27,9 +27,9 @@
 				<th class="left-align">Name</th>
 				<th>Treasury Value</th>
 				<th>Total Funding</th>
-				<th># NFTs</th>
-				<th># Proposals</th>
-				<th># Participants</th>
+				<th>NFTs</th>
+				<th>Proposals</th>
+				<th>Participants</th>
 				<th>Funding</th>
 			</tr>
 		</thead>
