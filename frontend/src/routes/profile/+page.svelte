@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fetchAllUserProfiles } from './fetchAllUserProfiles';
+	import { fetchAllProfilesFromUser } from './fetchAllProfilesFromUser';
 	import type { Profile } from '$lib/types/common/profile.interface.ts';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
@@ -7,6 +7,7 @@
 	import { profile, user } from '$stores/flow/FlowStore';
 	import { Button } from '@emerald-dao/component-library';
 	import { onMount } from 'svelte';
+	import { writable, derived, type Writable } from 'svelte/store';
 
 	export let form;
 
@@ -18,7 +19,7 @@
 	onMount(async () => {
 		if (!$user.addr) return;
 
-		const profilesData = await fetchAllUserProfiles($user.addr);
+		const profilesData = await fetchAllProfilesFromUser($user.addr);
 
 		allUserProfiles = profilesData.profiles;
 
@@ -30,8 +31,6 @@
 		useFind = initialUseFind;
 	});
 
-	let image: File[] = [];
-
 	let initialProfileName = '';
 	let inputProfileName: string;
 
@@ -39,11 +38,34 @@
 	let useFind: boolean;
 
 	$: dataHasChanges = inputProfileName !== initialProfileName || useFind !== initialUseFind;
-
-	let profileAvatar: string;
-
 	$: findProfile = allUserProfiles.find((p) => p.type === 'find');
-	console.log('findProfile', findProfile);
+
+	let image: Writable<FileList> = writable();
+	let fileInput: HTMLInputElement;
+
+	const getImage = (node: HTMLImageElement) => {
+		const derivedImages = derived([image, profile], ([$image, $profile]) => {
+			return {
+				uploadedImage: $image,
+				profileAvatar: $profile?.avatar ?? '/profile-placeholder.jpg'
+			};
+		});
+
+		const unsubscribe = derivedImages.subscribe((value) => {
+			if (value.uploadedImage && value.uploadedImage.length > 0) {
+				const reader = new FileReader();
+
+				reader.onload = () => (node.src = reader.result as string);
+				reader.readAsDataURL(value.uploadedImage[0]);
+			} else {
+				node.src = value.profileAvatar;
+			}
+		});
+
+		return {
+			destroy: () => unsubscribe()
+		};
+	};
 </script>
 
 {#if !$user.addr}
@@ -62,10 +84,22 @@
 				{/if}
 				<span />
 				<div class="image-wrapper">
-					<img src={$profile?.avatar} alt="User avatar" />
-					<button>
+					<img use:getImage alt="User avatar" />
+					<button
+						on:click={() => {
+							fileInput.click();
+						}}
+					>
 						<Icon icon="tabler:edit" inline width="14px" />
 					</button>
+					<input
+						type="file"
+						bind:this={fileInput}
+						class="hidden"
+						bind:files={$image}
+						accept="image/png, image/jpeg"
+						multiple={false}
+					/>
 				</div>
 			</div>
 			<form
@@ -183,6 +217,10 @@
 
 				.image-wrapper {
 					position: relative;
+
+					.hidden {
+						display: none;
+					}
 
 					img {
 						max-width: 120px;

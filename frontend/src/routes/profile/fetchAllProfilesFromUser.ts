@@ -1,6 +1,6 @@
 import type { Profile } from '$lib/types/common/profile.interface';
 
-export const fetchAllUserProfiles = async (address: string) => {
+export const fetchAllProfilesFromUser = async (address: string) => {
 	const res = await fetch(`/api/get-profile/${address}?allProfiles=true`, {
 		headers: {
 			'Cache-Control': 'no-cache'
