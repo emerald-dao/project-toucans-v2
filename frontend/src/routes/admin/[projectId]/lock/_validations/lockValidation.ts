@@ -22,16 +22,16 @@ const lockValidation = create(
 			enforce(data.address).startsWith('0x');
 		});
 
-		skipWhen(lockValidation.get().hasErrors('address'), () => {
-			test('address', "Address doesn't have a vault set up.", async () => {
-				return (await checkAddress(
-					data.address,
-					projectOwner,
-					projectId,
-					currencyToDistribute
-				)) as string;
-			});
-		});
+		// skipWhen(lockValidation.get().hasErrors('address'), () => {
+		// 	test('address', "Address doesn't have a vault set up.", async () => {
+		// 		return (await checkAddress(
+		// 			data.address,
+		// 			projectOwner,
+		// 			projectId,
+		// 			currencyToDistribute
+		// 		)) as string;
+		// 	});
+		// });
 
 		test('amount', 'Amount should me greater than 0', () => {
 			enforce(data.amount).greaterThan(0);
