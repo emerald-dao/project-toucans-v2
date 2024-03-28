@@ -15,7 +15,11 @@
 
 	export let round: FundingCycle;
 	export let daoData: DAOProject;
+	// cycleId
+	let roundId: number = Number(round.details.cycleId);
+	// cycleIndex
 	export let roundNumber: number;
+	// cycleId
 	export let activeRound: number | null;
 	export let admin: boolean = false;
 	export let paused: boolean = true;
@@ -30,7 +34,7 @@
 		? new Date(Number(round.details.timeframe.endTime) * 1000)
 		: null;
 
-	$: roundStatus = getRoundStatus(roundNumber, activeRound, startDate);
+	$: roundStatus = getRoundStatus(roundId, activeRound, startDate);
 </script>
 
 <div class="main-wrapper row-space-between align-center">
