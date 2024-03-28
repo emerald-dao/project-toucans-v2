@@ -73,16 +73,6 @@ access(all) contract ExampleToken: FungibleToken {
             return ExampleToken.resolveContractView(resourceType: nil, viewType: view)
         }
 
-        access(all) view fun getSupportedVaultTypes(): {Type: Bool} {
-            let supportedTypes: {Type: Bool} = {}
-            supportedTypes[self.getType()] = true
-            return supportedTypes
-        }
-
-        access(all) view fun isSupportedVaultType(type: Type): Bool {
-            return self.getSupportedVaultTypes()[type] ?? false
-        }
-
         access(all) view fun isAvailableToWithdraw(amount: UFix64): Bool {
             return amount <= self.balance
         }
