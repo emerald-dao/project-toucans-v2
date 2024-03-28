@@ -1,9 +1,8 @@
-import Toucans from "../Toucans.cdc"
+import "Toucans"
 import ToucansActions from "../ToucansActions.cdc"
 
-pub fun main(projectOwner: Address, projectId: String, actionId: UInt64): Result? {
-  let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+access(all) fun main(projectOwner: Address, projectId: String, actionId: UInt64): Result? {
+  let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                 ?? panic("User does not have a Toucans Collection")
   
   let info = projectCollection.borrowProjectPublic(projectId: projectId)!
@@ -19,9 +18,9 @@ pub fun main(projectOwner: Address, projectId: String, actionId: UInt64): Result
   return nil
 }
 
-pub struct Result {
-  pub let amounts: {Address: UFix64}
-  pub let currency: String
+access(all) struct Result {
+  access(all) let amounts: {Address: UFix64}
+  access(all) let currency: String
   
   init(_ a: {Address: UFix64}, _ c: String) {
     self.amounts = a

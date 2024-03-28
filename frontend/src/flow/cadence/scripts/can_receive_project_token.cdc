@@ -1,10 +1,9 @@
-import ExampleToken from "../ExampleToken.cdc"
-import FungibleToken from "../utility/FungibleToken.cdc"
+import "ExampleToken"
+import "FungibleToken"
 
-pub fun main(user: Address): Bool {
+access(all) fun main(user: Address): Bool {
   // otherwise check the projects token
-  let vault = getAccount(user).getCapability(ExampleToken.ReceiverPublicPath)
-                .borrow<&{FungibleToken.Receiver}>()
+  let vault = getAccount(user).capabilities.borrow<&{FungibleToken.Receiver}>(ExampleToken.ReceiverPublicPath)
 
   return vault != nil
 }

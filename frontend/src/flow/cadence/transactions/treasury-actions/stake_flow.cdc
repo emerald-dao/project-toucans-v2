@@ -1,12 +1,11 @@
-import Toucans from "../../Toucans.cdc"
+import "Toucans"
 
 transaction(projectId: String, projectOwner: Address, flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
 
-    let Project: &Toucans.Project{Toucans.ProjectPublic}
+    let Project: &Toucans.Project
 
-    prepare(signer: AuthAccount) {
-        let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+    prepare(signer: &Account) {
+        let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                   ?? panic("This is an incorrect address for project owner.")
         self.Project = projectCollection.borrowProjectPublic(projectId: projectId)
                   ?? panic("Project does not exist, at least in this collection.")

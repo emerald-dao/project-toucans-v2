@@ -1,4 +1,4 @@
-import Toucans from "../Toucans.cdc"
+import "Toucans"
 import ToucansActions from "../ToucansActions.cdc"
 
 transaction(
@@ -8,15 +8,16 @@ transaction(
   vote: Bool
 ) {
 
-  let Collection: &Toucans.Collection
+  let Collection: auth(Toucans.Owner) &Toucans.Collection
   
-  prepare(signer: AuthAccount) {
-    if signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
-      signer.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
-      signer.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+  prepare(signer: auth(Storage, Capabilities) &Account) {
+    if signer.storage.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      signer.storage.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      let cap = signer.capabilities.storage.issue<&Toucans.Collection>(Toucans.CollectionStoragePath)
+      signer.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
     }
     
-    self.Collection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
+    self.Collection = signer.storage.borrow<auth(Toucans.Owner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)
               ?? panic("Signer does not have Toucans collection does not exist.")
   }
   execute {

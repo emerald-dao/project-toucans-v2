@@ -2,11 +2,14 @@ import * as fcl from "@onflow/fcl";
 
 export async function fetchFlowPrice() {
   try {
-    const response = await fetch('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=4558', {
-      headers: {
-        'X-CMC_PRO_API_KEY': process.env.CMC_PRO_API_KEY,
-      },
-    });
+    const response = await fetch(
+      "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=4558",
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": process.env.CMC_PRO_API_KEY,
+        },
+      }
+    );
     let json = await response.json();
     let flowPrice = json.data[4558].quote.USD.price;
     return flowPrice;
@@ -31,7 +34,7 @@ export const fetchStFlowPrice = async (flowPrice) => {
       // stable pair is generally better so we use 
       // that for now. but if we want to compare between
       // v1 and stable, then uncomment the code below
-      pub fun main(amountIn: UFix64, tokenInKey: String): UFix64 {
+      access(all) fun main(amountIn: UFix64, tokenInKey: String): UFix64 {
           // let pairv1Address: Address = 0x396c0cda3302d8c5
           // let pairv1PublicRef = getAccount(pairv1Address)
           //     .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
@@ -57,14 +60,11 @@ export const fetchStFlowPrice = async (flowPrice) => {
           return amountOut
       }
       `,
-      args: (arg, t) => [
-        arg('1.0', t.UFix64),
-        arg(tokenInKey, t.String)
-      ]
+      args: (arg, t) => [arg("1.0", t.UFix64), arg(tokenInKey, t.String)],
     });
     return Number(stFlowPriceRelativeToFlow) * flowPrice;
   } catch (e) {
-    console.log('Error in fetchStFlowPriceRelativeToFlow', e);
-    throw new Error('Error in fetchStFlowPriceRelativeToFlow');
+    console.log("Error in fetchStFlowPriceRelativeToFlow", e);
+    throw new Error("Error in fetchStFlowPriceRelativeToFlow");
   }
 };

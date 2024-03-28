@@ -61,7 +61,6 @@ import canReceiveProjectTokenScript from './cadence/scripts/can_receive_project_
 import canReceiveNFTCollectionScript from './cadence/scripts/can_receive_nft_collection.cdc?raw';
 import getBatchAmountsScript from './cadence/scripts/get_batch_amounts.cdc?raw';
 import getFlowBalanceScript from './cadence/scripts/get_flow_balance.cdc?raw';
-import getTrendingDataScript from './cadence/scripts/get_trending_data.cdc?raw';
 import getProjectBalancesScript from './cadence/scripts/get_project_balances.cdc?raw';
 import getStableSwapPoolInfoScript from './cadence/scripts/get_stable_swap_pool_info.cdc?raw';
 import getCatalogSpecificNFTsByIDScript from './cadence/scripts/get_catalog_specific_nfts_by_id.cdc?raw';
@@ -1515,21 +1514,6 @@ export const getBatchAmounts = async (
 	} catch (e) {
 		console.log('Error in getBatchAmounts', e);
 		throw new Error('Error in getBatchAmounts');
-	}
-};
-
-export const getTrendingData = async (projectIds: string[], contractAddresses: string[]) => {
-	try {
-		return await fcl.query({
-			cadence: replaceWithProperValues(getTrendingDataScript),
-			args: (arg, t) => [
-				arg(projectIds, t.Array(t.String)),
-				arg(contractAddresses, t.Array(t.Address))
-			]
-		});
-	} catch (e) {
-		console.log('Error in getTrendingData', e);
-		throw new Error('Error in getTrendingData');
 	}
 };
 

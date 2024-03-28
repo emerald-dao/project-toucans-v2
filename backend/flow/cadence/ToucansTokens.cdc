@@ -2,18 +2,18 @@ import FlowToken from "./utility/FlowToken.cdc"
 import FiatToken from "./utility/FiatToken.cdc"
 import FungibleToken from "./utility/FungibleToken.cdc"
 
-pub contract ToucansTokens {
+access(all) contract ToucansTokens {
 
   access(self) let tokens: {Type: TokenInfo}
 
-  pub struct TokenInfo {
-    pub let contractName: String
-    pub let contractAddress: Address
-    pub let tokenType: Type
-    pub let symbol: String
-    pub let receiverPath: PublicPath
-    pub let publicPath: PublicPath
-    pub let storagePath: StoragePath
+  access(all) struct TokenInfo {
+    access(all) let contractName: String
+    access(all) let contractAddress: Address
+    access(all) let tokenType: Type
+    access(all) let symbol: String
+    access(all) let receiverPath: PublicPath
+    access(all) let publicPath: PublicPath
+    access(all) let storagePath: StoragePath
 
     init(_ cn: String, _ ca: Address, _ s: String, _ rp: PublicPath, _ pp: PublicPath, _ sp: StoragePath) {
       self.contractName = cn
@@ -27,25 +27,25 @@ pub contract ToucansTokens {
     }
   }
 
-  pub resource Admin {
-    pub fun addToken(tokenInfo: TokenInfo) {
+  access(all) resource Admin {
+    access(all) fun addToken(tokenInfo: TokenInfo) {
       ToucansTokens.tokens[tokenInfo.tokenType] = tokenInfo
     }
 
-    pub fun removeToken(tokenType: Type) {
+    access(all) fun removeToken(tokenType: Type) {
       ToucansTokens.tokens.remove(key: tokenType)
     }
   }
 
-  pub fun getTokenInfo(tokenType: Type): TokenInfo? {
+  access(all) fun getTokenInfo(tokenType: Type): TokenInfo? {
     return self.tokens[tokenType]
   }
 
-  pub fun getTokenSymbol(tokenType: Type): String? {
+  access(all) fun getTokenSymbol(tokenType: Type): String? {
     return self.tokens[tokenType]?.symbol
   }
 
-  pub fun getTokenInfoFromSymbol(symbol: String): TokenInfo? {
+  access(all) fun getTokenInfoFromSymbol(symbol: String): TokenInfo? {
     for info in self.tokens.values {
       if info.symbol == symbol {
         return info
@@ -55,7 +55,7 @@ pub contract ToucansTokens {
   }
 
   // stringAddress DOES NOT include the `0x`
-  pub fun stringToAddress(stringAddress: String): Address {
+  access(all) fun stringToAddress(stringAddress: String): Address {
     var r: UInt64 = 0
     var bytes: [UInt8] = stringAddress.decodeHex()
 

@@ -11,30 +11,30 @@
 // multiple addresses to your DiscordID, and you cannot configure
 // multiple DiscordIDs to your address. 1-1.
 
-pub contract EmeraldIdentityLilico {
+access(all) contract EmeraldIdentityLilico {
 
     //
     // Paths
     //
-    pub let AdministratorStoragePath: StoragePath
-    pub let AdministratorPrivatePath: PrivatePath
+    access(all) let AdministratorStoragePath: StoragePath
+    access(all) let AdministratorPrivatePath: PrivatePath
 
     //
     // Events
     //
-    pub event EmeraldIDCreated(account: Address, discordID: String)
-    pub event EmeraldIDRemoved(account: Address, discordID: String)
+    access(all) event EmeraldIDCreated(account: Address, discordID: String)
+    access(all) event EmeraldIDRemoved(account: Address, discordID: String)
     
     //
     // Administrator
     //
-    pub resource Administrator {
+    access(all) resource Administrator {
         // 1-to-1
         access(account) var accountToDiscord: {Address: String}
         // 1-to-1
         access(account) var discordToAccount: {String: Address}
 
-        pub fun createEmeraldID(account: Address, discordID: String) {
+        access(all) fun createEmeraldID(account: Address, discordID: String) {
             pre {
                 EmeraldIdentityLilico.getAccountFromDiscord(discordID: discordID) == nil:
                     "The old discordID must remove their EmeraldID first."
@@ -48,12 +48,12 @@ pub contract EmeraldIdentityLilico {
             emit EmeraldIDCreated(account: account, discordID: discordID)
         }
 
-        pub fun removeByAccount(account: Address) {
+        access(all) fun removeByAccount(account: Address) {
             let discordID = EmeraldIdentityLilico.getDiscordFromAccount(account: account) ?? panic("This EmeraldID does not exist!")
             self.remove(account: account, discordID: discordID)
         }
 
-        pub fun removeByDiscord(discordID: String) {
+        access(all) fun removeByDiscord(discordID: String) {
             let account = EmeraldIdentityLilico.getAccountFromDiscord(discordID: discordID) ?? panic("This EmeraldID does not exist!")
             self.remove(account: account, discordID: discordID)
         }
@@ -65,7 +65,7 @@ pub contract EmeraldIdentityLilico {
             emit EmeraldIDRemoved(account: account, discordID: discordID)
         }
 
-        pub fun createAdministrator(): Capability<&Administrator> {
+        access(all) fun createAdministrator(): Capability<&Administrator> {
             return EmeraldIdentityLilico.account.getCapability<&Administrator>(EmeraldIdentityLilico.AdministratorPrivatePath)
         }
 
@@ -77,12 +77,12 @@ pub contract EmeraldIdentityLilico {
 
     /*** USE THE BELOW FUNCTIONS FOR SECURE VERIFICATION OF ID ***/ 
 
-    pub fun getDiscordFromAccount(account: Address): String?  {
+    access(all) fun getDiscordFromAccount(account: Address): String?  {
         let admin = EmeraldIdentityLilico.account.borrow<&Administrator>(from: EmeraldIdentityLilico.AdministratorStoragePath)!
         return admin.accountToDiscord[account]
     }
 
-    pub fun getAccountFromDiscord(discordID: String): Address? {
+    access(all) fun getAccountFromDiscord(discordID: String): Address? {
         let admin = EmeraldIdentityLilico.account.borrow<&Administrator>(from: EmeraldIdentityLilico.AdministratorStoragePath)!
         return admin.discordToAccount[discordID]
     }
