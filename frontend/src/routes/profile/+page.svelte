@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { fetchAllProfilesFromUser } from './fetchAllProfilesFromUser';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
@@ -7,103 +6,105 @@
 	import { Button } from '@emerald-dao/component-library';
 	import { onMount } from 'svelte';
 	import { writable, derived, type Writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import type { Profile } from '$lib/types/common/profile.interface';
+	import type { Profile, ProfileTypes } from '$lib/types/common/profile.interface';
+	import { fetchAllUserProfiles } from './fetchAllUserProfiles';
 
 	export let form;
 
+	// form state
 	let isUploading = false;
 	let errorMessage = '';
 
-	let allUserProfiles: Writable<Profile[]> = writable([]);
+	// general data
+	let allUserProfiles: {
+		profiles: { [key in ProfileTypes]: Profile | null };
+		useFind: boolean;
+	};
 
-	onMount(async () => {
-		if (!$user.addr) return;
-
-		const profilesData = await fetchAllProfilesFromUser($user.addr);
-
-		$allUserProfiles = profilesData.profiles;
-
-		initialUseFind = profilesData.useFind;
-		$useFind = initialUseFind;
-
-		initialProfileName =
-			$allUserProfiles.find((p) => p.type === ($useFind ? 'find' : 'toucans'))?.name ?? '';
-		inputProfileName = initialProfileName;
-	});
-
-	let initialProfileName = '';
-	let inputProfileName: string;
-
-	let initialUseFind: boolean;
-	let useFind: Writable<boolean> = writable(false);
-
-	$: dataHasChanges = inputProfileName !== initialProfileName || $useFind !== initialUseFind;
-	$: findProfile = $allUserProfiles.find((p) => p.type === 'find');
-
-	let image: Writable<FileList> = writable();
+	// Inputs elements
 	let fileInput: HTMLInputElement;
 
+	// Inputs data
+	const inputImage: Writable<FileList> = writable();
+	const inputUseFind = writable(false);
+	const inputProfileName = writable('');
+
+	onMount(async () => {
+		if ($user.addr) {
+			allUserProfiles = await fetchAllUserProfiles($user.addr);
+
+			inputUseFind.set(allUserProfiles.useFind);
+			inputProfileName.set(allUserProfiles.profiles.toucans?.name ?? '');
+		}
+	});
+
 	const getImage = (node: HTMLImageElement) => {
-		const derivedImages = derived(
-			[image, useFind, allUserProfiles],
-			([$image, $useFind, $allUserProfiles]) => {
-				return {
-					uploadedImage: $image,
-					useFin: $useFind,
-					profileAvatar: ($useFind
-						? $allUserProfiles.find((p) => p.type === 'find')?.avatar
-						: $allUserProfiles.find((p) => p.type === 'toucans')?.avatar ??
-						  '/profile-placeholder.jpg') as string
-				};
+		const imageToDisplay = derived([inputImage, inputUseFind], ([$inputImage, $inputUseFind]) => {
+			if ($inputUseFind) {
+				return (
+					(allUserProfiles.profiles.find?.avatar as string) ??
+					(allUserProfiles.profiles.random?.avatar as string)
+				);
 			}
-		);
+			return $inputImage && $inputImage.length > 0
+				? URL.createObjectURL($inputImage[0])
+				: allUserProfiles.profiles.toucans?.avatar ?? ('/profile-placeholder.jpg' as string);
+		});
 
-		const unsubscribe = derivedImages.subscribe((value) => {
-			if (value.uploadedImage && value.uploadedImage.length > 0 && value.useFin === false) {
-				const reader = new FileReader();
-
-				reader.onload = () => (node.src = reader.result as string);
-				reader.readAsDataURL(value.uploadedImage[0]);
-			} else {
-				node.src = value.profileAvatar;
-			}
+		const unsubscribe = imageToDisplay.subscribe((value) => {
+			node.src = value;
 		});
 
 		return {
 			destroy: () => unsubscribe()
 		};
 	};
+
+	const dataHasChanges = derived(
+		[inputImage, inputUseFind, inputProfileName],
+		([$inputImage, $inputUseFind, $inputProfileName]) => {
+			if (allUserProfiles) {
+				if ($inputUseFind !== allUserProfiles.useFind) {
+					return true;
+				} else if ($inputUseFind === true) {
+					return false;
+				} else {
+					return (
+						$inputImage.length > 0 || $inputProfileName !== allUserProfiles.profiles.toucans?.name
+					);
+				}
+			} else {
+				return false;
+			}
+		}
+	);
 </script>
 
 {#if !$user.addr}
 	<ConnectPage />
-{:else}
+{:else if allUserProfiles}
 	<section class="container-small column-6">
-		{$profile?.avatar}
-		<div class="card column-10">
+		<div class="card column-5">
 			<div class="card-header">
 				<h1>Edit profile</h1>
 				<span class="wallet-address">
 					<Icon icon="tabler:wallet" inline />
 					{$user.addr}
 				</span>
-				{#if findProfile !== undefined}
-					<span>{findProfile.name}</span>
-				{/if}
 			</div>
 
 			<form
 				method="POST"
-				class="column-5 align-center"
+				class="column-4 align-center"
 				use:enhance={() => {
 					isUploading = true;
 
 					return async ({ result, update }) => {
 						if (result.type === 'success') {
 							await update({ reset: false });
-							initialProfileName = inputProfileName;
+							// initialProfileName = inputProfileName;
 
 							isUploading = false;
 						}
@@ -120,21 +121,15 @@
 					};
 				}}
 			>
-				{#if $allUserProfiles.length > 0 && findProfile}
-					<label for="use-find" class="switch">
-						<input type="checkbox" name="use-find" id="use-find" bind:checked={$useFind} />
-						<span class="slider" />
-						Use .find profile
-					</label>
-				{/if}
 				<div class="image-wrapper">
 					<img use:getImage alt="User avatar" />
-					{#if !$useFind}
+					{#if !$inputUseFind}
 						<button
 							type="button"
 							on:click={() => {
 								fileInput.click();
 							}}
+							transition:fly|local={{ duration: 300, easing: quintOut, y: 5 }}
 						>
 							<Icon icon="tabler:edit" inline width="14px" />
 						</button>
@@ -142,45 +137,57 @@
 							type="file"
 							bind:this={fileInput}
 							class="hidden"
-							bind:files={$image}
+							bind:files={$inputImage}
 							accept="image/png, image/jpeg"
 							multiple={false}
 							name="user-avatar"
 						/>
 					{/if}
 				</div>
+				{#if allUserProfiles.profiles.find}
+					<span class="find-name w-medium large">{allUserProfiles.profiles.find.name}</span>
+				{/if}
+				{#if allUserProfiles.profiles.find}
+					<label for="use-find" class="switch">
+						<input type="checkbox" name="use-find" id="use-find" bind:checked={$inputUseFind} />
+						<span class="slider" />
+						Use .find profile
+					</label>
+				{/if}
 
 				<input type="hidden" name="user" value={JSON.stringify($user)} />
 
-				<div>
-					{#if !$useFind}
-						<div
-							class="column-1"
-							transition:slide={{ delay: 250, duration: 300, easing: quintOut }}
-						>
-							<label for="user-name">Username</label>
-							<input
-								type="text"
-								name="user-name"
-								id="user-name"
-								disabled={$useFind}
-								bind:value={inputProfileName}
-							/>
-						</div>
-					{/if}
+				<div class="inputs-wrapper column-4">
+					<div>
+						{#if !$inputUseFind}
+							<div
+								class="column-1"
+								transition:slide={{ delay: 250, duration: 300, easing: quintOut }}
+							>
+								<label for="user-name">Username</label>
+								<input
+									type="text"
+									name="user-name"
+									id="user-name"
+									disabled={$inputUseFind}
+									bind:value={$inputProfileName}
+								/>
+							</div>
+						{/if}
+					</div>
+					<Button
+						color="neutral"
+						size="small"
+						width="full-width"
+						state={isUploading ? 'loading' : $dataHasChanges ? 'active' : 'disabled'}
+					>
+						{#if isUploading}
+							Updating
+						{:else}
+							Update profile
+						{/if}
+					</Button>
 				</div>
-				<Button
-					color="neutral"
-					size="small"
-					width="extended"
-					state={isUploading ? 'loading' : dataHasChanges ? 'active' : 'disabled'}
-				>
-					{#if isUploading}
-						Updating
-					{:else}
-						Update profile
-					{/if}
-				</Button>
 
 				{#if errorMessage}
 					<p class="error small">
@@ -241,15 +248,15 @@
 				}
 
 				img {
-					max-width: 120px;
-					border-radius: var(--radius-2);
+					max-width: 140px;
+					border-radius: 50%;
 					border: 1px solid var(--clr-border-primary);
 				}
 
 				button {
 					position: absolute;
-					bottom: -4px;
-					right: -6px;
+					bottom: 8px;
+					right: 8px;
 					background-color: var(--clr-primary-main);
 					border: none;
 					border-radius: 50%;
@@ -261,6 +268,14 @@
 					justify-content: center;
 					align-items: center;
 				}
+			}
+
+			.find-name {
+				color: var(--clr-text-off);
+			}
+
+			.inputs-wrapper {
+				width: 100%;
 			}
 
 			.success {
