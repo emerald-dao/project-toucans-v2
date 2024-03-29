@@ -27,7 +27,6 @@
 		setNotifications
 	} from '$lib/features/notifications/stores/NotificationsStore';
 	import getProfile from '$lib/utilities/api/getProfile';
-	import dappInfo from '$lib/config/config';
 
 	const connect = async () => {
 		logIn().then(async () => {
@@ -43,6 +42,8 @@
 
 	const connectProfileToStore = async (address: string) => {
 		$profile = await getProfile(address);
+
+		console.log($profile);
 	};
 
 	$: isDapperWallet =

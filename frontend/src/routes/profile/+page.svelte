@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { fetchAllProfilesFromUser } from './fetchAllProfilesFromUser';
-	import type { Profile } from '$lib/types/common/profile.interface.ts';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
@@ -8,51 +7,61 @@
 	import { Button } from '@emerald-dao/component-library';
 	import { onMount } from 'svelte';
 	import { writable, derived, type Writable } from 'svelte/store';
+	import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+	import type { Profile } from '$lib/types/common/profile.interface';
 
 	export let form;
 
 	let isUploading = false;
 	let errorMessage = '';
 
-	let allUserProfiles: Profile[] = [];
+	let allUserProfiles: Writable<Profile[]> = writable([]);
 
 	onMount(async () => {
 		if (!$user.addr) return;
 
 		const profilesData = await fetchAllProfilesFromUser($user.addr);
 
-		allUserProfiles = profilesData.profiles;
-
-		initialProfileName =
-			allUserProfiles.find((p) => p.type === (useFind ? 'find' : 'toucans'))?.name ?? '';
-		inputProfileName = initialProfileName;
+		$allUserProfiles = profilesData.profiles;
 
 		initialUseFind = profilesData.useFind;
-		useFind = initialUseFind;
+		$useFind = initialUseFind;
+
+		initialProfileName =
+			$allUserProfiles.find((p) => p.type === ($useFind ? 'find' : 'toucans'))?.name ?? '';
+		inputProfileName = initialProfileName;
 	});
 
 	let initialProfileName = '';
 	let inputProfileName: string;
 
 	let initialUseFind: boolean;
-	let useFind: boolean;
+	let useFind: Writable<boolean> = writable(false);
 
-	$: dataHasChanges = inputProfileName !== initialProfileName || useFind !== initialUseFind;
-	$: findProfile = allUserProfiles.find((p) => p.type === 'find');
+	$: dataHasChanges = inputProfileName !== initialProfileName || $useFind !== initialUseFind;
+	$: findProfile = $allUserProfiles.find((p) => p.type === 'find');
 
 	let image: Writable<FileList> = writable();
 	let fileInput: HTMLInputElement;
 
 	const getImage = (node: HTMLImageElement) => {
-		const derivedImages = derived([image, profile], ([$image, $profile]) => {
-			return {
-				uploadedImage: $image,
-				profileAvatar: $profile?.avatar ?? '/profile-placeholder.jpg'
-			};
-		});
+		const derivedImages = derived(
+			[image, useFind, allUserProfiles],
+			([$image, $useFind, $allUserProfiles]) => {
+				return {
+					uploadedImage: $image,
+					useFin: $useFind,
+					profileAvatar: ($useFind
+						? $allUserProfiles.find((p) => p.type === 'find')?.avatar
+						: $allUserProfiles.find((p) => p.type === 'toucans')?.avatar ??
+						  '/profile-placeholder.jpg') as string
+				};
+			}
+		);
 
 		const unsubscribe = derivedImages.subscribe((value) => {
-			if (value.uploadedImage && value.uploadedImage.length > 0) {
+			if (value.uploadedImage && value.uploadedImage.length > 0 && value.useFin === false) {
 				const reader = new FileReader();
 
 				reader.onload = () => (node.src = reader.result as string);
@@ -72,6 +81,7 @@
 	<ConnectPage />
 {:else}
 	<section class="container-small column-6">
+		{$profile?.avatar}
 		<div class="card column-10">
 			<div class="card-header">
 				<h1>Edit profile</h1>
@@ -82,29 +92,11 @@
 				{#if findProfile !== undefined}
 					<span>{findProfile.name}</span>
 				{/if}
-				<span />
-				<div class="image-wrapper">
-					<img use:getImage alt="User avatar" />
-					<button
-						on:click={() => {
-							fileInput.click();
-						}}
-					>
-						<Icon icon="tabler:edit" inline width="14px" />
-					</button>
-					<input
-						type="file"
-						bind:this={fileInput}
-						class="hidden"
-						bind:files={$image}
-						accept="image/png, image/jpeg"
-						multiple={false}
-					/>
-				</div>
 			</div>
+
 			<form
 				method="POST"
-				class="column-5"
+				class="column-5 align-center"
 				use:enhance={() => {
 					isUploading = true;
 
@@ -128,42 +120,67 @@
 					};
 				}}
 			>
-				<input type="hidden" name="user" value={JSON.stringify($user)} />
-
-				{#if allUserProfiles.length > 0 && findProfile}
+				{#if $allUserProfiles.length > 0 && findProfile}
 					<label for="use-find" class="switch">
-						<input type="checkbox" name="use-find" id="use-find" bind:checked={useFind} />
+						<input type="checkbox" name="use-find" id="use-find" bind:checked={$useFind} />
 						<span class="slider" />
 						Use .find profile
 					</label>
-				{:else}
-					<p>You don't have .find profile</p>
 				{/if}
-
-				{#if !useFind}
-					<div class="column-1">
-						<label for="user-name">Username</label>
+				<div class="image-wrapper">
+					<img use:getImage alt="User avatar" />
+					{#if !$useFind}
+						<button
+							type="button"
+							on:click={() => {
+								fileInput.click();
+							}}
+						>
+							<Icon icon="tabler:edit" inline width="14px" />
+						</button>
 						<input
-							type="text"
-							name="user-name"
-							id="user-name"
-							disabled={useFind}
-							bind:value={inputProfileName}
+							type="file"
+							bind:this={fileInput}
+							class="hidden"
+							bind:files={$image}
+							accept="image/png, image/jpeg"
+							multiple={false}
+							name="user-avatar"
 						/>
-					</div>
-					<Button
-						color="neutral"
-						size="small"
-						width="extended"
-						state={isUploading ? 'loading' : dataHasChanges ? 'active' : 'disabled'}
-					>
-						{#if isUploading}
-							Updating
-						{:else}
-							Update profile
-						{/if}
-					</Button>
-				{/if}
+					{/if}
+				</div>
+
+				<input type="hidden" name="user" value={JSON.stringify($user)} />
+
+				<div>
+					{#if !$useFind}
+						<div
+							class="column-1"
+							transition:slide={{ delay: 250, duration: 300, easing: quintOut }}
+						>
+							<label for="user-name">Username</label>
+							<input
+								type="text"
+								name="user-name"
+								id="user-name"
+								disabled={$useFind}
+								bind:value={inputProfileName}
+							/>
+						</div>
+					{/if}
+				</div>
+				<Button
+					color="neutral"
+					size="small"
+					width="extended"
+					state={isUploading ? 'loading' : dataHasChanges ? 'active' : 'disabled'}
+				>
+					{#if isUploading}
+						Updating
+					{:else}
+						Update profile
+					{/if}
+				</Button>
 
 				{#if errorMessage}
 					<p class="error small">
@@ -175,7 +192,7 @@
 				{#if form?.success}
 					<p class="success small">
 						<Icon icon="tabler:check" inline />
-						Name succesfully updated
+						Profile succesfully updated
 					</p>
 				{/if}
 			</form>
@@ -214,37 +231,38 @@
 					width: fit-content;
 					font-size: var(--font-size-1);
 				}
+			}
 
-				.image-wrapper {
-					position: relative;
+			.image-wrapper {
+				position: relative;
 
-					.hidden {
-						display: none;
-					}
+				.hidden {
+					display: none;
+				}
 
-					img {
-						max-width: 120px;
-						border-radius: var(--radius-2);
-						border: 1px solid var(--clr-border-primary);
-					}
+				img {
+					max-width: 120px;
+					border-radius: var(--radius-2);
+					border: 1px solid var(--clr-border-primary);
+				}
 
-					button {
-						position: absolute;
-						bottom: -4px;
-						right: -6px;
-						background-color: var(--clr-primary-main);
-						border: none;
-						border-radius: 50%;
-						padding: var(--space-1);
-						cursor: pointer;
-						width: 26px;
-						height: 26px;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-					}
+				button {
+					position: absolute;
+					bottom: -4px;
+					right: -6px;
+					background-color: var(--clr-primary-main);
+					border: none;
+					border-radius: 50%;
+					padding: var(--space-1);
+					cursor: pointer;
+					width: 26px;
+					height: 26px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
 				}
 			}
+
 			.success {
 				color: var(--clr-primary-main);
 			}

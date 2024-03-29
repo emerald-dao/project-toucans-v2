@@ -8,6 +8,9 @@ export const fetchAllProfilesFromUser = async (address: string) => {
 	});
 	const data = (await res.json()) as Profile[];
 
+	console.log(data);
+
+	// return data;
 	return MOCK_PROFILES;
 };
 
@@ -26,5 +29,5 @@ const MOCK_PROFILES = {
 			type: 'toucans' as const
 		}
 	],
-	useFind: true
+	useFind: false
 };

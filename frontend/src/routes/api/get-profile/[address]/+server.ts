@@ -6,9 +6,13 @@ import RANDOM_USERS from '../../../u/[address]/_features/userNames/randomUsers.j
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params, setHeaders, url }) {
-	setHeaders({ 'cache-control': 'max-age=86400, public' });
+	// setHeaders({ 'cache-control': 'max-age=0, public' });
+	console.log('bala');
 
 	const allProfiles = url.searchParams.get('allProfiles') === 'true' ?? false;
+
+	console.log(url.searchParams.get('allProfiles'));
+	console.log(allProfiles);
 
 	const profile = await fetchProfile(params.address, allProfiles);
 
@@ -37,6 +41,8 @@ const fetchProfile = async (
 		console.error('Error fetching profile', error);
 	}
 
+	console.log(toucansProfile?.use_find, allProfiles);
+
 	if (toucansProfile !== null && (toucansProfile.use_find === false || allProfiles === true)) {
 		const profile = {
 			address: walletAddress,
@@ -46,6 +52,8 @@ const fetchProfile = async (
 		};
 
 		if (!allProfiles) {
+			console.log('no');
+
 			return profile;
 		}
 
