@@ -29,6 +29,11 @@
 		pageEnd = pageSize;
 	}
 
+	$: if (pageEnd - pageSize > amountOfItems) {
+		pageEnd = Math.ceil(amountOfItems / pageSize) * pageSize;
+		pageStart = pageEnd - pageSize;
+	}
+
 	$: if (amountOfItems === 0) {
 		pageStart = 0;
 		pageEnd = pageSize;

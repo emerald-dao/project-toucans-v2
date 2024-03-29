@@ -49,7 +49,7 @@
 	searchTerms={['name', 'serial']}
 	placeholder="Search NFT name or serial..."
 />
-{#if currentPageNFTs.length === 0}
+{#if filteredNfts.length === 0}
 	<p class="small off">
 		<em> Sorry! We didn't find NFTs from this collection. </em>
 	</p>
