@@ -13,6 +13,7 @@ export const actions = {
 		const website = formData.get('website');
 		const twitter = formData.get('twitter');
 		const discord = formData.get('discord');
+		const name = formData.get('name');
 		const description = formData.get('description');
 		const long_description = formData.get('longDescription');
 
@@ -40,6 +41,7 @@ export const actions = {
 				website,
 				twitter,
 				discord,
+				name,
 				description,
 				long_description,
 				logo: logoIpfsUrl,
@@ -53,6 +55,6 @@ export const actions = {
 			});
 		}
 
-		return { success: true, website, twitter, discord, description, long_description };
+		return { success: true, website, twitter, discord, name, description, long_description };
 	}
 };

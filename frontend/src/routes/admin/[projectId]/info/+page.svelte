@@ -25,6 +25,7 @@
 		website: '',
 		twitter: '',
 		discord: '',
+		name: '',
 		description: '',
 		long_description: '',
 		logo: [],
@@ -43,6 +44,7 @@
 		formData.website = (form?.website as string) ?? activeDaoData.generalInfo.website;
 		formData.twitter = (form?.twitter as string) ?? activeDaoData.generalInfo.twitter;
 		formData.discord = (form?.discord as string) ?? activeDaoData.generalInfo.discord;
+		formData.name = (form?.name as string) ?? activeDaoData.generalInfo.name;
 		formData.description = (form?.description as string) ?? activeDaoData.generalInfo.description;
 		formData.long_description =
 			(form?.long_description as string) ?? activeDaoData.generalInfo.long_description;
@@ -62,6 +64,7 @@
 	const populateFormData = () => {
 		formData.website = activeDaoData.generalInfo.website ? activeDaoData.generalInfo.website : '';
 		formData.twitter = activeDaoData.generalInfo.twitter ? activeDaoData.generalInfo.twitter : '';
+		formData.name = activeDaoData.generalInfo.name ? activeDaoData.generalInfo.name : '';
 		formData.discord = activeDaoData.generalInfo.discord ? activeDaoData.generalInfo.discord : '';
 		formData.description = activeDaoData.generalInfo.description;
 		formData.long_description = activeDaoData.generalInfo.long_description
@@ -75,6 +78,7 @@
 				formData.website !== activeDaoData.generalInfo.website ||
 				formData.twitter !== activeDaoData.generalInfo.twitter ||
 				formData.discord !== activeDaoData.generalInfo.discord ||
+				formData.name !== activeDaoData.generalInfo.name || 
 				formData.description !== activeDaoData.generalInfo.description ||
 				formData.long_description !== activeDaoData.generalInfo.long_description ||
 				formData.logo.length > 0 ||
@@ -125,6 +129,20 @@
 					hidden
 					value={activeDaoData.generalInfo.project_id}
 				/>
+				<InputWrapper
+					name="name"
+					label="Name"
+					errors={res.getErrors('name')}
+					isValid={res.isValid('name')}
+				>
+					<input
+						name="name"
+						type="text"
+						placeholder="A DAO for the people"
+						bind:value={formData.name}
+						on:input={handleChange}
+					/>
+				</InputWrapper>
 				<InputWrapper
 					name="description"
 					label="Description"
