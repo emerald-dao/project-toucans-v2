@@ -2,9 +2,8 @@
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
-	import { profile, user } from '$stores/flow/FlowStore';
+	import { user } from '$stores/flow/FlowStore';
 	import { Button } from '@emerald-dao/component-library';
-	import { onMount } from 'svelte';
 	import { writable, derived, type Writable } from 'svelte/store';
 	import { fly, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
@@ -70,19 +69,19 @@
 		async ([$inputImage, $inputUseFind, $inputProfileName]) => {
 			const userProfiles = await allUserProfiles;
 
+			console.log('a');
+
 			if (userProfiles !== null) {
-				if ($inputUseFind !== userProfiles.useFind) {
-					return true;
-				} else if ($inputUseFind === true) {
-					return false;
-				} else {
-					return (
-						$inputImage.length > 0 || $inputProfileName !== userProfiles.profiles.toucans?.name
-					);
-				}
-			} else {
-				return false;
+				console.log(userProfiles.profiles.toucans?.name);
+
+				return (
+					($inputImage && $inputImage.length > 0) ||
+					$inputProfileName !== userProfiles.profiles.toucans?.name ||
+					$inputUseFind !== userProfiles.useFind
+				);
 			}
+
+			return false;
 		}
 	);
 </script>
