@@ -6,7 +6,7 @@
 
 	export let votingData: Vote[];
 	export let transparent = false;
-	export let title = 'Legact active votations';
+	export let title = 'Legacy active votations';
 	export let discordLink: string | null = null;
 
 	let activeVotation = 0;
