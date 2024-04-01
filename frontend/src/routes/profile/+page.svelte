@@ -81,9 +81,7 @@
 	const handleInputChange = (name: string) => {
 		res = validationSuite($inputProfileName);
 
-		if (name === 'user-name') {
-			userNamePending = true;
-		}
+		userNamePending = true;
 
 		(res as SuiteRunResult).done((result) => {
 			res = result;
