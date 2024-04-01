@@ -3,12 +3,14 @@
 	import { enhance } from '$app/forms';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import { user } from '$stores/flow/FlowStore';
-	import { Button } from '@emerald-dao/component-library';
+	import { Button, InputWrapper } from '@emerald-dao/component-library';
 	import { writable, derived, type Writable } from 'svelte/store';
 	import { fly, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import type { Profile, ProfileTypes } from '$lib/types/common/profile.interface';
 	import { fetchAllUserProfiles } from './fetchAllUserProfiles';
+	import validationSuite from './validation';
+	import type { SuiteRunResult } from 'vest';
 
 	export let form;
 
@@ -43,8 +45,6 @@
 
 	const getImage = (node: HTMLImageElement, userProfiles: UserProfiles) => {
 		const imageToDisplay = derived([inputImage, inputUseFind], ([$inputImage, $inputUseFind]) => {
-			console.log('inputUserfind', $inputUseFind);
-
 			if ($inputUseFind) {
 				return (
 					(userProfiles.profiles.find?.avatar as string) ??
@@ -72,18 +72,59 @@
 		};
 	};
 
+	let res = validationSuite.get();
+	let userNamePending = false;
+
+	let isResValid = writable(false);
+	$: isResValid.set(res.isValid('user-name'));
+
+	const handleInputChange = (name: string) => {
+		res = validationSuite($inputProfileName);
+
+		if (name === 'user-name') {
+			userNamePending = true;
+		}
+
+		(res as SuiteRunResult).done((result) => {
+			res = result;
+			userNamePending = false;
+		});
+	};
+
 	const dataHasChanges = derived(
 		[inputImage, inputUseFind, inputProfileName],
 		async ([$inputImage, $inputUseFind, $inputProfileName]) => {
 			const userProfiles = await allUserProfiles;
 
 			if (userProfiles !== null) {
-				console.log(userProfiles.profiles.toucans?.name);
+				if ($inputUseFind) {
+					return $inputUseFind !== userProfiles.useFind;
+				}
 
 				return (
 					($inputImage && $inputImage.length > 0) ||
 					$inputProfileName !== userProfiles.profiles.toucans?.name ||
 					$inputUseFind !== userProfiles.useFind
+				);
+			}
+
+			return false;
+		}
+	);
+
+	const canUpdateProfile = derived(
+		[dataHasChanges, inputUseFind, isResValid],
+		async ([$dataHasChanges, $inputUseFind, $isResValid]) => {
+			const userProfiles = await allUserProfiles;
+
+			if (userProfiles !== null) {
+				return (
+					!isUploading &&
+					(await $dataHasChanges) &&
+					($inputUseFind
+						? true
+						: $isResValid &&
+						  (userProfiles.profiles.toucans?.avatar || ($inputImage && $inputImage.length > 0)))
 				);
 			}
 
@@ -127,7 +168,7 @@
 							return async ({ result, update }) => {
 								if (result.type === 'success') {
 									await update({ reset: false });
-									// initialProfileName = inputProfileName;
+									// initialProfileName.set(inputProfileName);
 
 									isUploading = false;
 								}
@@ -187,23 +228,32 @@
 										class="column-1"
 										transition:slide={{ delay: 250, duration: 300, easing: quintOut }}
 									>
-										<label for="user-name">Username</label>
-										<input
-											type="text"
+										<InputWrapper
 											name="user-name"
-											id="user-name"
-											disabled={$inputUseFind}
-											bind:value={$inputProfileName}
-										/>
+											label="Username"
+											pending={userNamePending}
+											pendingMessage={['Checking username availability']}
+											errors={res.getErrors('user-name')}
+											isValid={res.isValid('user-name')}
+										>
+											<input
+												type="text"
+												name="user-name"
+												id="user-name"
+												disabled={$inputUseFind}
+												bind:value={$inputProfileName}
+												on:input={() => handleInputChange('user-name')}
+											/>
+										</InputWrapper>
 									</div>
 								{/if}
 							</div>
-							{#await $dataHasChanges then hasChanges}
+							{#await $canUpdateProfile then canUpdate}
 								<Button
 									color="neutral"
 									size="small"
 									width="full-width"
-									state={isUploading ? 'loading' : hasChanges ? 'active' : 'disabled'}
+									state={isUploading ? 'loading' : canUpdate ? 'active' : 'disabled'}
 								>
 									{#if isUploading}
 										Updating
@@ -282,7 +332,8 @@
 				}
 
 				img {
-					max-width: 140px;
+					height: 140px;
+					width: 140px;
 					border-radius: 50%;
 					border: 1px solid var(--clr-border-primary);
 				}
