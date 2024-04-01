@@ -14,7 +14,6 @@
 
 	export let form;
 
-	// form state
 	let isUploading = false;
 	let errorMessage = '';
 
@@ -23,7 +22,6 @@
 		useFind: boolean;
 	}
 
-	// general data
 	let allUserProfiles: Promise<UserProfiles> | null = null;
 
 	$: allUserProfiles = $user.addr
@@ -35,10 +33,8 @@
 		  })
 		: null;
 
-	// Inputs elements
 	let fileInput: HTMLInputElement;
 
-	// Inputs data
 	const inputImage: Writable<FileList> = writable();
 	const inputUseFind = writable(false);
 	const inputProfileName = writable('');
@@ -78,7 +74,7 @@
 	let isResValid = writable(false);
 	$: isResValid.set(res.isValid('user-name'));
 
-	const handleInputChange = (name: string) => {
+	const handleInputChange = () => {
 		res = validationSuite($inputProfileName);
 
 		userNamePending = true;
@@ -121,7 +117,7 @@
 					(await $dataHasChanges) &&
 					($inputUseFind
 						? true
-						: $isResValid &&
+						: ($isResValid || userProfiles.profiles.toucans?.name === $inputProfileName) &&
 						  (userProfiles.profiles.toucans?.avatar || ($inputImage && $inputImage.length > 0)))
 				);
 			}
@@ -160,6 +156,7 @@
 					<form
 						method="POST"
 						class="column-4 align-center"
+						autocomplete="off"
 						use:enhance={() => {
 							isUploading = true;
 

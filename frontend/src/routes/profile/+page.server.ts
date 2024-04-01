@@ -38,7 +38,7 @@ export const actions = {
 			return fail(400, { error: 'User not verified' });
 		}
 
-		if (avatarImage) {
+		if (avatarImage && avatarImage.size > 0 && avatarImage.type.includes('image')) {
 			const { error: imgError } = await supabase.storage
 				.from('avatars')
 				.upload(`static/${userObject.addr}.png`, avatarImage, {
