@@ -43,6 +43,8 @@
 
 	const getImage = (node: HTMLImageElement, userProfiles: UserProfiles) => {
 		const imageToDisplay = derived([inputImage, inputUseFind], ([$inputImage, $inputUseFind]) => {
+			console.log('inputUserfind', $inputUseFind);
+
 			if ($inputUseFind) {
 				return (
 					(userProfiles.profiles.find?.avatar as string) ??
@@ -50,9 +52,15 @@
 				);
 			}
 
-			return $inputImage && $inputImage.length > 0
-				? URL.createObjectURL($inputImage[0])
-				: userProfiles.profiles.toucans?.avatar ?? ('/profile-placeholder.jpg' as string);
+			if ($inputImage && $inputImage.length > 0) {
+				return URL.createObjectURL($inputImage[0]);
+			}
+
+			if (userProfiles.profiles.toucans?.avatar) {
+				return userProfiles.profiles.toucans?.avatar;
+			}
+
+			return '/profile-placeholder.jpg';
 		});
 
 		const unsubscribe = imageToDisplay.subscribe((value) => {
@@ -68,8 +76,6 @@
 		[inputImage, inputUseFind, inputProfileName],
 		async ([$inputImage, $inputUseFind, $inputProfileName]) => {
 			const userProfiles = await allUserProfiles;
-
-			console.log('a');
 
 			if (userProfiles !== null) {
 				console.log(userProfiles.profiles.toucans?.name);
@@ -89,16 +95,23 @@
 {#if !$user.addr}
 	<ConnectPage />
 {:else}
-	{#await allUserProfiles}
-		<span>Loading profiles</span>
-	{:then allProfiles}
-		{#if allProfiles === null}
-			<span>Could not load profiles</span>
-		{:else}
-			<section class="container-small column-6">
-				<div class="card column-5">
+	<section class="container-small column-6">
+		<div class="card column-5">
+			<h1>Edit profile</h1>
+			{#await allUserProfiles}
+				<div class="loading-card">
+					<Icon
+						icon="svg-spinners:ring-resize"
+						width="30px"
+						height="30px"
+						color="var(--clr-text-off)"
+					/>
+				</div>
+			{:then allProfiles}
+				{#if allProfiles === null}
+					<span>Could not load profiles</span>
+				{:else}
 					<div class="card-header">
-						<h1>Edit profile</h1>
 						<span class="wallet-address">
 							<Icon icon="tabler:wallet" inline />
 							{$user.addr}
@@ -215,10 +228,10 @@
 							</p>
 						{/if}
 					</form>
-				</div>
-			</section>
-		{/if}
-	{/await}
+				{/if}
+			{/await}
+		</div>
+	</section>
 {/if}
 
 <style lang="scss">
@@ -233,16 +246,23 @@
 			display: flex;
 			flex-direction: column;
 
+			h1 {
+				font-size: var(--font-size-5);
+				text-align: center;
+			}
+
+			.loading-card {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 300px;
+			}
+
 			.card-header {
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				gap: var(--space-3);
-
-				h1 {
-					font-size: var(--font-size-4);
-					margin-bottom: var(--space-2);
-				}
 
 				.wallet-address {
 					background-color: var(--clr-background-secondary);
