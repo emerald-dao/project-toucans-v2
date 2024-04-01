@@ -17,11 +17,13 @@
 	let isUploading = false;
 	let errorMessage = '';
 
-	// general data
-	let allUserProfiles: Promise<{
+	interface UserProfiles {
 		profiles: { [key in ProfileTypes]: Profile | null };
 		useFind: boolean;
-	}> | null = null;
+	}
+
+	// general data
+	let allUserProfiles: Promise<UserProfiles> | null = null;
 
 	$: allUserProfiles = $user.addr
 		? fetchAllUserProfiles($user.addr).then((p) => {
@@ -40,13 +42,7 @@
 	const inputUseFind = writable(false);
 	const inputProfileName = writable('');
 
-	const getImage = async (node: HTMLImageElement) => {
-		const userProfiles = await allUserProfiles;
-
-		if (userProfiles === null) {
-			return;
-		}
-
+	const getImage = (node: HTMLImageElement, userProfiles: UserProfiles) => {
 		const imageToDisplay = derived([inputImage, inputUseFind], ([$inputImage, $inputUseFind]) => {
 			if ($inputUseFind) {
 				return (
@@ -137,7 +133,7 @@
 						}}
 					>
 						<div class="image-wrapper">
-							<img use:getImage alt="User avatar" />
+							<img use:getImage={allProfiles} alt="User avatar" />
 							{#if !$inputUseFind}
 								<button
 									type="button"
