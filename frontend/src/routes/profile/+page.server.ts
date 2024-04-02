@@ -47,7 +47,7 @@ export const actions = {
 			const { error: imgError } = await supabase.storage
 				.from('avatars')
 				.upload(`avatars/${userObject.addr}.png`, avatarImage, {
-					cacheControl: '3600',
+					cacheControl: '0',
 					upsert: true
 				});
 
