@@ -89,7 +89,7 @@ export const avatarDropdownNav = [
 	},
 	{
 		name: 'Edit avatar',
-		url: '/profile',
+		url: '/avatar',
 		prefetch: true,
 		icon: 'tabler:alien'
 	}

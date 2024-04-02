@@ -133,7 +133,7 @@
 	<section class="container-small column-6">
 		<div class="card column-2">
 			<div class="padding-x">
-				<h1>Edit profile</h1>
+				<h1>Edit avatar</h1>
 			</div>
 			{#await allUserProfiles}
 				<div class="loading-card padding-x">
@@ -268,7 +268,7 @@
 									{#if isUploading}
 										Updating
 									{:else}
-										Update profile
+										Update avatar
 									{/if}
 								</Button>
 							{/await}
