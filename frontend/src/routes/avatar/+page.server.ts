@@ -19,7 +19,6 @@ export const actions = {
 		const user = formData.get('user') as string | null;
 		const avatarImage = formData.get('user-avatar') as File | null;
 		const userName = formData.get('user-name') as string | null;
-		const avatarFileName = formData.get('avatar-file-name') as string | null;
 
 		if (user === null) {
 			console.log('User not found');
@@ -58,9 +57,11 @@ export const actions = {
 			}
 		}
 
+		const uuid = uuidv4();
+
 		const { error: dataError } = await supabase.from('profiles').upsert({
 			wallet_address: userObject.addr,
-			avatar_url: `avatars/${userObject.addr}.png`,
+			avatar_url: `avatars/${userObject.addr}.png?c=${uuid}`,
 			user_name: userName,
 			use_find: false
 		});
