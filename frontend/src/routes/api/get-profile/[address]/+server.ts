@@ -89,6 +89,6 @@ const fetchProfile = async (
 
 	return {
 		profiles: allProfilesObj,
-		useFind: toucansProfile?.use_find ?? true
+		useFind: toucansProfile?.use_find ?? findProfile ? true : false
 	};
 };

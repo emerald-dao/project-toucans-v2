@@ -11,7 +11,6 @@
 	import { fetchAllUserProfiles } from './fetchAllUserProfiles';
 	import validationSuite from './validation';
 	import type { SuiteRunResult } from 'vest';
-	import { invalidateAll } from '$app/navigation';
 
 	export let form;
 
