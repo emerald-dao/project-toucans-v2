@@ -131,10 +131,12 @@
 	<ConnectPage />
 {:else}
 	<section class="container-small column-6">
-		<div class="card column-5">
-			<h1>Edit profile</h1>
+		<div class="card column-2">
+			<div class="padding-x">
+				<h1>Edit profile</h1>
+			</div>
 			{#await allUserProfiles}
-				<div class="loading-card">
+				<div class="loading-card padding-x">
 					<Icon
 						icon="svg-spinners:ring-resize"
 						width="30px"
@@ -144,9 +146,11 @@
 				</div>
 			{:then allProfiles}
 				{#if allProfiles === null}
-					<span>Could not load profiles</span>
+					<div class="padding-x">
+						<span>Could not load profiles</span>
+					</div>
 				{:else}
-					<div class="card-header">
+					<div class="card-header padding-x">
 						<span class="wallet-address">
 							<Icon icon="tabler:wallet" inline />
 							{$user.addr}
@@ -155,7 +159,7 @@
 
 					<form
 						method="POST"
-						class="column-4 align-center"
+						class="column-4 align-center padding-x"
 						autocomplete="off"
 						use:enhance={() => {
 							isUploading = true;
@@ -163,8 +167,6 @@
 							return async ({ result, update }) => {
 								if (result.type === 'success') {
 									await update({ reset: false });
-									// initialProfileName.set(inputProfileName);
-
 									isUploading = false;
 								}
 
@@ -203,29 +205,31 @@
 								/>
 							{/if}
 						</div>
+
 						{#if allProfiles.profiles.find}
-							<span class="find-name w-medium large">{allProfiles.profiles.find.name}</span>
-						{/if}
-						{#if allProfiles.profiles.find}
-							<label for="use-find" class="switch">
-								<input type="checkbox" name="use-find" id="use-find" bind:checked={$inputUseFind} />
-								<span class="slider" />
-								Use .find profile
-							</label>
+							<div class="use-find-wrapper">
+								<label for="use-find" class="switch">
+									<input
+										type="checkbox"
+										name="use-find"
+										id="use-find"
+										bind:checked={$inputUseFind}
+									/>
+									<span class="slider" />
+									Use .find profile
+								</label>
+							</div>
 						{/if}
 
 						<input type="hidden" name="user" value={JSON.stringify($user)} />
 
 						<div class="inputs-wrapper column-4">
 							<div>
+								<label for="user-name" class="username-label">Username</label>
 								{#if !$inputUseFind}
-									<div
-										class="column-1"
-										transition:slide={{ delay: 250, duration: 300, easing: quintOut }}
-									>
+									<div class="column-1" in:slide|local={{ duration: 500, easing: quintOut }}>
 										<InputWrapper
 											name="user-name"
-											label="Username"
 											pending={userNamePending}
 											pendingMessage={['Checking username availability']}
 											errors={res.getErrors('user-name')}
@@ -237,9 +241,13 @@
 												id="user-name"
 												disabled={$inputUseFind}
 												bind:value={$inputProfileName}
-												on:input={() => handleInputChange('user-name')}
+												on:input={() => handleInputChange()}
 											/>
 										</InputWrapper>
+									</div>
+								{:else if allProfiles.profiles.find}
+									<div in:slide|local={{ duration: 500, easing: quintOut }} class="column-1">
+										<span class="find-name w-medium large">{allProfiles.profiles.find.name}</span>
 									</div>
 								{/if}
 							</div>
@@ -259,17 +267,15 @@
 							{/await}
 						</div>
 
-						{#if errorMessage}
-							<p class="error small">
-								<Icon icon="tabler:alert-triangle" inline />
-								{errorMessage}
-							</p>
-						{/if}
-
 						{#if form?.success}
 							<p class="success small">
 								<Icon icon="tabler:check" inline />
 								Profile succesfully updated
+							</p>
+						{:else if errorMessage}
+							<p class="error small">
+								<Icon icon="tabler:alert-triangle" inline />
+								{errorMessage}
 							</p>
 						{/if}
 					</form>
@@ -290,10 +296,16 @@
 			width: 100%;
 			display: flex;
 			flex-direction: column;
+			padding: var(--space-8) 0;
+
+			.padding-x {
+				padding: 0 var(--space-8);
+			}
 
 			h1 {
 				font-size: var(--font-size-5);
 				text-align: center;
+				margin-bottom: 0;
 			}
 
 			.loading-card {
@@ -308,6 +320,8 @@
 				flex-direction: column;
 				align-items: center;
 				gap: var(--space-3);
+				border-bottom: 1px solid var(--clr-neutral-badge);
+				padding-bottom: var(--space-5);
 
 				.wallet-address {
 					background-color: var(--clr-background-secondary);
@@ -317,6 +331,10 @@
 					width: fit-content;
 					font-size: var(--font-size-1);
 				}
+			}
+
+			form {
+				margin-top: var(--space-5);
 			}
 
 			.image-wrapper {
@@ -350,8 +368,16 @@
 				}
 			}
 
-			.find-name {
+			.use-find-wrapper {
+				width: 100%;
+			}
+
+			.username-label {
 				color: var(--clr-text-off);
+			}
+
+			.find-name {
+				color: var(--clr-heading-main);
 			}
 
 			.inputs-wrapper {

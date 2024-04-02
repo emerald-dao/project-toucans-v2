@@ -38,10 +38,15 @@ export const actions = {
 			return fail(400, { error: 'User not verified' });
 		}
 
+		if (avatarImage && avatarImage.size > 1 * 1024 * 1024) {
+			console.log('Image too big');
+			return fail(400, { error: 'Image too big' });
+		}
+
 		if (avatarImage && avatarImage.size > 0 && avatarImage.type.includes('image')) {
 			const { error: imgError } = await supabase.storage
 				.from('avatars')
-				.upload(`static/${userObject.addr}.png`, avatarImage, {
+				.upload(`avatars/${userObject.addr}.png`, avatarImage, {
 					cacheControl: '3600',
 					upsert: true
 				});
@@ -54,7 +59,7 @@ export const actions = {
 
 		const { error: dataError } = await supabase.from('profiles').upsert({
 			wallet_address: userObject.addr,
-			avatar_url: `static/${userObject.addr}.png`,
+			avatar_url: `avatars/${userObject.addr}.png`,
 			user_name: userName,
 			use_find: false
 		});
