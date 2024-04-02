@@ -6,9 +6,14 @@ import RANDOM_USERS from '../../../u/[address]/_features/userNames/randomUsers.j
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params, setHeaders, url }) {
-	// setHeaders({ 'cache-control': 'max-age=0, public' });
-
 	const allProfiles = url.searchParams.get('allProfiles') === 'true' ?? false;
+
+	if (!allProfiles) {
+		setHeaders({
+			'cache-control': 'max-age=60, s-maxage=60, stale-while-revalidate=86400, public'
+		});
+	}
+
 	const profile = await fetchProfile(params.address, allProfiles);
 
 	return new Response(JSON.stringify(profile));
