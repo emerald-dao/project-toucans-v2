@@ -86,5 +86,11 @@ export const avatarDropdownNav = [
 		url: '/dao-generator',
 		prefetch: true,
 		icon: 'tabler:square-rounded-plus'
+	},
+	{
+		name: 'Edit avatar',
+		url: '/profile',
+		prefetch: true,
+		icon: 'tabler:alien'
 	}
 ];

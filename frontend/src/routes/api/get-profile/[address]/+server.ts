@@ -51,8 +51,6 @@ const fetchProfile = async (
 		};
 
 		if (!allProfiles) {
-			console.log('no');
-
 			return profile;
 		}
 

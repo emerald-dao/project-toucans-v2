@@ -42,8 +42,6 @@
 
 	const connectProfileToStore = async (address: string) => {
 		$profile = await getProfile(address);
-
-		console.log($profile);
 	};
 
 	$: isDapperWallet =
