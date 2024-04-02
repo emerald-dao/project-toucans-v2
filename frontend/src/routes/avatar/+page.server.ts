@@ -45,36 +45,22 @@ export const actions = {
 			return fail(400, { error: 'Image too big' });
 		}
 
-		const uuid = uuidv4();
-
 		if (avatarImage && avatarImage.size > 0 && avatarImage.type.includes('image')) {
 			const { error: imgError } = await supabase.storage
 				.from('avatars')
-				.upload(`avatars/${userObject.addr}/${uuid}.png`, avatarImage);
+				.upload(`avatars/${userObject.addr}.png`, avatarImage, {
+					upsert: true
+				});
 
 			if (imgError) {
 				console.log('Error uploading image', imgError);
 				return fail(500, { error: 'Error uploading image' });
 			}
-
-			if (avatarFileName) {
-				const fileNameIndex = avatarFileName.lastIndexOf('/');
-				const fileName = avatarFileName.substring(fileNameIndex + 1);
-
-				const { error: delError } = await supabase.storage
-					.from('avatars')
-					.remove([`avatars/${userObject.addr}/${fileName}`]);
-
-				if (delError) {
-					console.log('Error uploading image', imgError);
-					return fail(500, { error: 'Error uploading image' });
-				}
-			}
 		}
 
 		const { error: dataError } = await supabase.from('profiles').upsert({
 			wallet_address: userObject.addr,
-			avatar_url: `avatars/${userObject.addr}/${uuid}.png`,
+			avatar_url: `avatars/${userObject.addr}.png`,
 			user_name: userName,
 			use_find: false
 		});
