@@ -222,13 +222,6 @@
 						{/if}
 
 						<input type="hidden" name="user" value={JSON.stringify($user)} />
-						{#if allProfiles.profiles.toucans}
-							<input
-								type="hidden"
-								name="avatar-file-name"
-								value={allProfiles.profiles.toucans.avatar}
-							/>
-						{/if}
 
 						<div class="inputs-wrapper column-4">
 							<div>
