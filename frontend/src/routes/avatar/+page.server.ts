@@ -19,6 +19,7 @@ export const actions = {
 		const user = formData.get('user') as string | null;
 		const avatarImage = formData.get('user-avatar') as File | null;
 		const userName = formData.get('user-name') as string | null;
+		const useFind: boolean = formData.get('use-find') === 'on' ? true : false;
 
 		if (user === null) {
 			console.log('User not found');
@@ -37,6 +38,27 @@ export const actions = {
 		if (!verifyAccount) {
 			console.log('User not verified');
 			return fail(400, { error: 'User not verified' });
+		}
+
+		if (useFind) {
+			const { error: dataError } = await supabase
+				.from('profiles')
+				.update({
+					use_find: useFind
+				})
+				.eq('wallet_address', userObject.addr);
+
+			if (dataError) {
+				console.log('Error updating profile', dataError);
+				return fail(500, { error: 'Error updating profile' });
+			}
+
+			return { success: true };
+		}
+
+		if (userName === null) {
+			console.log('Username not found');
+			return fail(400, { error: 'Username not found' });
 		}
 
 		if (avatarImage && avatarImage.size > 1 * 1024 * 1024) {
@@ -63,7 +85,7 @@ export const actions = {
 			wallet_address: userObject.addr,
 			avatar_url: `avatars/${userObject.addr}.png?c=${uuid}`,
 			user_name: userName,
-			use_find: false
+			use_find: useFind
 		});
 
 		if (dataError) {
