@@ -8,11 +8,14 @@ import {
 	longDescriptionValidation
 } from '$lib/utilities/validations/descriptionValidation';
 import { create, only, optional } from 'vest';
+import { nameValidation } from '$lib/utilities/validations/nameValidation';
 
 const validationSuite = create((data = {}, currentField) => {
 	only(currentField);
 
-	optional(['website', 'discord', 'twitter', 'description', 'longDescription']);
+	optional(['website', 'discord', 'twitter', 'name', 'description', 'longDescription']);
+
+	nameValidation(data.name);
 
 	descriptionValidation(data.description);
 

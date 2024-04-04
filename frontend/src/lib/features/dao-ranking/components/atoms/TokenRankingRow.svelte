@@ -27,13 +27,23 @@
 	</td>
 	<td>
 		{#if project.price}
-			<Currency
-				amount={project.price}
-				color="heading"
-				fontSize="var(--font-size-1)"
-				moneyPrefix={true}
-				decimalNumbers={2}
-			/>
+			{#if project.price < .01}
+				<Currency
+					amount={project.price}
+					color="heading"
+					fontSize="var(--font-size-0)"
+					moneyPrefix={true}
+					decimalNumbers={5}
+				/>
+			{:else}
+				<Currency
+					amount={project.price}
+					color="heading"
+					fontSize="var(--font-size-0)"
+					moneyPrefix={true}
+					decimalNumbers={2}
+				/>
+			{/if}
 		{:else}
 			N/A
 		{/if}
@@ -43,7 +53,7 @@
 			<Currency
 				amount={Math.round(project.price * project.total_supply * 100) / 100}
 				color="heading"
-				fontSize="var(--font-size-1)"
+				fontSize="var(--font-size-0)"
 				moneyPrefix={true}
 			/>
 		{:else}
@@ -55,7 +65,7 @@
 			<Currency
 				amount={project.volume_24h}
 				color="heading"
-				fontSize="var(--font-size-1)"
+				fontSize="var(--font-size-0)"
 				moneyPrefix={true}
 			/>
 		{:else}
@@ -67,7 +77,7 @@
 			<Currency
 				amount={project.tvl}
 				color="heading"
-				fontSize="var(--font-size-1)"
+				fontSize="var(--font-size-0)"
 				moneyPrefix={true}
 			/>
 		{:else}
@@ -79,7 +89,7 @@
 			amount={project.total_supply}
 			currency={project.projects.token_symbol}
 			color="heading"
-			fontSize="var(--font-size-1)"
+			fontSize="var(--font-size-0)"
 		/>
 	</td>
 	<td>
@@ -88,7 +98,7 @@
 				amount={project.max_supply}
 				currency={project.projects.token_symbol}
 				color="heading"
-				fontSize="var(--font-size-1)"
+				fontSize="var(--font-size-0)"
 			/>
 		{:else}
 			N/A
@@ -101,13 +111,13 @@
 
 <style type="scss">
 	tr {
-		margin-block: var(--spacce-10);
+		margin-block: var(--space-10);
 
 		th,
 		td {
 			text-align: right;
 			color: var(--clr-heading-main);
-			font-size: var(--font-size-1);
+			font-size: var(--font-size-0);
 		}
 
 		a {

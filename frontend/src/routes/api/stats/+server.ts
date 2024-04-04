@@ -10,7 +10,9 @@ export const GET = async () => {
 		(x) => x.treasury_value > 500 || x.num_participants >= 100
 	).length;
 
-	const projectsWithTokenValue = rankings.filter((x) => x.price);
+	const projectsWithTokenValue = rankings.filter(
+		(x) => x.price && x.liquidity_amount && x.liquidity_amount >= 50
+	);
 	const totalMarketCap = projectsWithTokenValue.reduce(
 		(acc, curr) => acc + curr.price * curr.total_supply,
 		0

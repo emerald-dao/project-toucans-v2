@@ -18,9 +18,9 @@
 				? 'TestingDAO'
 				: PUBLIC_FLOW_NETWORK === 'testnet'
 				? 'TestToken'
-				: 'BallerzFC',
+				: 'ADUToken',
 		story:
-			'One of the first DAOs created on the platform, Ballerz FC has formed a strong community of Ballerz FC and broader MFL lovers.'
+			'The official All Day Unlimited DAO. They have received more than 1,000 NFT donations, making them the top-funded NFT DAO on the platform.'
 	};
 	const DOM: DaoDatabaseData = projects.find(
 		(project) => project.project_id === DOMInfo.projectId

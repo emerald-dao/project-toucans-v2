@@ -71,18 +71,23 @@
 	}
 
 	$: if (infiniteDuration || endDate === '0') {
-		options.mode = 'single';
-		endDate = '0';
-
-		if (infiniteDuration && value) {
-			if (Array.isArray(value) && value[0]) {
-				startDate = (value[0].getTime() / 1000).toString();
-				value = value[0];
-			} else if (!Array.isArray(value)) {
-				startDate = (value.getTime() / 1000).toString();
-			}
+		if (roundStarted) {
+			options.mode = 'single';
+			startDate = initialStartDate;
 		} else {
-			value = minStartTimePlus5Minutes;
+			options.mode = 'single';
+			endDate = '0';
+
+			if (infiniteDuration && value) {
+				if (Array.isArray(value) && value[0]) {
+					startDate = (value[0].getTime() / 1000).toString();
+					value = value[0];
+				} else if (!Array.isArray(value)) {
+					startDate = (value.getTime() / 1000).toString();
+				}
+			} else {
+				value = minStartTimePlus5Minutes;
+			}
 		}
 	} else if (roundStarted) {
 		options.mode = 'single';
