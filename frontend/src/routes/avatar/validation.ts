@@ -18,8 +18,12 @@ const validationSuite = create((userName: string) => {
 		enforce(userName).doesNotEndWith('.find');
 	});
 
-	test('user-name', 'Username can only contain letters, numbers, and underscores', () => {
-		enforce(userName).matches(/^[a-zA-Z0-9_]+$/);
+	test('user-name', 'Username can only contain letters, numbers, spaces and underscores', () => {
+		enforce(userName).matches(/^[a-zA-Z0-9_ ]+$/);
+	});
+
+	test('user-name', "Username can't start or end with spaces nor have two spaces together", () => {
+		enforce(userName).matches(/^(\S+\s?)*\S+$/);
 	});
 
 	skipWhen(validationSuite.get().hasErrors('user-name'), () => {
