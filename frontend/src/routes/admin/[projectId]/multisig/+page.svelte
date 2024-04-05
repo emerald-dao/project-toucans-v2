@@ -1,5 +1,4 @@
 <script type="ts">
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { onMount } from 'svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import MultisigManager from '$lib/features/multisig-manager/components/MultisigManager.svelte';
@@ -7,8 +6,6 @@
 	import * as AdminPage from '../_components/admin-page';
 
 	export let data;
-
-	let activeDao = data.activeDao as DAOProject;
 
 	let allWalletsValid: boolean = false;
 	let thresholdValid: boolean = true;
@@ -21,8 +18,8 @@
 	}[] = [];
 
 	const reloadData = () => {
-		existingAddresses = activeDao.onChainData.signers;
-		threshold = Number(activeDao.onChainData.threshold);
+		existingAddresses = data.activeDao.onChainData.signers;
+		threshold = Number(data.activeDao.onChainData.threshold);
 		newAddresses = [];
 	};
 
@@ -30,7 +27,7 @@
 		reloadData();
 	});
 
-	$: activeDao && reloadData();
+	$: data.activeDao && reloadData();
 	$: allAddresses = existingAddresses.concat(newAddresses.map((address) => address.address));
 </script>
 
@@ -47,19 +44,19 @@
 				bind:allWalletsValid
 				bind:thresholdValid
 				bind:threshold
-				owner={activeDao.generalInfo.owner}
-				projectId={activeDao.generalInfo.project_id}
+				owner={data.activeDao.generalInfo.owner}
+				projectId={data.activeDao.generalInfo.project_id}
 			/>
 			<Button
 				state={allWalletsValid &&
 				thresholdValid &&
-				(Number(activeDao.onChainData.threshold) !== threshold || newAddresses.length > 0)
+				(Number(data.activeDao.onChainData.threshold) !== threshold || newAddresses.length > 0)
 					? 'active'
 					: 'disabled'}
 				on:click={() =>
 					updateMultisigExecution(
-						activeDao.generalInfo.owner,
-						activeDao.generalInfo.project_id,
+						data.activeDao.generalInfo.owner,
+						data.activeDao.generalInfo.project_id,
 						allAddresses,
 						threshold
 					)}

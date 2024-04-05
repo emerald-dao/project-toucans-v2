@@ -5,10 +5,32 @@
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import { invalidate } from '$app/navigation';
 	import DesktopOnlyPage from '$components/desktop-only-page/DesktopOnlyPage.svelte';
+	import { supabase } from '$lib/supabaseClient';
+	import { onMount } from 'svelte';
 
 	export let data;
 
 	let screenSize: number;
+
+	onMount(() => {
+		const subscription = supabase
+			.channel('events')
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'events',
+					filter: `project_id=eq.${data.activeDao.generalInfo.project_id}`
+				},
+				async () => {
+					await invalidate('app:dao-data');
+				}
+			)
+			.subscribe();
+
+		return () => supabase.removeChannel(subscription);
+	});
 
 	const onChangeUser = async () => {
 		await invalidate('app:admin');

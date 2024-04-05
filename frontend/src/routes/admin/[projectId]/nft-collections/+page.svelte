@@ -1,7 +1,6 @@
 <script lang="ts">
 	import SearchBar from '$lib/components/search-bar/SearchBar.svelte';
 	import NFTCollectionSelectedCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectedCard.svelte';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
 	import { Button } from '@emerald-dao/component-library';
 	import { addAllowedNFTCollections } from './_actions/addAllowedNFTCollections.js';
 	import NFTCollectionSelectCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectCard.svelte';
@@ -10,7 +9,15 @@
 
 	export let data;
 
-	let activeDao = data.activeDao as DAOProject;
+	const handleAddCollection = (collection) => {
+		addAllowedNFTCollections(
+			selectedCollections,
+			data.activeDao.generalInfo.owner,
+			data.activeDao.generalInfo.project_id
+		);
+
+		selectedCollections = [];
+	};
 
 	let collectionsList = Object.values(data.projectNFTs);
 	let filteredCollections = collectionsList;
@@ -19,7 +26,9 @@
 	let pageEnd: number;
 
 	$: currentPageCollections = filteredCollections
-		.sort((a, b) => (activeDao.onChainData.allowedNFTCollections.includes(a.identifier) ? -1 : 1))
+		.sort((a, b) =>
+			data.activeDao.onChainData.allowedNFTCollections.includes(a.identifier) ? -1 : 1
+		)
 		.slice(pageStart, pageEnd);
 
 	let selectedCollections: string[] = [];
@@ -45,11 +54,11 @@
 					{#if filteredCollections.length > 0}
 						<div class="collections-wrapper">
 							{#each currentPageCollections as collection (collection.identifier)}
-								{#if activeDao.onChainData.allowedNFTCollections.includes(collection.identifier)}
+								{#if data.activeDao.onChainData.allowedNFTCollections.includes(collection.identifier)}
 									<NFTCollectionSelectedCard
 										nftCollection={collection}
 										bind:selectedCollections
-										daoData={activeDao}
+										daoData={data.activeDao}
 									/>
 								{:else}
 									<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
@@ -70,12 +79,7 @@
 				</div>
 				<Button
 					state={selectedCollections.length === 0 ? 'disabled' : 'active'}
-					on:click={() =>
-						addAllowedNFTCollections(
-							selectedCollections,
-							activeDao.generalInfo.owner,
-							activeDao.generalInfo.project_id
-						)}
+					on:click={handleAddCollection}
 					>{`Add ${selectedCollections.length === 0 ? 'selected' : selectedCollections.length} ${
 						selectedCollections.length === 1 ? 'collection' : 'collections'
 					}`}</Button

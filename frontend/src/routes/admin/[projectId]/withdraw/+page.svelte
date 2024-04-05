@@ -7,15 +7,12 @@
 	import { withdrawTokens } from '$lib/features/distribute-tokens/functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
 	import FungibleTokensDistributionForm from './_components/FungibleTokensDistributionForm.svelte';
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
 	export let data;
 
-	let activeDao = data.activeDao as DAOProject;
-
 	let activeCurrency: string;
 	onMount(() => {
-		activeCurrency = Object.keys(activeDao.onChainData.treasuryBalances)[0];
+		activeCurrency = Object.keys(data.activeDao.onChainData.treasuryBalances)[0];
 	});
 
 	let formDist: Distribution = {
@@ -26,7 +23,7 @@
 
 	let distStaging: Distribution[] = [];
 
-	$: availableBalance = Number(activeDao.onChainData.treasuryBalances[activeCurrency]);
+	$: availableBalance = Number(data.activeDao.onChainData.treasuryBalances[activeCurrency]);
 
 	const resetDistribution = () => {
 		formDist = {
@@ -42,7 +39,7 @@
 
 	const handleCreateWithdrawAction = async () => {
 		const actionResult = await withdrawTokens(
-			activeDao,
+			data.activeDao,
 			distStaging,
 			activeCurrency as ECurrencies
 		);
@@ -63,7 +60,7 @@
 				</AdminPage.Description>
 			</AdminPage.Header>
 			<DistributeTokens.Tabs>
-				{#each Object.entries(activeDao.onChainData.treasuryBalances) as [currency] (currency)}
+				{#each Object.entries(data.activeDao.onChainData.treasuryBalances) as [currency] (currency)}
 					<DistributeTokens.Tab {currency} bind:activeCurrency />
 				{/each}
 				<DistributeTokens.Tab currency="NFTs" bind:activeCurrency />
@@ -76,8 +73,8 @@
 						{csvDist}
 						{activeCurrency}
 						{availableBalance}
-						projectOwner={activeDao.generalInfo.owner}
-						projectId={activeDao.generalInfo.project_id}
+						projectOwner={data.activeDao.generalInfo.owner}
+						projectId={data.activeDao.generalInfo.project_id}
 						bind:distStaging
 					/>
 				{:else}
@@ -86,8 +83,8 @@
 					</DistributeTokens.NoTokensMessage>
 				{/if}
 			{:else if activeCurrency === 'NFTs'}
-				{#if activeDao.onChainData.allowedNFTCollections.length > 0}
-					<NFTDistributionForm {activeDao} />
+				{#if data.activeDao.onChainData.allowedNFTCollections.length > 0}
+					<NFTDistributionForm activeDao={data.activeDao} />
 				{:else}
 					<DistributeTokens.NoTokensMessage>
 						{`We didn't find any NFT on this treasury.`}

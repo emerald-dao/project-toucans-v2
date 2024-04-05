@@ -10,6 +10,7 @@ export const ssr = false;
 
 export const load = async ({ depends, params, parent }) => {
 	depends('app:admin');
+	depends('app:dao-data');
 
 	if (get(user).loggedIn) {
 		const { daos } = await parent();

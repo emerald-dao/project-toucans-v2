@@ -1,5 +1,4 @@
 <script type="ts">
-	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import * as DistributeTokens from '$lib/features/distribute-tokens/components';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import FungibleTokensDistributionForm from '../withdraw/_components/FungibleTokensDistributionForm.svelte';
@@ -8,10 +7,8 @@
 
 	export let data;
 
-	let activeDao = data.activeDao as DAOProject;
-
-	$: availableBalance = activeDao.onChainData.maxSupply
-		? Number(activeDao.onChainData.maxSupply) - Number(activeDao.onChainData.totalSupply)
+	$: availableBalance = data.activeDao.onChainData.maxSupply
+		? Number(data.activeDao.onChainData.maxSupply) - Number(data.activeDao.onChainData.totalSupply)
 		: ('infinite' as const);
 
 	let formDist: Distribution = {
@@ -32,7 +29,7 @@
 	};
 
 	const handleCreateMintAction = async () => {
-		const actionResult = await mintTokens(activeDao, distStaging);
+		const actionResult = await mintTokens(data.activeDao, distStaging);
 
 		if (actionResult.state === 'success') {
 			resetDistribution();
@@ -41,37 +38,40 @@
 </script>
 
 <AdminPage.Root>
-	{#if activeDao.generalInfo.token_symbol}
+	{#if data.activeDao.generalInfo.token_symbol}
 		<AdminPage.Container>
 			<AdminPage.Content>
 				<AdminPage.Header>
 					<AdminPage.Title>Mint Tokens</AdminPage.Title>
 					<AdminPage.Description>
-						{`Mint $${activeDao.generalInfo.token_symbol} tokens to external wallets.`}
+						{`Mint $${data.activeDao.generalInfo.token_symbol} tokens to external wallets.`}
 					</AdminPage.Description>
 				</AdminPage.Header>
 				<DistributeTokens.AvailableBalance
 					{availableBalance}
-					currency={activeDao.generalInfo.token_symbol}
+					currency={data.activeDao.generalInfo.token_symbol}
 				/>
 				{#if (availableBalance && Number(availableBalance) > 0) || availableBalance === 'infinite'}
 					<FungibleTokensDistributionForm
 						{formDist}
 						{csvDist}
-						activeCurrency={activeDao.generalInfo.token_symbol}
+						activeCurrency={data.activeDao.generalInfo.token_symbol}
 						{availableBalance}
-						projectOwner={activeDao.generalInfo.owner}
-						projectId={activeDao.generalInfo.project_id}
+						projectOwner={data.activeDao.generalInfo.owner}
+						projectId={data.activeDao.generalInfo.project_id}
 						bind:distStaging
 					/>
 				{:else}
 					<DistributeTokens.NoTokensMessage>
-						{`No ${activeDao.generalInfo.token_symbol} tokens available to mint.`}
+						{`No ${data.activeDao.generalInfo.token_symbol} tokens available to mint.`}
 					</DistributeTokens.NoTokensMessage>
 				{/if}
 			</AdminPage.Content>
 			<AdminPage.Content>
-				<DistributeTokens.Staging bind:distStaging tokenName={activeDao.generalInfo.token_symbol} />
+				<DistributeTokens.Staging
+					bind:distStaging
+					tokenName={data.activeDao.generalInfo.token_symbol}
+				/>
 				<DistributeTokens.Button
 					on:click={handleCreateMintAction}
 					disabled={distStaging.length === 0}>Create Mint Action</DistributeTokens.Button
