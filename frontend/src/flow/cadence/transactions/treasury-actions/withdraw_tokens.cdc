@@ -25,6 +25,6 @@ transaction(tokenSymbol: String, recipientAddr: Address, amount: UFix64, project
     }
     assert(tokenInfo != nil, message: "Didn't find token info.")
     let recipientVault = getAccount(recipientAddr).getCapability<&{FungibleToken.Receiver}>(tokenInfo!.receiverPath)
-    self.Project.proposeWithdraw(vaultType: tokenInfo!.vaultType, recipientVault: recipientVault!, amount: amount)
+    self.Project.proposeWithdraw(vaultType: tokenInfo!.tokenType, recipientVault: recipientVault!, amount: amount)
   }
 }
