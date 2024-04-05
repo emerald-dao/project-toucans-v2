@@ -17,18 +17,16 @@ export const load = async ({ depends, params, parent }) => {
 
 		const daoId = params.projectId;
 		const daoGeneralInfo = daos.find((dao) => dao.project_id === daoId) as DaoDatabaseData;
-		const daoData: DAOProject = await fetchProjectData(daoGeneralInfo);
+		const daoData = await fetchProjectData(daoGeneralInfo);
 
 		if (daoData.onChainData.signers.includes(get(user).addr as string)) {
 			return {
 				activeDao: daoData
 			};
 		}
-
-		redirect(300, '/admin');
 	}
 
-	redirect(300, '/admin');
+	throw redirect(300, '/admin');
 };
 
 async function fetchProjectData(project: DaoDatabaseData): Promise<DAOProject> {
