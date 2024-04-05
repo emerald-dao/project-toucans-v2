@@ -31,12 +31,6 @@
 
 		return () => supabase.removeChannel(subscription);
 	});
-
-	const onChangeUser = async () => {
-		await invalidate('app:admin');
-	};
-
-	$: $user.addr && onChangeUser();
 </script>
 
 <svelte:window bind:innerWidth={screenSize} />
