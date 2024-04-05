@@ -1,19 +1,14 @@
 <script type="ts">
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { onMount } from 'svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import MultisigManager from '$lib/features/multisig-manager/components/MultisigManager.svelte';
 	import { updateMultisigExecution } from '$flow/actions';
 	import * as AdminPage from '../_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	export let data;
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	let activeDao = data.activeDao as DAOProject;
 
 	let allWalletsValid: boolean = false;
 	let thresholdValid: boolean = true;
@@ -26,8 +21,8 @@
 	}[] = [];
 
 	const reloadData = () => {
-		existingAddresses = activeDaoData.onChainData.signers;
-		threshold = Number(activeDaoData.onChainData.threshold);
+		existingAddresses = activeDao.onChainData.signers;
+		threshold = Number(activeDao.onChainData.threshold);
 		newAddresses = [];
 	};
 
@@ -35,7 +30,7 @@
 		reloadData();
 	});
 
-	$: activeDaoData && reloadData();
+	$: activeDao && reloadData();
 	$: allAddresses = existingAddresses.concat(newAddresses.map((address) => address.address));
 </script>
 
@@ -52,19 +47,19 @@
 				bind:allWalletsValid
 				bind:thresholdValid
 				bind:threshold
-				owner={activeDaoData.generalInfo.owner}
-				projectId={activeDaoData.generalInfo.project_id}
+				owner={activeDao.generalInfo.owner}
+				projectId={activeDao.generalInfo.project_id}
 			/>
 			<Button
 				state={allWalletsValid &&
 				thresholdValid &&
-				(Number(activeDaoData.onChainData.threshold) !== threshold || newAddresses.length > 0)
+				(Number(activeDao.onChainData.threshold) !== threshold || newAddresses.length > 0)
 					? 'active'
 					: 'disabled'}
 				on:click={() =>
 					updateMultisigExecution(
-						activeDaoData.generalInfo.owner,
-						activeDaoData.generalInfo.project_id,
+						activeDao.generalInfo.owner,
+						activeDao.generalInfo.project_id,
 						allAddresses,
 						threshold
 					)}

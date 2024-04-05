@@ -1,18 +1,12 @@
 <script type="ts">
 	import RoundsList from '$lib/components/dao-data-blocks/funding-rounds/list/RoundsList.svelte';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import RoundGeneratorModal from '$lib/features/round-generator/components/RoundGeneratorModal.svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import * as AdminPage from '../_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	export let data;
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	let activeDao = data.activeDao as DAOProject;
 </script>
 
 <AdminPage.Root>
@@ -21,12 +15,12 @@
 	</AdminPage.Header>
 	<AdminPage.Container grid={false}>
 		<AdminPage.Content>
-			{#if activeDaoData.onChainData.fundingCycles.length < 1}
+			{#if activeDao.onChainData.fundingCycles.length < 1}
 				<AdminPage.EmptyMessage>This project has no funding rounds yet</AdminPage.EmptyMessage>
 			{:else}
-				<RoundsList daoData={activeDaoData} />
+				<RoundsList daoData={activeDao} />
 			{/if}
-			<RoundGeneratorModal daoData={activeDaoData} />
+			<RoundGeneratorModal daoData={activeDao} />
 		</AdminPage.Content>
 	</AdminPage.Container>
 </AdminPage.Root>

@@ -3,9 +3,8 @@
 	import Icon from '@iconify/svelte';
 	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
-	import { goto } from '$app/navigation';
 
-	export let userDaos: DaoDatabaseData[];
+	export let daos: DaoDatabaseData[];
 	export let activeDao: DAOProject;
 
 	let dropDown: HTMLDivElement;
@@ -46,16 +45,15 @@
 	{#if displayDropDown}
 		<div class="drop-down" bind:this={dropDown} transition:fly|local={{ y: 15, duration: 400 }}>
 			<slot name="top" />
-			{#if userDaos.length > 1}
+			{#if daos.length > 1}
 				<ul>
-					{#each userDaos as dao, index}
+					{#each daos as dao, index}
 						<li>
 							<img src={dao.logo} on:error={(e) => handleLogoImgError(e)} alt="dao logo" />
 							<a
 								class="header-link"
-								class:selected={index === 0}
-								href=""
-								on:click={() => goto(`/admin/${dao.project_id}`)}
+								class:selected={dao.project_id === activeDao.generalInfo.project_id}
+								href={`/admin/${dao.project_id}`}
 							>
 								{dao.name}
 							</a>

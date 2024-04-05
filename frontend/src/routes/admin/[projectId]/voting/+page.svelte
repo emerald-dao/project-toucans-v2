@@ -1,20 +1,12 @@
 <script type="ts">
 	import VotingGeneratorModal from './_components/VotingGeneratorModal.svelte';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import * as AdminPage from '../_components/admin-page';
 	import VotingRoundsGrid from '$lib/features/voting-rounds/components/voting-round-card/VotingRoundsGrid.svelte';
 
 	export let data;
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
-
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	let activeDao = data.activeDao as DAOProject;
 </script>
 
 <AdminPage.Root>
@@ -27,11 +19,11 @@
 				<VotingRoundsGrid
 					votingRounds={data.votingRounds}
 					cardsPerPage={3}
-					daoSigners={activeDaoData.onChainData.signers}
+					daoSigners={activeDao.onChainData.signers}
 					showDeleteButton={true}
 				/>
 			</div>
-			<VotingGeneratorModal daoData={activeDaoData} />
+			<VotingGeneratorModal daoData={activeDao} />
 		</AdminPage.Content>
 	</AdminPage.Container>
 </AdminPage.Root>

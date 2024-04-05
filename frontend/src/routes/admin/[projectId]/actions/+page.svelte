@@ -1,24 +1,19 @@
 <script type="ts">
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { onMount } from 'svelte';
 	import PendingActionsList from '$lib/components/dao-data-blocks/pending-actions/list/PendingActionsList.svelte';
 	import { getProjectInfo } from '$flow/actions';
 	import * as AdminPage from '../_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	export let data;
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	let activeDao = data.activeDao as DAOProject;
 
 	onMount(async () => {
-		activeDaoData.onChainData = await getProjectInfo(
-			activeDaoData.generalInfo.contract_address,
-			activeDaoData.generalInfo.owner,
-			activeDaoData.generalInfo.project_id
+		activeDao.onChainData = await getProjectInfo(
+			activeDao.generalInfo.contract_address,
+			activeDao.generalInfo.owner,
+			activeDao.generalInfo.project_id
 		);
 	});
 </script>
@@ -29,12 +24,12 @@
 		<AdminPage.Description>Actions waiting for signatures</AdminPage.Description>
 	</AdminPage.Header>
 	<AdminPage.Container grid={false}>
-		{#if activeDaoData.onChainData.actions.length < 1}
+		{#if activeDao.onChainData.actions.length < 1}
 			<AdminPage.EmptyMessage
 				>This project has no actions waiting for signatures</AdminPage.EmptyMessage
 			>
 		{:else}
-			<PendingActionsList daoData={activeDaoData} />
+			<PendingActionsList daoData={activeDao} />
 		{/if}
 	</AdminPage.Container>
 </AdminPage.Root>

@@ -1,27 +1,21 @@
 <script type="ts">
 	import NFTDistributionForm from './_components/NFTDistributionForm.svelte';
-	import type { Writable } from 'svelte/store';
-	import { getContext, onMount } from 'svelte';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
+	import { onMount } from 'svelte';
 	import * as DistributeTokens from '$lib/features/distribute-tokens/components';
 	import * as AdminPage from '../_components/admin-page';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import { withdrawTokens } from '$lib/features/distribute-tokens/functions/withdrawTokens';
 	import type { ECurrencies } from '$lib/types/common/enums';
 	import FungibleTokensDistributionForm from './_components/FungibleTokensDistributionForm.svelte';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	export let data;
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	let activeDao = data.activeDao as DAOProject;
 
 	let activeCurrency: string;
-
 	onMount(() => {
-		activeCurrency = Object.keys(activeDaoData.onChainData.treasuryBalances)[0];
+		activeCurrency = Object.keys(activeDao.onChainData.treasuryBalances)[0];
 	});
 
 	let formDist: Distribution = {
@@ -32,7 +26,7 @@
 
 	let distStaging: Distribution[] = [];
 
-	$: availableBalance = Number(activeDaoData.onChainData.treasuryBalances[activeCurrency]);
+	$: availableBalance = Number(activeDao.onChainData.treasuryBalances[activeCurrency]);
 
 	const resetDistribution = () => {
 		formDist = {
@@ -48,7 +42,7 @@
 
 	const handleCreateWithdrawAction = async () => {
 		const actionResult = await withdrawTokens(
-			activeDaoData,
+			activeDao,
 			distStaging,
 			activeCurrency as ECurrencies
 		);
@@ -69,7 +63,7 @@
 				</AdminPage.Description>
 			</AdminPage.Header>
 			<DistributeTokens.Tabs>
-				{#each Object.entries(activeDaoData.onChainData.treasuryBalances) as [currency] (currency)}
+				{#each Object.entries(activeDao.onChainData.treasuryBalances) as [currency] (currency)}
 					<DistributeTokens.Tab {currency} bind:activeCurrency />
 				{/each}
 				<DistributeTokens.Tab currency="NFTs" bind:activeCurrency />
@@ -82,8 +76,8 @@
 						{csvDist}
 						{activeCurrency}
 						{availableBalance}
-						projectOwner={activeDaoData.generalInfo.owner}
-						projectId={activeDaoData.generalInfo.project_id}
+						projectOwner={activeDao.generalInfo.owner}
+						projectId={activeDao.generalInfo.project_id}
 						bind:distStaging
 					/>
 				{:else}
@@ -92,8 +86,8 @@
 					</DistributeTokens.NoTokensMessage>
 				{/if}
 			{:else if activeCurrency === 'NFTs'}
-				{#if activeDaoData.onChainData.allowedNFTCollections.length > 0}
-					<NFTDistributionForm {activeDaoData} />
+				{#if activeDao.onChainData.allowedNFTCollections.length > 0}
+					<NFTDistributionForm {activeDao} />
 				{:else}
 					<DistributeTokens.NoTokensMessage>
 						{`We didn't find any NFT on this treasury.`}
