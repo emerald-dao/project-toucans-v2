@@ -266,7 +266,7 @@ pub contract Toucans {
 
     // Setters
     // Some proposals we think make sense to be public initially
-    pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
+    pub fun proposeWithdraw(vaultType: Type, recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
     pub fun proposeBatchWithdraw(vaultType: Type, recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64})
     pub fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], message: String, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>)
     pub fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
@@ -366,8 +366,7 @@ pub contract Toucans {
     //                                  |___/       
 
 
-    pub fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
-      let vaultType: Type = recipientVault.borrow()!.getType()
+    pub fun proposeWithdraw(vaultType: Type, recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
                 ?? panic("Unsupported token type for withdrawing.")
       let action = ToucansActions.WithdrawToken(vaultType, recipientVault, amount, tokenInfo.symbol)
