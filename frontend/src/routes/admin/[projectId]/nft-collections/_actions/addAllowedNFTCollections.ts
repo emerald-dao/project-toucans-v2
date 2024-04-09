@@ -1,3 +1,4 @@
+import { invalidate } from '$app/navigation';
 import { addAllowedNFTCollectionsExecution } from '$flow/actions';
 
 export const addAllowedNFTCollections = async (
@@ -5,5 +6,7 @@ export const addAllowedNFTCollections = async (
 	owner: string,
 	project_id: string
 ) => {
-	return await addAllowedNFTCollectionsExecution(owner, project_id, selectedNFTs);
+	return await addAllowedNFTCollectionsExecution(owner, project_id, selectedNFTs).then(() => {
+		invalidate('app:project-nfts');
+	});
 };

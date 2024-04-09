@@ -1,7 +1,4 @@
 <script lang="ts">
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import {
 		PrimaryTabs,
 		SecondaryTabs,
@@ -12,33 +9,29 @@
 	} from './_components';
 	import * as AdminPage from './_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
-
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	export let data;
 </script>
 
-<AdminPage.Root>
-	<DaoStatsIntro daoData={activeDaoData} />
-	<div class="secondary-wrapper">
-		<div class="column-8">
-			<GeneralStats daoData={activeDaoData} />
-			<PrimaryTabs daoData={activeDaoData} />
-		</div>
-		<div class="column-space-between second-column">
-			<div class="treasury-wrapper column-6">
-				<a href={`/admin/${activeDaoData.generalInfo.project_id}/withdraw`}>
-					<TreasuryWallet daoData={activeDaoData} />
-				</a>
-				<SecondaryTabs daoData={activeDaoData} />
+{#if data.activeDao}
+	<AdminPage.Root>
+		<DaoStatsIntro daoData={data.activeDao} />
+		<div class="secondary-wrapper">
+			<div class="column-8">
+				<GeneralStats daoData={data.activeDao} />
+				<PrimaryTabs daoData={data.activeDao} />
 			</div>
-			<Signers daoData={activeDaoData} />
+			<div class="column-space-between second-column">
+				<div class="treasury-wrapper column-6">
+					<a href={`/admin/${data.activeDao.generalInfo.project_id}/withdraw`}>
+						<TreasuryWallet daoData={data.activeDao} />
+					</a>
+					<SecondaryTabs daoData={data.activeDao} />
+				</div>
+				<Signers daoData={data.activeDao} />
+			</div>
 		</div>
-	</div>
-</AdminPage.Root>
+	</AdminPage.Root>
+{/if}
 
 <style lang="scss">
 	.secondary-wrapper {

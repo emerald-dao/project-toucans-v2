@@ -11,14 +11,14 @@
 	import SpecialMessage from '$lib/features/payments/components/atoms/SpecialMessage.svelte';
 	import CollectionSelector from '$lib/features/nft-treasury/components/nfts-list/atoms/CollectionSelector.svelte';
 
-	export let activeDaoData: DAOProject;
+	export let activeDao: DAOProject;
 
 	let address: string;
 	let isAddressValid: boolean;
 	let reasonMessage: string = '';
 	let selectedNFTIds: string[] = [];
 
-	let projectNFTsCollections = activeDaoData.onChainData.allowedNFTCollections;
+	let projectNFTsCollections = activeDao.onChainData.allowedNFTCollections;
 	let selectedCollection: string = projectNFTsCollections[0];
 
 	let storedUserNFTs: {
@@ -29,8 +29,8 @@
 		selectedNFTIds = [];
 		if (!storedUserNFTs[collectionIdentifier]) {
 			storedUserNFTs[collectionIdentifier] = await getProjectSpecificNFTTreasury(
-				activeDaoData.generalInfo.owner,
-				activeDaoData.generalInfo.project_id,
+				activeDao.generalInfo.owner,
+				activeDao.generalInfo.project_id,
 				collectionIdentifier
 			);
 		}
@@ -51,7 +51,7 @@
 			);
 		}
 
-		withdrawNFTs(activeDaoData, selectedCollection, selectedNFTIds, address, reasonMessage);
+		withdrawNFTs(activeDao, selectedCollection, selectedNFTIds, address, reasonMessage);
 		resetDistributionForm();
 	};
 

@@ -1,13 +1,7 @@
 <script lang="ts">
 	import SearchBar from '$lib/components/search-bar/SearchBar.svelte';
 	import NFTCollectionSelectedCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectedCard.svelte';
-	import type {
-		DAOProject,
-		DaoDatabaseData
-	} from '$lib/types/dao-project/dao-project.interface.js';
 	import { Button } from '@emerald-dao/component-library';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import { addAllowedNFTCollections } from './_actions/addAllowedNFTCollections.js';
 	import NFTCollectionSelectCard from '$lib/features/nft-treasury/components/nft-collections-list/NFTCollectionSelectCard.svelte';
 	import Pagination from '$lib/components/atoms/Pagination.svelte';
@@ -15,13 +9,15 @@
 
 	export let data;
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	const handleAddCollection = (collection) => {
+		addAllowedNFTCollections(
+			selectedCollections,
+			data.activeDao.generalInfo.owner,
+			data.activeDao.generalInfo.project_id
+		);
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+		selectedCollections = [];
+	};
 
 	let collectionsList = Object.values(data.projectNFTs);
 	let filteredCollections = collectionsList;
@@ -31,7 +27,7 @@
 
 	$: currentPageCollections = filteredCollections
 		.sort((a, b) =>
-			activeDaoData.onChainData.allowedNFTCollections.includes(a.identifier) ? -1 : 1
+			data.activeDao.onChainData.allowedNFTCollections.includes(a.identifier) ? -1 : 1
 		)
 		.slice(pageStart, pageEnd);
 
@@ -58,8 +54,12 @@
 					{#if filteredCollections.length > 0}
 						<div class="collections-wrapper">
 							{#each currentPageCollections as collection (collection.identifier)}
-								{#if activeDaoData.onChainData.allowedNFTCollections.includes(collection.identifier)}
-									<NFTCollectionSelectedCard nftCollection={collection} bind:selectedCollections />
+								{#if data.activeDao.onChainData.allowedNFTCollections.includes(collection.identifier)}
+									<NFTCollectionSelectedCard
+										nftCollection={collection}
+										bind:selectedCollections
+										daoData={data.activeDao}
+									/>
 								{:else}
 									<NFTCollectionSelectCard nftCollection={collection} bind:selectedCollections />
 								{/if}
@@ -79,12 +79,7 @@
 				</div>
 				<Button
 					state={selectedCollections.length === 0 ? 'disabled' : 'active'}
-					on:click={() =>
-						addAllowedNFTCollections(
-							selectedCollections,
-							activeDaoData.generalInfo.owner,
-							activeDaoData.generalInfo.project_id
-						)}
+					on:click={handleAddCollection}
 					>{`Add ${selectedCollections.length === 0 ? 'selected' : selectedCollections.length} ${
 						selectedCollections.length === 1 ? 'collection' : 'collections'
 					}`}</Button
