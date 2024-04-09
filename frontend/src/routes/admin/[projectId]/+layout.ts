@@ -5,6 +5,8 @@ import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-pro
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
 import { fetchDaoFundingInfo } from '$lib/utilities/api/supabase/fetchDaoFundingInfo';
 import { redirect } from '@sveltejs/kit';
+import { supabase } from '$lib/supabaseClient.js';
+import { network } from '$flow/config.js';
 
 export const ssr = false;
 
@@ -13,12 +15,19 @@ export const load = async ({ depends, params, parent }) => {
 	depends('app:dao-data');
 
 	if (get(user).loggedIn) {
-		const { daos } = await parent();
+		const { data } = await supabase
+			.from('projects')
+			.select()
+			.eq('project_id', params.projectId)
+			.eq('network', network);
+		if (!data || !data.length) {
+			return {
+				activeDao: null,
+				otherDaos: []
+			};
+		}
 
-		const daoId = params.projectId;
-		const daoGeneralInfo = daos.find((dao) => dao.project_id === daoId) as DaoDatabaseData;
-		const daoData = await fetchProjectData(daoGeneralInfo);
-
+		const daoData = await fetchProjectData(data[0] as DaoDatabaseData);
 		if (daoData.onChainData.signers.includes(get(user).addr as string)) {
 			return {
 				activeDao: daoData

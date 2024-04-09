@@ -45,7 +45,7 @@
 	{#if displayDropDown}
 		<div class="drop-down" bind:this={dropDown} transition:fly|local={{ y: 15, duration: 400 }}>
 			<slot name="top" />
-			{#if daos.length > 1}
+			{#if daos.length > 0}
 				<ul>
 					{#each daos as dao, index}
 						<li>

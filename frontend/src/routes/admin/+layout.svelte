@@ -25,13 +25,6 @@
 	<DesktopOnlyPage />
 {:else if !$user.addr}
 	<ConnectPage />
-{:else if data.daos.length > 0}
-	<slot />
 {:else}
-	<section class="container flex centered">
-		<div class="card-primary column-7 align-center">
-			<span>You do not have any DAOs to manage.</span>
-			<Button size="large" href="/dao-generator">Create DAO</Button>
-		</div>
-	</section>
+	<slot />
 {/if}
