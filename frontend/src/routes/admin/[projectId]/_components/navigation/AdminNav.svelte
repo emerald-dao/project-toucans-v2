@@ -1,29 +1,22 @@
 <script type="ts">
 	import { fly } from 'svelte/transition';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import { page } from '$app/stores';
 	import { Label, AlertNumber } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import DropDownHeading from './atoms/DropDownHeading.svelte';
 	import CopyToClipboard from '$components/atoms/CopyToClipboard.svelte';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 	import { network } from '$flow/config';
+	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
-
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	export let activeDao: DAOProject;
+	export let daos: DaoDatabaseData[];
 
 	let copied = false;
 	const copyToClipboard = () => {
 		const app = new CopyToClipboard({
 			target: document.getElementById('clipboard') as Element,
-			props: { name: `${$page.url.origin}/p/${activeDaoData.generalInfo.project_id}` }
+			props: { name: `${$page.url.origin}/p/${activeDao.generalInfo.project_id}` }
 		});
 
 		copied = true;
@@ -40,17 +33,17 @@
 	<div class="column-6">
 		<div class="row-3 align-center">
 			<img
-				src={activeDaoData.generalInfo.logo}
+				src={activeDao.generalInfo.logo}
 				on:error={(e) => handleLogoImgError(e)}
 				alt="DAO Logo"
 			/>
-			<DropDownHeading activeDao={activeDaoData} userDaos={adminData.otherDaos}>
+			<DropDownHeading {activeDao} {daos}>
 				<div id="clipboard" />
 				<div class="top-dropdown-wapper" on:click={copyToClipboard} slot="top" on:keydown>
 					<Label color="neutral" size="small">
 						<div class="row-6 header-link align-center">
 							<span class="row-1 align-center">
-								{activeDaoData.generalInfo.project_id}
+								{activeDao.generalInfo.project_id}
 							</span>
 							{#if copied}
 								<div in:fly|local={{ x: 10, duration: 300 }} class="row align-center">
@@ -74,9 +67,9 @@
 		</div>
 		<div class="column-4">
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}`}
+				href={`/admin/${activeDao.generalInfo.project_id}`}
 				class="sidebar-link"
-				class:active={$page.url.pathname === `/admin/${activeDaoData.generalInfo.project_id}`}
+				class:active={$page.url.pathname === `/admin/${activeDao.generalInfo.project_id}`}
 			>
 				<div class="sidebar-link-icon">
 					<Icon icon="tabler:home" />
@@ -84,7 +77,7 @@
 				Home
 			</a>
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}/actions`}
+				href={`/admin/${activeDao.generalInfo.project_id}/actions`}
 				class="sidebar-link"
 				class:active={$page.url.pathname.includes('actions')}
 			>
@@ -92,13 +85,13 @@
 					<Icon icon="tabler:layout-list" />
 				</div>
 				Actions Queue
-				{#if Number(activeDaoData.onChainData.actions.length) > 0}
-					<AlertNumber number={Number(activeDaoData.onChainData.actions.length)} />
+				{#if Number(activeDao.onChainData.actions.length) > 0}
+					<AlertNumber number={Number(activeDao.onChainData.actions.length)} />
 				{/if}
 			</a>
-			{#if activeDaoData.hasToken}
+			{#if activeDao.hasToken}
 				<a
-					href={`/admin/${activeDaoData.generalInfo.project_id}/rounds`}
+					href={`/admin/${activeDao.generalInfo.project_id}/rounds`}
 					class="sidebar-link"
 					class:active={$page.url.pathname.includes('rounds')}
 				>
@@ -109,7 +102,7 @@
 				</a>
 			{/if}
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}/multisig`}
+				href={`/admin/${activeDao.generalInfo.project_id}/multisig`}
 				class="sidebar-link"
 				class:active={$page.url.pathname.includes('multisig')}
 			>
@@ -118,9 +111,9 @@
 				</div>
 				Multisig
 			</a>
-			{#if activeDaoData.hasToken}
+			{#if activeDao.hasToken}
 				<a
-					href={`/admin/${activeDaoData.generalInfo.project_id}/overflow`}
+					href={`/admin/${activeDao.generalInfo.project_id}/overflow`}
 					class="sidebar-link"
 					class:active={$page.url.pathname.includes('overflow')}
 				>
@@ -131,7 +124,7 @@
 				</a>
 			{/if}
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}/nft-collections`}
+				href={`/admin/${activeDao.generalInfo.project_id}/nft-collections`}
 				class="sidebar-link"
 				class:active={$page.url.pathname.includes('nft-collections')}
 			>
@@ -141,7 +134,7 @@
 				NFT Collections
 			</a>
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}/voting`}
+				href={`/admin/${activeDao.generalInfo.project_id}/voting`}
 				class="sidebar-link"
 				class:active={$page.url.pathname.includes('voting')}
 			>
@@ -152,7 +145,7 @@
 			</a>
 			<span class="sidebar-divider">Funds management</span>
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}/withdraw`}
+				href={`/admin/${activeDao.generalInfo.project_id}/withdraw`}
 				class="sidebar-link"
 				class:active={$page.url.pathname.includes('withdraw')}
 			>
@@ -161,9 +154,9 @@
 				</div>
 				Distribute
 			</a>
-			{#if activeDaoData.hasToken && activeDaoData.onChainData.minting}
+			{#if activeDao.hasToken && activeDao.onChainData.minting}
 				<a
-					href={`/admin/${activeDaoData.generalInfo.project_id}/mint`}
+					href={`/admin/${activeDao.generalInfo.project_id}/mint`}
 					class="sidebar-link"
 					class:active={$page.url.pathname.includes('mint')}
 				>
@@ -173,9 +166,9 @@
 					Mint
 				</a>
 			{/if}
-			{#if activeDaoData.hasToken}
+			{#if activeDao.hasToken}
 				<a
-					href={`/admin/${activeDaoData.generalInfo.project_id}/lock`}
+					href={`/admin/${activeDao.generalInfo.project_id}/lock`}
 					class="sidebar-link"
 					class:active={$page.url.pathname.includes('lock')}
 				>
@@ -186,7 +179,7 @@
 				</a>
 			{/if}
 			<a
-				href={`/admin/${activeDaoData.generalInfo.project_id}/burn`}
+				href={`/admin/${activeDao.generalInfo.project_id}/burn`}
 				class="sidebar-link"
 				class:active={$page.url.pathname.includes('burn')}
 			>
@@ -197,7 +190,7 @@
 			</a>
 			{#if network === 'mainnet'}
 				<a
-					href={`/admin/${activeDaoData.generalInfo.project_id}/staking`}
+					href={`/admin/${activeDao.generalInfo.project_id}/staking`}
 					class="sidebar-link"
 					class:active={$page.url.pathname.includes('staking')}
 				>
@@ -210,7 +203,7 @@
 		</div>
 	</div>
 	<a
-		href={`/admin/${activeDaoData.generalInfo.project_id}/info`}
+		href={`/admin/${activeDao.generalInfo.project_id}/info`}
 		class="sidebar-link small"
 		class:active={$page.url.pathname.includes('info')}
 	>

@@ -1,28 +1,18 @@
 <script type="ts">
-	import { Button, Seo } from '@emerald-dao/component-library';
+	import { Button } from '@emerald-dao/component-library';
 	import { AdminNav } from './_components';
-	import { setContext } from 'svelte';
-	import { writable, type Writable } from 'svelte/store';
 	import { user } from '$stores/flow/FlowStore';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import ConnectPage from '$components/atoms/ConnectPage.svelte';
 	import { invalidate } from '$app/navigation';
-	import { supabase } from '$lib/supabaseClient';
-	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
-	import { getProjectInfo } from '$flow/actions';
 	import DesktopOnlyPage from '$components/desktop-only-page/DesktopOnlyPage.svelte';
-	import { page } from '$app/stores';
+	import { supabase } from '$lib/supabaseClient';
+	import { onMount } from 'svelte';
 
-	interface Data {
-		activeDao: DAOProject;
-		otherDaos: DaoDatabaseData[];
-	}
-
-	export let data: Data;
+	export let data;
 
 	let screenSize: number;
 
-	const daoDataStore: Writable<DAOProject> = writable(data.activeDao, (set) => {
+	onMount(() => {
 		const subscription = supabase
 			.channel('events')
 			.on(
@@ -31,45 +21,16 @@
 					event: 'INSERT',
 					schema: 'public',
 					table: 'events',
-					filter: `project_id=eq.${$page.params.projectId}`
+					filter: `project_id=eq.${data.activeDao.generalInfo.project_id}`
 				},
-				(payload) => {
-					const newEvent = payload.new as DaoEvent;
-
-					reloadBlockchainData(data.activeDao);
-
-					$daoDataStore.events?.push(newEvent);
-
-					return set($daoDataStore);
+				async () => {
+					await invalidate('app:dao-data');
 				}
 			)
 			.subscribe();
 
 		return () => supabase.removeChannel(subscription);
 	});
-
-	const reloadBlockchainData = async (projectData: DAOProject) => {
-		$daoDataStore.onChainData = await getProjectInfo(
-			projectData.generalInfo.contract_address,
-			projectData.generalInfo.owner,
-			projectData.generalInfo.project_id
-		);
-	};
-
-	$: setContext<{
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	}>('admin-data', {
-		activeDao: daoDataStore,
-		otherDaos: data.otherDaos
-	});
-
-	const onChangeUser = async () => {
-		await invalidate('app:admin');
-		$daoDataStore = data.activeDao;
-	};
-
-	$: $user.addr && onChangeUser();
 </script>
 
 <svelte:window bind:innerWidth={screenSize} />
@@ -87,7 +48,7 @@
 	</section>
 {:else}
 	<section class="dashboard-section">
-		<AdminNav />
+		<AdminNav activeDao={data.activeDao} daos={data.daos} />
 		<div class="main-wrapper">
 			<slot />
 		</div>

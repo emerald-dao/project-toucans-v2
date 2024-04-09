@@ -1,5 +1,5 @@
 <script type="ts">
-	import { Button, Currency, InputWrapper } from '@emerald-dao/component-library';
+	import { Button, InputWrapper } from '@emerald-dao/component-library';
 	import { burnTokensExecution } from '$flow/actions';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import { onMount } from 'svelte';

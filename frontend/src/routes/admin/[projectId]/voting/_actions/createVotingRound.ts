@@ -21,7 +21,7 @@ export const createVotingRound = async (): Promise<ActionExecutionResult> => {
 	const result = await postVotingRound(projectId, userObj, generatorData);
 
 	if (result === 'success') {
-		await invalidate((url) => url.pathname === `/admin/${projectId}/voting`);
+		await invalidate('app:voting-rounds');
 		resetVotingGeneratorStores();
 	}
 

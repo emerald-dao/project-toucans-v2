@@ -1,19 +1,11 @@
 <script type="ts">
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
-	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { onMount } from 'svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import MultisigManager from '$lib/features/multisig-manager/components/MultisigManager.svelte';
 	import { updateMultisigExecution } from '$flow/actions';
 	import * as AdminPage from '../_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
-
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	export let data;
 
 	let allWalletsValid: boolean = false;
 	let thresholdValid: boolean = true;
@@ -26,8 +18,8 @@
 	}[] = [];
 
 	const reloadData = () => {
-		existingAddresses = activeDaoData.onChainData.signers;
-		threshold = Number(activeDaoData.onChainData.threshold);
+		existingAddresses = data.activeDao.onChainData.signers;
+		threshold = Number(data.activeDao.onChainData.threshold);
 		newAddresses = [];
 	};
 
@@ -35,7 +27,7 @@
 		reloadData();
 	});
 
-	$: activeDaoData && reloadData();
+	$: data.activeDao && reloadData();
 	$: allAddresses = existingAddresses.concat(newAddresses.map((address) => address.address));
 </script>
 
@@ -52,19 +44,19 @@
 				bind:allWalletsValid
 				bind:thresholdValid
 				bind:threshold
-				owner={activeDaoData.generalInfo.owner}
-				projectId={activeDaoData.generalInfo.project_id}
+				owner={data.activeDao.generalInfo.owner}
+				projectId={data.activeDao.generalInfo.project_id}
 			/>
 			<Button
 				state={allWalletsValid &&
 				thresholdValid &&
-				(Number(activeDaoData.onChainData.threshold) !== threshold || newAddresses.length > 0)
+				(Number(data.activeDao.onChainData.threshold) !== threshold || newAddresses.length > 0)
 					? 'active'
 					: 'disabled'}
 				on:click={() =>
 					updateMultisigExecution(
-						activeDaoData.generalInfo.owner,
-						activeDaoData.generalInfo.project_id,
+						data.activeDao.generalInfo.owner,
+						data.activeDao.generalInfo.project_id,
 						allAddresses,
 						threshold
 					)}

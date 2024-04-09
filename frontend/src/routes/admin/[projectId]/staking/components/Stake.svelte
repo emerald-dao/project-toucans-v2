@@ -1,8 +1,6 @@
 <script type="ts">
-	import { Button, Currency, InputWrapper } from '@emerald-dao/component-library';
-	import { paymentActiveStep } from '$lib/features/payments/stores/PaymentSteps';
+	import { Button, Currency } from '@emerald-dao/component-library';
 	import { fade } from 'svelte/transition';
-	import { paymentData } from '$lib/features/payments/stores/PaymentData';
 	import CurrencySelect from '$components/atoms/CurrencySelect.svelte';
 	import { ECurrencies } from '$lib/types/common/enums';
 	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
@@ -16,7 +14,7 @@
 	let amountOut = 0;
 	let timeout;
 	let price = 0;
-	console.log(daoData.onChainData.treasuryBalances);
+
 	$: availableBalance = Number(daoData.onChainData.treasuryBalances[currencyIn]);
 
 	let isValid = true;
@@ -48,9 +46,19 @@
 	async function runTransaction() {
 		if (currencyIn === ECurrencies.FLOW) {
 			// stake with 1% slippage
-			await stakeFlowExecution(daoData.generalInfo.project_id, daoData.generalInfo.owner, amountIn, amountOut * 0.99);
+			await stakeFlowExecution(
+				daoData.generalInfo.project_id,
+				daoData.generalInfo.owner,
+				amountIn,
+				amountOut * 0.99
+			);
 		} else if (currencyIn === ECurrencies.stFlow) {
-			await unstakeFlowExecution(daoData.generalInfo.project_id, daoData.generalInfo.owner, amountIn, amountOut * 0.99);
+			await unstakeFlowExecution(
+				daoData.generalInfo.project_id,
+				daoData.generalInfo.owner,
+				amountIn,
+				amountOut * 0.99
+			);
 		}
 	}
 </script>

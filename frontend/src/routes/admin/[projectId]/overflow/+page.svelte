@@ -1,30 +1,21 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import { Button, Currency } from '@emerald-dao/component-library';
 	import CurrencyInput from '$lib/components/atoms/CurrencyInput.svelte';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import CheckElement from './_components/CheckElement.svelte';
 	import { transferOverflowSuite } from './_validations/validation';
 	import { transferOverflowExecution } from '$flow/actions';
 	import * as AdminPage from '../_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	export let data;
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
-
-	$: activeRound = activeDaoData.onChainData.currentFundingCycle;
+	$: activeRound = data.activeDao.onChainData.currentFundingCycle;
 
 	// Transfer overflow
 	let transferAmount: number = 0;
 	const onTransferOverflowTokens = async () => {
 		await transferOverflowExecution(
-			activeDaoData.generalInfo.owner,
-			activeDaoData.generalInfo.project_id,
+			data.activeDao.generalInfo.owner,
+			data.activeDao.generalInfo.project_id,
 			transferAmount.toString()
 		);
 	};
@@ -35,7 +26,7 @@
 		res = transferOverflowSuite(
 			transferAmount,
 			amountToGoal,
-			Number(activeDaoData.onChainData.overflowBalance)
+			Number(data.activeDao.onChainData.overflowBalance)
 		);
 	};
 
@@ -51,7 +42,7 @@
 
 	$: isEligibleForTransfer =
 		activeRound !== null &&
-		Number(activeDaoData.onChainData.overflowBalance) > 0 &&
+		Number(data.activeDao.onChainData.overflowBalance) > 0 &&
 		(amountToGoal > 0 || activeRoundGoal == 'infinite');
 </script>
 
@@ -68,8 +59,8 @@
 			<div class="card column-1">
 				<span> Available overflow </span>
 				<Currency
-					amount={Number(activeDaoData.onChainData.overflowBalance)}
-					currency={activeDaoData.onChainData.paymentCurrency}
+					amount={Number(data.activeDao.onChainData.overflowBalance)}
+					currency={data.activeDao.onChainData.paymentCurrency}
 					fontSize="1.5rem"
 					color="heading"
 				/>
@@ -92,7 +83,7 @@
 						/>
 					{/if}
 					<CheckElement
-						check={Number(activeDaoData.onChainData.overflowBalance) > 0}
+						check={Number(data.activeDao.onChainData.overflowBalance) > 0}
 						text="The DAO has overflow tokens"
 					/>
 				</div>
@@ -104,7 +95,7 @@
 					<CurrencyInput
 						name="transferOverflowAmount"
 						autofocus={true}
-						currency={activeDaoData.onChainData.paymentCurrency}
+						currency={data.activeDao.onChainData.paymentCurrency}
 						isValid={res.isValid()}
 						errors={res.getErrors('transferOverflowAmount')}
 						bind:value={transferAmount}
