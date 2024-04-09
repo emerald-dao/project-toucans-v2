@@ -21,10 +21,7 @@ export const load = async ({ depends, params, parent }) => {
 			.eq('project_id', params.projectId)
 			.eq('network', network);
 		if (!data || !data.length) {
-			return {
-				activeDao: null,
-				otherDaos: []
-			};
+			throw redirect(300, '/admin');
 		}
 
 		const daoData = await fetchProjectData(data[0] as DaoDatabaseData);
