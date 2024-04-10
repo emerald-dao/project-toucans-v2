@@ -46,9 +46,9 @@ export const calcTokenPrice = {
 };
 
 export function getLiquidityAmount(info) {
-  if (info[0].includes("Flow")) {
+  if (info[0].includes("FlowToken")) {
     return parseFloat(info[2]);
-  } else if (info[1].includes("Flow")) {
+  } else if (info[1].includes("FlowToken")) {
     return parseFloat(info[3]);
   } else if (info[0].includes("FiatToken")) {
     return parseFloat(info[2]);
@@ -62,13 +62,13 @@ export function getLiquidityAmount(info) {
 function getQuoteToFlowPriceFromDex(info) {
   let numFlow = 0.0;
   let numQuote = 0.0;
-  if (info[0].includes("Flow")) {
+  if (info[0].includes("FlowToken")) {
     numFlow = parseFloat(info[2]);
     // if (numFlow < 100) {
     //   return null;
     // }
     numQuote = parseFloat(info[3]);
-  } else if (info[1].includes("Flow")) {
+  } else if (info[1].includes("FlowToken")) {
     numFlow = parseFloat(info[3]);
     // if (numFlow < 100) {
     //   return null;
