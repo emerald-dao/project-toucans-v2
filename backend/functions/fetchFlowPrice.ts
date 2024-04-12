@@ -1,12 +1,21 @@
 import * as fcl from "@onflow/fcl";
+import { supabase } from "../supabaseClient";
 
 export async function fetchFlowPrice() {
+  const { data } = await supabase.from("price_api").select("price").eq("id", 1);
+  return data[0].price;
+}
+
+export async function fetchCoinMarketCapFlowPrice() {
   try {
-    const response = await fetch('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=4558', {
-      headers: {
-        'X-CMC_PRO_API_KEY': process.env.CMC_PRO_API_KEY,
-      },
-    });
+    const response = await fetch(
+      "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=4558",
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": process.env.CMC_PRO_API_KEY,
+        },
+      }
+    );
     let json = await response.json();
     let flowPrice = json.data[4558].quote.USD.price;
     return flowPrice;
@@ -57,14 +66,11 @@ export const fetchStFlowPrice = async (flowPrice) => {
           return amountOut
       }
       `,
-      args: (arg, t) => [
-        arg('1.0', t.UFix64),
-        arg(tokenInKey, t.String)
-      ]
+      args: (arg, t) => [arg("1.0", t.UFix64), arg(tokenInKey, t.String)],
     });
     return Number(stFlowPriceRelativeToFlow) * flowPrice;
   } catch (e) {
-    console.log('Error in fetchStFlowPriceRelativeToFlow', e);
-    throw new Error('Error in fetchStFlowPriceRelativeToFlow');
+    console.log("Error in fetchStFlowPriceRelativeToFlow", e);
+    throw new Error("Error in fetchStFlowPriceRelativeToFlow");
   }
 };

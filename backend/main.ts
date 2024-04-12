@@ -8,7 +8,11 @@ import {
   getTrendingDatav2,
 } from "./flow/actions";
 import { supabase } from "./supabaseClient";
-import { fetchFlowPrice, fetchStFlowPrice } from "./functions/fetchFlowPrice";
+import {
+  fetchCoinMarketCapFlowPrice,
+  fetchFlowPrice,
+  fetchStFlowPrice,
+} from "./functions/fetchFlowPrice";
 import { fetchAllProjects } from "./supabase/fetchAllProjects";
 import { roundToUSDPrice } from "./flow/utils";
 import { fetchAllProposals } from "./supabase/fetchAllProposals";
@@ -257,4 +261,18 @@ async function refillUserFunding() {
 cron.schedule("*/10 * * * *", () => {
   gatherTrendingProjects();
   console.log("executing ranking task");
+});
+
+async function saveFlowTokenPrice() {
+  const tokenPrice = await fetchCoinMarketCapFlowPrice();
+  console.log({ tokenPrice });
+  const { error } = await supabase
+    .from("price_api")
+    .update({ price: tokenPrice })
+    .eq("id", 1);
+}
+
+cron.schedule("*/5 * * * *", () => {
+  saveFlowTokenPrice();
+  console.log("executing price task");
 });
