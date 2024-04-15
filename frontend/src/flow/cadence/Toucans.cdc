@@ -317,8 +317,7 @@ access(all) contract Toucans {
     //                                  |___/       
 
 
-    access(all) fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
-      let vaultType: Type = recipientVault.borrow()!.getType()
+    access(all) fun proposeWithdraw(vaultType: Type, recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
                 ?? panic("Unsupported token type for withdrawing.")
       let action = ToucansActions.WithdrawToken(vaultType, recipientVault, amount, tokenInfo.symbol)
