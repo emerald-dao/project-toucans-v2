@@ -77,6 +77,21 @@ export type Database = {
           },
         ]
       }
+      price_api: {
+        Row: {
+          id: number
+          price: number
+        }
+        Insert: {
+          id?: number
+          price: number
+        }
+        Update: {
+          id?: number
+          price?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -271,6 +286,7 @@ export type Database = {
       }
       votes: {
         Row: {
+          amount_of_tokens: number | null
           created_at: string
           nft_uuids: Json | null
           selected_option: number
@@ -278,6 +294,7 @@ export type Database = {
           wallet_address: string
         }
         Insert: {
+          amount_of_tokens?: number | null
           created_at?: string
           nft_uuids?: Json | null
           selected_option: number
@@ -285,6 +302,7 @@ export type Database = {
           wallet_address: string
         }
         Update: {
+          amount_of_tokens?: number | null
           created_at?: string
           nft_uuids?: Json | null
           selected_option?: number
@@ -427,7 +445,11 @@ export type Database = {
       }
     }
     Enums: {
-      voting_nft_modes: "no-nfts" | "nft-holders" | "nft-donators"
+      voting_nft_modes:
+        | "no-nfts"
+        | "nft-holders"
+        | "nft-donators"
+        | "token-holders"
     }
     CompositeTypes: {
       [_ in never]: never

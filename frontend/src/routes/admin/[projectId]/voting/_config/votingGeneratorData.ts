@@ -1,9 +1,12 @@
 import { derived, writable, type Readable } from 'svelte/store';
 import type { VotingOption } from '$lib/features/voting-rounds/types/voting-option.interface';
-import type { VotingNftModeSlug } from '$lib/features/voting-rounds/constants/votingNftModes';
+import type { VotingModeSlug } from '$lib/features/voting-rounds/constants/VOTING_MODES';
 import type { VotingRoundData } from '$lib/features/voting-rounds/types/voting-round-data.type';
 import { fromDate, getLocalTimeZone, now, toCalendarDateTime } from '@internationalized/date';
 import type { MultisigActions } from '$lib/types/dao-project/multisig-actions/multisig-actions.type';
+import { reset as resetVotingGeneralDataValidation } from '../_components/steps/1-general-data/validation';
+import { reset as resetVotingOptionsValidation } from '../_components/steps/2-voting-options/validation';
+import { reset as resetVotingTimeframeValidation } from '../_components/steps/5-timeframe/validation';
 
 const createVotingGeneratorDataStore = <T>(defaultData: T) => {
 	const { subscribe, set, update } = writable(structuredClone(defaultData));
@@ -44,7 +47,7 @@ export const votingGeneratorOptions = createVotingGeneratorDataStore<VotingOptio
 	}
 ]);
 
-export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingNftModeSlug>('no-nfts');
+export const votingGeneratorNftMode = createVotingGeneratorDataStore<VotingModeSlug>('no-nfts');
 export const votingGeneratorRequiredCollection = createVotingGeneratorDataStore<[string]>(['']);
 
 export const votingGeneratorDates = createVotingGeneratorDataStore<VotingGeneratorDates>({
@@ -128,4 +131,8 @@ export const resetVotingGeneratorStores = () => {
 	votingGeneratorRequiredCollection.reset();
 	votingGeneratorDates.reset();
 	votingGeneratorLinkedAction.reset();
+
+	resetVotingGeneralDataValidation();
+	resetVotingTimeframeValidation();
+	resetVotingOptionsValidation();
 };

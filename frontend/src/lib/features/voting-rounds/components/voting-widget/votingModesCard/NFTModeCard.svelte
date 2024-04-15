@@ -1,20 +1,20 @@
 <script lang="ts">
 	import Image from '$lib/components/Image.svelte';
 	import {
-		VOTING_NFT_MODES,
-		type VotingNftModeSlug
-	} from '$lib/features/voting-rounds/constants/votingNftModes';
+		VOTING_MODES,
+		type VotingModeSlug
+	} from '$lib/features/voting-rounds/constants/VOTING_MODES';
 	import { getCatalogByCollectionIDs } from './../../../../../../flow/actions';
 	import * as VotingModeCard from './atoms/index';
 
-	export let nftMode: VotingNftModeSlug;
+	export let nftMode: VotingModeSlug;
 	export let requiredCollectionId: string | null;
 </script>
 
 <VotingModeCard.Root>
 	<VotingModeCard.Content>
-		<VotingModeCard.Label>{VOTING_NFT_MODES[nftMode].title}</VotingModeCard.Label>
-		<VotingModeCard.Description>{VOTING_NFT_MODES[nftMode].description}</VotingModeCard.Description>
+		<VotingModeCard.Label>{VOTING_MODES[nftMode].title}</VotingModeCard.Label>
+		<VotingModeCard.Description>{VOTING_MODES[nftMode].description}</VotingModeCard.Description>
 	</VotingModeCard.Content>
 	{#if requiredCollectionId && nftMode != 'no-nfts'}
 		{#await getCatalogByCollectionIDs([requiredCollectionId]) then nftCollections}
