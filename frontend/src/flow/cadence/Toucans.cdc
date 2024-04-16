@@ -677,11 +677,11 @@ pub contract Toucans {
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
-      // tax for emerald city (5%)
+      // tax for emerald city (2%)
       let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).getCapability(self.paymentTokenInfo.receiverPath)
                                           .borrow<&{FungibleToken.Receiver}>()
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
-      emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
+      emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.02))
       
       let paymentAfterTax: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
