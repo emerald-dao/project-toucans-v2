@@ -11,6 +11,7 @@
 	export let selectedCollection: string;
 	export let nftUuidOwnerMap: { [uuid: string]: string } = {};
 	export let selectedNFTIds: string[] = [];
+	export let nftTreasuryPage: boolean = false;
 
 	if (sortNFTs && selectedCollection === 'NFLAllDay') {
 		let tierRating = {
@@ -43,18 +44,24 @@
 	$: currentPageNFTs = filteredNfts.slice(pageStart, pageEnd);
 </script>
 
-<AnimatedSearchBar
-	items={NFTs}
-	bind:filteredItems={filteredNfts}
-	searchTerms={['name', 'serial']}
-	placeholder="Search NFT name or serial..."
-/>
+{#if !nftTreasuryPage}
+	<AnimatedSearchBar
+		items={NFTs}
+		bind:filteredItems={filteredNfts}
+		searchTerms={['name', 'serial']}
+		placeholder="Search NFT name or serial..."
+	/>
+{/if}
 {#if currentPageNFTs.length === 0}
 	<p class="small off">
 		<em> Sorry! We didn't find NFTs from this collection. </em>
 	</p>
 {:else}
-	<div class="nfts-grid">
+	<div
+		class:treasury-page={nftTreasuryPage}
+		class:treasury-widget={!nftTreasuryPage}
+		class="nfts-grid"
+	>
 		{#each currentPageNFTs as nft (nft.id)}
 			<NFTCard
 				{nft}
@@ -72,6 +79,14 @@
 <style lang="scss">
 	.nfts-grid {
 		display: grid;
+	}
+	.treasury-page {
+		grid-template-columns: repeat(4, 1fr);
+		flex-wrap: wrap;
+		gap: var(--space-4);
+	}
+
+	.treasury-widget {
 		grid-gap: var(--space-3);
 		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 	}
