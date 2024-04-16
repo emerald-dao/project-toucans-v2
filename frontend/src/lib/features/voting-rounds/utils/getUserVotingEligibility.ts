@@ -22,7 +22,7 @@ export const getUserVotingEligibility = async (
 	userAddress: string | null,
 	votingRound: VotingRound,
 	votingRoundStatus: VotingRoundStatus,
-	votes: Vote[],
+	votes: Vote[] | null,
 	tokenContractAddress: string | null
 ): Promise<VotingEligibility> => {
 	if (votingRoundStatus === 'ended') {
@@ -110,27 +110,29 @@ export const getUserVotingEligibility = async (
 		};
 	}
 
-	let userVotes = 0;
+	let userVotes: Vote[];
 
 	if (votes) {
-		userVotes = votes.filter((vote) => vote.wallet_address === userAddress).length;
+		userVotes = votes.filter((vote) => vote.wallet_address === userAddress);
 	} else {
-		const { error, count } = await supabase
+		const { error, data } = await supabase
 			.from('votes')
-			.select('*', { count: 'exact', head: true })
+			.select('*')
 			.eq('voting_round_id', votingRound.id)
 			.eq('wallet_address', userAddress);
 
 		if (error) {
-			console.error('Error fetching votes', error);
+			console.error('Error fetching user votes', error);
 			throw error;
 		}
 
-		userVotes = count ?? 0;
+		userVotes = data;
 	}
 
-	console.log(tokenContractAddress);
-	console.log(votingRound.nft_mode);
+	const amountOfVotes =
+		votingRound.nft_mode === 'token-holders'
+			? userVotes.reduce((acc, vote) => acc + Number(vote.amount_of_tokens), 0)
+			: userVotes.length;
 
 	if (votingRound.nft_mode === 'token-holders' && tokenContractAddress) {
 		const userBalance = await getTokenBalance(
@@ -139,8 +141,6 @@ export const getUserVotingEligibility = async (
 			userAddress
 		);
 
-		console.log('userBalance', userBalance);
-
 		if (!userBalance || userBalance === 0) {
 			return {
 				eligible: false,
@@ -148,7 +148,7 @@ export const getUserVotingEligibility = async (
 			};
 		}
 
-		if (userVotes >= userBalance) {
+		if (amountOfVotes >= userBalance) {
 			return {
 				eligible: false,
 				reason: 'already-voted'
@@ -157,11 +157,11 @@ export const getUserVotingEligibility = async (
 
 		return {
 			eligible: true,
-			availableTokens: userBalance - userVotes
+			availableTokens: userBalance - amountOfVotes
 		};
 	}
 
-	if (userVotes !== null && userVotes > 0) {
+	if (amountOfVotes !== null && amountOfVotes > 0) {
 		return {
 			eligible: false,
 			reason: 'already-voted'

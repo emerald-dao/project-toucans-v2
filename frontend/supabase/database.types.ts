@@ -288,6 +288,7 @@ export type Database = {
         Row: {
           amount_of_tokens: number | null
           created_at: string
+          id: number
           nft_uuids: Json | null
           selected_option: number
           voting_round_id: number
@@ -296,6 +297,7 @@ export type Database = {
         Insert: {
           amount_of_tokens?: number | null
           created_at?: string
+          id?: number
           nft_uuids?: Json | null
           selected_option: number
           voting_round_id: number
@@ -304,6 +306,7 @@ export type Database = {
         Update: {
           amount_of_tokens?: number | null
           created_at?: string
+          id?: number
           nft_uuids?: Json | null
           selected_option?: number
           voting_round_id?: number

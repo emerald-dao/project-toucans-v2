@@ -72,6 +72,7 @@ export const createVotingRoundStore = (
 		const votes = await $allVotes;
 		const isNftMode =
 			votingRound.nft_mode === 'nft-donators' || votingRound.nft_mode === 'nft-holders';
+		const isTokenMode = votingRound.nft_mode === 'token-holders';
 
 		const votingOptions = votingRound.voting_options.reduce((acc, option) => {
 			acc[option.id] = 0;
@@ -81,6 +82,8 @@ export const createVotingRoundStore = (
 		const results = votes.reduce((acc, vote) => {
 			if (isNftMode && vote.nft_uuids && vote.nft_uuids.length > 0) {
 				acc[vote.selected_option] += vote.nft_uuids.length;
+			} else if (isTokenMode && vote.amount_of_tokens) {
+				acc[vote.selected_option] += vote.amount_of_tokens;
 			} else if (!isNftMode) {
 				acc[vote.selected_option] += 1;
 			}

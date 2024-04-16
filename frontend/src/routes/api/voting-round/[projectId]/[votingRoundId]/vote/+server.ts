@@ -21,9 +21,11 @@ export async function POST({ request, params }) {
 		votingOptionId: number;
 		votingRoundStatus: VotingRoundStatus;
 		nftUuids: string[] | undefined;
+		amountOfTokens: number | undefined;
+		tokenContractAddress: string | null;
 	} = await request.json();
 
-	const { user, votingOptionId, nftUuids } = requestData;
+	const { user, votingOptionId, nftUuids, amountOfTokens, tokenContractAddress } = requestData;
 	const votingRoundId = params.votingRoundId;
 
 	try {
@@ -40,7 +42,9 @@ export async function POST({ request, params }) {
 		const userElegibility = await getUserVotingEligibility(
 			user.addr,
 			requestData.votingRound,
-			requestData.votingRoundStatus
+			requestData.votingRoundStatus,
+			null,
+			tokenContractAddress
 		);
 
 		if (!userElegibility.eligible) {
@@ -53,7 +57,8 @@ export async function POST({ request, params }) {
 				voting_round_id: Number(votingRoundId),
 				selected_option: Number(votingOptionId),
 				nft_uuids: nftUuids,
-				wallet_address: user.addr
+				wallet_address: user.addr,
+				amount_of_tokens: amountOfTokens ?? null
 			})
 			.select()
 			.single();
