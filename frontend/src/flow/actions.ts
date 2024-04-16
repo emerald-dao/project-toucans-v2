@@ -49,6 +49,7 @@ import getProjectNoTokenScript from './cadence/scripts/get_project_no_token.cdc?
 import getProjectActionsScript from './cadence/scripts/get_project_actions.cdc?raw';
 import getProjectLockedTokensScript from './cadence/scripts/get_project_locked_tokens.cdc?raw';
 import getProjectNFTTreasuryScript from './cadence/scripts/get_project_nft_treasury.cdc?raw';
+import getProjectNFTTreasuryIDsScript from './cadence/scripts/get_project_nft_treasury_ids.cdc?raw';
 import getProjectSpecificNFTTreasuryScript from './cadence/scripts/get_project_specific_nft_treasury.cdc?raw';
 import getProjectSpecificNFTTreasuryIDsScript from './cadence/scripts/get_project_specific_nft_treasury_ids.cdc?raw';
 import getProjectLockedTokensForUserScript from './cadence/scripts/get_project_locked_tokens_for_user.cdc?raw';
@@ -1194,6 +1195,24 @@ export const getProjectNFTTreasury: (
 		return response;
 	} catch (e) {
 		console.log('Error in getProjectNFTTreasury');
+		console.log(e);
+	}
+};
+
+export const getProjectNFTTreasuryIDs: (
+	owner: string,
+	projectId: string
+) => Promise<{
+	[collectionIdentifier: string]: string[];
+}> = async (owner: string, projectId: string) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectNFTTreasuryIDsScript),
+			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
+		});
+		return response;
+	} catch (e) {
+		console.log('Error in getProjectNFTTreasuryIDs');
 		console.log(e);
 	}
 };
