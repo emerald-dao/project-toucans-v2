@@ -18,8 +18,8 @@ export async function POST({ request }) {
 	try {
 		const timeout =
 			<T>(cb: (res: (arg: T) => T) => T, interval: number) =>
-				() =>
-					new Promise((resolve) => setTimeout(() => cb(resolve as () => T), interval));
+			() =>
+				new Promise((resolve) => setTimeout(() => cb(resolve as () => T), interval));
 		const timeoutPromise = timeout<string>((resolve) => resolve('timeout'), 3000);
 
 		const executionResult = (await Promise.race(
@@ -63,13 +63,19 @@ export async function POST({ request }) {
 		const eventType = event.type.substring(27);
 
 		// if its a donate or purchase event, save it differently
-		if ((eventType === 'Donate' || eventType === 'Purchase') && (rest.tokenSymbol === ECurrencies.FLOW || rest.tokenSymbol === ECurrencies.USDC)) {
+		if (
+			(eventType === 'Donate' || eventType === 'Purchase') &&
+			(rest.tokenSymbol === ECurrencies.FLOW || rest.tokenSymbol === ECurrencies.USDC)
+		) {
 			let amount = 0;
 			if (rest.tokenSymbol === 'FLOW') {
 				const flowPrice = await fetchFlowPrice();
-				amount = Math.round(Number(rest.amount) * flowPrice * 100) / 100
+				if (!flowPrice) {
+					return json({ success: false, error: 'There was an error fetching the flow price.' });
+				}
+				amount = Math.round(Number(rest.amount) * flowPrice * 100) / 100;
 			} else if (rest.tokenSymbol === 'USDC') {
-				amount = Math.round(Number(rest.amount) * 100) / 100
+				amount = Math.round(Number(rest.amount) * 100) / 100;
 			}
 
 			const { error } = await supabase.rpc('save_fund', {
