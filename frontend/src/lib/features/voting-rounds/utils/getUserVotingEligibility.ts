@@ -1,4 +1,4 @@
-import { getCatalogNFTs } from '$flow/actions';
+import { getCatalogNFTs, getTokenBalance } from '$flow/actions';
 import { supabase } from '$lib/supabaseClient';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 import type { Vote } from '$lib/utilities/api/supabase/fetchVotingRoundVotes';
@@ -7,20 +7,23 @@ import type { VotingRoundStatus } from '../components/voting-widget/voting-round
 export interface VotingEligibility {
 	eligible: boolean;
 	reason?:
-	| 'required-nfts-not-owned'
-	| 'required-nfts-already-used'
-	| 'already-voted'
-	| 'not-connected'
-	| 'voting-round-ended'
-	| null;
+		| 'required-nfts-not-owned'
+		| 'required-nfts-already-used'
+		| 'required-tokens-not-owned'
+		| 'already-voted'
+		| 'not-connected'
+		| 'voting-round-ended'
+		| null;
 	availableNfts?: string[];
+	availableTokens?: number;
 }
 
 export const getUserVotingEligibility = async (
 	userAddress: string | null,
 	votingRound: VotingRound,
 	votingRoundStatus: VotingRoundStatus,
-	votes?: Vote[]
+	votes: Vote[],
+	tokenContractAddress: string | null
 ): Promise<VotingEligibility> => {
 	if (votingRoundStatus === 'ended') {
 		return {
@@ -71,7 +74,7 @@ export const getUserVotingEligibility = async (
 				if (vote.nft_uuids) {
 					usedNftsUuids = usedNftsUuids.concat(vote.nft_uuids);
 				}
-			})
+			});
 		} else {
 			const { data: usedNfts, error } = await supabase
 				.from('votes')
@@ -87,7 +90,7 @@ export const getUserVotingEligibility = async (
 				if (vote.nft_uuids) {
 					usedNftsUuids = usedNftsUuids.concat(vote.nft_uuids);
 				}
-			})
+			});
 		}
 
 		const availableNfts = eligibleNftsIds.filter(
@@ -124,6 +127,38 @@ export const getUserVotingEligibility = async (
 		}
 
 		userVotes = count ?? 0;
+	}
+
+	console.log(tokenContractAddress);
+	console.log(votingRound.nft_mode);
+
+	if (votingRound.nft_mode === 'token-holders' && tokenContractAddress) {
+		const userBalance = await getTokenBalance(
+			votingRound.project_id,
+			tokenContractAddress,
+			userAddress
+		);
+
+		console.log('userBalance', userBalance);
+
+		if (!userBalance || userBalance === 0) {
+			return {
+				eligible: false,
+				reason: 'required-tokens-not-owned'
+			};
+		}
+
+		if (userVotes >= userBalance) {
+			return {
+				eligible: false,
+				reason: 'already-voted'
+			};
+		}
+
+		return {
+			eligible: true,
+			availableTokens: userBalance - userVotes
+		};
 	}
 
 	if (userVotes !== null && userVotes > 0) {

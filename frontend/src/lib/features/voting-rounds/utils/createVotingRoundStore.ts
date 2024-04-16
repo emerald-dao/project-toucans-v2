@@ -11,7 +11,11 @@ import type {
 	VotingRoundStatus
 } from '../components/voting-widget/voting-round-status.type';
 
-export const createVotingRoundStore = (votingRound: VotingRound, userAddress: string | null) => {
+export const createVotingRoundStore = (
+	votingRound: VotingRound,
+	userAddress: string | null,
+	tokenContactAddress: string | null
+) => {
 	const formattedEndTimestamp = postgreTimestampToDateTime(votingRound.end_date);
 	const formattedStartTimestamp = postgreTimestampToDateTime(
 		votingRound.start_date ?? votingRound.created_at
@@ -48,7 +52,13 @@ export const createVotingRoundStore = (votingRound: VotingRound, userAddress: st
 		async ([$votingStatus, $allVotes]) => {
 			const votes = await $allVotes;
 
-			return getUserVotingEligibility(userAddress, votingRound, $votingStatus, votes);
+			return getUserVotingEligibility(
+				userAddress,
+				votingRound,
+				$votingStatus,
+				votes,
+				tokenContactAddress
+			);
 		}
 	);
 

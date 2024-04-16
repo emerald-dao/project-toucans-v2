@@ -14,10 +14,15 @@
 
 	export let votingRound: VotingRound;
 	export let daoActions: ActionData[];
+	export let tokenContractAddress: string | null;
 
 	let selectedOptionId: number | undefined = undefined;
 
-	let votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
+	let votingRoundStore = createVotingRoundStore(
+		votingRound,
+		$user.addr ?? null,
+		tokenContractAddress
+	);
 
 	onMount(() => {
 		const subscription = supabase

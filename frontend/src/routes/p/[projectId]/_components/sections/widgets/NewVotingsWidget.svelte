@@ -6,6 +6,7 @@
 
 	export let votingRounds: VotingRound[];
 	export let daoSigners: string[];
+	export let tokenContractAddress: string | null;
 
 	let activeVotingRoundIndex = 0;
 
@@ -39,7 +40,12 @@
 				<Icon icon="tabler:arrow-right" />
 			</a>
 		</div>
-		<VotingRoundCard votingRound={activeVotingRound} showResults={true} {daoSigners} />
+		<VotingRoundCard
+			votingRound={activeVotingRound}
+			showResults={true}
+			{daoSigners}
+			{tokenContractAddress}
+		/>
 	</div>
 {/if}
 
