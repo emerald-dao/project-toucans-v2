@@ -16,7 +16,7 @@
 {#if data.activeDao}
 	<AdminPage.Root>
 		<DaoStatsIntro daoData={data.activeDao} />
-		<StageContract daoData={data.activeDao} />
+		<!-- <StageContract daoData={data.activeDao} /> -->
 		<div class="secondary-wrapper">
 			<div class="column-8">
 				<GeneralStats daoData={data.activeDao} />

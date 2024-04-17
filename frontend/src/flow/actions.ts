@@ -75,7 +75,7 @@ import getCatalogSpecificNFTsScript from './cadence/scripts/get_catalog_specific
 import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
 import stageContractTx from './cadence/transactions/stage_contract.cdc?raw';
-import isStagedScript from './cadence/transactions/is_staged.cdc?raw';
+import isStagedScript from './cadence/scripts/is_staged.cdc?raw';
 
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
