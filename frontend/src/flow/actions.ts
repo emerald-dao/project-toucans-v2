@@ -74,10 +74,13 @@ import getCatalogNFTsScript from './cadence/scripts/get_catalog_nfts.cdc?raw';
 import getCatalogSpecificNFTsScript from './cadence/scripts/get_catalog_specific_nfts.cdc?raw';
 import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
+import stageContractTx from './cadence/transactions/stage_contract.cdc?raw';
+import isStagedScript from './cadence/scripts/is_staged.cdc?raw';
+
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
-import type { DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
+import type { DAOProject, DaoBlockchainData } from '$lib/types/dao-project/dao-project.interface';
 import { ECurrencies } from '$lib/types/common/enums';
 import type { DaoGeneratorData } from '$lib/features/dao-generator/types/dao-generator-data.interface';
 import type { TransactionStatusObject } from '@onflow/fcl';
@@ -96,6 +99,49 @@ if (browser) {
 // Lifecycle FCL Auth functions
 export const unauthenticate = () => fcl.unauthenticate();
 export const logIn = async () => fcl.logIn();
+
+/* STAGING CONTRACT */
+
+const stageContract = async (data: DAOProject) => {
+	let contractCode = rawExampleTokenCode
+		.replaceAll('INSERT NAME', data.generalInfo.name)
+		.replaceAll('INSERT DESCRIPTION', data.generalInfo.description.replace(/(\r\n|\n|\r)/gm, ''))
+		.replaceAll('INSERT SYMBOL', data.generalInfo.token_symbol!)
+		.replaceAll('INSERT URL', data.generalInfo.website!)
+		.replaceAll('INSERT TWITTER', data.generalInfo.twitter!)
+		.replaceAll('INSERT LOGO', data.generalInfo.logo)
+		.replaceAll('INSERT BANNER LOGO', data.generalInfo.banner_image)
+		.replaceAll('INSERT DISCORD', data.generalInfo.discord!);
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(stageContractTx),
+		args: (arg, t) => [arg(daoData.generalInfo.project_id, t.String), arg(contractCode, t.String)],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const stageContractExecution = (daoData: DAOProject) =>
+	executeTransaction(() => stageContract(daoData), saveEventAction);
+
+export const isStaged: (contractAddress: string, contractName: string) => Promise<boolean> = async (
+	contractAddress: string,
+	contractName: string
+) => {
+	try {
+		return await fcl.query({
+			cadence: replaceWithProperValues(isStagedScript),
+			args: (arg, t) => [arg(contractAddress, t.Address), arg(contractName, t.String)]
+		});
+	} catch (e) {
+		console.log('Error in isStaged');
+		console.log(e);
+		return false;
+	}
+};
+
+/********************/
 
 const saveEventAction: (res: TransactionStatusObject) => Promise<ActionExecutionResult> = async (
 	executionResult: TransactionStatusObject
