@@ -1,4 +1,4 @@
-import type { BaseEvent } from './common/base-event.interface';
+import type { BaseEvent } from '$lib/utilities/api/supabase/fetchProjectEvents';
 
 export interface BatchMintEvent extends BaseEvent {
 	type: 'BatchMint';
@@ -6,6 +6,6 @@ export interface BatchMintEvent extends BaseEvent {
 		amount: string;
 		tokenSymbol: string;
 		currentCycle: string | null;
-		amounts: { [address: string]: string }
+		amounts: { [address: string]: string };
 	};
 }

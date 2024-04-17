@@ -8,7 +8,9 @@ export const postVote = async (
 	votingRound: VotingRound,
 	votingOptionId: number,
 	votingRoundStatus: VotingRoundStatus,
-	nftUuids: string[] | undefined
+	nftUuids: string[] | undefined,
+	amountOfTokens: number | undefined,
+	tokenContractAddress: string | null
 ) => {
 	try {
 		const response = await fetch(`/api/voting-round/${projectId}/${votingRound.id}/vote`, {
@@ -21,7 +23,9 @@ export const postVote = async (
 				votingRound,
 				votingOptionId,
 				votingRoundStatus,
-				nftUuids
+				nftUuids,
+				amountOfTokens,
+				tokenContractAddress
 			})
 		});
 		if (response.ok) {

@@ -4,4 +4,8 @@
 	export let data;
 </script>
 
-<VotingRoundsGrid votingRounds={data.votingRounds} daoSigners={data.onChainData.signers} />
+<VotingRoundsGrid
+	votingRounds={data.votingRounds}
+	daoSigners={data.onChainData.signers}
+	tokenContractAddress={data.generalInfo.contract_address}
+/>

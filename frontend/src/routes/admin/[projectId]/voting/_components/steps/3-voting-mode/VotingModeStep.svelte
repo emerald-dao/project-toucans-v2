@@ -8,7 +8,7 @@
 	import { getContext } from 'svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import VotingNftModeCard from './atoms/VotingNftModeCard.svelte';
-	import { VOTING_NFT_MODES } from '../../../../../../../lib/features/voting-rounds/constants/votingNftModes';
+	import { VOTING_MODES } from '../../../../../../../lib/features/voting-rounds/constants/VOTING_MODES';
 	import {
 		votingGeneratorNftMode,
 		votingGeneratorRequiredCollection
@@ -37,11 +37,18 @@
 
 <div class="column-5">
 	<div class="options-wrapper">
-		{#each Object.entries(VOTING_NFT_MODES) as [slug, { title, description }]}
-			<VotingNftModeCard {slug} {title} {description} bind:selectedSlug={$votingGeneratorNftMode} />
+		{#each Object.entries(VOTING_MODES) as [slug, { title, description }]}
+			{#if !(slug === 'token-holders' && !daoData.hasToken)}
+				<VotingNftModeCard
+					{slug}
+					{title}
+					{description}
+					bind:selectedSlug={$votingGeneratorNftMode}
+				/>
+			{/if}
 		{/each}
 	</div>
-	{#if $votingGeneratorNftMode !== 'no-nfts'}
+	{#if $votingGeneratorNftMode === 'nft-holders' || $votingGeneratorNftMode === 'nft-donators'}
 		<div class="column-3">
 			{#if daoData.onChainData.allowedNFTCollections.length === 0}
 				<span class="small">
@@ -100,7 +107,7 @@
 <style lang="scss">
 	.options-wrapper {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(4, 1fr);
 		gap: var(--space-4);
 	}
 

@@ -54,4 +54,6 @@ const validationSuite = create((votingOptions: VotingOption[]) => {
 	});
 });
 
+export const reset = validationSuite.reset;
+
 export default validationSuite;

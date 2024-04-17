@@ -15,6 +15,44 @@ export const MOCK_DAO: DAOProject = {
 		discord: 'emerald-city-906264258189332541',
 		banner_image: 'https://i.imgur.com/JE5HFpS.jpg'
 	},
+	votingRounds: [
+		{
+			id: 63,
+			project_id: 'EmeraldCity',
+			name: 'Flow Giveaway',
+			description: 'Should we withdraw 10 $FLOW from the treasury to a random DAO on Toucans?',
+			created_at: '2024-03-07T03:21:42.789942+00:00',
+			start_date: null,
+			end_date: '2024-03-14T02:16:00+00:00',
+			nft_mode: 'no-nfts',
+			required_nft_collection_id: '',
+			linked_action_id: null,
+			linked_action_type: null,
+			voting_options: [
+				{
+					id: 138,
+					voting_round_id: 63,
+					name: 'Yes',
+					description: '',
+					option_number: 1
+				},
+				{
+					id: 139,
+					voting_round_id: 63,
+					name: 'No',
+					description: 'If you select this option, you are mean.',
+					option_number: 2
+				},
+				{
+					id: 140,
+					voting_round_id: 63,
+					name: 'Yes, but make it 100 $FLOW instead.',
+					description: '',
+					option_number: 3
+				}
+			]
+		}
+	],
 	onChainData: {
 		projectId: 'EmeraldCity',
 		tokenType: {
@@ -884,31 +922,33 @@ export const MOCK_NFTS = [
 	{
 		id: '5025450',
 		name: 'Brock Purdy',
-		thumbnail: 'https://assets.nflallday.com/resize/editions/dynamic/96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo/play_96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=640 1x, https://assets.nflallday.com/resize/editions/dynamic/96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo/play_96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=1200 2x',
+		thumbnail:
+			'https://assets.nflallday.com/resize/editions/dynamic/96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo/play_96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=640 1x, https://assets.nflallday.com/resize/editions/dynamic/96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo/play_96462c32-5a9c-48fe-a565-6a3932d3cdb9-l-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=1200 2x',
 		serial: '13',
 		traits: {
-			'playType': 'Player Melt',
-			'editionTier': 'LEGENDARY',
-			'setName': 'Dynamic',
-			'seriesName': '2023 Season',
-			'playerFirstName': 'Brock',
-			'playerLastName': 'Purdy',
-			'teamName': 'San Francisco 49ers'
+			playType: 'Player Melt',
+			editionTier: 'LEGENDARY',
+			setName: 'Dynamic',
+			seriesName: '2023 Season',
+			playerFirstName: 'Brock',
+			playerLastName: 'Purdy',
+			teamName: 'San Francisco 49ers'
 		}
 	},
 	{
 		id: '5025451',
 		name: 'Lamar Jackson',
-		thumbnail: 'https://assets.nflallday.com/resize/editions/dynamic/81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo/play_81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=640 1x, https://assets.nflallday.com/resize/editions/dynamic/81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo/play_81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=1200 2x',
+		thumbnail:
+			'https://assets.nflallday.com/resize/editions/dynamic/81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo/play_81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=640 1x, https://assets.nflallday.com/resize/editions/dynamic/81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo/play_81682c78-d356-4aa0-9e07-a5d84d6d6b04-r-w16evo_dynamic_capture_Hero_Black_2880_2880_Black.png?format=webp&quality=80&width=1200 2x',
 		serial: '31',
 		traits: {
-			'playType': 'Player Melt',
-			'editionTier': 'RARE',
-			'setName': 'Dynamic',
-			'seriesName': '2023 Season',
-			'playerFirstName': 'Lamar',
-			'playerLastName': 'Jackson',
-			'teamName': 'Baltimore Ravens'
+			playType: 'Player Melt',
+			editionTier: 'RARE',
+			setName: 'Dynamic',
+			seriesName: '2023 Season',
+			playerFirstName: 'Lamar',
+			playerLastName: 'Jackson',
+			teamName: 'Baltimore Ravens'
 		}
 	}
-]
+];

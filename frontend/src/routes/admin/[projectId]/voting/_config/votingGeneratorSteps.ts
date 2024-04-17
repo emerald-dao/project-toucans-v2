@@ -3,7 +3,7 @@ import { createSteps } from '$stores/custom/steps/Steps';
 import { createVotingRound } from '../_actions/createVotingRound';
 import VotingGeneralDataStep from '../_components/steps/1-general-data/VotingGeneralDataStep.svelte';
 import VotingOptionsStep from '../_components/steps/2-voting-options/VotingOptionsStep.svelte';
-import VotingNftModeStep from '../_components/steps/3-nft-mode/VotingNftModeStep.svelte';
+import VotingModeStep from '../_components/steps/3-voting-mode/VotingModeStep.svelte';
 import VotingActionLinkingStep from '../_components/steps/4-action-linking/VotingActionLinkingStep.svelte';
 import VotingTimeframeStep from '../_components/steps/5-timeframe/VotingTimeframeStep.svelte';
 import VotingThanksStep from '../_components/steps/6-thanks/VotingThanksStep.svelte';
@@ -36,9 +36,9 @@ export const votingGeneratorSteps = createSteps([
 		}
 	},
 	{
-		name: 'Required NFTs',
-		description: 'Optionally require an NFT to participate in the round.',
-		component: VotingNftModeStep,
+		name: 'Voting mode',
+		description: 'Optionally require NFTs or fungible tokens to participate in the round.',
+		component: VotingModeStep,
 		action: null,
 		form: false,
 		state: 'inactive',

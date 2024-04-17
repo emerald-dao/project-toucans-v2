@@ -1,4 +1,4 @@
-import type { BaseEvent } from './common/base-event.interface';
+import type { BaseEvent } from '$lib/utilities/api/supabase/fetchProjectEvents';
 
 export interface DonateNFTsEvent extends BaseEvent {
 	type: 'DonateNFT';
@@ -10,6 +10,6 @@ export interface DonateNFTsEvent extends BaseEvent {
 		collectionExternalURL: string;
 		projectOwner: string;
 		by: string;
-		uuids: string[]
+		uuids: string[];
 	};
 }

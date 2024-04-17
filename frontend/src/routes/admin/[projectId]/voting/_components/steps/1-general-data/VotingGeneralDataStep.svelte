@@ -26,6 +26,7 @@
 	let firstInput: HTMLInputElement;
 
 	onMount(() => {
+		isValid = res.isValid();
 		firstInput.focus();
 	});
 </script>

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import * as FeatureCard from '../atoms/feature-card';
 	import FeautreLabel from '../../atoms/FeatureLabel.svelte';
-	import LegacyVotingsWidget from '../../../../p/[projectId]/_components/sections/widgets/LegacyVotingsWidget.svelte';
 	import { MOCK_DAO } from '../mockDao';
+	import VotingWidgetExpanded from '$lib/features/voting-rounds/components/voting-widget/VotingWidgetExpanded.svelte';
 </script>
 
 <FeatureCard.Root>
@@ -14,6 +14,19 @@
 		</FeatureCard.Heading>
 	</FeatureCard.Header>
 	<FeatureCard.Content>
-		<LegacyVotingsWidget votingData={MOCK_DAO.votes} />
+		<div>
+			<VotingWidgetExpanded
+				votingRound={MOCK_DAO.votingRounds[0]}
+				tokenContractAddress={null}
+				daoActions={[]}
+			/>
+		</div>
 	</FeatureCard.Content>
 </FeatureCard.Root>
+
+<style>
+	div {
+		bottom: 8rem;
+		width: 1100px;
+	}
+</style>
