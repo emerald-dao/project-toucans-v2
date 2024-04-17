@@ -1,12 +1,12 @@
 <script lang="ts">
-	import VotingResultsPieChart from './../voting-results-charts/VotingResultsPieChart.svelte';
+	import VotingResultsPieChart from '../voting-results-charts/VotingResultsPieChart.svelte';
 	import { page } from '$app/stores';
 	import { createVotingRoundStore } from '$lib/features/voting-rounds/utils/createVotingRoundStore';
 	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
 	import { user } from '$stores/flow/FlowStore';
 	import { onMount } from 'svelte';
 	import VotingOptionCard from './VotingOptionCard.svelte';
-	import VotingWidgetCard from './VotingWidgetCard.svelte';
+	import VotingWidgetCard from './VotingWidgetExpandedCard.svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { Button } from '@emerald-dao/component-library';
 	import { postVote } from '$lib/features/voting-rounds/api/postVote';
