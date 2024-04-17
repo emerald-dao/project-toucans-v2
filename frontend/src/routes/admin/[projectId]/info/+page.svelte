@@ -1,22 +1,13 @@
 <script type="ts">
-	import type { Writable } from 'svelte/store';
-	import { getContext, onMount } from 'svelte';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
+	import { onMount } from 'svelte';
 	import { Button, InputWrapper, DropZone } from '@emerald-dao/component-library';
 	import validationSuite from './validation';
 	import { applyAction, enhance } from '$app/forms';
 	import IconCircle from '$components/atoms/IconCircle.svelte';
 	import * as AdminPage from '../_components/admin-page';
 
+	export let data;
 	export let form;
-
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
-
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
 
 	let changesSubmmited = false;
 	let submitionOnCourse = false;
@@ -25,6 +16,7 @@
 		website: '',
 		twitter: '',
 		discord: '',
+		name: '',
 		description: '',
 		long_description: '',
 		logo: [],
@@ -40,12 +32,13 @@
 		submitionOnCourse = false;
 		changesSubmmited = true;
 
-		formData.website = (form?.website as string) ?? activeDaoData.generalInfo.website;
-		formData.twitter = (form?.twitter as string) ?? activeDaoData.generalInfo.twitter;
-		formData.discord = (form?.discord as string) ?? activeDaoData.generalInfo.discord;
-		formData.description = (form?.description as string) ?? activeDaoData.generalInfo.description;
+		formData.website = (form?.website as string) ?? data.activeDao.generalInfo.website;
+		formData.twitter = (form?.twitter as string) ?? data.activeDao.generalInfo.twitter;
+		formData.discord = (form?.discord as string) ?? data.activeDao.generalInfo.discord;
+		formData.name = (form?.name as string) ?? data.activeDao.generalInfo.name;
+		formData.description = (form?.description as string) ?? data.activeDao.generalInfo.description;
 		formData.long_description =
-			(form?.long_description as string) ?? activeDaoData.generalInfo.long_description;
+			(form?.long_description as string) ?? data.activeDao.generalInfo.long_description;
 	};
 
 	const handleChange = (input: Event) => {
@@ -60,23 +53,25 @@
 	};
 
 	const populateFormData = () => {
-		formData.website = activeDaoData.generalInfo.website ? activeDaoData.generalInfo.website : '';
-		formData.twitter = activeDaoData.generalInfo.twitter ? activeDaoData.generalInfo.twitter : '';
-		formData.discord = activeDaoData.generalInfo.discord ? activeDaoData.generalInfo.discord : '';
-		formData.description = activeDaoData.generalInfo.description;
-		formData.long_description = activeDaoData.generalInfo.long_description
-			? activeDaoData.generalInfo.long_description
+		formData.website = data.activeDao.generalInfo.website ? data.activeDao.generalInfo.website : '';
+		formData.twitter = data.activeDao.generalInfo.twitter ? data.activeDao.generalInfo.twitter : '';
+		formData.name = data.activeDao.generalInfo.name ? data.activeDao.generalInfo.name : '';
+		formData.discord = data.activeDao.generalInfo.discord ? data.activeDao.generalInfo.discord : '';
+		formData.description = data.activeDao.generalInfo.description;
+		formData.long_description = data.activeDao.generalInfo.long_description
+			? data.activeDao.generalInfo.long_description
 			: '';
 	};
 
 	const checkDataChanges = () => {
-		if (activeDaoData) {
+		if (data.activeDao) {
 			return (
-				formData.website !== activeDaoData.generalInfo.website ||
-				formData.twitter !== activeDaoData.generalInfo.twitter ||
-				formData.discord !== activeDaoData.generalInfo.discord ||
-				formData.description !== activeDaoData.generalInfo.description ||
-				formData.long_description !== activeDaoData.generalInfo.long_description ||
+				formData.website !== data.activeDao.generalInfo.website ||
+				formData.twitter !== data.activeDao.generalInfo.twitter ||
+				formData.discord !== data.activeDao.generalInfo.discord ||
+				formData.name !== data.activeDao.generalInfo.name ||
+				formData.description !== data.activeDao.generalInfo.description ||
+				formData.long_description !== data.activeDao.generalInfo.long_description ||
 				formData.logo.length > 0 ||
 				formData.bannerImage.length > 0
 			);
@@ -92,9 +87,9 @@
 
 	let res = validationSuite.get();
 
-	$: activeDaoData && populateFormData();
-	$: activeDaoData && formData && (formHasChanges = checkDataChanges());
-	$: activeDaoData && resetValidation();
+	$: data.activeDao && populateFormData();
+	$: data.activeDao && formData && (formHasChanges = checkDataChanges());
+	$: data.activeDao && resetValidation();
 </script>
 
 <AdminPage.Root>
@@ -123,8 +118,22 @@
 					type="hidden"
 					name="project_id"
 					hidden
-					value={activeDaoData.generalInfo.project_id}
+					value={data.activeDao.generalInfo.project_id}
 				/>
+				<InputWrapper
+					name="name"
+					label="Name"
+					errors={res.getErrors('name')}
+					isValid={res.isValid('name')}
+				>
+					<input
+						name="name"
+						type="text"
+						placeholder="A DAO for the people"
+						bind:value={formData.name}
+						on:input={handleChange}
+					/>
+				</InputWrapper>
 				<InputWrapper
 					name="description"
 					label="Description"

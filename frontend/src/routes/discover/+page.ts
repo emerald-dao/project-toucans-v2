@@ -14,10 +14,14 @@ export const load: PageLoad = async () => {
 		return (project.treasury_value || 0) + 15 * project.total_funding + 10 * project.nft_count;
 	}
 
+	function calculateTokenScore(token: DaoRankingData) {
+		return token.price! * token.total_supply!;
+	}
+
 	const daoRankings = rankings.sort((a, b) => calculateScore(b) - calculateScore(a));
 	const tokenRankings = rankings
 		.filter((x) => x.price && x.liquidity_amount && x.liquidity_amount >= 50)
-		.sort((a, b) => b.price - a.price);
+		.sort((a, b) => calculateTokenScore(b) - calculateTokenScore(a));
 
 	return {
 		allProjects,

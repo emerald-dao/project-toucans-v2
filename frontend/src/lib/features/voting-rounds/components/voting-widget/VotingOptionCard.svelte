@@ -13,6 +13,12 @@
 		selectedOptionId = votingOption.id;
 	};
 
+	const getTotalAmountOfVotes = (votesResults: {
+		[key in number]: number;
+	}) => {
+		return Object.values(votesResults).reduce((acc, votes) => acc + votes, 0);
+	};
+
 	$: isSelected = selectedOptionId === votingOption.id;
 </script>
 
@@ -27,9 +33,9 @@
 						mostVotedOptions.includes(votingOption.id.toString()) &&
 						$votingRoundStore.votingStatus === 'ended'}
 					{@const userVotesIds = userVotes.map((vote) => vote.selected_option)}
-					{@const totalAmountOfVotes = allVotes.length}
+					{@const totalAmountOfVotes = getTotalAmountOfVotes(votesResults)}
 					{@const thisOptionVotes = votesResults[votingOption.id]}
-					{@const votesPercentage = ((thisOptionVotes / totalAmountOfVotes) * 100).toFixed(2)}
+					{@const votesPercentage = ((thisOptionVotes * 100) / totalAmountOfVotes).toFixed(2)}
 					<div
 						class="card"
 						class:active={isSelected}

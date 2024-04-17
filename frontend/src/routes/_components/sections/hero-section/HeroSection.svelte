@@ -1,5 +1,4 @@
 <script type="ts">
-	import BuiltOnFlow from './atoms/BuiltOnFlow.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import FeatureLabel from '../atoms/FeatureLabel.svelte';
 </script>
@@ -18,7 +17,7 @@
 				and <FeatureLabel icon="mdi:vote">Voting</FeatureLabel>.
 			</p>
 			<p>
-				Manage funds thorough a secure <FeatureLabel icon="mdi:treasure-chest"
+				Manage funds through a secure <FeatureLabel icon="mdi:treasure-chest"
 					>Multisig Treasury</FeatureLabel
 				>.
 			</p>
@@ -29,7 +28,6 @@
 		>
 		<Button color="primary" size="large" width="extended" href="/dao-generator">Create DAO</Button>
 	</div>
-	<!-- <BuiltOnFlow /> -->
 </section>
 
 <style type="scss">

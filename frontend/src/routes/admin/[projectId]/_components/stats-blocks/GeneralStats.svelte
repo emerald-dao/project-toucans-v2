@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import { Currency, Label } from '@emerald-dao/component-library';
+	import { Currency } from '@emerald-dao/component-library';
 
 	export let daoData: DAOProject;
 </script>

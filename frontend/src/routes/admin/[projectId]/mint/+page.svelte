@@ -1,23 +1,14 @@
 <script type="ts">
-	import type { Writable } from 'svelte/store';
-	import { getContext } from 'svelte';
-	import type { DAOProject, DaoDatabaseData } from '$lib/types/dao-project/dao-project.interface';
 	import * as DistributeTokens from '$lib/features/distribute-tokens/components';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import FungibleTokensDistributionForm from '../withdraw/_components/FungibleTokensDistributionForm.svelte';
 	import { mintTokens } from '$lib/features/distribute-tokens/functions/mintTokens';
 	import * as AdminPage from '../_components/admin-page';
 
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
+	export let data;
 
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
-
-	$: availableBalance = activeDaoData.onChainData.maxSupply
-		? Number(activeDaoData.onChainData.maxSupply) - Number(activeDaoData.onChainData.totalSupply)
+	$: availableBalance = data.activeDao.onChainData.maxSupply
+		? Number(data.activeDao.onChainData.maxSupply) - Number(data.activeDao.onChainData.totalSupply)
 		: ('infinite' as const);
 
 	let formDist: Distribution = {
@@ -38,7 +29,7 @@
 	};
 
 	const handleCreateMintAction = async () => {
-		const actionResult = await mintTokens(activeDaoData, distStaging);
+		const actionResult = await mintTokens(data.activeDao, distStaging);
 
 		if (actionResult.state === 'success') {
 			resetDistribution();
@@ -47,39 +38,39 @@
 </script>
 
 <AdminPage.Root>
-	{#if activeDaoData.generalInfo.token_symbol}
+	{#if data.activeDao.generalInfo.token_symbol}
 		<AdminPage.Container>
 			<AdminPage.Content>
 				<AdminPage.Header>
 					<AdminPage.Title>Mint Tokens</AdminPage.Title>
 					<AdminPage.Description>
-						{`Mint $${activeDaoData.generalInfo.token_symbol} tokens to external wallets.`}
+						{`Mint $${data.activeDao.generalInfo.token_symbol} tokens to external wallets.`}
 					</AdminPage.Description>
 				</AdminPage.Header>
 				<DistributeTokens.AvailableBalance
 					{availableBalance}
-					currency={activeDaoData.generalInfo.token_symbol}
+					currency={data.activeDao.generalInfo.token_symbol}
 				/>
 				{#if (availableBalance && Number(availableBalance) > 0) || availableBalance === 'infinite'}
 					<FungibleTokensDistributionForm
 						{formDist}
 						{csvDist}
-						activeCurrency={activeDaoData.generalInfo.token_symbol}
+						activeCurrency={data.activeDao.generalInfo.token_symbol}
 						{availableBalance}
-						projectOwner={activeDaoData.generalInfo.owner}
-						projectId={activeDaoData.generalInfo.project_id}
+						projectOwner={data.activeDao.generalInfo.owner}
+						projectId={data.activeDao.generalInfo.project_id}
 						bind:distStaging
 					/>
 				{:else}
 					<DistributeTokens.NoTokensMessage>
-						{`No ${activeDaoData.generalInfo.token_symbol} tokens available to mint.`}
+						{`No ${data.activeDao.generalInfo.token_symbol} tokens available to mint.`}
 					</DistributeTokens.NoTokensMessage>
 				{/if}
 			</AdminPage.Content>
 			<AdminPage.Content>
 				<DistributeTokens.Staging
 					bind:distStaging
-					tokenName={activeDaoData.generalInfo.token_symbol}
+					tokenName={data.activeDao.generalInfo.token_symbol}
 				/>
 				<DistributeTokens.Button
 					on:click={handleCreateMintAction}

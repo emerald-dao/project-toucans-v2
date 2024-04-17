@@ -33,18 +33,18 @@
 		<div class="row-6">
 			<div class="row-2 align-center">
 				{#if daoData.onChainData.currentFundingCycle}
-					<a href="/admin/rounds" class="rounds-link header-link">
+					<a href={`/admin/${daoData.generalInfo.project_id}/rounds`} class="rounds-link header-link">
 						<StatusCircle status="success" width="0.5rem" />
 						Active Funding Round
 					</a>
 				{:else if daoData.hasToken}
-					<a href="/admin/rounds" class="rounds-link header-link">
+					<a href={`/admin/${daoData.generalInfo.project_id}/rounds`} class="rounds-link header-link">
 						<StatusCircle status="alert" width="0.5rem" />
 						No Active Funding Round
 					</a>
 				{/if}
 			</div>
-			<a class="pending-actions" href="/admin/actions">
+			<a class="pending-actions" href={`/admin/${daoData.generalInfo.project_id}/actions`}>
 				<div class="alert-number-wrapper">
 					<AlertNumber number={Number(daoData.onChainData.actions.length)} />
 				</div>

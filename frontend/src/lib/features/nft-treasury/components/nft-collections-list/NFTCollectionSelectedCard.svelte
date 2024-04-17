@@ -2,24 +2,12 @@
 	import NFTCollectionSelectCard from './NFTCollectionSelectCard.svelte';
 	import Icon from '@iconify/svelte';
 	import type { NftCollection } from '$lib/features/nft-treasury/types/nft-collection.interface.js';
-	import type { Writable } from 'svelte/store';
-	import { getContext } from 'svelte';
-	import type {
-		DAOProject,
-		DaoDatabaseData
-	} from '$lib/types/dao-project/dao-project.interface.js';
+	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
 	import { removeAllowedNFTCollections } from '../../../../../routes/admin/[projectId]/nft-collections/_actions/removeAllowedNFTCollections';
 
 	export let nftCollection: NftCollection;
 	export let selectedCollections: string[];
-
-	const adminData: {
-		activeDao: Writable<DAOProject>;
-		otherDaos: DaoDatabaseData[];
-	} = getContext('admin-data');
-
-	const activeDaoStore = adminData.activeDao;
-	$: activeDaoData = $activeDaoStore;
+	export let daoData: DAOProject;
 </script>
 
 <NFTCollectionSelectCard {nftCollection} bind:selectedCollections isCollectionActive={true}>
@@ -29,14 +17,14 @@
 		on:click={() =>
 			removeAllowedNFTCollections(
 				[nftCollection.identifier],
-				activeDaoData.generalInfo.owner,
-				activeDaoData.generalInfo.project_id
+				daoData.generalInfo.owner,
+				daoData.generalInfo.project_id
 			)}
 		on:keydown={() =>
 			removeAllowedNFTCollections(
 				[nftCollection.identifier],
-				activeDaoData.generalInfo.owner,
-				activeDaoData.generalInfo.project_id
+				daoData.generalInfo.owner,
+				daoData.generalInfo.project_id
 			)}
 	>
 		<Icon icon="tabler:x" width="20" height="20" />

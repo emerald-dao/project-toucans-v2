@@ -8,6 +8,7 @@
 	export let round: FundingCycle;
 	export let projectToken: string;
 	export let paymentToken: ECurrencies;
+	// cycleIndex
 	export let roundNumber: number;
 	export let projectId: string;
 	export let activeRound: number | null;
