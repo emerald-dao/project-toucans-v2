@@ -122,6 +122,18 @@
 				"testnet": "631e88ae7f1d7c20"
 			}
 		},
+		"Burner": {
+			"source": "./src/flow/cadence/utility/Burner.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"ExampleToken": {
+			"source": "./src/flow/cadence/ExampleToken.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
 		"OnChainMultiSig": {
 			"source": "./src/flow/cadence/utility/OnChainMultiSig.cdc",
 			"aliases": {
@@ -285,14 +297,10 @@
 			]
 		},
 		"testnet": {
-			"testnet-account": [
-				"Toucans"
-			]
+			"testnet-account": ["Toucans"]
 		},
 		"mainnet": {
-			"mainnet-account": [
-				"Toucans"
-			]
+			"mainnet-account": ["Toucans"]
 		}
 	}
 }

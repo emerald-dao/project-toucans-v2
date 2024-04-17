@@ -1,8 +1,8 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import FiatToken from "../utility/FiatToken.cdc"
-import FlowToken from "../utility/FlowToken.cdc"
-import Toucans from "../Toucans.cdc"
-import ToucansTokens from "../ToucansTokens.cdc"
+import "FungibleToken"
+import "FiatToken"
+import "FlowToken"
+import "Toucans"
+import "ToucansTokens"
 
 transaction(
   contractName: String,
@@ -23,14 +23,17 @@ transaction(
   initialAllowedNFTCollections: [String]
 ) {
 
-  prepare(deployer: AuthAccount) {
+  prepare(deployer: auth(Storage, Capabilities, Contracts) &Account) {
     /**************************************************************************************/
     /********************************** Setup USDC if not *********************************/
     /**************************************************************************************/
-    if deployer.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
-      deployer.save(<- FiatToken.createEmptyVault(), to: /storage/USDCVault)
-      deployer.link<&FiatToken.Vault{FungibleToken.Receiver}>(/public/USDCVaultReceiver, target: /storage/USDCVault)
-      deployer.link<&FiatToken.Vault{FungibleToken.Balance}>(/public/USDCVaultBalance, target: /storage/USDCVault)
+    if deployer.storage.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
+      deployer.storage.save(<- FiatToken.createEmptyVault(vaultType: Type<@FiatToken.Vault>()), to: /storage/USDCVault)
+      let receiverCap = deployer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
+      deployer.capabilities.publish(receiverCap, at: /public/USDCVaultReceiver)
+
+      let publicCap = deployer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
+      deployer.capabilities.publish(publicCap, at: /public/USDCVaultBalance)
     }
 
     // Blank empty for now

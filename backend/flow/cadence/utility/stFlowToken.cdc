@@ -11,37 +11,37 @@
 
 import FungibleToken from "./FungibleToken.cdc"
 
-pub contract stFlowToken: FungibleToken {
+access(all) contract stFlowToken: FungibleToken {
 
     // Total supply of Flow tokens in existence
-    pub var totalSupply: UFix64
+    access(all) var totalSupply: UFix64
 
     // Paths
-    pub let tokenVaultPath: StoragePath
-    pub let tokenProviderPath: PrivatePath
-    pub let tokenBalancePath: PublicPath
-    pub let tokenReceiverPath: PublicPath
+    access(all) let tokenVaultPath: StoragePath
+    access(all) let tokenProviderPath: PrivatePath
+    access(all) let tokenBalancePath: PublicPath
+    access(all) let tokenReceiverPath: PublicPath
 
     // Event that is emitted when the contract is created
-    pub event TokensInitialized(initialSupply: UFix64)
+    access(all) event TokensInitialized(initialSupply: UFix64)
 
     // Event that is emitted when tokens are withdrawn from a Vault
-    pub event TokensWithdrawn(amount: UFix64, from: Address?)
+    access(all) event TokensWithdrawn(amount: UFix64, from: Address?)
 
     // Event that is emitted when tokens are deposited to a Vault
-    pub event TokensDeposited(amount: UFix64, to: Address?)
+    access(all) event TokensDeposited(amount: UFix64, to: Address?)
 
     // Event that is emitted when new tokens are minted
-    pub event TokensMinted(amount: UFix64)
+    access(all) event TokensMinted(amount: UFix64)
 
     // Event that is emitted when tokens are destroyed
-    pub event TokensBurned(amount: UFix64)
+    access(all) event TokensBurned(amount: UFix64)
 
     // Event that is emitted when a new minter resource is created
-    pub event MinterCreated(allowedAmount: UFix64)
+    access(all) event MinterCreated(allowedAmount: UFix64)
 
     // Event that is emitted when a new burner resource is created
-    pub event BurnerCreated()
+    access(all) event BurnerCreated()
 
     // Vault
     //
@@ -55,10 +55,10 @@ pub contract stFlowToken: FungibleToken {
     // out of thin air. A special Minter resource needs to be defined to mint
     // new tokens.
     //
-    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {
+    access(all) resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {
 
         // holds the balance of a users tokens
-        pub var balance: UFix64
+        access(all) var balance: UFix64
 
         // initialize the balance at resource creation time
         init(balance: UFix64) {
@@ -74,7 +74,7 @@ pub contract stFlowToken: FungibleToken {
         // created Vault to the context that called so it can be deposited
         // elsewhere.
         //
-        pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
+        access(all) fun withdraw(amount: UFix64): @FungibleToken.Vault {
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
             return <-create Vault(balance: amount)
@@ -87,7 +87,7 @@ pub contract stFlowToken: FungibleToken {
         // It is allowed to destroy the sent Vault because the Vault
         // was a temporary holder of the tokens. The Vault's balance has
         // been consumed and therefore can be destroyed.
-        pub fun deposit(from: @FungibleToken.Vault) {
+        access(all) fun deposit(from: @FungibleToken.Vault) {
             let vault <- from as! @stFlowToken.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
@@ -107,7 +107,7 @@ pub contract stFlowToken: FungibleToken {
     // and store the returned Vault in their storage in order to allow their
     // account to be able to receive deposits of this token type.
     //
-    pub fun createEmptyVault(): @FungibleToken.Vault {
+    access(all) fun createEmptyVault(): @FungibleToken.Vault {
         return <-create Vault(balance: 0.0)
     }
 
@@ -118,7 +118,7 @@ pub contract stFlowToken: FungibleToken {
     //   - user migrates existing (staked) NodeDelegator resource
     // into the liquid staking protocol
     //
-    pub fun mintTokens(amount: UFix64): @stFlowToken.Vault {
+    access(all) fun mintTokens(amount: UFix64): @stFlowToken.Vault {
         pre {
             amount > 0.0: "Amount minted must be greater than zero"
         }
@@ -135,7 +135,7 @@ pub contract stFlowToken: FungibleToken {
     // $stFlow token will be burned in exchange for underlying $flow when user requests unstake from the liquid staking protocol
     // Note: the burned tokens are automatically subtracted from the total supply in the Vault destructor.
     //
-    pub fun burnTokens(from: @FungibleToken.Vault) {
+    access(all) fun burnTokens(from: @FungibleToken.Vault) {
         let vault <- from as! @stFlowToken.Vault
         let amount = vault.balance
         destroy vault
