@@ -1,16 +1,16 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import ToucansTokens from "./ToucansTokens.cdc"
 
-pub contract ToucansLockTokens {
+access(all) contract ToucansLockTokens {
 
-    pub struct LockedVaultDetails {
-        pub let lockedVaultUuid: UInt64
-        pub let recipient: Address
-        pub let vaultType: Type
-        pub let unlockTime: UFix64
-        pub let tokenInfo: ToucansTokens.TokenInfo
-        pub let amount: UFix64
-        pub let extra: {String: AnyStruct}
+    access(all) struct LockedVaultDetails {
+        access(all) let lockedVaultUuid: UInt64
+        access(all) let recipient: Address
+        access(all) let vaultType: Type
+        access(all) let unlockTime: UFix64
+        access(all) let tokenInfo: ToucansTokens.TokenInfo
+        access(all) let amount: UFix64
+        access(all) let extra: {String: AnyStruct}
 
         init(
             lockedVaultUuid: UInt64,
@@ -30,8 +30,8 @@ pub contract ToucansLockTokens {
         }
     }
 
-    pub resource LockedVault {
-        pub let details: LockedVaultDetails
+    access(all) resource LockedVault {
+        access(all) let details: LockedVaultDetails
         access(contract) var vault: @FungibleToken.Vault?
         // for extra metadata
         access(self) var additions: @{String: AnyResource}
@@ -64,21 +64,21 @@ pub contract ToucansLockTokens {
         }
     }
 
-    pub resource interface ManagerPublic {
-        pub fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver})
-        pub fun getIDs(): [UInt64]
-        pub fun getIDsForAddress(address: Address): [UInt64]
-        pub fun getLockedVaultInfos(): [LockedVaultDetails]
-        pub fun getLockedVaultInfosForAddress(address: Address): [LockedVaultDetails]
+    access(all) resource interface ManagerPublic {
+        access(all) fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver})
+        access(all) fun getIDs(): [UInt64]
+        access(all) fun getIDsForAddress(address: Address): [UInt64]
+        access(all) fun getLockedVaultInfos(): [LockedVaultDetails]
+        access(all) fun getLockedVaultInfosForAddress(address: Address): [LockedVaultDetails]
     }
 
-    pub resource Manager: ManagerPublic {
+    access(all) resource Manager: ManagerPublic {
         access(self) let lockedVaults: @{UInt64: LockedVault}
         access(self) let addressMap: {Address: [UInt64]}
         // for extra metadata
         access(self) var additions: @{String: AnyResource}
 
-        pub fun deposit(recipient: Address, unlockTime: UFix64, vault: @FungibleToken.Vault, tokenInfo: ToucansTokens.TokenInfo) {
+        access(all) fun deposit(recipient: Address, unlockTime: UFix64, vault: @FungibleToken.Vault, tokenInfo: ToucansTokens.TokenInfo) {
             pre {
                 tokenInfo.tokenType == vault.getType(): "Types are not the same"
             }
@@ -93,7 +93,7 @@ pub contract ToucansLockTokens {
             self.lockedVaults[lockedVault.uuid] <-! lockedVault
         }
 
-        pub fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver}) {
+        access(all) fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver}) {
             let lockedVault: @LockedVault <- self.lockedVaults.remove(key: lockedVaultUuid) ?? panic("This LockedVault does not exist.")
             lockedVault.withdrawVault(receiver: receiver)
             assert(lockedVault.vault == nil, message: "The withdraw did not execute correctly.")
@@ -102,15 +102,15 @@ pub contract ToucansLockTokens {
             self.addressMap[receiver.owner!.address]!.remove(at: indexOfUuid)
         }
 
-        pub fun getIDs(): [UInt64] {
+        access(all) fun getIDs(): [UInt64] {
             return self.lockedVaults.keys
         }
 
-        pub fun getIDsForAddress(address: Address): [UInt64] {
+        access(all) fun getIDsForAddress(address: Address): [UInt64] {
             return self.addressMap[address] ?? []
         }
 
-        pub fun getLockedVaultInfos(): [LockedVaultDetails] {
+        access(all) fun getLockedVaultInfos(): [LockedVaultDetails] {
             let ids: [UInt64] = self.getIDs()
             let vaults: [LockedVaultDetails] = []
             for id in ids {
@@ -119,7 +119,7 @@ pub contract ToucansLockTokens {
             return vaults
         }
 
-        pub fun getLockedVaultInfosForAddress(address: Address): [LockedVaultDetails] {
+        access(all) fun getLockedVaultInfosForAddress(address: Address): [LockedVaultDetails] {
             let ids: [UInt64] = self.getIDsForAddress(address: address)
             let vaults: [LockedVaultDetails] = []
             for id in ids {
@@ -140,7 +140,7 @@ pub contract ToucansLockTokens {
         }
     }
 
-    pub fun createManager(): @Manager {
+    access(all) fun createManager(): @Manager {
         return <- create Manager()
     }
 }

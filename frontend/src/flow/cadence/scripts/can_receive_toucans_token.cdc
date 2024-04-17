@@ -1,12 +1,11 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import ToucansTokens from "../ToucansTokens.cdc"
+import "FungibleToken"
+import "ToucansTokens"
 
-pub fun main(user: Address, tokenSymbol: String): Bool {
+access(all) fun main(user: Address, tokenSymbol: String): Bool {
 
   // if the token symbol is for payments
   if let tokenInfo = ToucansTokens.getTokenInfoFromSymbol(symbol: tokenSymbol) {
-    let vault = getAccount(user).getCapability(tokenInfo.receiverPath)
-              .borrow<&{FungibleToken.Receiver}>()
+    let vault = getAccount(user).capabilities.borrow<&{FungibleToken.Receiver}>(tokenInfo.receiverPath)
 
     return vault != nil
   }

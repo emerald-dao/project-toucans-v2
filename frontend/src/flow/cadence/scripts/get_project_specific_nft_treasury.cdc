@@ -1,8 +1,8 @@
-import Toucans from "../Toucans.cdc"
-import MetadataViews from "../utility/MetadataViews.cdc"
-import NFTCatalog from "../utility/NFTCatalog.cdc"
+import "Toucans"
+import "MetadataViews"
+import "NFTCatalog"
 
-pub fun main(projectOwner: Address, projectId: String, collectionIdentifier: String, ids: [UInt64]): [NFTData] {
+access(all) fun main(projectOwner: Address, projectId: String, collectionIdentifier: String, ids: [UInt64]): [NFTData] {
     let catalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier)
           ?? panic("There is no NFT Catalog entry for this.")
     let contractAddressToString = catalogEntry.contractAddress.toString()
@@ -13,9 +13,8 @@ pub fun main(projectOwner: Address, projectId: String, collectionIdentifier: Str
       .concat(catalogEntry.contractName)
       .concat(".Collection")
     )!
-    let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                    .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
-                    ?? panic("User does not have a Toucans Collection")
+    let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
+                ?? panic("User does not have a Toucans Collection")
     let project = projectCollection.borrowProjectPublic(projectId: projectId)!
 
     let nftRefs = project.getNFTRefsByIDs(collectionType: collectionType, ids: ids)
@@ -40,13 +39,13 @@ pub fun main(projectOwner: Address, projectId: String, collectionIdentifier: Str
     return nftDatas
 }
 
-pub struct NFTData {
-    pub let uuid: UInt64
-    pub let id: UInt64
-    pub let name: String
-    pub let thumbnail: String
-    pub let serial: UInt64?
-    pub let traits: [MetadataViews.Trait]
+access(all) struct NFTData {
+    access(all) let uuid: UInt64
+    access(all) let id: UInt64
+    access(all) let name: String
+    access(all) let thumbnail: String
+    access(all) let serial: UInt64?
+    access(all) let traits: [MetadataViews.Trait]
 
     init(_ uuid: UInt64, _ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?, _ traits: MetadataViews.Traits?) {
         self.uuid = uuid

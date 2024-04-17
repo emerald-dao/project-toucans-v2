@@ -1,5 +1,5 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import Toucans from "../Toucans.cdc"
+import "FungibleToken"
+import "Toucans"
 
 transaction(
   projectOwner: Address, 
@@ -8,22 +8,21 @@ transaction(
   vaultReceiverPath: PublicPath
 ) {
 
-  let Project: &Toucans.Project{Toucans.ProjectPublic}
+  let Project: &Toucans.Project
   let Receiver: &{FungibleToken.Receiver}
   
-  prepare(signer: AuthAccount) {
-    if signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
-      signer.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
-      signer.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+  prepare(signer: auth(Storage, Capabilities) &Account) {
+    if signer.storage.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      signer.storage.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      let cap = signer.capabilities.storage.issue<&Toucans.Collection>(Toucans.CollectionStoragePath)
+      signer.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
     }
 
-    let collection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                    .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+    let collection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
 
-    self.Receiver = signer.getCapability(vaultReceiverPath)
-                      .borrow<&{FungibleToken.Receiver}>()
+    self.Receiver = signer.capabilities.borrow<&{FungibleToken.Receiver}>(vaultReceiverPath)
                       ?? panic("User does not have receiver set up.")
   }
   

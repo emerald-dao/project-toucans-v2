@@ -5,32 +5,32 @@ import Toucans from "./Toucans.cdc"
 import ToucansTokens from "./ToucansTokens.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
  
-pub contract TestingDAO: FungibleToken {
+access(all) contract TestingDAO: FungibleToken {
 
     // The amount of tokens in existance
-    pub var totalSupply: UFix64
+    access(all) var totalSupply: UFix64
     // nil if there is none
-    pub let maxSupply: UFix64?
+    access(all) let maxSupply: UFix64?
 
     // Paths
-    pub let VaultStoragePath: StoragePath
-    pub let ReceiverPublicPath: PublicPath
-    pub let VaultPublicPath: PublicPath
-    pub let MinterStoragePath: StoragePath
-    pub let AdministratorStoragePath: StoragePath
+    access(all) let VaultStoragePath: StoragePath
+    access(all) let ReceiverPublicPath: PublicPath
+    access(all) let VaultPublicPath: PublicPath
+    access(all) let MinterStoragePath: StoragePath
+    access(all) let AdministratorStoragePath: StoragePath
 
     // Events
-    pub event TokensInitialized(initialSupply: UFix64)
-    pub event TokensWithdrawn(amount: UFix64, from: Address?)
-    pub event TokensDeposited(amount: UFix64, to: Address?)
-    pub event TokensTransferred(amount: UFix64, from: Address, to: Address)
-    pub event TokensMinted(amount: UFix64)
-    pub event TokensBurned(amount: UFix64)
+    access(all) event TokensInitialized(initialSupply: UFix64)
+    access(all) event TokensWithdrawn(amount: UFix64, from: Address?)
+    access(all) event TokensDeposited(amount: UFix64, to: Address?)
+    access(all) event TokensTransferred(amount: UFix64, from: Address, to: Address)
+    access(all) event TokensMinted(amount: UFix64)
+    access(all) event TokensBurned(amount: UFix64)
 
-    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, MetadataViews.Resolver {
-        pub var balance: UFix64
+    access(all) resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, MetadataViews.Resolver {
+        access(all) var balance: UFix64
 
-        pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
+        access(all) fun withdraw(amount: UFix64): @FungibleToken.Vault {
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
 
@@ -40,7 +40,7 @@ pub contract TestingDAO: FungibleToken {
             return <- create Vault(balance: amount)
         }
 
-        pub fun deposit(from: @FungibleToken.Vault) {
+        access(all) fun deposit(from: @FungibleToken.Vault) {
             let vault: @Vault <- from as! @Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
@@ -55,13 +55,13 @@ pub contract TestingDAO: FungibleToken {
             }
         }
 
-        pub fun getViews(): [Type]{
+        access(all) fun getViews(): [Type]{
             return [Type<FungibleTokenMetadataViews.FTView>(),
                     Type<FungibleTokenMetadataViews.FTDisplay>(),
                     Type<FungibleTokenMetadataViews.FTVaultData>()]
         }
 
-        pub fun resolveView(_ view: Type): AnyStruct? {
+        access(all) fun resolveView(_ view: Type): AnyStruct? {
             switch view {
                 case Type<FungibleTokenMetadataViews.FTView>():
                     return FungibleTokenMetadataViews.FTView(
@@ -120,12 +120,12 @@ pub contract TestingDAO: FungibleToken {
         }
     }
 
-    pub fun createEmptyVault(): @Vault {
+    access(all) fun createEmptyVault(): @Vault {
         return <- create Vault(balance: 0.0)
     }
 
-    pub resource Minter: Toucans.Minter {
-        pub fun mint(amount: UFix64): @Vault {
+    access(all) resource Minter: Toucans.Minter {
+        access(all) fun mint(amount: UFix64): @Vault {
             post {
                 TestingDAO.maxSupply == nil || TestingDAO.totalSupply <= TestingDAO.maxSupply!: 
                     "Exceeded the max supply of tokens allowd."
@@ -139,7 +139,7 @@ pub contract TestingDAO: FungibleToken {
     // We follow this pattern of storage
     // so the (potentially) huge dictionary 
     // isn't loaded when the contract is imported
-    pub resource Administrator {
+    access(all) resource Administrator {
         // This is an experimental index and should
         // not be used for anything official
         // or monetary related
@@ -149,11 +149,11 @@ pub contract TestingDAO: FungibleToken {
             self.balances[address] = balance
         }
 
-        pub fun getBalance(address: Address): UFix64 {
+        access(all) fun getBalance(address: Address): UFix64 {
             return self.balances[address] ?? 0.0
         }
 
-        pub fun getBalances(): {Address: UFix64} {
+        access(all) fun getBalances(): {Address: UFix64} {
             return self.balances
         }
 
@@ -167,12 +167,12 @@ pub contract TestingDAO: FungibleToken {
         admin.setBalance(address: address, balance: balance)
     }
 
-    pub fun getBalance(address: Address): UFix64 {
+    access(all) fun getBalance(address: Address): UFix64 {
         let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
         return admin.getBalance(address: address)
     }
 
-    pub fun getBalances(): {Address: UFix64} {
+    access(all) fun getBalances(): {Address: UFix64} {
         let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
         return admin.getBalances()
     }

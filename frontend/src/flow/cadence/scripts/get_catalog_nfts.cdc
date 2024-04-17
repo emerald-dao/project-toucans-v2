@@ -1,14 +1,14 @@
-import NFTCatalog from "../utility/NFTCatalog.cdc"
-import NonFungibleToken from "../utility/NonFungibleToken.cdc"
-import MetadataViews from "../utility/MetadataViews.cdc"
+import "NFTCatalog"
+import "NonFungibleToken"
+import "MetadataViews"
 
-pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]} {
+access(all) fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]} {
   let res: {String: [NFTData]} = {}
-  let authAccount = getAuthAccount(user)
+  let authAccount = getAuthAccount<auth(Storage) &Account>(user)
   for collectionID in collectionIdentifiers {
       if let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionID) {
         let storagePath = data.collectionData.storagePath
-        if let userCollection = authAccount.borrow<&{MetadataViews.ResolverCollection}>(from: storagePath) {
+        if let userCollection = authAccount.storage.borrow<&{NonFungibleToken.Collection}>(from: storagePath) {
             if userCollection.getIDs().length == 0 {
                 continue
             }
@@ -17,7 +17,7 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
                 if index == 2000 {
                     break
                 }
-                let nft = userCollection.borrowViewResolver(id: id)
+                let nft = userCollection.borrowViewResolver(id: id)!
                 let display = nft.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
                 var serialNum: UInt64? = nil
                 if let serialView = nft.resolveView(Type<MetadataViews.Serial>()) {
@@ -36,11 +36,11 @@ pub fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]
   return res
 }
 
-pub struct NFTData {
-    pub let id: UInt64
-    pub let name: String
-    pub let thumbnail: String
-    pub let serial: UInt64?
+access(all) struct NFTData {
+    access(all) let id: UInt64
+    access(all) let name: String
+    access(all) let thumbnail: String
+    access(all) let serial: UInt64?
 
     init(_ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?) {
         self.id = id

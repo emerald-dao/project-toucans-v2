@@ -40,7 +40,7 @@ export const fetchStFlowPrice = async (flowPrice) => {
       // stable pair is generally better so we use 
       // that for now. but if we want to compare between
       // v1 and stable, then uncomment the code below
-      pub fun main(amountIn: UFix64, tokenInKey: String): UFix64 {
+      access(all) fun main(amountIn: UFix64, tokenInKey: String): UFix64 {
           // let pairv1Address: Address = 0x396c0cda3302d8c5
           // let pairv1PublicRef = getAccount(pairv1Address)
           //     .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)

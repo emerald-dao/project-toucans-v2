@@ -1,6 +1,6 @@
 import EmeraldIdentity from "../utility/EmeraldIdentity.cdc"
 import FIND from "../utility/FIND.cdc"
-pub fun main(discordIds: [String]): {String: AnyStruct} {
+access(all) fun main(discordIds: [String]): {String: AnyStruct} {
   // value is either a string (.find name) or address
   let answer: {String: AnyStruct} = {}
   for discordId in discordIds {

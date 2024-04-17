@@ -6,7 +6,7 @@ import SwapInterfaces from "../utility/SwapInterfaces.cdc"
 import SwapConfig from "../utility/SwapConfig.cdc"
 import SwapFactory from "../utility/SwapFactory.cdc"
 
-pub fun main(contractNames: [String], contractAddresses: [Address]): {String: Info} {
+access(all) fun main(contractNames: [String], contractAddresses: [Address]): {String: Info} {
   let answer: {String: Info} = {}
   for i, contractName in contractNames {
     let contract = getAccount(contractAddresses[i]).contracts.borrow<&FungibleToken>(name: contractName)!
@@ -37,10 +37,10 @@ pub fun main(contractNames: [String], contractAddresses: [Address]): {String: In
   return answer
 }
 
-pub struct Info {
-  pub let totalSupply: UFix64
-  pub let pairInfo: [AnyStruct]?
-  pub let paymentCurrency: String
+access(all) struct Info {
+  access(all) let totalSupply: UFix64
+  access(all) let pairInfo: [AnyStruct]?
+  access(all) let paymentCurrency: String
 
   init(_ ts: UFix64, _ pi: [AnyStruct]?, _ pc: String) {
     self.totalSupply = ts

@@ -2,11 +2,11 @@ import FungibleToken from "./utility/FungibleToken.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
 
-pub contract ToucansActions {
+access(all) contract ToucansActions {
 
-  pub struct interface Action {
-    pub fun getIntent(): String
-    pub fun getTitle(): String
+  access(all) struct interface Action {
+    access(all) fun getIntent(): String
+    access(all) fun getTitle(): String
   }
 
 
@@ -19,18 +19,18 @@ pub contract ToucansActions {
 
 
   // Transfers `amount` tokens from the treasury to `recipientVault`
-  pub struct WithdrawToken: Action {
-    pub let vaultType: Type
-    pub let recipientVault: Capability<&{FungibleToken.Receiver}>
-    pub let amount: UFix64
-    pub let tokenSymbol: String
-    pub let readableAmount: String
+  access(all) struct WithdrawToken: Action {
+    access(all) let vaultType: Type
+    access(all) let recipientVault: Capability<&{FungibleToken.Receiver}>
+    access(all) let amount: UFix64
+    access(all) let tokenSymbol: String
+    access(all) let readableAmount: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Withdraw ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(ToucansUtils.getFind(self.recipientVault.borrow()!.owner!.address))
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "Withdraw"
     }
 
@@ -46,18 +46,18 @@ pub contract ToucansActions {
     }
   }
 
-  pub struct BatchWithdrawToken: Action {
-    pub let vaultType: Type
-    pub let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}
-    pub let amounts: {Address: UFix64}
-    pub let tokenSymbol: String
-    pub let totalReadableAmount: String
+  access(all) struct BatchWithdrawToken: Action {
+    access(all) let vaultType: Type
+    access(all) let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}
+    access(all) let amounts: {Address: UFix64}
+    access(all) let tokenSymbol: String
+    access(all) let totalReadableAmount: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Withdraw a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the treasury to ").concat(self.amounts.keys.length.toString()).concat(" total wallets")
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "BatchWithdraw"
     }
 
@@ -76,18 +76,18 @@ pub contract ToucansActions {
   }
 
   // Withdraws NFTs from the treasury to 1 address
-  pub struct WithdrawNFTs: Action {
-    pub let collectionType: Type
-    pub let recipientCollection: Capability<&{NonFungibleToken.Receiver}>
-    pub let nftIDs: [UInt64]
-    pub let contractAddress: Address
-    pub let contractName: String
+  access(all) struct WithdrawNFTs: Action {
+    access(all) let collectionType: Type
+    access(all) let recipientCollection: Capability<&{NonFungibleToken.Receiver}>
+    access(all) let nftIDs: [UInt64]
+    access(all) let contractAddress: Address
+    access(all) let contractName: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.contractName).concat(" NFTs from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "WithdrawNFTs"
     }
 
@@ -105,17 +105,17 @@ pub contract ToucansActions {
   }
 
   // Mint `amount` tokens to `recipientVault`
-  pub struct MintTokens: Action {
-    pub let recipientVault: Capability<&{FungibleToken.Receiver}>
-    pub let amount: UFix64
-    pub let tokenSymbol: String
-    pub let readableAmount: String
+  access(all) struct MintTokens: Action {
+    access(all) let recipientVault: Capability<&{FungibleToken.Receiver}>
+    access(all) let amount: UFix64
+    access(all) let tokenSymbol: String
+    access(all) let readableAmount: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Mint ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(ToucansUtils.getFind(self.recipientVault.borrow()!.owner!.address))
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "Mint"
     }
 
@@ -128,17 +128,17 @@ pub contract ToucansActions {
     }
   }
 
-  pub struct BatchMintTokens: Action {
-    pub let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}
-    pub let amounts: {Address: UFix64}
-    pub let tokenSymbol: String
-    pub let totalReadableAmount: String
+  access(all) struct BatchMintTokens: Action {
+    access(all) let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>}
+    access(all) let amounts: {Address: UFix64}
+    access(all) let tokenSymbol: String
+    access(all) let totalReadableAmount: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Mint a total of ".concat(self.totalReadableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to ").concat(self.amounts.keys.length.toString()).concat(" total wallets")
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "BatchMint"
     }
 
@@ -156,16 +156,16 @@ pub contract ToucansActions {
   }
 
   // Mint `amount` tokens to the treasury directly
-  pub struct MintTokensToTreasury: Action {
-    pub let amount: UFix64
-    pub let tokenSymbol: String
-    pub let readableAmount: String
+  access(all) struct MintTokensToTreasury: Action {
+    access(all) let amount: UFix64
+    access(all) let tokenSymbol: String
+    access(all) let readableAmount: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Mint ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens to the Treasury")
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "MintToTreasury"
     }
 
@@ -177,14 +177,14 @@ pub contract ToucansActions {
   }
 
   // Add a new signer to the treasury
-  pub struct AddOneSigner: Action {
-    pub let signer: Address
+  access(all) struct AddOneSigner: Action {
+    access(all) let signer: Address
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Add ".concat(ToucansUtils.getFind(self.signer)).concat(" as a signer to the Treasury")
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "AddSigner"
     }
 
@@ -197,14 +197,14 @@ pub contract ToucansActions {
   // NOTE: If this reduces the # of signers to 
   // below the threshold, this will automatically
   // reduce the threshold to the # of signers
-  pub struct RemoveOneSigner: Action {
-    pub let signer: Address
+  access(all) struct RemoveOneSigner: Action {
+    access(all) let signer: Address
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Remove ".concat(ToucansUtils.getFind(self.signer)).concat(" as a signer from the Treasury")
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "RemoveSigner"
     }
 
@@ -214,14 +214,14 @@ pub contract ToucansActions {
   }
 
   // Update the threshold of signers
-  pub struct UpdateTreasuryThreshold: Action {
-    pub let threshold: UInt64
+  access(all) struct UpdateTreasuryThreshold: Action {
+    access(all) let threshold: UInt64
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Update the threshold of signers needed to execute an action in the Treasury to ".concat(self.threshold.toString())
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "UpdateThreshold"
     }
 
@@ -231,16 +231,16 @@ pub contract ToucansActions {
   }
 
   // burn your DAOs token from the treasury
-  pub struct BurnTokens: Action {
-    pub let amount: UFix64
-    pub let tokenSymbol: String
-    pub let readableAmount: String
+  access(all) struct BurnTokens: Action {
+    access(all) let amount: UFix64
+    access(all) let tokenSymbol: String
+    access(all) let readableAmount: String
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Burn ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens from the Treasury")
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "Burn"
     }
 
@@ -252,18 +252,18 @@ pub contract ToucansActions {
   }
 
   // burn your DAOs token from the treasury
-  pub struct LockTokens: Action {
-    pub let recipient: Address
-    pub let amount: UFix64
-    pub let tokenSymbol: String
-    pub let readableAmount: String
-    pub let unlockTime: UFix64
+  access(all) struct LockTokens: Action {
+    access(all) let recipient: Address
+    access(all) let amount: UFix64
+    access(all) let tokenSymbol: String
+    access(all) let readableAmount: String
+    access(all) let unlockTime: UFix64
 
-    pub fun getIntent(): String {
+    access(all) fun getIntent(): String {
       return "Lock ".concat(self.readableAmount).concat(" ").concat(self.tokenSymbol).concat(" tokens for ").concat(ToucansUtils.getFind(self.recipient)).concat(" until ").concat(self.unlockTime.toString())
     }
 
-    pub fun getTitle(): String {
+    access(all) fun getTitle(): String {
       return "LockTokens"
     }
 

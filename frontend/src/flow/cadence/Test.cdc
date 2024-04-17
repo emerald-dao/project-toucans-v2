@@ -1,5 +1,5 @@
-pub contract Test {
-  pub var gg: String 
+access(all) contract Test {
+  access(all) var gg: String 
 
   init() {
     self.gg = "gg"

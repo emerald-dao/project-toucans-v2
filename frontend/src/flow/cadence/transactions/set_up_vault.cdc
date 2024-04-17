@@ -1,33 +1,24 @@
-import ExampleToken from "../ExampleToken.cdc"
-import FungibleToken from "../utility/FungibleToken.cdc"
-import MetadataViews from "../utility/MetadataViews.cdc"
-import Toucans from "../Toucans.cdc"
+import "ExampleToken"
+import "FungibleToken"
+import "MetadataViews"
+import "Toucans"
 
 transaction() {
-  prepare(user: AuthAccount) {
-    if user.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
-      user.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
-      user.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+  prepare(user: auth(Storage, Capabilities) &Account) {
+    if user.storage.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      user.storage.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      let cap = user.capabilities.storage.issue<&Toucans.Collection>(Toucans.CollectionStoragePath)
+      user.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
     }
 
-    if user.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) == nil {
-      user.save(<- ExampleToken.createEmptyVault(), to: ExampleToken.VaultStoragePath)
-    }
+    if user.storage.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) == nil {
+      user.storage.save(<- ExampleToken.createEmptyVault(vaultType: Type<@ExampleToken.Vault>()), to: ExampleToken.VaultStoragePath)
 
-    if user.getCapability(ExampleToken.ReceiverPublicPath).borrow<&ExampleToken.Vault{FungibleToken.Receiver}>() == nil {
-      user.unlink(ExampleToken.ReceiverPublicPath)
-      user.link<&ExampleToken.Vault{FungibleToken.Receiver}>(
-          ExampleToken.ReceiverPublicPath,
-          target: ExampleToken.VaultStoragePath
-      )
-    }
+      let publicCap = user.capabilities.storage.issue<&ExampleToken.Vault>(ExampleToken.VaultStoragePath)
+      user.capabilities.publish(publicCap, at: ExampleToken.VaultPublicPath)
 
-    if user.getCapability(ExampleToken.VaultPublicPath).borrow<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>() == nil {
-      user.unlink(ExampleToken.VaultPublicPath)
-      user.link<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
-          ExampleToken.VaultPublicPath,
-          target: ExampleToken.VaultStoragePath
-      )
+      let receiverCap = user.capabilities.storage.issue<&ExampleToken.Vault>(ExampleToken.VaultStoragePath)
+      user.capabilities.publish(receiverCap, at: ExampleToken.ReceiverPublicPath)
     }
   }
 }

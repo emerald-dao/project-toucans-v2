@@ -1,5 +1,5 @@
 // This is the most basic script you can execute on Flow Network
-import Toucans from "../Toucans.cdc"
+import "Toucans"
 
 transaction(
   projectId: String, 
@@ -12,10 +12,10 @@ transaction(
   fundingTarget: UFix64?
 ) {
 
-  let Project: &Toucans.Project
+  let Project: auth(Toucans.Owner) &Toucans.Project
   
-  prepare(signer: AuthAccount) {
-    let collection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
+  prepare(signer: auth(Storage) &Account) {
+    let collection = signer.storage.borrow<auth(Toucans.Owner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProject(projectId: projectId) ?? panic("Project does not exist.")
   }

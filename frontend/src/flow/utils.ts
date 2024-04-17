@@ -158,7 +158,7 @@ export const getFindProfile = async (address: string) => {
 				import EmeraldIdentity from ${addresses.EmeraldIdentity}
 				import EmeraldIdentityDapper from ${addresses.EmeraldIdentity}
 				import EmeraldIdentityLilico from ${addresses.EmeraldIdentity}
-				pub fun main(address: Address): Profile? {
+				access(all) fun main(address: Address): Profile? {
 					if let name = FIND.reverseLookup(address) {
 						if let profile = FIND.lookup(name) {
 							return Profile(_name: name, _address: address, _avatar: profile.getAvatar())
@@ -183,7 +183,7 @@ export const getFindProfile = async (address: string) => {
 					return nil
 				}
 
-				pub fun helper(discordId: String): MiniProfile? {
+				access(all) fun helper(discordId: String): MiniProfile? {
 					let emeraldIDs: [Address] = EmeraldIdentity.getEmeraldIDs(discordID: discordId).values
 						for emeraldIDAddress in emeraldIDs {
 							if let name = FIND.reverseLookup(emeraldIDAddress) {
@@ -195,9 +195,9 @@ export const getFindProfile = async (address: string) => {
 						return nil
 				}
 
-				pub struct MiniProfile {
-					pub let name: String
-					pub let avatar: String
+				access(all) struct MiniProfile {
+					access(all) let name: String
+					access(all) let avatar: String
 
 					init(_name: String, _avatar: String) {
 						self.name = _name
@@ -205,10 +205,10 @@ export const getFindProfile = async (address: string) => {
 					}
 				}
 
-				pub struct Profile {
-					pub let name: String
-					pub let address: Address
-					pub let avatar: String
+				access(all) struct Profile {
+					access(all) let name: String
+					access(all) let address: Address
+					access(all) let avatar: String
 
 					init(_name: String, _address: Address, _avatar: String) {
 						self.name = _name
@@ -235,7 +235,7 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 			import EmeraldIdentity from ${addresses.EmeraldIdentity}
       import EmeraldIdentityDapper from ${addresses.EmeraldIdentity}
       import EmeraldIdentityLilico from ${addresses.EmeraldIdentity}
-      pub fun main(address: Address): Profile? {
+      access(all) fun main(address: Address): Profile? {
 				if let name = FIND.reverseLookup(address) {
 					if let profile = FIND.lookup(name) {
 						return Profile(_name: name, _address: address, _avatar: profile.getAvatar())
@@ -260,7 +260,7 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 				return nil
 			}
 
-      pub fun helper(discordId: String): MiniProfile? {
+      access(all) fun helper(discordId: String): MiniProfile? {
         let emeraldIDs: [Address] = EmeraldIdentity.getEmeraldIDs(discordID: discordId).values
 					for emeraldIDAddress in emeraldIDs {
 						if let name = FIND.reverseLookup(emeraldIDAddress) {
@@ -272,9 +272,9 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
           return nil
       }
 
-      pub struct MiniProfile {
-        pub let name: String
-				pub let avatar: String
+      access(all) struct MiniProfile {
+        access(all) let name: String
+				access(all) let avatar: String
 
 				init(_name: String, _avatar: String) {
 					self.name = _name
@@ -282,10 +282,10 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 				}
       }
 
-			pub struct Profile {
-				pub let name: String
-				pub let address: Address
-				pub let avatar: String
+			access(all) struct Profile {
+				access(all) let name: String
+				access(all) let address: Address
+				access(all) let avatar: String
 
 				init(_name: String, _address: Address, _avatar: String) {
 					self.name = _name
@@ -298,7 +298,7 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 		} else {
 			cadence = `
 			import FIND from ${addresses.FIND}
-			pub fun main(name: String): Profile? {
+			access(all) fun main(name: String): Profile? {
 				if let profile = FIND.lookup(name) {
 					return Profile(_name: name, _address: profile.getAddress(), _avatar: profile.getAvatar())
 				}
@@ -306,10 +306,10 @@ export const getFindProfileFromAddressOrName = async (input: string) => {
 				return nil
 			}
 
-			pub struct Profile {
-				pub let name: String
-				pub let address: Address
-				pub let avatar: String
+			access(all) struct Profile {
+				access(all) let name: String
+				access(all) let address: Address
+				access(all) let avatar: String
 
 				init(_name: String, _address: Address, _avatar: String) {
 					self.name = _name
@@ -334,7 +334,7 @@ export const getFindNamesBatch = async (addressList: string[]) => {
 		return await fcl.query({
 			cadence: `
         import FIND from ${addresses.FIND}
-        pub fun main(addresses: [Address]): {Address: String} {
+        access(all) fun main(addresses: [Address]): {Address: String} {
 					let answer: {Address: String} = {}
 					for address in addresses {
 						answer[address] = FIND.reverseLookup(address)
@@ -354,7 +354,7 @@ export const getFindProfilesBatch = async (addressList: string[]) => {
 		return await fcl.query({
 			cadence: `
         import FIND from ${addresses.FIND}
-        pub fun main(addresses: [Address]): {Address: Profile} {
+        access(all) fun main(addresses: [Address]): {Address: Profile} {
 					let answer: {Address: Profile} = {}
 					for address in addresses {
 						if let name = FIND.reverseLookup(address) {
@@ -365,10 +365,10 @@ export const getFindProfilesBatch = async (addressList: string[]) => {
 					return answer
         }
 
-				pub struct Profile {
-          pub let name: String
-          pub let address: Address
-          pub let avatar: String
+				access(all) struct Profile {
+          access(all) let name: String
+          access(all) let address: Address
+          access(all) let avatar: String
 
           init(_name: String, _address: Address, _avatar: String) {
             self.name = _name

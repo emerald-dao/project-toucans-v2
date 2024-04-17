@@ -1,37 +1,46 @@
-import FungibleToken from "./utility/FungibleToken.cdc"
-import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
-import MetadataViews from "./utility/MetadataViews.cdc"
-import Toucans from "./Toucans.cdc"
-import ToucansTokens from "./ToucansTokens.cdc"
-import FlowToken from "./utility/FlowToken.cdc"
-import ViewResolver from "./utility/ViewResolver.cdc"
+import "FungibleToken"
+import "FungibleTokenMetadataViews"
+import "MetadataViews"
+import "Toucans"
+import "ToucansTokens"
+import "FlowToken"
+import "ViewResolver"
  
-pub contract ExampleToken: FungibleToken, ViewResolver {
+access(all) contract ExampleToken: FungibleToken {
 
     // The amount of tokens in existance
-    pub var totalSupply: UFix64
+    access(all) var totalSupply: UFix64
     // nil if there is none
-    pub let maxSupply: UFix64?
+    access(all) let maxSupply: UFix64?
 
     // Paths
-    pub let VaultStoragePath: StoragePath
-    pub let ReceiverPublicPath: PublicPath
-    pub let VaultPublicPath: PublicPath
-    pub let MinterStoragePath: StoragePath
-    pub let AdministratorStoragePath: StoragePath
+    access(all) let VaultStoragePath: StoragePath
+    access(all) let ReceiverPublicPath: PublicPath
+    access(all) let VaultPublicPath: PublicPath
+    access(all) let MinterStoragePath: StoragePath
+    access(all) let AdministratorStoragePath: StoragePath
 
     // Events
-    pub event TokensInitialized(initialSupply: UFix64)
-    pub event TokensWithdrawn(amount: UFix64, from: Address?)
-    pub event TokensDeposited(amount: UFix64, to: Address?)
-    pub event TokensTransferred(amount: UFix64, from: Address, to: Address)
-    pub event TokensMinted(amount: UFix64)
-    pub event TokensBurned(amount: UFix64)
+    access(all) event TokensInitialized(initialSupply: UFix64)
+    access(all) event TokensWithdrawn(amount: UFix64, from: Address?)
+    access(all) event TokensDeposited(amount: UFix64, to: Address?)
+    access(all) event TokensTransferred(amount: UFix64, from: Address, to: Address)
+    access(all) event TokensMinted(amount: UFix64)
+    access(all) event TokensBurned(amount: UFix64)
 
-    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, MetadataViews.Resolver {
-        pub var balance: UFix64
+    access(all) resource Vault: FungibleToken.Vault {
+        access(all) var balance: UFix64
 
-        pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
+        /// Called when a fungible token is burned via the `Burner.burn()` method
+        access(contract) fun burnCallback() {
+            if self.balance > 0.0 {
+                emit TokensBurned(amount: self.balance)
+                ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
+            }
+            self.balance = 0.0
+        }
+
+        access(FungibleToken.Withdraw) fun withdraw(amount: UFix64): @{FungibleToken.Vault} {
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
 
@@ -41,7 +50,7 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
             return <- create Vault(balance: amount)
         }
 
-        pub fun deposit(from: @FungibleToken.Vault) {
+        access(all) fun deposit(from: @{FungibleToken.Vault}) {
             let vault: @Vault <- from as! @Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
@@ -56,44 +65,33 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
             }
         }
 
-        pub fun getViews(): [Type]{
-            return [
-                Type<FungibleTokenMetadataViews.FTView>(),
-                Type<FungibleTokenMetadataViews.FTDisplay>(),
-                Type<FungibleTokenMetadataViews.FTVaultData>()
-            ]
+        access(all) view fun getViews(): [Type] {
+            return ExampleToken.getContractViews(resourceType: nil)
         }
 
-        pub fun resolveView(_ view: Type): AnyStruct? {
-            switch view {
-                case Type<FungibleTokenMetadataViews.FTView>():
-                    return ExampleToken.resolveView(view)
-                case Type<FungibleTokenMetadataViews.FTDisplay>():
-                    return ExampleToken.resolveView(view)
-                case Type<FungibleTokenMetadataViews.FTVaultData>():
-                    return ExampleToken.resolveView(view)
-            }
-            return nil
+        access(all) fun resolveView(_ view: Type): AnyStruct? {
+            return ExampleToken.resolveContractView(resourceType: nil, viewType: view)
+        }
+
+        access(all) view fun isAvailableToWithdraw(amount: UFix64): Bool {
+            return amount <= self.balance
+        }
+
+        access(all) fun createEmptyVault(): @Vault {
+            return <- create Vault(balance: 0.0)
         }
   
         init(balance: UFix64) {
             self.balance = balance
         }
-
-        destroy() {
-            if (self.balance > 0.0) {
-                emit TokensBurned(amount: self.balance)
-                ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
-            }
-        }
     }
 
-    pub fun createEmptyVault(): @Vault {
+    access(all) fun createEmptyVault(vaultType: Type): @Vault {
         return <- create Vault(balance: 0.0)
     }
 
-    pub resource Minter: Toucans.Minter {
-        pub fun mint(amount: UFix64): @Vault {
+    access(all) resource Minter: Toucans.Minter {
+        access(all) fun mint(amount: UFix64): @Vault {
             post {
                 ExampleToken.maxSupply == nil || ExampleToken.totalSupply <= ExampleToken.maxSupply!: 
                     "Exceeded the max supply of tokens allowd."
@@ -107,7 +105,7 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
     // We follow this pattern of storage
     // so the (potentially) huge dictionary 
     // isn't loaded when the contract is imported
-    pub resource Administrator {
+    access(all) resource Administrator {
         // This is an experimental index and should
         // not be used for anything official
         // or monetary related
@@ -117,11 +115,11 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
             self.balances[address] = balance
         }
 
-        pub fun getBalance(address: Address): UFix64 {
+        access(all) view fun getBalance(address: Address): UFix64 {
             return self.balances[address] ?? 0.0
         }
 
-        pub fun getBalances(): {Address: UFix64} {
+        access(all) view fun getBalances(): {Address: UFix64} {
             return self.balances
         }
 
@@ -131,34 +129,35 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
     }
 
     access(contract) fun setBalance(address: Address, balance: UFix64) {
-        let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
+        let admin: &Administrator = self.account.storage.borrow<&Administrator>(from: self.AdministratorStoragePath)!
         admin.setBalance(address: address, balance: balance)
     }
 
-    pub fun getBalance(address: Address): UFix64 {
-        let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
+    access(all) view fun getBalance(address: Address): UFix64 {
+        let admin: &Administrator = self.account.storage.borrow<&Administrator>(from: self.AdministratorStoragePath)!
         return admin.getBalance(address: address)
     }
 
-    pub fun getBalances(): {Address: UFix64} {
-        let admin: &Administrator = self.account.borrow<&Administrator>(from: self.AdministratorStoragePath)!
+    access(all) view fun getBalances(): {Address: UFix64} {
+        let admin: &Administrator = self.account.storage.borrow<&Administrator>(from: self.AdministratorStoragePath)!
         return admin.getBalances()
     }
 
-    pub fun getViews(): [Type] {
+    access(all) view fun getContractViews(resourceType: Type?): [Type] {
         return [
             Type<FungibleTokenMetadataViews.FTView>(),
             Type<FungibleTokenMetadataViews.FTDisplay>(),
-            Type<FungibleTokenMetadataViews.FTVaultData>()
+            Type<FungibleTokenMetadataViews.FTVaultData>(),
+            Type<FungibleTokenMetadataViews.TotalSupply>()
         ]
     }
 
-    pub fun resolveView(_ view: Type): AnyStruct? {
-        switch view {
+    access(all) view fun resolveContractView(resourceType: Type?, viewType: Type): AnyStruct? {
+        switch viewType {
             case Type<FungibleTokenMetadataViews.FTView>():
                 return FungibleTokenMetadataViews.FTView(
-                    ftDisplay: self.resolveView(Type<FungibleTokenMetadataViews.FTDisplay>()) as! FungibleTokenMetadataViews.FTDisplay?,
-                    ftVaultData: self.resolveView(Type<FungibleTokenMetadataViews.FTVaultData>()) as! FungibleTokenMetadataViews.FTVaultData?
+                    ftDisplay: self.resolveContractView(resourceType: nil, viewType: Type<FungibleTokenMetadataViews.FTDisplay>()) as! FungibleTokenMetadataViews.FTDisplay?,
+                    ftVaultData: self.resolveContractView(resourceType: nil, viewType: Type<FungibleTokenMetadataViews.FTVaultData>()) as! FungibleTokenMetadataViews.FTVaultData?
                 )
             case Type<FungibleTokenMetadataViews.FTDisplay>():
                 let media = MetadataViews.Media(
@@ -190,13 +189,15 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
                     storagePath: ExampleToken.VaultStoragePath,
                     receiverPath: ExampleToken.ReceiverPublicPath,
                     metadataPath: ExampleToken.VaultPublicPath,
-                    providerPath: /private/ExampleTokenVault,
-                    receiverLinkedType: Type<&Vault{FungibleToken.Receiver}>(),
-                    metadataLinkedType: Type<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
-                    providerLinkedType: Type<&Vault{FungibleToken.Provider}>(),
-                    createEmptyVaultFunction: (fun (): @Vault {
-                        return <- ExampleToken.createEmptyVault()
+                    receiverLinkedType: Type<&Vault>(),
+                    metadataLinkedType: Type<&Vault>(),
+                    createEmptyVaultFunction: (fun(): @{FungibleToken.Vault} {
+                        return <-ExampleToken.createEmptyVault(vaultType: Type<@Vault>())
                     })
+                )
+            case Type<FungibleTokenMetadataViews.TotalSupply>():
+                return FungibleTokenMetadataViews.TotalSupply(
+                    totalSupply: ExampleToken.totalSupply
                 )
         }
         return nil
@@ -224,24 +225,21 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
  
       // Admin Setup
       let vault <- create Vault(balance: self.totalSupply)
-      self.account.save(<- vault, to: self.VaultStoragePath)
+      self.account.storage.save(<- vault, to: self.VaultStoragePath)
 
-      self.account.link<&Vault{FungibleToken.Receiver}>(
-          self.ReceiverPublicPath,
-          target: self.VaultStoragePath
-      )
+      let publicCap = self.account.capabilities.storage.issue<&Vault>(self.VaultStoragePath)
+      self.account.capabilities.publish(publicCap, at: self.VaultPublicPath)
 
-      self.account.link<&Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
-          self.VaultPublicPath,
-          target: self.VaultStoragePath
-      )
+      let receiverCap = self.account.capabilities.storage.issue<&Vault>(self.VaultStoragePath)
+      self.account.capabilities.publish(receiverCap, at: self.ReceiverPublicPath)
 
-      if self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
-        self.account.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
-        self.account.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+      if self.account.storage.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+        self.account.storage.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+        let cap = self.account.capabilities.storage.issue<&Toucans.Collection>(Toucans.CollectionStoragePath)
+        self.account.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
       }
 
-      let toucansProjectCollection = self.account.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
+      let toucansProjectCollection = self.account.storage.borrow<auth(Toucans.Owner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)!
       toucansProjectCollection.createProject(
         projectTokenInfo: ToucansTokens.TokenInfo("ExampleToken", self.account.address, "INSERT SYMBOL", self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 
@@ -252,7 +250,7 @@ pub contract ExampleToken: FungibleToken, ViewResolver {
         extra: _extra
       )
 
-      self.account.save(<- create Administrator(), to: self.AdministratorStoragePath)
+      self.account.storage.save(<- create Administrator(), to: self.AdministratorStoragePath)
 
       // Events
       emit TokensInitialized(initialSupply: self.totalSupply)

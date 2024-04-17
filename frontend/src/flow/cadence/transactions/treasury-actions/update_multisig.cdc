@@ -1,5 +1,5 @@
 import ToucansActions from "../../ToucansActions.cdc"
-import Toucans from "../../Toucans.cdc"
+import "Toucans"
 
 // An example of proposing an action.
 //
@@ -7,11 +7,10 @@ import Toucans from "../../Toucans.cdc"
 
 transaction(projectOwner: Address, projectId: String, newSigners: [Address], newThreshold: UInt64) {
 
-  let Project: &Toucans.Project{Toucans.ProjectPublic}
+  let Project: &Toucans.Project
   
-  prepare(signer: AuthAccount) {
-    let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+  prepare(signer: &Account) {
+    let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                   ?? panic("This is an incorrect address for project owner.")
     self.Project = projectCollection.borrowProjectPublic(projectId: projectId)
                   ?? panic("Project does not exist, at least in this collection.")
@@ -24,20 +23,20 @@ transaction(projectOwner: Address, projectId: String, newSigners: [Address], new
     // Propose the new action
     for newSigner in newSigners {
         if !existingSigners.contains(newSigner) {
-          let addSignerAction = ToucansActions.AddOneSigner(_signer: newSigner)
+          let addSignerAction = ToucansActions.AddOneSigner(newSigner)
           self.Project.proposeAddSigner(signer: newSigner)
         }
     }
 
     for oldSigner in existingSigners {
       if !newSigners.contains(oldSigner) {
-        let removeSignerAction = ToucansActions.RemoveOneSigner(_signer: oldSigner)
+        let removeSignerAction = ToucansActions.RemoveOneSigner(oldSigner)
         self.Project.proposeRemoveSigner(signer: oldSigner)
       }
     }
 
     if newThreshold != existingThreshold {
-      let updateThresholdAction = ToucansActions.UpdateTreasuryThreshold(_threshold: newThreshold)
+      let updateThresholdAction = ToucansActions.UpdateTreasuryThreshold(newThreshold)
       self.Project.proposeUpdateThreshold(threshold: newThreshold)
     }
   }
