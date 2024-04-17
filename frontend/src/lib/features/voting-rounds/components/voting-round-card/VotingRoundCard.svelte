@@ -15,8 +15,13 @@
 	export let showResults = false;
 	export let daoSigners: string[] = [];
 	export let showDeleteButton = false;
+	export let tokenContractAddress: string | null;
 
-	$: votingRoundStore = createVotingRoundStore(votingRound, $user.addr ?? null);
+	$: votingRoundStore = createVotingRoundStore(
+		votingRound,
+		$user.addr ?? null,
+		tokenContractAddress
+	);
 </script>
 
 <a

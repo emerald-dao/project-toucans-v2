@@ -19,7 +19,11 @@
 {#if roundData}
 	<div class="main-wrapper" id={`${roundData.id}`}>
 		{#key roundData.id}
-			<VotingWidget votingRound={roundData} daoActions={data.onChainData.actions} />
+			<VotingWidget
+				votingRound={roundData}
+				daoActions={data.onChainData.actions}
+				tokenContractAddress={data.generalInfo.contract_address}
+			/>
 		{/key}
 		<div class="row-3 row-space-between">
 			<Button

@@ -5,7 +5,6 @@ import { env as PublicEnv } from '$env/dynamic/public';
 import type { CurrentUserObject } from '@onflow/fcl';
 import { verifyAccountOwnership } from '$flow/utils.js';
 import { fail } from '@sveltejs/kit';
-import { invalidate } from '$app/navigation';
 
 const supabase = createClient<Database>(
 	PublicEnv.PUBLIC_SUPABASE_URL,

@@ -39,4 +39,6 @@ const validationSuite = create(
 	}
 );
 
+export const reset = validationSuite.reset;
+
 export default validationSuite;
