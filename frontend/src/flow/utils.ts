@@ -33,6 +33,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
 			.replace('"../utility/EmeraldIdentity.cdc"', addresses.EmeraldIdentity)
 			.replace('"../utility/stFlowToken.cdc"', addresses.stFlowToken)
+			.replace('"../utility/MigrationContractStaging.cdc"', addresses.Migration)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)

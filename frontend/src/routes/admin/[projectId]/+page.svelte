@@ -8,6 +8,7 @@
 		DaoStatsIntro
 	} from './_components';
 	import * as AdminPage from './_components/admin-page';
+	import StageContract from './_components/admin-page/StageContract.svelte';
 
 	export let data;
 </script>
@@ -15,6 +16,7 @@
 {#if data.activeDao}
 	<AdminPage.Root>
 		<DaoStatsIntro daoData={data.activeDao} />
+		<StageContract daoData={data.activeDao} />
 		<div class="secondary-wrapper">
 			<div class="column-8">
 				<GeneralStats daoData={data.activeDao} />
