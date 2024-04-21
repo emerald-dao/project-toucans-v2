@@ -50,7 +50,7 @@
 		{/if}
 		{#if daoData.onChainData.actions.length > 0}
 			<TabPanel>
-				<PendingActionsList {daoData} showDetail={false} />
+				<PendingActionsList {daoData} showDetail={true} />
 			</TabPanel>
 		{/if}
 	</Tabs>
