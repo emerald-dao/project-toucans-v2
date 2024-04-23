@@ -4,10 +4,13 @@
 	import Icon from '@iconify/svelte';
 	import type { Vault } from '../../../_types/user-data.interface';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
+	import { transferTokens } from './transferTokens';
 
 	export let vault: Vault;
 
 	let isFormValid: boolean;
+	let recipient: string;
+	let amount: number;
 </script>
 
 <Button color="neutral" size="x-small" on:click={() => getModal('transfer').open()} type="ghost">
@@ -37,9 +40,23 @@
 			projectId={vault.daoData.projectId}
 			currencyToDistribute={vault.daoData.tokenSymbol}
 			bind:isValid={isFormValid}
+			bind:amount
+			bind:address={recipient}
 		/>
 		<div class="column align-end">
-			<Button color="primary" size="small" state={isFormValid ? 'active' : 'disabled'}>
+			<Button
+				color="primary"
+				size="small"
+				state={isFormValid ? 'active' : 'disabled'}
+				on:click={() =>
+					transferTokens(
+						recipient,
+						amount,
+						vault.daoData.owner,
+						vault.daoData.projectId,
+						vault.daoData.tokenSymbol
+					)}
+			>
 				Transfer
 				<Icon icon="tabler:arrow-up-right" />
 			</Button>
