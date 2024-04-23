@@ -60,7 +60,7 @@
 		</InputWrapper>
 		{#if res.isValid('address') && address}
 			<div in:fly|local={{ duration: 400, x: -5 }} class="avatar-wrapper">
-				<UserAvatar {address} fontSize="var(--font-size-0)" />
+				<UserAvatar {address} />
 			</div>
 		{/if}
 	</div>
