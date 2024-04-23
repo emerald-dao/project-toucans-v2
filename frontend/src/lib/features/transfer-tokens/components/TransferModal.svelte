@@ -4,6 +4,8 @@
 	import Icon from '@iconify/svelte';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
 	import { transferTokens } from '../actions/transferTokens';
+	import { invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	export let tokenSymbol: string;
 	export let daoName: string;
@@ -15,6 +17,30 @@
 	let isFormValid: boolean;
 	let recipient: string;
 	let amount: number;
+
+	let transactionState: 'success' | 'error' | null = null;
+
+	const handleTransferTokens = async () => {
+		if (isFormValid) {
+			const transactionResult = await transferTokens(
+				recipient,
+				amount,
+				projectOwner,
+				projectId,
+				tokenSymbol
+			);
+
+			transactionState = transactionResult.state;
+
+			if (transactionState === 'success') {
+				if ($page.url.pathname.startsWith('/p/')) {
+					invalidate('app:discover');
+				} else if ($page.url.pathname.startsWith('/u/')) {
+					invalidate('app:userprofile');
+				}
+			}
+		}
+	};
 </script>
 
 <Button color="neutral" size="x-small" on:click={() => getModal('transfer').open()}>
@@ -22,39 +48,51 @@
 	<Icon icon="tabler:arrow-up-right" />
 </Button>
 <Modal id={'transfer'}>
-	<div class="main-wrapper column-8">
-		<h3>Transfer tokens</h3>
-		<div class="available-tokens row-2 align-center">
-			<div class="token-icon">
-				<img src={logoUrl} on:error={(e) => handleLogoImgError(e)} alt="Coin Logo" class="logo" />
+	{#if transactionState === null}
+		<div class="main-wrapper column-8">
+			<h3>Transfer tokens</h3>
+			<div class="available-tokens row-2 align-center">
+				<div class="token-icon">
+					<img src={logoUrl} on:error={(e) => handleLogoImgError(e)} alt="Coin Logo" class="logo" />
+				</div>
+				<div class="token-details">
+					<p class="token-name">{daoName}</p>
+					<Currency amount={userBalance} currency={tokenSymbol} fontSize="var(--font-size-1)" />
+				</div>
 			</div>
-			<div class="token-details">
-				<p class="token-name">{daoName}</p>
-				<Currency amount={userBalance} currency={tokenSymbol} />
+			<TransferTokensForm
+				availableBalance={userBalance}
+				{projectOwner}
+				{projectId}
+				currencyToDistribute={tokenSymbol}
+				bind:isValid={isFormValid}
+				bind:amount
+				bind:address={recipient}
+			/>
+			<div class="column align-end">
+				<Button
+					color="neutral"
+					size="small"
+					width="full-width"
+					state={isFormValid ? 'active' : 'disabled'}
+					on:click={handleTransferTokens}
+				>
+					Transfer
+					<Icon icon="tabler:arrow-up-right" />
+				</Button>
 			</div>
 		</div>
-		<TransferTokensForm
-			availableBalance={userBalance}
-			{projectOwner}
-			{projectId}
-			currencyToDistribute={tokenSymbol}
-			bind:isValid={isFormValid}
-			bind:amount
-			bind:address={recipient}
-		/>
-		<div class="column align-end">
-			<Button
-				color="neutral"
-				size="small"
-				width="full-width"
-				state={isFormValid ? 'active' : 'disabled'}
-				on:click={() => transferTokens(recipient, amount, projectOwner, projectId, tokenSymbol)}
-			>
-				Transfer
-				<Icon icon="tabler:arrow-up-right" />
-			</Button>
+	{:else if transactionState === 'success'}
+		<div class="main-wrapper column-8">
+			<h3>Transfer tokens</h3>
+			<p>Transaction successful!</p>
 		</div>
-	</div>
+	{:else if transactionState === 'error'}
+		<div class="main-wrapper column-8">
+			<h3>Transfer tokens</h3>
+			<p>Transaction failed. Please try again.</p>
+		</div>
+	{/if}
 </Modal>
 
 <style lang="scss">
@@ -69,7 +107,7 @@
 		.available-tokens {
 			border: 1px solid var(--clr-border-primary);
 			border-radius: var(--radius-2);
-			padding: var(--space-2);
+			padding: var(--space-3);
 			background-color: var(--clr-surface-primary);
 
 			.token-icon {
@@ -82,7 +120,9 @@
 			}
 
 			.token-name {
+				font-size: var(--font-size-1);
 				color: var(--clr-heading-main);
+				margin-bottom: -4px;
 			}
 		}
 	}

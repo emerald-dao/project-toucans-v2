@@ -7,7 +7,9 @@ import { fetchAllProjectRecentDonateOrPurchaseEventsByUser } from '$lib/utilitie
 import { fetchFlowPrice } from '$lib/utilities/fetchFlowPrice';
 import type { UserData, Vault } from './_types/user-data.interface';
 
-export const load = async ({ params, fetch }): Promise<UserData> => {
+export const load = async ({ params, fetch, depends }): Promise<UserData> => {
+	depends('app:userprofile');
+
 	const profile = await fetch(`/api/get-profile/${params.address}`).then(
 		async (data) => (await data.json()) as Profile
 	);

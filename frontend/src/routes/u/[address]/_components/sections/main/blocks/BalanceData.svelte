@@ -3,9 +3,9 @@
 	import { Currency } from '@emerald-dao/component-library';
 	import DashboardHeading from '../../../atoms/DashboardHeading.svelte';
 	import type { UserData } from '../../../../_types/user-data.interface';
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const userData: UserData = getContext('userData');
+	export let userData: UserData;
 
 	const vaults = [...userData.vaults];
 

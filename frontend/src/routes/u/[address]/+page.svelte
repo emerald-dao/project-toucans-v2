@@ -10,15 +10,14 @@
 
 	let selectedVaultStore: Writable<null | number> = writable(null);
 
-	setContext('userData', data);
 	setContext('selectedVault', selectedVaultStore);
 </script>
 
 <OpenGraph title={data.profile.name} />
 
 <div class="container section">
-	<UserSidebar />
-	<UserMain />
+	<UserSidebar userData={data} />
+	<UserMain userData={data} />
 </div>
 {#if $selectedVaultStore !== null}
 	<VaultDetail userData={data} {selectedVaultStore} />
