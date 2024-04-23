@@ -6,7 +6,8 @@
 	import { transferTokens } from '../actions/transferTokens';
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
+	import transferValidation from '../validation/transferValidation';
 
 	export let tokenSymbol: string;
 	export let daoName: string;
@@ -23,11 +24,14 @@
 
 	let transactionState: 'success' | 'error' | null = null;
 
-	onMount(() => {
+	const handleOpenModal = () => {
 		recipient = '';
 		amount = 0;
 		transactionState = null;
-	});
+		transferValidation.reset();
+
+		getModal('transfer').open();
+	};
 
 	const handleTransferTokens = async () => {
 		if (isFormValid) {
@@ -52,7 +56,7 @@
 	};
 </script>
 
-<Button color="neutral" size="x-small" on:click={() => getModal('transfer').open()}>
+<Button color="neutral" size="x-small" on:click={handleOpenModal}>
 	Transfer
 	<Icon icon="tabler:arrow-up-right" />
 </Button>
