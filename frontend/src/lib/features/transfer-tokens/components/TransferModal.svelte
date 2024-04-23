@@ -44,8 +44,9 @@
 		/>
 		<div class="column align-end">
 			<Button
-				color="primary"
+				color="neutral"
 				size="small"
+				width="full-width"
 				state={isFormValid ? 'active' : 'disabled'}
 				on:click={() => transferTokens(recipient, amount, projectOwner, projectId, tokenSymbol)}
 			>
