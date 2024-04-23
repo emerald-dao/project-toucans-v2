@@ -2,18 +2,22 @@
 	import TransferTokensForm from './TransferTokensForm.svelte';
 	import { Button, Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import type { Vault } from '../../../_types/user-data.interface';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
-	import { transferTokens } from './transferTokens';
+	import { transferTokens } from '../actions/transferTokens';
 
-	export let vault: Vault;
+	export let tokenSymbol: string;
+	export let daoName: string;
+	export let projectOwner: string | undefined;
+	export let projectId: string | undefined;
+	export let logoUrl: string;
+	export let userBalance: number;
 
 	let isFormValid: boolean;
 	let recipient: string;
 	let amount: number;
 </script>
 
-<Button color="neutral" size="x-small" on:click={() => getModal('transfer').open()} type="ghost">
+<Button color="neutral" size="x-small" on:click={() => getModal('transfer').open()}>
 	Transfer
 	<Icon icon="tabler:arrow-up-right" />
 </Button>
@@ -22,23 +26,18 @@
 		<h3>Transfer tokens</h3>
 		<div class="available-tokens row-2 align-center">
 			<div class="token-icon">
-				<img
-					src={vault.daoData.logoUrl}
-					on:error={(e) => handleLogoImgError(e)}
-					alt="Coin Logo"
-					class="logo"
-				/>
+				<img src={logoUrl} on:error={(e) => handleLogoImgError(e)} alt="Coin Logo" class="logo" />
 			</div>
 			<div class="token-details">
-				<p class="token-name">{vault.daoData.name}</p>
-				<Currency amount={vault.balance} currency={vault.daoData.tokenSymbol} />
+				<p class="token-name">{daoName}</p>
+				<Currency amount={userBalance} currency={tokenSymbol} />
 			</div>
 		</div>
 		<TransferTokensForm
-			availableBalance={vault.balance}
-			projectOwner={vault.daoData.owner}
-			projectId={vault.daoData.projectId}
-			currencyToDistribute={vault.daoData.tokenSymbol}
+			availableBalance={userBalance}
+			{projectOwner}
+			{projectId}
+			currencyToDistribute={tokenSymbol}
 			bind:isValid={isFormValid}
 			bind:amount
 			bind:address={recipient}
@@ -48,14 +47,7 @@
 				color="primary"
 				size="small"
 				state={isFormValid ? 'active' : 'disabled'}
-				on:click={() =>
-					transferTokens(
-						recipient,
-						amount,
-						vault.daoData.owner,
-						vault.daoData.projectId,
-						vault.daoData.tokenSymbol
-					)}
+				on:click={() => transferTokens(recipient, amount, projectOwner, projectId, tokenSymbol)}
 			>
 				Transfer
 				<Icon icon="tabler:arrow-up-right" />

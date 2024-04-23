@@ -1,6 +1,6 @@
 import { canReceiveProjectToken, canReceiveToucansToken } from '$flow/actions';
 import { ECurrencies } from '$lib/types/common/enums';
-import { create, enforce, test, only, skipWhen, omitWhen } from 'vest';
+import { create, enforce, test, only, skipWhen } from 'vest';
 
 const transferValidation = create(
 	(
@@ -8,8 +8,8 @@ const transferValidation = create(
 		amount: number,
 		currentField,
 		availableBalance: number,
-		projectOwner: string,
-		projectId: string,
+		projectOwner: string | undefined,
+		projectId: string | undefined,
 		currencyToDistribute: ECurrencies | string
 	) => {
 		only(currentField);
@@ -45,8 +45,8 @@ const transferValidation = create(
 
 const checkAddress = async (
 	address: string,
-	projectOwner: string,
-	projectId: string,
+	projectOwner: string | undefined,
+	projectId: string | undefined,
 	currencyToDistribute: ECurrencies | string
 ) => {
 	return new Promise((resolve, reject) => {
@@ -59,7 +59,11 @@ const checkAddress = async (
 			) {
 				success = await canReceiveToucansToken(address, currencyToDistribute);
 			} else {
-				success = await canReceiveProjectToken(projectOwner, projectId, address);
+				success = await canReceiveProjectToken(
+					projectOwner as string,
+					projectId as string,
+					address
+				);
 			}
 
 			if (success) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TransferModal from './../transfer-modal/TransferModal.svelte';
+	import TransferModal from '$lib/features/transfer-tokens/components/TransferModal.svelte';
 	import type { UserData } from '../../../_types/user-data.interface';
 	import { fly, fade } from 'svelte/transition';
 	import { Currency } from '@emerald-dao/component-library';
@@ -12,6 +12,7 @@
 	import ProjectLockTokens from '../../atoms/ProjectLockTokens.svelte';
 	import { page } from '$app/stores';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let userData: UserData;
 	export let selectedVaultStore: Writable<number | null>;
@@ -84,7 +85,16 @@
 							decimalNumbers={2}
 						/>
 					</div>
-					<TransferModal {vault} />
+					{#if $user && $user.addr && $user.addr === $page.params.address}
+						<TransferModal
+							tokenSymbol={vault.daoData.tokenSymbol}
+							daoName={vault.daoData.name}
+							projectOwner={vault.daoData.owner}
+							projectId={vault.daoData.projectId}
+							logoUrl={vault.daoData.logoUrl}
+							userBalance={vault.balance}
+						/>
+					{/if}
 				</div>
 				<div class="column-space-between">
 					<div>

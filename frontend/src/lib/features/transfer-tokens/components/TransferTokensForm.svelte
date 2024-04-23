@@ -3,12 +3,12 @@
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import type { SuiteRunResult } from 'vest';
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
-	import transferValidation from './transferValidation';
+	import transferValidation from '../validation/transferValidation';
 
 	export let isValid: boolean = false;
 	export let availableBalance: number;
-	export let projectOwner: string;
-	export let projectId: string;
+	export let projectOwner: string | undefined;
+	export let projectId: string | undefined;
 	export let currencyToDistribute: string;
 	export let amount = 0;
 	export let address = '';

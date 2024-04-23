@@ -4,8 +4,8 @@ import { ECurrencies } from '$lib/types/common/enums';
 export const transferTokens = async (
 	recipient: string,
 	amount: number,
-	projectOwner: string,
-	projectId: string,
+	projectOwner: string | undefined,
+	projectId: string | undefined,
 	currencyToDistribute: ECurrencies | string
 ) => {
 	if (
@@ -15,5 +15,11 @@ export const transferTokens = async (
 	) {
 		return await transferTokenExecution(amount.toString(), recipient, currencyToDistribute);
 	}
-	return await transferProjectTokenExecution(amount.toString(), recipient, projectId, projectOwner);
+
+	return await transferProjectTokenExecution(
+		amount.toString(),
+		recipient,
+		projectId as string,
+		projectOwner as string
+	);
 };
