@@ -30,7 +30,7 @@ const getUserVaults = async (address: string): Promise<Vault[]> => {
 	});
 
 	const balances = await getProjectBalances(address, y);
-	console.log('balances', balances)
+	console.log('balances', balances);
 
 	const vaults: Vault[] = [];
 
@@ -45,20 +45,40 @@ const getUserVaults = async (address: string): Promise<Vault[]> => {
 					owner: project.owner
 				},
 				balance: balances[project.project_id],
-				tokenValue: rankedProjects.find(x => x.project_id == project.project_id)?.price || 0
+				tokenValue: rankedProjects.find((x) => x.project_id == project.project_id)?.price || 0
 			});
 		}
 	}
 
-	vaults.push({
-		daoData: {
-			name: 'Flow',
-			logoUrl: '/flow-logo.png',
-			tokenSymbol: 'FLOW'
+	vaults.push(
+		{
+			daoData: {
+				name: 'Flow Token',
+				logoUrl: '/flow-logo.png',
+				tokenSymbol: 'FLOW'
+			},
+			balance: balances['Flow'],
+			tokenValue: await fetchFlowPrice()
 		},
-		balance: balances["Flow"],
-		tokenValue: await fetchFlowPrice()
-	})
+		{
+			daoData: {
+				name: 'Fiat Token',
+				logoUrl: '/usdc-logo.png',
+				tokenSymbol: 'USDC'
+			},
+			balance: balances['USDC'],
+			tokenValue: 1
+		},
+		{
+			daoData: {
+				name: 'Staked Flow Token',
+				logoUrl: '/stflow-logo.png',
+				tokenSymbol: 'stFlow'
+			},
+			balance: balances['stFlow'],
+			tokenValue: 0
+		}
+	);
 
 	// sort daos by highest value
 	vaults.sort((a, b) => {

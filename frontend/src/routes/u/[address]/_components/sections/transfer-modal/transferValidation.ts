@@ -37,8 +37,8 @@ const transferValidation = create(
 			enforce(amount).greaterThan(0);
 		});
 
-		test('amount', `Treasury doesn't have enough tokens`, () => {
-			enforce(amount).lessThan(availableBalance);
+		test('amount', `You don't have enough tokens to transfer`, () => {
+			enforce(amount).lessThanOrEquals(availableBalance);
 		});
 	}
 );
@@ -52,7 +52,11 @@ const checkAddress = async (
 	return new Promise((resolve, reject) => {
 		setTimeout(async () => {
 			let success;
-			if (currencyToDistribute == ECurrencies.FLOW || currencyToDistribute == ECurrencies.USDC) {
+			if (
+				currencyToDistribute == ECurrencies.FLOW ||
+				currencyToDistribute == ECurrencies.USDC ||
+				currencyToDistribute == ECurrencies.stFlow
+			) {
 				success = await canReceiveToucansToken(address, currencyToDistribute);
 			} else {
 				success = await canReceiveProjectToken(projectOwner, projectId, address);
