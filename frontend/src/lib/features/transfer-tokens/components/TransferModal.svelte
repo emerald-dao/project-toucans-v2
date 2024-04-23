@@ -6,6 +6,7 @@
 	import { transferTokens } from '../actions/transferTokens';
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let tokenSymbol: string;
 	export let daoName: string;
@@ -18,7 +19,15 @@
 	let recipient: string;
 	let amount: number;
 
+	const dispatch = createEventDispatcher();
+
 	let transactionState: 'success' | 'error' | null = null;
+
+	onMount(() => {
+		recipient = '';
+		amount = 0;
+		transactionState = null;
+	});
 
 	const handleTransferTokens = async () => {
 		if (isFormValid) {
@@ -33,9 +42,9 @@
 			transactionState = transactionResult.state;
 
 			if (transactionState === 'success') {
-				if ($page.url.pathname.startsWith('/p/')) {
-					invalidate('app:discover');
-				} else if ($page.url.pathname.startsWith('/u/')) {
+				dispatch('transferSuccess');
+
+				if ($page.url.pathname.startsWith('/u/')) {
 					invalidate('app:userprofile');
 				}
 			}

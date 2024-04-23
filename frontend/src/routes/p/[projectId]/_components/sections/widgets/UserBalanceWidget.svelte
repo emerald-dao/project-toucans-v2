@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Vault } from './../../../../../u/[address]/_types/user-data.interface.ts';
 	import { setUpVaultExecution } from '$flow/actions';
 	import TransferModal from '$lib/features/transfer-tokens/components/TransferModal.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
@@ -7,6 +6,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let daoData: DAOProject;
+	export let reloadUserBalance: () => void;
 
 	async function setUpVault() {
 		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
@@ -34,6 +34,7 @@
 				projectId={daoData.generalInfo.project_id}
 				logoUrl={daoData.generalInfo.logo}
 				userBalance={daoData.userBalance}
+				on:transferSuccess={reloadUserBalance}
 			/>
 		</div>
 	{:else if !daoData.vaultSetup}
