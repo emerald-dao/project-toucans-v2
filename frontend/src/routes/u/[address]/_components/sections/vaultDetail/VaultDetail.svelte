@@ -2,7 +2,7 @@
 	import TransferModal from './../transfer-modal/TransferModal.svelte';
 	import type { UserData } from '../../../_types/user-data.interface';
 	import { fly, fade } from 'svelte/transition';
-	import { Button, Currency, Modal, getModal } from '@emerald-dao/component-library';
+	import { Currency } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import type { Writable } from 'svelte/store';
 	import TransactionsList from '../../atoms/TransactionsList.svelte';
@@ -84,7 +84,7 @@
 							decimalNumbers={2}
 						/>
 					</div>
-					<TransferModal />
+					<TransferModal {vault} />
 				</div>
 				<div class="column-space-between">
 					<div>

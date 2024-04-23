@@ -1,6 +1,13 @@
 <script lang="ts">
-	import { Button, Modal, getModal } from '@emerald-dao/component-library';
+	import TransferTokensForm from './TransferTokensForm.svelte';
+	import { Button, Currency, Modal, getModal } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
+	import type { Vault } from '../../../_types/user-data.interface';
+	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
+
+	export let vault: Vault;
+
+	let isFormValid: boolean;
 </script>
 
 <Button color="neutral" size="x-small" on:click={() => getModal('transfer').open()} type="ghost">
@@ -8,32 +15,31 @@
 	<Icon icon="tabler:arrow-up-right" />
 </Button>
 <Modal id={'transfer'}>
-	<div class="column-8">
+	<div class="main-wrapper column-8">
 		<h3>Transfer tokens</h3>
 		<div class="available-tokens row-2 align-center">
 			<div class="token-icon">
 				<img
-					src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579"
-					alt="Bitcoin"
+					src={vault.daoData.logoUrl}
+					on:error={(e) => handleLogoImgError(e)}
+					alt="Coin Logo"
+					class="logo"
 				/>
 			</div>
 			<div class="token-details">
-				<div class="token-name">Bitcoin</div>
-				<div class="token-amount">0.00000000</div>
+				<p class="token-name">{vault.daoData.name}</p>
+				<Currency amount={vault.balance} currency={vault.daoData.tokenSymbol} />
 			</div>
 		</div>
-		<form class="column-2">
-			<div class="input-group">
-				<label for="recipient">Recipient</label>
-				<input type="text" id="recipient" />
-			</div>
-			<div class="input-group">
-				<label for="amount">Amount</label>
-				<input type="number" id="amount" />
-			</div>
-		</form>
+		<TransferTokensForm
+			availableBalance={vault.balance}
+			projectOwner={vault.daoData.owner}
+			projectId={vault.daoData.projectId}
+			currencyToDistribute={vault.daoData.tokenSymbol}
+			bind:isValid={isFormValid}
+		/>
 		<div class="column align-end">
-			<Button color="primary" size="small">
+			<Button color="primary" size="small" state={isFormValid ? 'active' : 'disabled'}>
 				Transfer
 				<Icon icon="tabler:arrow-up-right" />
 			</Button>
@@ -42,23 +48,32 @@
 </Modal>
 
 <style lang="scss">
-	h3 {
-		font-size: var(--font-size-5);
-		text-align: center;
-	}
+	.main-wrapper {
+		width: 300px;
 
-	.available-tokens {
-		border: 1px solid var(--clr-border-primary);
-		border-radius: var(--radius-2);
-		padding: var(--space-2);
-		background-color: var(--clr-surface-primary);
-
-		.token-icon {
-			width: 40px;
+		h3 {
+			font-size: var(--font-size-5);
+			text-align: center;
 		}
 
-		.token-name {
-			color: var(--clr-heading-main);
+		.available-tokens {
+			border: 1px solid var(--clr-border-primary);
+			border-radius: var(--radius-2);
+			padding: var(--space-2);
+			background-color: var(--clr-surface-primary);
+
+			.token-icon {
+				width: 40px;
+				height: 40px;
+
+				img {
+					border-radius: 50%;
+				}
+			}
+
+			.token-name {
+				color: var(--clr-heading-main);
+			}
 		}
 	}
 </style>
