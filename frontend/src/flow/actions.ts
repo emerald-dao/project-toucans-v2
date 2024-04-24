@@ -29,6 +29,8 @@ import setUpVaultTx from './cadence/transactions/set_up_vault.cdc?raw';
 import addAllowedNFTCollectionsTx from './cadence/transactions/add_allowed_nft_collections.cdc?raw';
 import removeAllowedNFTCollectionsTx from './cadence/transactions/remove_allowed_nft_collections.cdc?raw';
 import togglePurchasingTx from './cadence/transactions/toggle_purchasing.cdc?raw';
+import transferTokenTx from './cadence/transactions/transfer_token.cdc?raw';
+import transferProjectTokenTx from './cadence/transactions/transfer_project_token.cdc?raw';
 
 // Treasury Actions
 import withdrawTokensTx from './cadence/transactions/treasury-actions/withdraw_tokens.cdc?raw';
@@ -433,6 +435,49 @@ export const donateExecution = (
 		() => donate(projectOwner, projectId, amount, message, currency),
 		saveEventAction
 	);
+
+const transferToken = async (amount: string, recipient: string, currency: ECurrencies) => {
+	let txCode = transferTokenTx;
+	if (currency === ECurrencies.USDC) {
+		txCode = switchToToken(txCode, ECurrencies.USDC);
+	} else if (currency === ECurrencies.stFlow) {
+		txCode = switchToToken(txCode, ECurrencies.stFlow);
+	}
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(txCode),
+		args: (arg, t) => [arg(recipient, t.Address), arg(formatFix(amount), t.UFix64)],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const transferTokenExecution = (amount: string, recipient: string, currency: ECurrencies) =>
+	executeTransaction(() => transferToken(amount, recipient, currency));
+
+const transferProjectToken = async (
+	amount: string,
+	recipient: string,
+	projectId: string,
+	contractAddress: string
+) => {
+	return await fcl.mutate({
+		cadence: replaceWithProperValues(transferProjectTokenTx, projectId, contractAddress),
+		args: (arg, t) => [arg(recipient, t.Address), arg(formatFix(amount), t.UFix64)],
+		proposer: fcl.authz,
+		payer: fcl.authz,
+		authorizations: [fcl.authz],
+		limit: 9999
+	});
+};
+
+export const transferProjectTokenExecution = (
+	amount: string,
+	recipient: string,
+	projectId: string,
+	contractAddress: string
+) => executeTransaction(() => transferProjectToken(amount, recipient, projectId, contractAddress));
 
 const donateNFTs = async (
 	projectOwner: string,
@@ -1378,10 +1423,7 @@ export const hasProjectVaultSetup = async (
 	}
 };
 
-export const canReceiveToucansToken = async (
-	userAddress: string,
-	tokenSymbol: ECurrencies | string
-) => {
+export const canReceiveToucansToken = async (userAddress: string, tokenSymbol: ECurrencies) => {
 	try {
 		const response = await fcl.query({
 			cadence: replaceWithProperValues(canReceiveToucansTokenScript),

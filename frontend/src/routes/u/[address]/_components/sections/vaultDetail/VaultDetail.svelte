@@ -1,9 +1,9 @@
 <script lang="ts">
+	import TransferModal from '$lib/features/transfer-tokens/components/TransferModal.svelte';
 	import type { UserData } from '../../../_types/user-data.interface';
 	import { fly, fade } from 'svelte/transition';
 	import { Currency } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
-	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import TransactionsList from '../../atoms/TransactionsList.svelte';
 	import { getLockedTokens } from '../../../actions/getLockedTokens';
@@ -12,9 +12,10 @@
 	import ProjectLockTokens from '../../atoms/ProjectLockTokens.svelte';
 	import { page } from '$app/stores';
 	import { handleLogoImgError } from '$lib/utilities/handleLogoImgError';
+	import { user } from '$stores/flow/FlowStore';
 
-	const userData: UserData = getContext('userData');
-	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
+	export let userData: UserData;
+	export let selectedVaultStore: Writable<number | null>;
 
 	let projectLockTokens: LockedVaultDetails[] = [];
 
@@ -64,7 +65,7 @@
 						<img
 							src={vault.daoData.logoUrl}
 							on:error={(e) => handleLogoImgError(e)}
-							alt="Emerald City Logo"
+							alt="Coin Logo"
 							class="logo"
 						/>
 						<h4 class="w-medium">{vault.daoData.name}</h4>
@@ -84,6 +85,16 @@
 							decimalNumbers={2}
 						/>
 					</div>
+					{#if $user && $user.addr && $user.addr === $page.params.address}
+						<TransferModal
+							tokenSymbol={vault.daoData.tokenSymbol}
+							daoName={vault.daoData.name}
+							projectOwner={vault.daoData.owner}
+							projectId={vault.daoData.projectId}
+							logoUrl={vault.daoData.logoUrl}
+							userBalance={vault.balance}
+						/>
+					{/if}
 				</div>
 				<div class="column-space-between">
 					<div>
@@ -144,7 +155,7 @@
 		background-color: var(--clr-background-secondary);
 		height: 100%;
 		min-width: 50vw;
-		z-index: 1000;
+		z-index: 999;
 
 		.content-wrapper {
 			padding: var(--space-14);

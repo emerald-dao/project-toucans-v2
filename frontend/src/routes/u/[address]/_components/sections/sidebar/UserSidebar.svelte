@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { UserData } from '../../../_types/user-data.interface';
 	import UserVaults from './blocks/UserVaults.svelte';
-	import { getContext } from 'svelte';
 	import UserBadges from '../../../_features/badges/components/UserBadges.svelte';
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 
-	const userData: UserData = getContext('userData');
+	export let userData: UserData;
 </script>
 
 <div class="column-6">
@@ -18,7 +17,7 @@
 	/>
 	<div class="column-6 secondary-wrapper">
 		<UserBadges {userData} />
-		<UserVaults />
+		<UserVaults {userData} />
 	</div>
 </div>
 
