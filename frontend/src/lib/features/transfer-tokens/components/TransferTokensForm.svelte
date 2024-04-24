@@ -1,5 +1,5 @@
 <script type="ts">
-	import { fly } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import type { SuiteRunResult } from 'vest';
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
@@ -59,7 +59,7 @@
 			/>
 		</InputWrapper>
 		{#if res.isValid('address') && address}
-			<div in:fly|local={{ duration: 400, x: -5 }} class="avatar-wrapper">
+			<div transition:slide|local={{ duration: 400 }} class="avatar-wrapper">
 				<UserAvatar {address} />
 			</div>
 		{/if}
