@@ -1,5 +1,6 @@
 <script type="ts">
-	import { fly, slide } from 'svelte/transition';
+	import CurrencyInput from '$components/atoms/CurrencyInput.svelte';
+	import { slide } from 'svelte/transition';
 	import { InputWrapper } from '@emerald-dao/component-library';
 	import type { SuiteRunResult } from 'vest';
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
@@ -64,15 +65,15 @@
 			</div>
 		{/if}
 	</div>
-	<InputWrapper
+	<CurrencyInput
 		name="amount"
 		label="Amount"
-		iconText={`$${currencyToDistribute}`}
+		currency={currencyToDistribute}
 		errors={res.getErrors('amount')}
 		isValid={res.isValid('amount')}
-	>
-		<input name="amount" type="number" bind:value={amount} on:input={handleChange} />
-	</InputWrapper>
+		on:input={(input) => handleChange(input.detail)}
+		bind:value={amount}
+	/>
 </form>
 
 <style lang="scss">
