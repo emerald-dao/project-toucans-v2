@@ -155,7 +155,7 @@
 		background-color: var(--clr-background-secondary);
 		height: 100%;
 		min-width: 50vw;
-		z-index: 900;
+		z-index: 999;
 
 		.content-wrapper {
 			padding: var(--space-14);
