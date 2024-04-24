@@ -13,6 +13,7 @@
 	import VotingsWidget from './widgets/VotingsWidget.svelte';
 
 	export let daoData: DAOProject;
+	export let reloadUserBalance: () => void;
 
 	$: currentFundingCycleData =
 		daoData.hasToken && daoData.onChainData.currentFundingCycle && daoData.events
@@ -28,7 +29,7 @@
 	<div class="column-8">
 		<div class="main-wrapper">
 			{#if daoData.hasToken && $user.addr}
-				<UserBalanceWidget {daoData} />
+				<UserBalanceWidget {daoData} {reloadUserBalance} />
 			{/if}
 			<div class="secondary-wrapper">
 				<ProjectFundingWidget {daoData} />

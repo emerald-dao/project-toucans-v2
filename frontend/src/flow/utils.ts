@@ -72,6 +72,11 @@ export function switchToToken(script: string, currency: ECurrencies) {
 			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
 			.replaceAll('flowTokenVault', 'USDCVault')
 			.replaceAll('FlowToken', 'FiatToken');
+	} else if (currency === ECurrencies.stFlow) {
+		return script
+			.replaceAll('flowTokenReceiver', 'stFlowTokenReceiver')
+			.replaceAll('flowTokenVault', 'stFlowTokenVault')
+			.replaceAll('FlowToken', 'stFlowToken');
 	}
 	return script;
 }

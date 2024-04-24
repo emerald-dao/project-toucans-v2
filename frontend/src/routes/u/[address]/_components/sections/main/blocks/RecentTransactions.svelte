@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { UserData } from '../../../../_types/user-data.interface';
-	import { getContext } from 'svelte';
 	import TransactionsList from '../../../atoms/TransactionsList.svelte';
 
-	const userData: UserData = getContext('userData');
+	export let userData: UserData;
 </script>
 
 <div class="main-wrapper">
