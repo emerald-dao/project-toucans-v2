@@ -4,6 +4,7 @@
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import BurnTokensForm from './_components/BurnTokensForm.svelte';
 	import * as AdminPage from '../_components/admin-page';
+	import BurnNftsForm from './_components/BurnNftsForm.svelte';
 
 	export let data;
 
@@ -37,7 +38,7 @@
 </script>
 
 <AdminPage.Root>
-	<AdminPage.Container>
+	<AdminPage.Container grid={activeCurrency !== 'NFTs'}>
 		<AdminPage.Content>
 			<AdminPage.Header>
 				<AdminPage.Title>Burn Tokens</AdminPage.Title>
@@ -49,10 +50,19 @@
 				{#each Object.entries(data.activeDao.onChainData.treasuryBalances) as [currency] (currency)}
 					<DistributeTokens.Tab {currency} bind:activeCurrency />
 				{/each}
+				<DistributeTokens.Tab currency="NFTs" bind:activeCurrency />
 			</DistributeTokens.Tabs>
-			<DistributeTokens.AvailableBalance {availableBalance} currency={activeCurrency} />
-			{#if data.activeDao.onChainData.treasuryBalances[activeCurrency] != undefined && Number(data.activeDao.onChainData.treasuryBalances[activeCurrency]) > 0}
+			{#if data.activeDao.onChainData.treasuryBalances[activeCurrency] != undefined && activeCurrency != 'NFTs' && Number(data.activeDao.onChainData.treasuryBalances[activeCurrency]) > 0}
+				<DistributeTokens.AvailableBalance {availableBalance} currency={activeCurrency} />
 				<BurnTokensForm {activeCurrency} daoData={data.activeDao} />
+			{:else if activeCurrency === 'NFTs'}
+				{#if data.activeDao.onChainData.allowedNFTCollections.length > 0}
+					<BurnNftsForm activeDao={data.activeDao} />
+				{:else}
+					<DistributeTokens.NoTokensMessage>
+						{`We didn't find any NFT on this treasury.`}
+					</DistributeTokens.NoTokensMessage>
+				{/if}
 			{:else}
 				<DistributeTokens.NoTokensMessage>
 					{`No ${activeCurrency} tokens available to burn.`}
