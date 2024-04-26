@@ -54,10 +54,6 @@ access(all) contract ExampleToken: FungibleToken {
             let vault: @Vault <- from as! @Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
-            
-            // We set the balance to 0.0 here so that it doesn't
-            // decrease the totalSupply in the `destroy` function.
-            vault.balance = 0.0
             destroy vault
 
             if let owner: Address = self.owner?.address {
