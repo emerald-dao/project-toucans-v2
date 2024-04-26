@@ -6,8 +6,8 @@
 
 */
 
-import FlowToken from "./FlowToken.cdc"
-import stFlowToken from "./stFlowToken.cdc"
+import "FlowToken"
+import "stFlowToken"
 
 access(all) contract LiquidStaking {
 
@@ -42,42 +42,21 @@ access(all) contract LiquidStaking {
 
     /// Deposit and stake $flow in exchange for $stFlow token
     access(all) fun stake(flowVault: @FlowToken.Vault): @stFlowToken.Vault {
+
         let flowAmountToStake = flowVault.balance
         let stFlowAmountToMint = self.calcStFlowFromFlow(flowAmount: flowAmountToStake)
-        destroy flowVault
 
+        // Stake to committed tokens
+        // DelegatorManager.depositToCommitted(flowVault: <-flowVault)
 
         // Mint stFlow
+        destroy flowVault
         let stFlowVault <- stFlowToken.mintTokens(amount: stFlowAmountToMint)
+
+        // emit Stake(flowAmountIn: flowAmountToStake, stFlowAmountOut: stFlowAmountToMint, currProtocolEpoch: )
 
         return <-stFlowVault
     }
-
-    /// To unstake (normally) that needs to wait for several epochs before finally withdrawing $flow (principal + interests) from the protocol
-    /// Returns a ticket indicating the amount of $flow redeemable after certain protocol epoch (so you won't get $flow back immediately)
-    access(all) fun unstake(stFlowVault: @stFlowToken.Vault): @WithdrawVoucher {
-        let stFlowAmountToBurn = stFlowVault.balance
-        let flowAmountToUnstake = self.calcFlowFromStFlow(stFlowAmount: stFlowAmountToBurn)
-
-        // Burn stFlow
-        stFlowToken.burnTokens(from: <-stFlowVault)
-
-
-        let currentBlockView = getCurrentBlock().view
-
-        // In most of the time, the voucher will be redeemable after 2 protocol epochs
-        var unlockEpoch: UInt64 = 1 + 2
-
-        let unstakeVoucher <- create WithdrawVoucher(
-            lockedFlowAmount: flowAmountToUnstake,
-            unlockEpoch: unlockEpoch
-        )
-
-        emit Unstake(stFlowAmountIn: stFlowAmountToBurn, lockedFlowAmount: flowAmountToUnstake, currProtocolEpoch: 3, unlockProtocolEpoch: unlockEpoch, voucherUUID: unstakeVoucher.uuid)
-
-        return <- unstakeVoucher
-    }
-
 
     /// WithdrawVoucher collection
     access(all) resource interface WithdrawVoucherCollectionPublic {
@@ -125,10 +104,6 @@ access(all) contract LiquidStaking {
         init() {
             self.vouchers <- []
         }
-
-        destroy() {
-            destroy self.vouchers
-        }
     }
 
     access(all) fun createEmptyWithdrawVoucherCollection(): @WithdrawVoucherCollection {
@@ -137,12 +112,26 @@ access(all) contract LiquidStaking {
 
     /// Calculate exchange amount from Flow to stFlow
     access(all) fun calcStFlowFromFlow(flowAmount: UFix64): UFix64 {
-        return 10.0
+        // let currentEpochSnapshot = DelegatorManager.borrowCurrentQuoteEpochSnapshot()
+        // let scaledFlowPrice = currentEpochSnapshot.scaledQuoteFlowStFlow
+        // let scaledFlowAmount = LiquidStakingConfig.UFix64ToScaledUInt256(flowAmount)
+
+        // let stFlowAmount = LiquidStakingConfig.ScaledUInt256ToUFix64(
+        //     scaledFlowPrice * scaledFlowAmount / LiquidStakingConfig.scaleFactor
+        // )
+        return flowAmount
     }
 
     /// Calculate exchange amount from stFlow to Flow
     access(all) fun calcFlowFromStFlow(stFlowAmount: UFix64): UFix64 {
-       return 10.0
+        // let currentEpochSnapshot = DelegatorManager.borrowCurrentQuoteEpochSnapshot()
+        // let scaledStFlowPrice = currentEpochSnapshot.scaledQuoteStFlowFlow
+        // let scaledStFlowAmount = LiquidStakingConfig.UFix64ToScaledUInt256(stFlowAmount)
+
+        // let flowAmount = LiquidStakingConfig.ScaledUInt256ToUFix64(
+        //     scaledStFlowPrice * scaledStFlowAmount / LiquidStakingConfig.scaleFactor
+        // )
+        return stFlowAmount
     }
 
     init() {

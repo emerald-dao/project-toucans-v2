@@ -10,6 +10,7 @@ import "NFTCatalog"
 import "SwapInterfaces"
 import "stFlowToken"
 import "SwapError"
+import "Burner"
 
 access(all) contract Toucans {
 
@@ -493,12 +494,12 @@ access(all) contract Toucans {
             } else {
               self.sendToLock(recipient: tokenLock.recipient, tokenInfo: ToucansTokens.getTokenInfoFromSymbol(symbol: tokenLock.tokenSymbol)!, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
             }
-          // case Type<ToucansActions.StakeFlow>():
-          //   let tokenLock: ToucansActions.StakeFlow = action as! ToucansActions.StakeFlow
-          //   self.stakeFlow(flowAmount: tokenLock.flowAmount, stFlowAmountOutMin: tokenLock.stFlowAmountOutMin)
-          // case Type<ToucansActions.UnstakeFlow>():
-          //   let tokenLock: ToucansActions.UnstakeFlow = action as! ToucansActions.UnstakeFlow
-          //   self.unstakeFlow(stFlowAmount: tokenLock.stFlowAmount, flowAmountOutMin: tokenLock.flowAmountOutMin)
+          case Type<ToucansActions.StakeFlow>():
+            let tokenLock: ToucansActions.StakeFlow = action as! ToucansActions.StakeFlow
+            self.stakeFlow(flowAmount: tokenLock.flowAmount, stFlowAmountOutMin: tokenLock.stFlowAmountOutMin)
+          case Type<ToucansActions.UnstakeFlow>():
+            let tokenLock: ToucansActions.UnstakeFlow = action as! ToucansActions.UnstakeFlow
+            self.unstakeFlow(stFlowAmount: tokenLock.stFlowAmount, flowAmountOutMin: tokenLock.flowAmountOutMin)
         }
       }
       if actionState == ActionState.DECLINED {
@@ -1052,42 +1053,42 @@ access(all) contract Toucans {
                         
     
     // DISCLAIMER: Only works on Mainnet.
-    // access(account) fun stakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
-    //   // withdraw flow from treasury
-    //   let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw!(amount: flowAmount)
-    //   // deposit stFlow to treasury
-    //   let outVault: @stFlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.1654653399040a61.FlowToken") as! @stFlowToken.Vault
-    //   assert(outVault.balance >= stFlowAmountOutMin, message: SwapError.ErrorEncode(
-    //     msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(stFlowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
-    //     err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
-    //   ))
-    //   emit StakeFlow(
-    //     projectId: self.projectId,
-    //     by: self.owner!.address,
-    //     amountIn: flowAmount,
-    //     amountOut: outVault.balance
-    //   )
-    //   self.depositToTreasury(vault: <- outVault)
-    // }
+    access(account) fun stakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
+      // withdraw flow from treasury
+      let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw!(amount: flowAmount)
+      // deposit stFlow to treasury
+      let outVault: @stFlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.1654653399040a61.FlowToken") as! @stFlowToken.Vault
+      assert(outVault.balance >= stFlowAmountOutMin, message: SwapError.ErrorEncode(
+        msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(stFlowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
+        err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
+      ))
+      emit StakeFlow(
+        projectId: self.projectId,
+        by: self.owner!.address,
+        amountIn: flowAmount,
+        amountOut: outVault.balance
+      )
+      self.depositToTreasury(vault: <- outVault)
+    }
 
     // DISCLAIMER: Only works on Mainnet.
-    // access(account) fun unstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
-    //   // withdraw stFlow from treasury
-    //   let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw!(amount: stFlowAmount)
-    //   // deposit flow to treasury
-    //   let outVault: @FlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.d6f80565193ad727.stFlowToken") as! @FlowToken.Vault
-    //   assert(outVault.balance >= flowAmountOutMin, message: SwapError.ErrorEncode(
-    //     msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(flowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
-    //     err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
-    //   ))
-    //   emit UnstakeFlow(
-    //     projectId: self.projectId,
-    //     by: self.owner!.address,
-    //     amountIn: stFlowAmount,
-    //     amountOut: outVault.balance
-    //   )
-    //   self.depositToTreasury(vault: <- outVault)
-    // }
+    access(account) fun unstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
+      // withdraw stFlow from treasury
+      let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw!(amount: stFlowAmount)
+      // deposit flow to treasury
+      let outVault: @FlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.d6f80565193ad727.stFlowToken") as! @FlowToken.Vault
+      assert(outVault.balance >= flowAmountOutMin, message: SwapError.ErrorEncode(
+        msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(flowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
+        err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
+      ))
+      emit UnstakeFlow(
+        projectId: self.projectId,
+        by: self.owner!.address,
+        amountIn: stFlowAmount,
+        amountOut: outVault.balance
+      )
+      self.depositToTreasury(vault: <- outVault)
+    }
 
 
     //   ____                   
@@ -1100,7 +1101,7 @@ access(all) contract Toucans {
 
     access(account) fun burn(tokenType: Type, tokenSymbol: String, amount: UFix64) {
       let tokens <- self.treasury[tokenType]?.withdraw!(amount: amount)
-      destroy tokens
+      Burner.burn(<- tokens)
 
       emit Burn(
         projectId: self.projectId,

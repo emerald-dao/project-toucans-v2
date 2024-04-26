@@ -199,6 +199,17 @@ access(all) contract stFlowToken: FungibleToken {
         }
     }
 
+    access(all) fun mintTokens(amount: UFix64): @stFlowToken.Vault {
+            pre {
+                amount > UFix64(0): "Amount minted must be greater than zero"
+                // amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
+            }
+            stFlowToken.totalSupply = stFlowToken.totalSupply + amount
+            // self.allowedAmount = self.allowedAmount - amount
+            emit TokensMinted(amount: amount)
+            return <-create Vault(balance: amount)
+        }
+
     // Minter
     //
     // Resource object that token admin accounts can hold to mint new tokens.

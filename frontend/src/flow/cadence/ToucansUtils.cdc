@@ -5,7 +5,7 @@ import "NonFungibleToken"
 import "FIND"
 import "EmeraldIdentity"
 import "SwapInterfaces"
-// import LiquidStaking from "./utility/LiquidStaking.cdc"
+import "LiquidStaking"
 import "FlowToken"
 import "stFlowToken"
 
@@ -98,44 +98,44 @@ access(all) contract ToucansUtils {
     return [address, contractName]
   }
 
-  // access(all) fun getEstimatedOut(amountIn: UFix64, tokenInKey: String): UFix64 {
-  //   // normal xyk pool
-  //   let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
-  //   // stableswap pool with most liquidity
-  //   let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+  access(all) fun getEstimatedOut(amountIn: UFix64, tokenInKey: String): UFix64 {
+    // normal xyk pool
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    // stableswap pool with most liquidity
+    let poolCapStable = getAccount(0xc353b9d685ec427d).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
     
-  //   let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
-  //   let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
-  //   let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
+    let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
 
-  //   if tokenInKey == "A.1654653399040a61.FlowToken" {
-  //     let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
-  //     return (estimatedSwapOut > estimatedStakeOut) ? estimatedSwapOut : estimatedStakeOut
-  //   }
+    if tokenInKey == "A.1654653399040a61.FlowToken" {
+      let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
+      return (estimatedSwapOut > estimatedStakeOut) ? estimatedSwapOut : estimatedStakeOut
+    }
 
-  //   return estimatedSwapOut
-  // }
+    return estimatedSwapOut
+  }
 
-  // access(all) fun swapTokensWithPotentialStake(inVault: @FungibleToken.Vault, tokenInKey: String): @FungibleToken.Vault {
-  //   let amountIn = inVault.balance
-  //   // normal xyk pool
-  //   let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
-  //   let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
-  //   // stableswap pool with most liquidity
-  //   let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
-  //   let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+  access(all) fun swapTokensWithPotentialStake(inVault: @{FungibleToken.Vault}, tokenInKey: String): @{FungibleToken.Vault} {
+    let amountIn = inVault.balance
+    // normal xyk pool
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    // stableswap pool with most liquidity
+    let poolCapStable = getAccount(0xc353b9d685ec427d).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
 
-  //   let estimatedSwapPoolCap = (estimatedSwapOutStable > estimatedSwapOutV1) ? poolCapStable : poolCapV1
+    let estimatedSwapPoolCap = (estimatedSwapOutStable > estimatedSwapOutV1) ? poolCapStable : poolCapV1
     
-  //   let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
-  //   let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
+    let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
+    let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
 
-  //   if tokenInKey == "A.1654653399040a61.FlowToken" && estimatedStakeOut > estimatedSwapOut {
-  //     return <- LiquidStaking.stake(flowVault: <- (inVault as! @FlowToken.Vault))
-  //   }
+    if tokenInKey == "A.1654653399040a61.FlowToken" && estimatedStakeOut > estimatedSwapOut {
+      return <- LiquidStaking.stake(flowVault: <- (inVault as! @FlowToken.Vault))
+    }
 
-  //   return <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
-  // }
+    return <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
+  }
 
   access(all) fun getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: String): String {
     let nftTypeIdentifier: String = collectionIdentifier.slice(from: 0, upTo: collectionIdentifier.length - 10).concat("NFT")
