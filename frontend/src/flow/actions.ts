@@ -1118,6 +1118,34 @@ export const getProjectSpecificNFTTreasury: (
 	}
 };
 
+export const getProjectSpecificNFTTreasuryByIDs: (
+	owner: string,
+	projectId: string,
+	collectionIdentifier: string,
+	ids: string[]
+) => Promise<Nft[]> = async (
+	owner: string,
+	projectId: string,
+	collectionIdentifier: string,
+	ids: string[]
+) => {
+	try {
+		const response = await fcl.query({
+			cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
+			args: (arg, t) => [
+				arg(owner, t.Address),
+				arg(projectId, t.String),
+				arg(collectionIdentifier, t.String),
+				arg(ids, t.Array(t.UInt64))
+			]
+		});
+		return convertTraitsForSpecific(response);
+	} catch (e) {
+		console.log('Error in getProjectSpecificNFTTreasuryByIDs');
+		console.log(e);
+	}
+};
+
 export const getProjectSpecificNFTTreasuryIDs: (
 	owner: string,
 	projectId: string,
