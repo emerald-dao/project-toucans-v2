@@ -70,10 +70,17 @@
 				isSelected={selectedNFTIds.includes(nft.id)}
 				{selectedCollection}
 				donatedBy={nftUuidOwnerMap[nft.uuid]}
+				{nftTreasuryPage}
 			/>
 		{/each}
 	</div>
-	<Pagination bind:pageStart bind:pageEnd amountOfItems={filteredNfts.length} {pageSize} />
+	<Pagination
+		bind:pageStart
+		bind:pageEnd
+		amountOfItems={filteredNfts.length}
+		{pageSize}
+		scrollToTopOnChange={nftTreasuryPage}
+	/>
 {/if}
 
 <style lang="scss">
@@ -81,9 +88,17 @@
 		display: grid;
 	}
 	.treasury-page {
-		grid-template-columns: repeat(4, 1fr);
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
 		gap: var(--space-4);
+
+		@include mq('small') {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@include mq('medium') {
+			grid-template-columns: repeat(4, 1fr);
+		}
 	}
 
 	.treasury-widget {
