@@ -5,7 +5,7 @@ export enum PlayTypeEnum {
 	FieldGoal = 'Field Goal',
 	ForcedFumble = 'Forced Fumble',
 	FumbleRecovery = 'Fumble Recovery',
-	Interceotion = 'Interception',
+	Interception = 'Interception',
 	KickReturn = 'Kick Return',
 	Pass = 'Pass',
 	PassDefense = 'Pass Defense',
