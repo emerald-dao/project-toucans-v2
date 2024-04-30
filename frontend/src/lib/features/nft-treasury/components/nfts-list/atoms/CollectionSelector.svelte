@@ -29,7 +29,7 @@
 		on:change={forExternalPage ? redirectToExternalLink : handleCollectionChange}
 		name="collection"
 	>
-		<option value={undefined} disabled selected hidden>Select one collection...</option>
+		<option value={undefined} disabled selected hidden>Select collection...</option>
 		{#each collectionIdentifiers as collection}
 			<option value={collection}>{collection}</option>
 		{/each}

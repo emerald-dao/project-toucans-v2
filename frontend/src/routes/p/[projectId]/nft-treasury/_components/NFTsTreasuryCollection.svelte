@@ -1,46 +1,47 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import NfTsList from '$lib/features/nft-treasury/components/nfts-list/NFTsList.svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
-	import NFTsTreasuryLayout from '../../_components/NFTsTreasuryLayout.svelte';
 	import NBATopShotCollection from '$lib/features/nft-treasury/components/nfts-list/atoms/projects/NBATopShotCollection.svelte';
 	import NFLAllDayCollection from '$lib/features/nft-treasury/components/nfts-list/atoms/projects/NFLAllDayCollection.svelte';
 
 	export let nfts: Nft[];
 	export let daoData: DAOProject;
+	export let selectedCollection: string | null = null;
 
 	let pageSize = 12;
 </script>
 
-<NFTsTreasuryLayout data={daoData}>
-	<div slot="nftsLength">
-		{nfts.length} NFTs found
-	</div>
-	<div
-		class:sidebar={$page.params.collectionId === 'NBATopShot' ||
-			$page.params.collectionId === 'NFLAllDay'}
-		class="column-6"
-		slot="main"
-	>
-		{#if $page.params.collectionId === 'NBATopShot'}
-			<NBATopShotCollection bind:nfts bind:daoData />
-		{:else if $page.params.collectionId === 'NFLAllDay'}
-			<NFLAllDayCollection bind:nfts bind:daoData />
-		{:else}
-			<NfTsList
-				selectedCollection={$page.params.collectionId}
-				NFTs={nfts}
-				{pageSize}
-				nftUuidOwnerMap={daoData.generalInfo.nftUuidOwnerMap}
-				sortNFTs={true}
-				nftTreasuryPage={true}
-			/>
-		{/if}
-	</div>
-</NFTsTreasuryLayout>
+<div
+	class:sidebar={selectedCollection === 'NBATopShot' || selectedCollection === 'NFLAllDay'}
+	class="main-wrapper column-6"
+>
+	{#if selectedCollection === 'NBATopShot'}
+		<NBATopShotCollection bind:nfts bind:daoData />
+	{:else if selectedCollection === 'NFLAllDay'}
+		<NFLAllDayCollection bind:nfts bind:daoData />
+	{:else}
+		<NfTsList
+			{selectedCollection}
+			NFTs={nfts}
+			{pageSize}
+			nftUuidOwnerMap={daoData.generalInfo.nftUuidOwnerMap}
+			sortNFTs={true}
+			nftTreasuryPage={true}
+		/>
+	{/if}
+</div>
 
 <style lang="scss">
+	.main-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+		width: 100%;
+		flex: 1;
+		justify-content: space-between;
+	}
+
 	.sidebar {
 		display: grid;
 		grid-template-columns: 1fr 2fr;
