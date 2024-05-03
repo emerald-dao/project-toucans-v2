@@ -11,6 +11,8 @@
 	import { filterNBAContent } from '$lib/features/nft-treasury/functions/NBATopShot/NBATopShotContentFilter';
 	import { derived } from 'svelte/store';
 	import { createSearchTerms } from '$lib/features/nft-treasury/functions/createSearchTerms';
+	import { Button } from '@emerald-dao/component-library';
+	import Icon from '@iconify/svelte';
 
 	export let nfts: Nft[];
 	export let daoData: DAOProject;
@@ -97,11 +99,34 @@
 	} else {
 		filteredContent = nfts;
 	}
+
+	let isSidebarOpen = false;
+	let innerWidth: number;
+
+	function handleClick() {
+		isSidebarOpen = !isSidebarOpen;
+	}
 </script>
 
-<div class="column-4">
+<svelte:window bind:innerWidth />
+
+{#if innerWidth < 640}
+	<button class="hamburger-button" on:click={handleClick}>
+		<Icon icon="tabler:menu-2" width="1.5rem" color="var(--clr-neutral-200)" />
+	</button>
+{/if}
+<div class="sidebar" class:show-sidebar={isSidebarOpen} class:hide-sidebar={!isSidebarOpen}>
 	<div>
-		<h5>Player Name</h5>
+		<div class="row justify-between">
+			<div>
+				<h5>Player Name</h5>
+			</div>
+			{#if isSidebarOpen}
+				<button on:click={handleClick}>
+					<Icon icon="tabler:x" color="var(--clr-neutral-200)" />
+				</button>
+			{/if}
+		</div>
 		<input type="text" placeholder="Search NFT by player" bind:value={$searchByNameStore.search} />
 	</div>
 	<div>
@@ -121,6 +146,11 @@
 		/>
 	</div>
 	<CollectionFilters bind:filters />
+	{#if isSidebarOpen}
+		<div class="filter-button">
+			<Button on:click={handleClick}>Filter</Button>
+		</div>
+	{/if}
 </div>
 <div class="column-6">
 	{#await filteredContent then contents}
@@ -136,9 +166,50 @@
 </div>
 
 <style lang="scss">
-	h5 {
-		margin-bottom: var(--space-2);
-		font-size: var(--font-size-3);
-		margin-top: 0;
+	.hamburger-button {
+		display: flex;
+		height: min-content;
+		background-color: var(--clr-background-primary);
+		border: none;
+		cursor: pointer;
+		color: var(--clr-neutral-200);
+	}
+
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+		z-index: 999;
+		background-color: var(--clr-background-primary);
+		position: fixed;
+		left: -2px;
+		top: 0;
+		height: 100%;
+		width: 100%;
+		transition: transform 0.2s ease-out;
+
+		h5 {
+			margin-bottom: var(--space-2);
+			font-size: var(--font-size-3);
+			margin-top: 0;
+		}
+
+		.filter-button {
+			padding-top: var(--space-6);
+		}
+	}
+
+	.hide-sidebar {
+		transform: translateX(-100vw);
+
+		@include mq('small') {
+			position: relative;
+			transform: translateX(0);
+		}
+	}
+
+	.show-sidebar {
+		transform: translateX(0);
+		padding: var(--space-4) var(--space-6);
 	}
 </style>

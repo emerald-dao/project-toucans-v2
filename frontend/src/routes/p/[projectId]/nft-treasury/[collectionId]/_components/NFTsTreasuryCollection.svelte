@@ -43,10 +43,12 @@
 <style lang="scss">
 	.sidebar {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
+		gap: var(--space-2);
+		grid-template-columns: 0.1fr 4fr;
 
 		@include mq('small') {
 			grid-template-columns: 1.5fr 4fr;
+			gap: var(--space-6);
 		}
 
 		@include mq('medium') {
