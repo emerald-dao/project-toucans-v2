@@ -18,8 +18,9 @@ transaction(projectId: String, projectOwner: Address, amounts: {Address: UFix64}
     let recipientVaults: {Address: Capability<&{FungibleToken.Receiver}>} = {}
     for wallet in amounts.keys {
       let cap = getAccount(wallet).getCapability<&{FungibleToken.Receiver}>(ExampleToken.ReceiverPublicPath)
-      assert(cap.check(), message: "Invalid capability for ".concat(wallet.toString()).concat("!"))
-      recipientVaults[wallet] = cap
+      if cap.check() {
+        recipientVaults[wallet] = cap
+      }
     }
     self.Project.proposeBatchMint(recipientVaults: recipientVaults, amounts: amounts)
   }
