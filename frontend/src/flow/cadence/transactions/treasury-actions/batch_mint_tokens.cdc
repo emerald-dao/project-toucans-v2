@@ -20,6 +20,8 @@ transaction(projectId: String, projectOwner: Address, amounts: {Address: UFix64}
       let cap = getAccount(wallet).getCapability<&{FungibleToken.Receiver}>(ExampleToken.ReceiverPublicPath)
       if cap.check() {
         recipientVaults[wallet] = cap
+      } else {
+        amounts.remove(key: wallet)
       }
     }
     self.Project.proposeBatchMint(recipientVaults: recipientVaults, amounts: amounts)
