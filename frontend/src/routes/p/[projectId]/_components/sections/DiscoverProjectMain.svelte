@@ -8,16 +8,12 @@
 	import UserBalanceWidget from './widgets/UserBalanceWidget.svelte';
 	import ProjectFundingWidget from './widgets/ProjectFundingWidget.svelte';
 	import TokenAnalysisWidget from './widgets/TokenAnalysisWidget.svelte';
-	import LegacyVotingsWidget from './widgets/LegacyVotingsWidget.svelte';
 	import NotableMembersWidget from './widgets/NotableMembersWidget/NotableMembersWidget.svelte';
 	import NftsTreasuryWidget from './widgets/NftsTreasuryWidget.svelte';
-	import NewVotingsWidget from './widgets/NewVotingsWidget.svelte';
-	import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
+	import VotingsWidget from './widgets/VotingsWidget.svelte';
 
 	export let daoData: DAOProject;
-	export let votingRounds: VotingRound[];
-
-	$: activeVotings = daoData.votes.filter((vote) => vote.pending === true);
+	export let reloadUserBalance: () => void;
 
 	$: currentFundingCycleData =
 		daoData.hasToken && daoData.onChainData.currentFundingCycle && daoData.events
@@ -33,7 +29,7 @@
 	<div class="column-8">
 		<div class="main-wrapper">
 			{#if daoData.hasToken && $user.addr}
-				<UserBalanceWidget {daoData} />
+				<UserBalanceWidget {daoData} {reloadUserBalance} />
 			{/if}
 			<div class="secondary-wrapper">
 				<ProjectFundingWidget {daoData} />
@@ -43,10 +39,11 @@
 			</div>
 		</div>
 		<NotableMembersWidget {daoData} />
-		<NewVotingsWidget {votingRounds} daoSigners={daoData.onChainData.signers} />
-		{#if activeVotings.length > 0}
-			<LegacyVotingsWidget votingData={activeVotings} discordLink={daoData.generalInfo.discord} />
-		{/if}
+		<VotingsWidget
+			votingRounds={daoData.votingRounds}
+			daoSigners={daoData.onChainData.signers}
+			tokenContractAddress={daoData.generalInfo.contract_address}
+		/>
 		{#if daoData.hasToken && currentFundingCycleData && daoData.generalInfo.token_symbol}
 			<RoundsWidget
 				round={currentFundingCycleData}

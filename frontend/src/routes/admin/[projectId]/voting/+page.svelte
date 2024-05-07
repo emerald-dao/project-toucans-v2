@@ -18,6 +18,7 @@
 					cardsPerPage={3}
 					daoSigners={data.activeDao.onChainData.signers}
 					showDeleteButton={true}
+					tokenContractAddress={data.activeDao.generalInfo.contract_address}
 				/>
 			</div>
 			<VotingGeneratorModal daoData={data.activeDao} />

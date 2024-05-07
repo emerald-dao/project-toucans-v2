@@ -1,4 +1,4 @@
-import type { BaseEvent } from './common/base-event.interface';
+import type { BaseEvent } from '$lib/utilities/api/supabase/fetchProjectEvents';
 
 export interface ProjectCreatedEvent extends BaseEvent {
 	type: 'ProjectCreated';

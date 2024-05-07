@@ -33,6 +33,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
 			.replace('"../utility/EmeraldIdentity.cdc"', addresses.EmeraldIdentity)
 			.replace('"../utility/stFlowToken.cdc"', addresses.stFlowToken)
+			.replace('"../utility/MigrationContractStaging.cdc"', addresses.Migration)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
@@ -71,6 +72,11 @@ export function switchToToken(script: string, currency: ECurrencies) {
 			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
 			.replaceAll('flowTokenVault', 'USDCVault')
 			.replaceAll('FlowToken', 'FiatToken');
+	} else if (currency === ECurrencies.stFlow) {
+		return script
+			.replaceAll('flowTokenReceiver', 'stFlowTokenReceiver')
+			.replaceAll('flowTokenVault', 'stFlowTokenVault')
+			.replaceAll('FlowToken', 'stFlowToken');
 	}
 	return script;
 }

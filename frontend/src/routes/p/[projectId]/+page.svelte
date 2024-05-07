@@ -3,12 +3,32 @@
 	import { getContext } from 'svelte';
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { getTokenBalance, hasProjectVaultSetup } from '$flow/actions';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let data: DAOProject;
 
 	let seeMore = false;
 
 	const daoData: DAOProject = getContext('daoData');
+
+	const reloadUserBalance = async () => {
+		if (!data.generalInfo.contract_address) return;
+		daoData.vaultSetup = true;
+
+		if ($user.addr) {
+			daoData.userBalance = await getTokenBalance(
+				data.generalInfo.project_id,
+				data.generalInfo.contract_address,
+				$user.addr
+			);
+			daoData.vaultSetup = await hasProjectVaultSetup(
+				data.generalInfo.contract_address,
+				data.generalInfo.project_id,
+				$user.addr
+			);
+		}
+	};
 </script>
 
 <section class="container">
@@ -17,7 +37,7 @@
 			<DiscoverProjectSidebar {daoData} />
 		</div>
 		<div class="secondary-wrapper">
-			<DiscoverProjectMain {daoData} votingRounds={data.votingRounds} />
+			<DiscoverProjectMain {daoData} {reloadUserBalance} />
 		</div>
 	</div>
 	{#if data.generalInfo.long_description}

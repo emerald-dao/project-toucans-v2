@@ -55,7 +55,7 @@
 		grid-template-columns: 1fr;
 		padding: 0;
 		overflow: hidden;
-		border-radius: var(--radius-1);
+		border-radius: var(--radius-4);
 
 		@include mq('medium') {
 			grid-template-columns: 1fr 2fr;

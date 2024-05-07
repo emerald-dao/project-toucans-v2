@@ -68,5 +68,4 @@
 		placeholder="0.00"
 		style={`font-size: ${fontSize}; color: ${fontColor}`}
 	/>
-	<!-- {value} -->
 </InputWrapper>

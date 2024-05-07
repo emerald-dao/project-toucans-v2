@@ -2,7 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import Papa from 'papaparse';
-	import { Button, Currency, DropZone } from '@emerald-dao/component-library';
+	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { InputWrapper, Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import fungibleTokenDistributionValidation from '../_validations/fungibleTokenDistributionValidation';

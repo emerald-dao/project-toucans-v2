@@ -10,6 +10,7 @@
 	export let cardsPerPage = 9;
 	export let daoSigners: string[];
 	export let showDeleteButton = false;
+	export let tokenContractAddress: string | null;
 
 	let showFinished = false;
 
@@ -52,7 +53,12 @@
 		<div class="cards-wrapper">
 			{#if currentPageVotingRounds.length > 0}
 				{#each currentPageVotingRounds as round (round.id)}
-					<VotingRoundCard votingRound={round} {daoSigners} {showDeleteButton} />
+					<VotingRoundCard
+						votingRound={round}
+						{daoSigners}
+						{showDeleteButton}
+						{tokenContractAddress}
+					/>
 				{/each}
 			{:else}
 				<em>No voting rounds available</em>

@@ -168,7 +168,7 @@
 					<Currency
 						currency={$paymentData.tokenName}
 						amount={$paymentData.amount *
-							0.95 *
+							0.98 *
 							$paymentData.issuanceRate *
 							(1 - $paymentData.reserveRate)}
 						color="heading"
@@ -184,7 +184,7 @@
 						<Currency
 							currency={$paymentData.tokenName}
 							amount={$paymentData.amount *
-								0.95 *
+								0.98 *
 								$paymentData.issuanceRate *
 								$paymentData.reserveRate}
 							color="heading"

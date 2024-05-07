@@ -1,11 +1,11 @@
 import type { VotingOption } from './voting-option.interface';
-import type { VotingNftModeSlug } from '../constants/votingNftModes';
+import type { VotingModeSlug } from '../constants/VOTING_MODES';
 
 export type VotingRoundData = {
 	name: string;
 	description?: string;
 	options: VotingOption[];
-	nftMode: VotingNftModeSlug;
+	nftMode: VotingModeSlug;
 	requiredCollection: string[];
 	startDate?: string;
 	endDate: string;

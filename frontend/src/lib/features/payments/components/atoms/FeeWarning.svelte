@@ -6,7 +6,7 @@
 
 <p class="xsmall">
 	<i>
-		5% of the transferred ${paymentCurrency} will go to the Emerald City treasury to help support the
+		2% of the transferred ${paymentCurrency} will go to the Emerald City treasury to help support the
 		platform and its developers.
 	</i>
 </p>

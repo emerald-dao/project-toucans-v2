@@ -16,3 +16,5 @@ export const fetchProjectDatabaseData = async (contractName: string) => {
 
 	return info;
 };
+
+export type DaoDatabaseData = Awaited<ReturnType<typeof fetchProjectDatabaseData>>;
