@@ -6,6 +6,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import DownloadNftTreasury from '../../../../../admin/[projectId]/_components/stats-blocks/atoms/DownloadNFTTreasury.svelte';
+	import { page } from '$app/stores';
 
 	export let pageSize = 5;
 	export let hasTitle = true;
@@ -46,10 +47,19 @@
 {#if projectNFTsCollections.length > 0}
 	<div class="column-3">
 		{#if hasTitle}
-			<span class="title">
-				<Icon icon="tabler:hexagon" />
-				NFT Treasury
-			</span>
+			<div class="row-space-between">
+				<span class="title">
+					<Icon icon="tabler:hexagon" />
+					NFT Treasury
+				</span>
+				<a
+					class="header-link row-1 align-center"
+					href={`/p/${$page.params.projectId}/nft-treasury`}
+				>
+					See all
+					<Icon icon="tabler:arrow-right" />
+				</a>
+			</div>
 		{/if}
 		<div class="card">
 			<div class="column-3">
@@ -88,5 +98,11 @@
 		flex-direction: row;
 		align-items: center;
 		gap: var(--space-1);
+
+		a {
+			display: flex;
+			align-items: center;
+			padding-left: var(--space-1);
+		}
 	}
 </style>

@@ -27,6 +27,7 @@
 		.heading {
 			text-align: left;
 			font-size: var(--font-size-2);
+			padding-bottom: var(--space-2);
 		}
 
 		.text {
