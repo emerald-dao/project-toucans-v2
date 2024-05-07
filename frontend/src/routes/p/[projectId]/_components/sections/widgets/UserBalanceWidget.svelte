@@ -9,7 +9,7 @@
 	export let reloadUserBalance: () => void;
 
 	async function setUpVault() {
-		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address);
+		await setUpVaultExecution(daoData.generalInfo.project_id, daoData.generalInfo.contract_address as string);
 		daoData.vaultSetup = true;
 	}
 </script>
@@ -30,7 +30,7 @@
 			<TransferModal
 				tokenSymbol={daoData.generalInfo.token_symbol}
 				daoName={daoData.generalInfo.name}
-				projectOwner={daoData.generalInfo.owner}
+				contractAddress={daoData.generalInfo.contract_address}
 				projectId={daoData.generalInfo.project_id}
 				logoUrl={daoData.generalInfo.logo}
 				userBalance={daoData.userBalance}

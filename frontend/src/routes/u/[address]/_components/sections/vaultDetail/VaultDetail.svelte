@@ -89,7 +89,7 @@
 						<TransferModal
 							tokenSymbol={vault.daoData.tokenSymbol}
 							daoName={vault.daoData.name}
-							projectOwner={vault.daoData.owner}
+							contractAddress={vault.daoData.contractAddress}
 							projectId={vault.daoData.projectId}
 							logoUrl={vault.daoData.logoUrl}
 							userBalance={vault.balance}

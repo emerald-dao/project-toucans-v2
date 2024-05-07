@@ -4,7 +4,7 @@ import { ECurrencies } from '$lib/types/common/enums';
 export const transferTokens = async (
 	recipient: string,
 	amount: number,
-	projectOwner: string | undefined,
+	contractAddress: string | null,
 	projectId: string | undefined,
 	currencyToDistribute: ECurrencies | string
 ) => {
@@ -20,6 +20,6 @@ export const transferTokens = async (
 		amount.toString(),
 		recipient,
 		projectId as string,
-		projectOwner as string
+		contractAddress as string
 	);
 };

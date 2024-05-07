@@ -12,7 +12,7 @@
 
 	export let tokenSymbol: string;
 	export let daoName: string;
-	export let projectOwner: string | undefined;
+	export let contractAddress: string | null;
 	export let projectId: string | undefined;
 	export let logoUrl: string;
 	export let userBalance: number;
@@ -39,7 +39,7 @@
 			const transactionResult = await transferTokens(
 				recipient,
 				amount,
-				projectOwner,
+				contractAddress,
 				projectId,
 				tokenSymbol
 			);
@@ -76,7 +76,7 @@
 			</div>
 			<TransferTokensForm
 				availableBalance={userBalance}
-				{projectOwner}
+				{contractAddress}
 				{projectId}
 				currencyToDistribute={tokenSymbol}
 				bind:isValid={isFormValid}

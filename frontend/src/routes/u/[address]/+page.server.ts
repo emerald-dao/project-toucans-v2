@@ -44,7 +44,8 @@ const getUserVaults = async (address: string): Promise<Vault[]> => {
 					logoUrl: project.logo,
 					tokenSymbol: project.token_symbol as string,
 					projectId: project.project_id,
-					owner: project.owner
+					owner: project.owner,
+					contractAddress: project.contract_address
 				},
 				balance: balances[project.project_id],
 				tokenValue: rankedProjects.find((x) => x.project_id == project.project_id)?.price || 0

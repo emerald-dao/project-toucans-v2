@@ -8,7 +8,7 @@ const transferValidation = create(
 		amount: number,
 		currentField,
 		availableBalance: number,
-		projectOwner: string | undefined,
+		contractAddress: string | null,
 		projectId: string | undefined,
 		currencyToDistribute: ECurrencies | string
 	) => {
@@ -26,7 +26,7 @@ const transferValidation = create(
 			test('address', "Address doesn't have a vault set up.", async () => {
 				return (await checkAddress(
 					address,
-					projectOwner,
+					contractAddress,
 					projectId,
 					currencyToDistribute
 				)) as string;
@@ -45,7 +45,7 @@ const transferValidation = create(
 
 const checkAddress = async (
 	address: string,
-	projectOwner: string | undefined,
+	contractAddress: string | null,
 	projectId: string | undefined,
 	currencyToDistribute: ECurrencies | string
 ) => {
@@ -60,7 +60,7 @@ const checkAddress = async (
 				success = await canReceiveToucansToken(address, currencyToDistribute);
 			} else {
 				success = await canReceiveProjectToken(
-					projectOwner as string,
+					contractAddress as string,
 					projectId as string,
 					address
 				);
