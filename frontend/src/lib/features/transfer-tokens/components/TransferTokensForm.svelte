@@ -8,7 +8,7 @@
 
 	export let isValid: boolean = false;
 	export let availableBalance: number;
-	export let projectOwner: string | undefined;
+	export let contractAddress: string | null;
 	export let projectId: string | undefined;
 	export let currencyToDistribute: string;
 	export let amount = 0;
@@ -26,7 +26,7 @@
 			amount,
 			target.name,
 			availableBalance,
-			projectOwner,
+			contractAddress,
 			projectId,
 			currencyToDistribute
 		);
