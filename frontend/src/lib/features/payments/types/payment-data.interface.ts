@@ -15,6 +15,7 @@ export interface PaymentData {
 	type: 'fund' | 'donation' | undefined;
 	daoName: string;
 	daoAddress: string;
+	contractAddress: string | null;
 	projectId: string;
 	tokenName: string;
 	payerAddress: string;

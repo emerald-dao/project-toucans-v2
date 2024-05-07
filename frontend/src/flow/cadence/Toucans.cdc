@@ -342,18 +342,18 @@ pub contract Toucans {
     // 
     // COMING SOON
     //
-    // pub fun evolve(projectTokenInfo: ToucansTokens.TokenInfo, minter: @{Minter}, initialTreasurySupply: UFix64, editDelay: UFix64) {
-    //   pre {
-    //     !self.hasTokenContract(): "This project already has an associated token."
-    //   }
-    //   self.editDelay = editDelay
-    //   self.projectTokenInfo = projectTokenInfo
-    //   let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
-    //   assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
-    //   self.depositToTreasury(vault: <- initialVault)
-    //   let dummyMinter <- self.minter <- minter
-    //   destroy dummyMinter
-    // }
+    pub fun evolve(projectTokenInfo: ToucansTokens.TokenInfo, minter: @{Minter}, initialTreasurySupply: UFix64, editDelay: UFix64) {
+      // pre {
+      //   !self.hasTokenContract(): "This project already has an associated token."
+      // }
+      self.editDelay = editDelay
+      self.projectTokenInfo = projectTokenInfo
+      let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
+      assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
+      self.depositToTreasury(vault: <- initialVault)
+      let dummyMinter <- self.minter <- minter
+      destroy dummyMinter
+    }
 
 
     //  __  __       _ _   _    _____ _             

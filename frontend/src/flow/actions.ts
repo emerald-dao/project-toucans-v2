@@ -462,8 +462,12 @@ const transferProjectToken = async (
 	projectId: string,
 	contractAddress: string
 ) => {
+	let script =
+		contractAddress === addresses.FlovatarDustToken
+			? switchToToken(transferProjectTokenTx, 'DUST')
+			: transferProjectTokenTx;
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(transferProjectTokenTx, projectId, contractAddress),
+		cadence: replaceWithProperValues(script, projectId, contractAddress),
 		args: (arg, t) => [arg(recipient, t.Address), arg(formatFix(amount), t.UFix64)],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -487,7 +491,7 @@ const donateNFTs = async (
 	message: string
 ) => {
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(donateNFTsTx, projectId, projectOwner),
+		cadence: replaceWithProperValues(donateNFTsTx),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
@@ -516,12 +520,13 @@ export const donateNFTsExecution = (
 
 const transferProjectTokenToTreasury = async (
 	projectOwner: string,
+	contractAddress: string,
 	projectId: string,
 	amount: string,
 	message: string
 ) => {
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(transferProjectTokenToTreasuryTx, projectId, projectOwner),
+		cadence: replaceWithProperValues(transferProjectTokenToTreasuryTx, projectId, contractAddress),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
@@ -537,12 +542,13 @@ const transferProjectTokenToTreasury = async (
 
 export const transferProjectTokenToTreasuryExecution = (
 	projectOwner: string,
+	contractAddress: string,
 	projectId: string,
 	amount: string,
 	message: string
 ) =>
 	executeTransaction(
-		() => transferProjectTokenToTreasury(projectOwner, projectId, amount, message),
+		() => transferProjectTokenToTreasury(projectOwner, contractAddress, projectId, amount, message),
 		saveEventAction
 	);
 
@@ -911,7 +917,7 @@ const burnTokens = async (
 	amount: string
 ) => {
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(burnTokensTx, projectId),
+		cadence: replaceWithProperValues(burnTokensTx),
 		args: (arg, t) => [
 			arg(tokenSymbol, t.String),
 			arg(projectId, t.String),
@@ -997,7 +1003,7 @@ const lockTokens = async (
 	unlockTimeInUnixSeconds: string
 ) => {
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(lockTokensTx, projectId),
+		cadence: replaceWithProperValues(lockTokensTx),
 		args: (arg, t) => [
 			arg(tokenSymbol, t.String),
 			arg(projectId, t.String),
@@ -1082,8 +1088,12 @@ export const unstakeFlowExecution = (
 ) => executeTransaction(() => unstakeFlow(projectId, projectOwner, stFlowAmount, flowAmountOutMin));
 
 const setUpVault = async (projectId: string, contractAddress: string) => {
+	let script =
+		contractAddress === addresses.FlovatarDustToken
+			? switchToToken(setUpVaultTx, 'DUST')
+			: setUpVaultTx;
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(setUpVaultTx, projectId, contractAddress),
+		cadence: replaceWithProperValues(script, projectId, contractAddress),
 		args: (arg, t) => [],
 		proposer: fcl.authz,
 		payer: fcl.authz,
@@ -1122,8 +1132,12 @@ export const getProjectWithTokenInfo: (
 	projectId: string
 ) => Promise<DaoBlockchainData> = async (contractAddress, owner, projectId) => {
 	try {
+		let script =
+			contractAddress === addresses.FlovatarDustToken
+				? switchToToken(getProjectScript, 'DUST')
+				: getProjectScript;
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getProjectScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(script, projectId, contractAddress),
 			args: (arg, t) => [arg(owner, t.Address), arg(projectId, t.String)]
 		});
 		response.actions = await getProjectActions(owner, projectId);
@@ -1441,8 +1455,12 @@ export const canReceiveProjectToken = async (
 	userAddress: string
 ) => {
 	try {
+		let script =
+			contractAddress === addresses.FlovatarDustToken
+				? switchToToken(canReceiveProjectTokenScript, 'DUST')
+				: canReceiveProjectTokenScript;
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(canReceiveProjectTokenScript, projectId, contractAddress),
+			cadence: replaceWithProperValues(script, projectId, contractAddress),
 			args: (arg, t) => [arg(userAddress, t.Address)]
 		});
 		return response;

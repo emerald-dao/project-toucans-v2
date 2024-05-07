@@ -66,7 +66,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 	);
 }
 
-export function switchToToken(script: string, currency: ECurrencies) {
+export function switchToToken(script: string, currency: ECurrencies | 'DUST') {
 	if (currency === ECurrencies.USDC) {
 		return script
 			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
@@ -77,6 +77,12 @@ export function switchToToken(script: string, currency: ECurrencies) {
 			.replaceAll('flowTokenReceiver', 'stFlowTokenReceiver')
 			.replaceAll('flowTokenVault', 'stFlowTokenVault')
 			.replaceAll('FlowToken', 'stFlowToken');
+	} else if (currency === 'DUST') {
+		return script
+			.replaceAll('.ReceiverPublicPath', '.VaultReceiverPath')
+			.replaceAll('.VaultPublicPath', '.VaultBalancePath')
+			.replaceAll('ExampleToken.getBalances()', '{}')
+			.replaceAll('ExampleToken.maxSupply', 'nil');
 	}
 	return script;
 }

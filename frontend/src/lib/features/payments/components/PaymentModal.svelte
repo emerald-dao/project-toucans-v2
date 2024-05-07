@@ -77,6 +77,7 @@
 		$paymentData.type = paymentType;
 		$paymentData.daoName = daoData.generalInfo.name;
 		$paymentData.daoAddress = daoData.generalInfo.owner;
+		$paymentData.contractAddress = daoData.generalInfo.contract_address;
 		$paymentData.payerAddress = $user.addr as string;
 		$paymentData.projectId = daoData.generalInfo.project_id;
 		$paymentData.currency = daoData.onChainData.paymentCurrency;

@@ -24,6 +24,7 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 		} else if (paymentData.currency === paymentData.daoTokenSymbol) {
 			return await transferProjectTokenToTreasuryExecution(
 				paymentData.daoAddress,
+				paymentData.contractAddress as string,
 				paymentData.projectId,
 				(paymentData.amount as number).toString(),
 				paymentData.specialMessage
