@@ -15,6 +15,7 @@
 	export let votingRound: VotingRound;
 	export let daoActions: ActionData[];
 	export let tokenContractAddress: string | null;
+	export let completedActionIds: {[actionId: string]: boolean};
 
 	let selectedOptionId: number | undefined = undefined;
 
@@ -81,7 +82,7 @@
 
 <svelte:window bind:innerWidth />
 <div class="column-3 main-wrapper">
-	<VotingWidgetCard {votingRound} {votingRoundStore} {daoActions}>
+	<VotingWidgetCard {votingRound} {votingRoundStore} {daoActions} {completedActionIds}>
 		<div class="voting-data-wrapper">
 			<div class="column-6">
 				<div class="options-wrapper">

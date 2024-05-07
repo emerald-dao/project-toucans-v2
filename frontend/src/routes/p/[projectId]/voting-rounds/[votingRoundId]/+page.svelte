@@ -21,7 +21,8 @@
 		{#key roundData.id}
 			<VotingWidgetExpanded
 				votingRound={roundData}
-				daoActions={data.onChainData.actions}
+				daoActions={data.onChainData.actions} 
+				completedActionIds={data.onChainData.completedActionIds}
 				tokenContractAddress={data.generalInfo.contract_address}
 			/>
 		{/key}

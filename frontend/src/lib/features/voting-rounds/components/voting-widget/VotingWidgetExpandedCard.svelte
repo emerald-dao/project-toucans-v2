@@ -10,6 +10,7 @@
 	export let votingRound: VotingRound;
 	export let votingRoundStore: VotingRoundStore;
 	export let daoActions: ActionData[];
+	export let completedActionIds: {[actionId: string]: boolean}
 </script>
 
 <div class="card">
@@ -39,7 +40,7 @@
 					requiredCollectionId={votingRound.required_nft_collection_id}
 				/>
 				{#if votingRound.linked_action_id}
-					<LinkedActionModeCard linkedActionId={votingRound.linked_action_id} {daoActions} />
+					<LinkedActionModeCard linkedActionId={votingRound.linked_action_id} {daoActions} {completedActionIds} linkedActionType={votingRound.linked_action_type} />
 				{/if}
 			</div>
 		</div>
