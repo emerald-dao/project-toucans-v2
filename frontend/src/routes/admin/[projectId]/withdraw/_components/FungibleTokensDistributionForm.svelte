@@ -13,7 +13,7 @@
 	export let csvDist: Distribution[];
 	export let activeCurrency: string;
 	export let availableBalance: number | undefined | 'infinite';
-	export let projectOwner: string;
+	export let contractAddress: string | null;
 	export let projectId: string;
 	export let distStaging: Distribution[];
 
@@ -64,7 +64,7 @@
 			target.name,
 			availableBalance,
 			amountOfTokensInStaging,
-			projectOwner,
+			contractAddress,
 			projectId,
 			activeCurrency
 		);
