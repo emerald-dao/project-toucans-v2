@@ -136,12 +136,19 @@ function generateGetTrendingDataScript(
   let imports = "";
   for (let i = 0; i < projectIds.length; i++) {
     if (contractAddresses[i] !== undefined) {
-      imports += `\nimport ${projectIds[i]} from ${contractAddresses[i]}`;
+      let contractName =
+        projectIds[i] == "FlovatarDAO" ? "FlovatarDustToken" : projectIds[i];
+      imports += `\nimport ${contractName} from ${contractAddresses[i]}`;
     }
   }
   let mainCode = projectIds
     .map((v, i) => {
       if (contractAddresses[i] !== undefined) {
+        let contractName = v === "FlovatarDAO" ? "FlovatarDustToken" : v;
+        let maxSupply =
+          v === "FlovatarDAO" ? "nil" : `${contractName}.maxSupply`;
+        let holders =
+          v === "FlovatarDAO" ? "[]" : `${contractName}.getBalances().keys`;
         return `\n
       let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
                   .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
@@ -170,9 +177,9 @@ function generateGetTrendingDataScript(
         "USDC": project${i}.getVaultBalanceInTreasury(vaultType: Type<@FiatToken.Vault>()) ?? 0.0,
         "stFlow": project${i}.getVaultBalanceInTreasury(vaultType: Type<@stFlowToken.Vault>()) ?? 0.0,
         project${i}.paymentTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: project${i}.paymentTokenInfo.tokenType) ?? 0.0,
-        project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${v}.Vault>()) ?? 0.0
+        project${i}.projectTokenInfo.symbol: project${i}.getVaultBalanceInTreasury(vaultType: Type<@${contractName}.Vault>()) ?? 0.0
       }
-      answer["${v}"] = Info(${v}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, ${v}.maxSupply, project${i}.totalFunding, project${i}.getFunders().keys, ${v}.getBalances().keys)
+      answer["${v}"] = Info(${contractName}.totalSupply, pairInfo${i}, project${i}.paymentTokenInfo.symbol, project${i}.borrowManagerPublic().getIDs().length, treasuryBalances${i}, ${maxSupply}, project${i}.totalFunding, project${i}.getFunders().keys, ${holders})
       `;
       } else {
         return `\n
