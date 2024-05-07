@@ -11,7 +11,7 @@
 <style lang="scss">
 	.content-wrapper {
 		width: 100%;
-		padding: var(--space-4) var(--space-2);
+		padding: var(--space-4) var(--space-4);
 		border-top: 1px solid var(--clr-neutral-badge);
 		flex-grow: 1;
 
@@ -23,6 +23,7 @@
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
 			word-break: break-word;
+			text-align: left;
 		}
 	}
 </style>

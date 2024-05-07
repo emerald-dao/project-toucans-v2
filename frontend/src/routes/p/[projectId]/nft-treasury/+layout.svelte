@@ -3,26 +3,28 @@
 	import CollectionSelector from '$lib/features/nft-treasury/components/nfts-list/atoms/CollectionSelector.svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
 	import Icon from '@iconify/svelte';
+	import { amountOfNfts } from './_store/amountOfNfts';
 
 	export let data: DAOProject;
 </script>
 
 <section class="section-small container column-6">
 	<div class="header-wrapper">
-		<div class="row-1 align-start">
+		<div class="row-3 align-start">
 			<a href={`/p/${$page.params.projectId}`} class="header-link row-1 align-center">
-				<Icon icon="tabler:arrow-left" />
 				{$page.params.projectId}
 			</a>
+			<span>/</span>
 			<a href={`/p/${$page.params.projectId}/nft-treasury`} class="header-link row-1 align-center">
-				/ All DAO NFTs
+				NFT Treasury
 			</a>
 			{#if $page.params.collectionId}
+				<span>/</span>
 				<a
 					href={`/p/${$page.params.projectId}/nft-treasury/${$page.params.collectionId}`}
 					class="header-link row-1 align-center"
 				>
-					/ {$page.params.collectionId}
+					{$page.params.collectionId}
 				</a>
 			{/if}
 		</div>
@@ -33,24 +35,32 @@
 					<h1>
 						{data.generalInfo.name}
 					</h1>
-					{#if $page.params.collectionId}
-						<span> {$page.params.collectionId} NFTs Treasury </span>
-					{:else}
-						<span> NFTs Treasury </span>
-					{/if}
+					<span> NFTs Treasury </span>
 				</div>
 			</div>
 			<CollectionSelector
 				collectionIdentifiers={data.onChainData.allowedNFTCollections}
 				selectedCollection={$page.params.collectionId ? $page.params.collectionId : undefined}
 				forExternalPage={true}
-				label="Visit specific NFT collection treasury"
+				label=""
 			/>
-			<slot name="nftsLength" />
+			<div>
+				{#if $amountOfNfts === 'loading'}
+					<p class="row-2 align-center">
+						<Icon icon="svg-spinners:ring-resize" width="0.8rem" inline />
+						NFTs
+					</p>
+				{:else}
+					<p>
+						{$amountOfNfts}
+						{$amountOfNfts === 1 ? ' NFT' : ' NFTs'}
+					</p>
+				{/if}
+			</div>
 		</div>
 	</div>
-	<div>
-		<slot name="main" />
+	<div class="main-wrapper">
+		<slot />
 	</div>
 </section>
 
@@ -84,6 +94,7 @@
 			display: flex;
 			flex-direction: column;
 			gap: var(--space-6);
+			margin-top: var(--space-4);
 
 			@include mq('small') {
 				flex-direction: row;
@@ -91,6 +102,14 @@
 				align-items: center;
 				gap: var(--space-15);
 			}
+		}
+
+		.main-wrapper {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
 		}
 	}
 </style>

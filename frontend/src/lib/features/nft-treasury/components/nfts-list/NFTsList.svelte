@@ -8,7 +8,7 @@
 	export let sortNFTs: boolean = false;
 	export let pageSize = 5;
 	export let clickable = false;
-	export let selectedCollection: string;
+	export let selectedCollection: string | null;
 	export let nftUuidOwnerMap: { [uuid: string]: string } = {};
 	export let selectedNFTIds: string[] = [];
 	export let nftTreasuryPage: boolean = false;
@@ -68,9 +68,9 @@
 				{clickable}
 				on:click={() => handleNFTClick(nft.id)}
 				isSelected={selectedNFTIds.includes(nft.id)}
-				{selectedCollection}
 				donatedBy={nftUuidOwnerMap[nft.uuid]}
 				{nftTreasuryPage}
+				{selectedCollection}
 			/>
 		{/each}
 	</div>

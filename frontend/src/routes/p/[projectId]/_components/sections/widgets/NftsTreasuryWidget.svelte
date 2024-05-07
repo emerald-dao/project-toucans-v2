@@ -31,8 +31,6 @@
 	} = {};
 
 	async function fetchUserNFTs(collectionIdentifier: string) {
-		console.log('Reloading!');
-
 		if (!storedUserNFTs[collectionIdentifier]) {
 			storedUserNFTs[collectionIdentifier] = await getProjectSpecificNFTTreasury(
 				daoData.generalInfo.owner,
@@ -71,11 +69,11 @@
 					<span class="small"><i>Loading...</i></span>
 				{:then userCatalogNFTs}
 					<NFTsList
-						{selectedCollection}
 						NFTs={userCatalogNFTs}
 						{pageSize}
 						{nftUuidOwnerMap}
 						sortNFTs={true}
+						{selectedCollection}
 					/>
 					{#if downloadable}
 						<DownloadNftTreasury
@@ -98,11 +96,5 @@
 		flex-direction: row;
 		align-items: center;
 		gap: var(--space-1);
-
-		a {
-			display: flex;
-			align-items: center;
-			padding-left: var(--space-1);
-		}
 	}
 </style>
