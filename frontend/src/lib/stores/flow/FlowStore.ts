@@ -93,6 +93,10 @@ const contractData = {
 	MigrationContractStaging: {
 		testnet: '0x2ceae959ed1a7e7a',
 		mainnet: '0x56100d46aa9b0212'
+	},
+	FlovatarDustToken: {
+		testnet: '0x9392a4a7c3f49a0b',
+		mainnet: '0x921ea449dffec68a'
 	}
 };
 
@@ -123,5 +127,6 @@ export const addresses: {
 	SwapFactory: contractData.SwapFactory[network],
 	EmeraldIdentity: contractData.EmeraldIdentity[network],
 	stFlowToken: contractData.stFlowToken[network],
-	Migration: contractData.MigrationContractStaging[network]
+	Migration: contractData.MigrationContractStaging[network],
+	FlovatarDustToken: contractData.FlovatarDustToken[network]
 };
