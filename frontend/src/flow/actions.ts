@@ -1355,15 +1355,11 @@ export const getProjectLockedTokensForUser: (
 	}
 };
 
-export const getTokenBalance = async (projectId: string, projectOwner: string, user: string) => {
+export const getTokenBalance = async (projectId: string, contractAddress: string, user: string) => {
 	try {
 		const response = await fcl.query({
-			cadence: replaceWithProperValues(getTokenBalanceScript),
-			args: (arg, t) => [
-				arg(user, t.Address),
-				arg(projectId, t.String),
-				arg(projectOwner, t.Address)
-			]
+			cadence: replaceWithProperValues(getTokenBalanceScript, projectId, contractAddress),
+			args: (arg, t) => [arg(user, t.Address)]
 		});
 		return response;
 	} catch (e) {
