@@ -410,7 +410,7 @@ const donate = async (
 		txCode = switchToToken(txCode, ECurrencies.USDC);
 	}
 	return await fcl.mutate({
-		cadence: replaceWithProperValues(txCode, projectId, projectOwner),
+		cadence: replaceWithProperValues(txCode),
 		args: (arg, t) => [
 			arg(projectOwner, t.Address),
 			arg(projectId, t.String),
