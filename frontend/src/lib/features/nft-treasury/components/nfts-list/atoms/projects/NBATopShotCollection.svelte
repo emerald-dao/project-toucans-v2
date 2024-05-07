@@ -111,7 +111,7 @@
 <svelte:window bind:innerWidth />
 
 {#if innerWidth < 640}
-	<button class="hamburger-button" on:click={handleClick}>
+	<button on:click={handleClick}>
 		<Icon icon="tabler:menu-2" width="1.5rem" color="var(--clr-neutral-200)" />
 	</button>
 {/if}
@@ -166,7 +166,7 @@
 </div>
 
 <style lang="scss">
-	.hamburger-button {
+	button {
 		display: flex;
 		height: min-content;
 		background-color: var(--clr-background-primary);
