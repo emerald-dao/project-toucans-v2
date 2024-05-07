@@ -61,7 +61,10 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"./ToucansActions.cdc"', addresses.Toucans)
 			.replace('"./ToucansTokens.cdc"', addresses.Toucans)
 			// For All
-			.replaceAll('ExampleToken', contractName)
+			.replaceAll(
+				'ExampleToken',
+				contractName === 'FlovatarDAO' ? 'FlovatarDustToken' : contractName
+			)
 			.replaceAll('0x5643fd47a29770e7', addresses.ECTreasury)
 	);
 }
