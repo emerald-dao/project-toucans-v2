@@ -85,7 +85,8 @@ export function switchToToken(script: string, currency: ECurrencies | 'DUST') {
 			.replaceAll('.ReceiverPublicPath', '.VaultReceiverPath')
 			.replaceAll('.VaultPublicPath', '.VaultBalancePath')
 			.replaceAll('ExampleToken.getBalances()', '{}')
-			.replaceAll('ExampleToken.maxSupply', 'nil');
+			.replaceAll('ExampleToken.maxSupply', 'nil')
+			.replaceAll(', MetadataViews.Resolver', '');
 	}
 	return script;
 }
