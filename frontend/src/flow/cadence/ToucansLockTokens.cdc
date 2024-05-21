@@ -3,7 +3,7 @@ import "ToucansTokens"
 
 access(all) contract ToucansLockTokens {
 
-    access(all) entitlement Owner
+    access(all) entitlement ManagerOwner
 
     access(all) struct LockedVaultDetails {
         access(all) let lockedVaultUuid: UInt64
@@ -67,7 +67,7 @@ access(all) contract ToucansLockTokens {
         // for extra metadata
         access(self) var additions: @{String: AnyResource}
 
-        access(Owner) fun deposit(recipient: Address, unlockTime: UFix64, vault: @{FungibleToken.Vault}, tokenInfo: ToucansTokens.TokenInfo) {
+        access(ManagerOwner) fun deposit(recipient: Address, unlockTime: UFix64, vault: @{FungibleToken.Vault}, tokenInfo: ToucansTokens.TokenInfo) {
             pre {
                 tokenInfo.tokenType == vault.getType(): "Types are not the same"
             }

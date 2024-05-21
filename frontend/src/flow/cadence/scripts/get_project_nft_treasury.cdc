@@ -15,7 +15,7 @@ access(all) fun main(projectOwner: Address, projectId: String): {String: [NFTDat
         }
         let nftDatas: [NFTData] = []
         let nftTypeIdentifier: String = nftRefs[0].getType().identifier
-        let collectionIdentifier = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier)!.keys[0]
+        // let collectionIdentifier = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier)!.keys[0]
         for nftRef in nftRefs {
             let display = nftRef.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
             var serialNum: UInt64? = nil
@@ -32,7 +32,7 @@ access(all) fun main(projectOwner: Address, projectId: String): {String: [NFTDat
             }
             nftDatas.append(NFTData(nftRef.uuid, nftRef.id, display.name, display.thumbnail.uri(), serialNum, traitsOpt))
         }
-        res[collectionIdentifier] = nftDatas
+        res[collectionType.identifier] = nftDatas
     }
     return res
 }

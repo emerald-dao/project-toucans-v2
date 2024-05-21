@@ -8,7 +8,7 @@ transaction(
   vote: Bool
 ) {
 
-  let Collection: auth(Toucans.Owner) &Toucans.Collection
+  let Collection: auth(Toucans.CollectionOwner) &Toucans.Collection
   
   prepare(signer: auth(Storage, Capabilities) &Account) {
     if signer.storage.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
@@ -17,7 +17,7 @@ transaction(
       signer.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
     }
     
-    self.Collection = signer.storage.borrow<auth(Toucans.Owner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)
+    self.Collection = signer.storage.borrow<auth(Toucans.CollectionOwner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)
               ?? panic("Signer does not have Toucans collection does not exist.")
   }
   execute {

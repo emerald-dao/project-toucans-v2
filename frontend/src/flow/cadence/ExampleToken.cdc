@@ -235,7 +235,7 @@ access(all) contract ExampleToken: FungibleToken {
         self.account.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
       }
 
-      let toucansProjectCollection = self.account.storage.borrow<auth(Toucans.Owner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)!
+      let toucansProjectCollection = self.account.storage.borrow<auth(Toucans.CollectionOwner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)!
       toucansProjectCollection.createProject(
         projectTokenInfo: ToucansTokens.TokenInfo("ExampleToken", self.account.address, "INSERT SYMBOL", self.ReceiverPublicPath, self.VaultPublicPath, self.VaultStoragePath), 
         paymentTokenInfo: _paymentTokenInfo, 

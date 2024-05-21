@@ -35,184 +35,8 @@ access(all) contract SwapFactory {
     access(all) event FeeToAddressChanged(oldFeeTo: Address?, newFeeTo: Address?)
     access(all) event PairAccountPublicKeyChanged(oldPublicKey: String?, newPublicKey: String?)
 
-    /// Create Pair
-    ///
-    /// @Param - token0/1Vault: use createEmptyVault() to create init vault types for SwapPair
-    /// @Param - accountCreationFee: fee (0.001 FlowToken) pay for the account creation.
-    ///
-    access(all) fun createPair(token0Vault: @FungibleToken.Vault, token1Vault: @FungibleToken.Vault, accountCreationFee: @FungibleToken.Vault): Address {
-        pre {
-            token0Vault.balance == 0.0 && token1Vault.balance == 0.0:
-                SwapError.ErrorEncode(
-                    msg: "SwapFactory: no need to provide liquidity when creating a pool",
-                    err: SwapError.ErrorCode.INVALID_PARAMETERS
-                )
-        }
-        /// The tokenKey is the type identifier of the token, eg A.f8d6e0586b0a20c7.FlowToken
-        let token0Key = SwapConfig.SliceTokenTypeIdentifierFromVaultType(vaultTypeIdentifier: token0Vault.getType().identifier)
-        let token1Key = SwapConfig.SliceTokenTypeIdentifierFromVaultType(vaultTypeIdentifier: token1Vault.getType().identifier)
-        assert(
-            token0Key != token1Key, message:
-                SwapError.ErrorEncode(
-                    msg: "SwapFactory: identical FungibleTokens",
-                    err: SwapError.ErrorCode.CANNOT_CREATE_PAIR_WITH_SAME_TOKENS
-                )
-        )
-        assert(
-            self.getPairAddress(token0Key: token0Key, token1Key: token1Key) == nil, message:
-                SwapError.ErrorEncode(
-                    msg: "SwapFactory: pair already exists",
-                    err: SwapError.ErrorCode.ADD_PAIR_DUPLICATED
-                )
-        )
-        assert(
-            accountCreationFee.balance >= 0.001, message:
-            SwapError.ErrorEncode(
-                msg: "SwapFactory: insufficient account creation fee",
-                err: SwapError.ErrorCode.INVALID_PARAMETERS
-            )
-        )
-        /// Deposit account creation fee into factory account, which then acts as payer of account creation
-        self.account.getCapability(/public/flowTokenReceiver).borrow<&{FungibleToken.Receiver}>()!.deposit(from: <-accountCreationFee)
+  
 
-        let pairAccount = AuthAccount(payer: self.account)
-        if (self.pairAccountPublicKey != nil) {
-            pairAccount.keys.add(
-                publicKey: PublicKey(
-                    publicKey: self.pairAccountPublicKey!.decodeHex(),
-                    signatureAlgorithm: SignatureAlgorithm.ECDSA_secp256k1
-                ),
-                hashAlgorithm: HashAlgorithm.SHA3_256,
-                weight: 1000.0
-            )
-        }
-
-        let pairAddress = pairAccount.address
-        
-        let pairTemplateContract = getAccount(self.pairContractTemplateAddress).contracts.get(name: "SwapPair")!
-        /// Deploy pair contract with initialized parameters
-        pairAccount.contracts.add(
-            name: "SwapPair",
-            code: pairTemplateContract.code,
-            token0Vault: <-token0Vault,
-            token1Vault: <-token1Vault
-        )
-        
-        /// insert pair map
-        if (self.pairMap.containsKey(token0Key) == false) {
-            self.pairMap.insert(key: token0Key, {})
-        }
-        if (self.pairMap.containsKey(token1Key) == false) {
-            self.pairMap.insert(key: token1Key, {})
-        }
-        self.pairMap[token0Key]!.insert(key: token1Key, pairAddress)
-        self.pairMap[token1Key]!.insert(key: token0Key, pairAddress)
-
-        self.pairs.append(pairAddress)
-
-        /// event
-        emit PairCreated(token0Key: token0Key, token1Key: token1Key, pairAddress: pairAddress, numPairs: self.pairs.length)
-
-        return pairAddress
-    }
-    
-    access(all) fun createEmptyLpTokenCollection(): @LpTokenCollection {
-        return <-create LpTokenCollection()
-    }
-
-    /// LpToken Collection Resource
-    ///
-    /// Used to collect all lptoken vaults in the user's local storage
-    ///
-    access(all) resource LpTokenCollection: SwapInterfaces.LpTokenCollectionPublic {
-        access(self) var lpTokenVaults: @{Address: FungibleToken.Vault}
-
-        init() {
-            self.lpTokenVaults <- {}
-        }
-
-        destroy() {
-            destroy self.lpTokenVaults
-        }
-
-        access(all) fun deposit(pairAddr: Address, lpTokenVault: @FungibleToken.Vault) {
-            pre {
-                lpTokenVault.balance > 0.0: SwapError.ErrorEncode(
-                    msg: "LpTokenCollection: deposit empty lptoken vault",
-                    err: SwapError.ErrorCode.INVALID_PARAMETERS
-                )
-            }
-            let pairPublicRef = getAccount(pairAddr).getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath).borrow()!
-            assert(
-                lpTokenVault.getType() == pairPublicRef.getLpTokenVaultType(), message:
-                SwapError.ErrorEncode(
-                    msg: "LpTokenCollection: input token vault type mismatch with pair lptoken vault",
-                    err: SwapError.ErrorCode.MISMATCH_LPTOKEN_VAULT
-                )
-            )
-
-            if self.lpTokenVaults.containsKey(pairAddr) {
-                let vaultRef = (&self.lpTokenVaults[pairAddr] as &FungibleToken.Vault?)!
-                vaultRef.deposit(from: <- lpTokenVault)
-            } else {
-                self.lpTokenVaults[pairAddr] <-! lpTokenVault
-            }
-        }
-
-        access(all) fun withdraw(pairAddr: Address, amount: UFix64): @FungibleToken.Vault {
-            pre {
-                self.lpTokenVaults.containsKey(pairAddr):
-                    SwapError.ErrorEncode(
-                        msg: "LpTokenCollection: haven't provided liquidity to pair ".concat(pairAddr.toString()),
-                        err: SwapError.ErrorCode.INVALID_PARAMETERS
-                    )
-            }
-
-            let vaultRef = (&self.lpTokenVaults[pairAddr] as &FungibleToken.Vault?)!
-            let withdrawVault <- vaultRef.withdraw(amount: amount)
-            if vaultRef.balance == 0.0 {
-                let deletedVault <- self.lpTokenVaults[pairAddr] <- nil
-                destroy deletedVault
-            }
-            return <- withdrawVault
-        }
-
-        access(all) fun getCollectionLength(): Int {
-            return self.lpTokenVaults.keys.length
-        }
-
-        access(all) fun getLpTokenBalance(pairAddr: Address): UFix64 {
-            if self.lpTokenVaults.containsKey(pairAddr) {
-                let vaultRef = (&self.lpTokenVaults[pairAddr] as &FungibleToken.Vault?)!
-                return vaultRef.balance
-            }
-            return 0.0
-        }
-
-        access(all) fun getAllLPTokens(): [Address] {
-            return self.lpTokenVaults.keys
-        }
-
-        access(all) fun getSlicedLPTokens(from: UInt64, to: UInt64): [Address] {
-            pre {
-                from <= to && from < UInt64(self.getCollectionLength()):
-                    SwapError.ErrorEncode(
-                        msg: "from index out of range",
-                        err: SwapError.ErrorCode.INVALID_PARAMETERS
-                    )
-            }
-            let pairLen = UInt64(self.getCollectionLength())
-            let endIndex = to >= pairLen ? pairLen - 1 : to
-            var curIndex = from
-            // Array.slice() is not supported yet.
-            let list: [Address] = []
-            while curIndex <= endIndex {
-                list.append(self.lpTokenVaults.keys[curIndex])
-                curIndex = curIndex + 1
-            }
-            return list
-        }
-    }
     
     
     access(all) fun getPairAddress(token0Key: String, token1Key: String): Address? {
@@ -225,53 +49,20 @@ access(all) contract SwapFactory {
         }
     }
 
-    access(all) fun getPairInfo(token0Key: String, token1Key: String): AnyStruct? {
-        var pairAddr = self.getPairAddress(token0Key: token0Key, token1Key: token1Key)
-        if pairAddr == nil {
-            return nil
-        }
-        return getAccount(pairAddr!).getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath).borrow()!.getPairInfo()
-    }
+    // access(all) fun getPairInfo(token0Key: String, token1Key: String): AnyStruct? {
+    //     var pairAddr = self.getPairAddress(token0Key: token0Key, token1Key: token1Key)
+    //     if pairAddr == nil {
+    //         return nil
+    //     }
+    //     return getAccount(pairAddr!).getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath).borrow()!.getPairInfo()
+    // }
 
     access(all) fun getAllPairsLength(): Int {
         return self.pairs.length
     }
 
-    /// Get sliced array of pair addresses (inclusive for both indexes)
-    access(all) fun getSlicedPairs(from: UInt64, to: UInt64): [Address] {
-        pre {
-            from <= to && from < UInt64(self.pairs.length):
-                SwapError.ErrorEncode(
-                    msg: "from index out of range",
-                    err: SwapError.ErrorCode.INVALID_PARAMETERS
-                )
-        }
-        let pairLen = UInt64(self.pairs.length)
-        let endIndex = to >= pairLen ? pairLen - 1 : to
-        var curIndex = from
-        // Array.slice() is not supported yet.
-        let list: [Address] = []
-        while curIndex <= endIndex {
-            list.append(self.pairs[curIndex])
-            curIndex = curIndex + 1
-        }
-        return list
-    }
 
-    /// Get sliced array of PairInfos (inclusive for both indexes)
-    access(all) fun getSlicedPairInfos(from: UInt64, to: UInt64): [AnyStruct] {
-        let pairSlice: [Address] = self.getSlicedPairs(from: from, to: to)
-        var i = 0
-        var res: [AnyStruct] = []
-        while(i < pairSlice.length) {
-            res.append(
-                getAccount(pairSlice[i]).getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath).borrow()!.getPairInfo()
-            )
-            i = i + 1
-        }
 
-        return res
-    }
 
     /// Admin function to update feeTo and pair template
     ///
@@ -298,7 +89,5 @@ access(all) contract SwapFactory {
         self.feeTo = nil
         self._reservedFields = {}
 
-        destroy <-self.account.load<@AnyResource>(from: /storage/swapFactoryAdmin)
-        self.account.save(<-create Admin(), to: /storage/swapFactoryAdmin)
     }
 }

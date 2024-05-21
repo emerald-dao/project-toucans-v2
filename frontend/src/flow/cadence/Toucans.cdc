@@ -14,7 +14,8 @@ import "Burner"
 
 access(all) contract Toucans {
 
-  access(all) entitlement Owner
+  access(all) entitlement ProjectOwner
+  access(all) entitlement CollectionOwner
 
   access(all) let CollectionStoragePath: StoragePath
   access(all) let CollectionPublicPath: PublicPath
@@ -525,7 +526,7 @@ access(all) contract Toucans {
     // NOTES:
     // If `fundingTarget` is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    access(Owner) fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
+    access(ProjectOwner) fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
         timeframe.startTime >= getCurrentBlock().timestamp: "Start time must be now or in the future."
@@ -583,7 +584,7 @@ access(all) contract Toucans {
     }
 
     // Allows you to edit a cycle that has not happened yet
-    access(Owner) fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
+    access(ProjectOwner) fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
       let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleIndex: cycleIndex)
       let currentTime: UFix64 = getCurrentBlock().timestamp
       assert(fundingCycle.details.cycleId == details.cycleId, message: "Cannot edit the cycleId.")
@@ -617,7 +618,7 @@ access(all) contract Toucans {
       fundingCycle.changeDetails(newDetails: details)
     }
 
-    access(Owner) fun togglePurchasing() {
+    access(ProjectOwner) fun togglePurchasing() {
       self.purchasing = !self.purchasing
     }
 
@@ -838,7 +839,7 @@ access(all) contract Toucans {
       (self.extra["completedActionIds"]! as! {UInt64: Bool}).insert(key: actionUUID, mark)
     }
 
-    access(Owner) fun addAllowedNFTCollections(collectionIdentifiers: [String]) {
+    access(ProjectOwner) fun addAllowedNFTCollections(collectionIdentifiers: [String]) {
       if self.extra["allowedNFTCollections"] == nil {
         self.extra["allowedNFTCollections"] = {} as {String: Bool}
       }
@@ -848,7 +849,7 @@ access(all) contract Toucans {
       }
     }
 
-    access(Owner) fun removeAllowedNFTCollections(collectionIdentifiers: [String]) {      
+    access(ProjectOwner) fun removeAllowedNFTCollections(collectionIdentifiers: [String]) {      
       for collectionIdentifier in collectionIdentifiers {
         (self.extra["allowedNFTCollections"]! as! {String: Bool}).remove(key: collectionIdentifier)
       }
@@ -1019,7 +1020,7 @@ access(all) contract Toucans {
         self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
       }
 
-      let tokenLockManager: auth(ToucansLockTokens.Owner) &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
+      let tokenLockManager: auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
       let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw!(amount: amount)
       tokenLockManager.deposit(recipient: recipient, unlockTime: unlockTime, vault: <- vaultToLock, tokenInfo: tokenInfo)
 
@@ -1122,7 +1123,7 @@ access(all) contract Toucans {
                                                                         
 
     // can only be called if amount does not put us over the funding target
-    access(Owner) fun transferOverflowToCurrentRound(amount: UFix64) {
+    access(ProjectOwner) fun transferOverflowToCurrentRound(amount: UFix64) {
       let cycle = self.borrowCurrentFundingCycleRef() ?? panic("There must be an active funding cycle in order to do this.")
       let overflow <- self.overflow.withdraw(amount: amount)
       // will fail if this puts the cycle over the funding target
@@ -1301,9 +1302,9 @@ access(all) contract Toucans {
       return &self.multiSignManager as &Manager
     }
 
-    access(self) fun borrowLockTokensManager(): auth(ToucansLockTokens.Owner) &ToucansLockTokens.Manager? {
-      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth(ToucansLockTokens.Owner) &AnyResource? {
-        return lockTokensManager as! auth(ToucansLockTokens.Owner) &ToucansLockTokens.Manager
+    access(self) fun borrowLockTokensManager(): auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth(ToucansLockTokens.ManagerOwner) &AnyResource? {
+        return lockTokensManager as! auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager
       }
       return nil
     }
@@ -1389,7 +1390,7 @@ access(all) contract Toucans {
   access(all) resource Collection {
     access(self) let projects: @{String: Project}
 
-    access(Owner) fun createProjectNoToken(
+    access(CollectionOwner) fun createProjectNoToken(
       projectId: String,
       paymentTokenInfo: ToucansTokens.TokenInfo,
       initialAllowedNFTCollections: [String],
@@ -1417,7 +1418,7 @@ access(all) contract Toucans {
       )
     }
 
-    access(Owner) fun createProject(
+    access(CollectionOwner) fun createProject(
       projectTokenInfo: ToucansTokens.TokenInfo, 
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
@@ -1461,12 +1462,12 @@ access(all) contract Toucans {
       return self.projects.keys
     }
 
-    access(Owner) fun borrowProject(projectId: String): auth(Owner) &Project? {
-      return &self.projects[projectId] as auth(Owner) &Project?
+    access(CollectionOwner) fun borrowProject(projectId: String): auth(ProjectOwner) &Project? {
+      return &self.projects[projectId] as auth(ProjectOwner) &Project?
     }
 
     // use this function to vote on other projects proposals
-    access(Owner) fun voteOnProjectAction(projectOwner: Address, projectId: String, actionUUID: UInt64, vote: Bool) {
+    access(CollectionOwner) fun voteOnProjectAction(projectOwner: Address, projectId: String, actionUUID: UInt64, vote: Bool) {
       let collection: &Collection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                     ?? panic("A DAOTreasury doesn't exist here.")
       let project: &Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
@@ -1479,7 +1480,7 @@ access(all) contract Toucans {
       }
     }
 
-    access(Owner) fun deleteProject(projectId: String) {
+    access(CollectionOwner) fun deleteProject(projectId: String) {
       destroy self.projects.remove(key: projectId)
     }
 
