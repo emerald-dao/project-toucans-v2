@@ -1,100 +1,43 @@
 <script type="ts">
 	import { DiscoverProjectSidebar, DiscoverProjectMain, SeeMoreSidebar } from './_components';
-	import { onMount, setContext } from 'svelte';
-	import { writable, type Writable } from 'svelte/store';
-	import type { DaoEvent } from '$lib/types/dao-project/dao-event/dao-event.type';
-	import { supabase } from '$lib/supabaseClient';
-	import { getProjectInfo, getTokenBalance, hasProjectVaultSetup } from '$flow/actions';
-	import { user } from '$stores/flow/FlowStore';
+	import { getContext } from 'svelte';
 	import Icon from '@iconify/svelte';
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
+	import { getTokenBalance, hasProjectVaultSetup } from '$flow/actions';
+	import { user } from '$stores/flow/FlowStore';
 
 	export let data: DAOProject;
 
 	let seeMore = false;
 
-	let daoDataStore: Writable<DAOProject> = writable(data, (set) => {
-		const subscription = supabase
-			.channel('events')
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'events',
-					filter: `project_id=eq.${data.generalInfo.project_id}`
-				},
-				(payload) => {
-					const newEvent = payload.new as DaoEvent;
-
-					reloadBlockchainData();
-
-					if (newEvent.type === 'Purchase' && newEvent.data.by === $user.addr) {
-						reloadUserBalance();
-					}
-
-					$daoDataStore.events?.push(newEvent);
-
-					return set($daoDataStore);
-				}
-			)
-			.subscribe();
-
-		return () => supabase.removeChannel(subscription);
-	});
-
-	setContext('daoData', $daoDataStore);
-
-	const reloadBlockchainData = async () => {
-		$daoDataStore.onChainData = await getProjectInfo(
-			data.generalInfo.contract_address,
-			data.generalInfo.owner,
-			data.generalInfo.project_id
-		);
-	};
+	const daoData: DAOProject = getContext('daoData');
 
 	const reloadUserBalance = async () => {
 		if (!data.generalInfo.contract_address) return;
-		$daoDataStore.vaultSetup = true;
+		daoData.vaultSetup = true;
 
 		if ($user.addr) {
-			$daoDataStore.userBalance = await getTokenBalance(
+			daoData.userBalance = await getTokenBalance(
 				data.generalInfo.project_id,
 				data.generalInfo.contract_address,
 				$user.addr
 			);
-			$daoDataStore.vaultSetup = await hasProjectVaultSetup(
+			daoData.vaultSetup = await hasProjectVaultSetup(
 				data.generalInfo.contract_address,
 				data.generalInfo.project_id,
 				$user.addr
 			);
 		}
 	};
-
-	$: $user.addr && reloadUserBalance();
-
-	onMount(() => {
-		let uuidsMap = {};
-		let donateNFTEvents = data.events.filter((e) => e.type === 'DonateNFT').reverse();
-		for (let i = 0; i < donateNFTEvents.length; i++) {
-			let event = donateNFTEvents[i];
-			if (event.data.uuids) {
-				for (let j = 0; j < event.data.uuids.length; j++) {
-					uuidsMap[event.data.uuids[j]] = event.data.by;
-				}
-			}
-		}
-		$daoDataStore.generalInfo.nftUuidOwnerMap = uuidsMap;
-	});
 </script>
 
 <section class="container">
 	<div class="main-wrapper">
 		<div class="project-sidebar-wrapper">
-			<DiscoverProjectSidebar daoData={$daoDataStore} />
+			<DiscoverProjectSidebar {daoData} />
 		</div>
 		<div class="secondary-wrapper">
-			<DiscoverProjectMain daoData={$daoDataStore} {reloadUserBalance} />
+			<DiscoverProjectMain {daoData} {reloadUserBalance} />
 		</div>
 	</div>
 	{#if data.generalInfo.long_description}

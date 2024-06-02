@@ -8,9 +8,10 @@
 	export let sortNFTs: boolean = false;
 	export let pageSize = 5;
 	export let clickable = false;
-	export let selectedCollection: string;
+	export let selectedCollection: string | null;
 	export let nftUuidOwnerMap: { [uuid: string]: string } = {};
 	export let selectedNFTIds: string[] = [];
+	export let nftTreasuryPage: boolean = false;
 
 	if (sortNFTs && selectedCollection === 'NFLAllDay') {
 		let tierRating = {
@@ -43,35 +44,64 @@
 	$: currentPageNFTs = filteredNfts.slice(pageStart, pageEnd);
 </script>
 
-<AnimatedSearchBar
-	items={NFTs}
-	bind:filteredItems={filteredNfts}
-	searchTerms={['name', 'serial']}
-	placeholder="Search NFT name or serial..."
-/>
-{#if filteredNfts.length === 0}
+{#if !nftTreasuryPage}
+	<AnimatedSearchBar
+		items={NFTs}
+		bind:filteredItems={filteredNfts}
+		searchTerms={['name', 'serial']}
+		placeholder="Search NFT name or serial..."
+	/>
+{/if}
+{#if currentPageNFTs.length === 0}
 	<p class="small off">
 		<em> Sorry! We didn't find NFTs from this collection. </em>
 	</p>
 {:else}
-	<div class="nfts-grid">
+	<div
+		class:treasury-page={nftTreasuryPage}
+		class:treasury-widget={!nftTreasuryPage}
+		class="nfts-grid"
+	>
 		{#each currentPageNFTs as nft (nft.id)}
 			<NFTCard
 				{nft}
 				{clickable}
 				on:click={() => handleNFTClick(nft.id)}
 				isSelected={selectedNFTIds.includes(nft.id)}
-				{selectedCollection}
 				donatedBy={nftUuidOwnerMap[nft.uuid]}
+				{nftTreasuryPage}
+				{selectedCollection}
 			/>
 		{/each}
 	</div>
-	<Pagination bind:pageStart bind:pageEnd amountOfItems={filteredNfts.length} {pageSize} />
+	<Pagination
+		bind:pageStart
+		bind:pageEnd
+		amountOfItems={filteredNfts.length}
+		{pageSize}
+		scrollToTopOnChange={nftTreasuryPage}
+	/>
 {/if}
 
 <style lang="scss">
 	.nfts-grid {
 		display: grid;
+	}
+	.treasury-page {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+		gap: var(--space-4);
+
+		@include mq('small') {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@include mq('medium') {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.treasury-widget {
 		grid-gap: var(--space-3);
 		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 	}
