@@ -268,39 +268,25 @@
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": [
-				"FCLCrypto",
-				"FungibleTokenMetadataViews",
-				"FUSD",
-				"FIND",
-				"stFlowToken",
-				"LiquidStaking",
-				"OnChainMultiSig",
-				"NFTCatalogSnapshot",
-				"NFTCatalog",
-				"ExampleNFT",
-				"ChinoNFT",
-				"FiatToken",
-				"EmeraldIdentityDapper",
-				"EmeraldIdentityLilico",
-				"EmeraldIdentity",
-				"ToucansUtils",
-				"ToucansTokens",
-				"ToucansLockTokens",
-				"Toucans",
-				"ToucansActions",
-				"TestingDAO",
-				"SwapError",
-				"SwapConfig",
-				"SwapInterfaces",
-				"SwapFactory"
-			]
+			"emulator-account": ["ViewResolver", "NonFungibleToken"]
 		},
 		"testnet": {
-			"testnet-account": ["Toucans"]
+			"testnet-account": [
+				"ToucansTokens",
+				"ToucansLockTokens",
+				"ToucansUtils",
+				"ToucansActions",
+				"Toucans"
+			]
 		},
 		"mainnet": {
-			"mainnet-account": ["Toucans"]
+			"mainnet-account": [
+				"ToucansTokens",
+				"ToucansLockTokens",
+				"ToucansUtils",
+				"ToucansActions",
+				"Toucans"
+			]
 		}
 	}
 }

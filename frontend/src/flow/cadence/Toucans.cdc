@@ -1316,16 +1316,16 @@ access(all) contract Toucans {
       return nil
     }
 
-    access(self) fun borrowNFTTreasury(): auth(Mutate, NonFungibleToken.Owner) &{Type: {NonFungibleToken.Collection}}? {
+    access(self) fun borrowNFTTreasury(): auth(Mutate, NonFungibleToken.Withdraw) &{Type: {NonFungibleToken.Collection}}? {
       if let nftTreasury = &self.additions["nftTreasury"] as auth(Mutate) &AnyResource? {
-        return nftTreasury as! auth(Mutate, NonFungibleToken.Owner) &{Type: {NonFungibleToken.Collection}}
+        return nftTreasury as! auth(Mutate, NonFungibleToken.Withdraw) &{Type: {NonFungibleToken.Collection}}
       }
       return nil
     }
 
-    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): auth(NonFungibleToken.Owner) &{NonFungibleToken.Collection}? {
+    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): auth(NonFungibleToken.Withdraw) &{NonFungibleToken.Collection}? {
       if let nftTreasury = self.borrowNFTTreasury() {
-        return nftTreasury[type] as! auth(NonFungibleToken.Owner) &{NonFungibleToken.Collection}?
+        return nftTreasury[type] as! auth(NonFungibleToken.Withdraw) &{NonFungibleToken.Collection}?
       }
       return nil
     }
