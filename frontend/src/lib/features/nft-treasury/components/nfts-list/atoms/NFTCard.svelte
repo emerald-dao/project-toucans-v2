@@ -14,7 +14,7 @@
 	export let donatedBy: string | undefined;
 
 	let imgSrc = nft.thumbnail.startsWith('ipfs://')
-		? `https://nftstorage.link/ipfs/${nft.thumbnail.slice(7)}`
+		? `https://ipfs.io/ipfs/${nft.thumbnail.slice(7)}`
 		: nft.thumbnail;
 
 	let cardDetailComponents = {
