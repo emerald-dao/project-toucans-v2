@@ -61,7 +61,9 @@ access(all) contract ToucansLockTokens {
         }
     }
 
-    access(all) resource Manager {
+    access(all) resource interface ManagerPublic {}
+
+    access(all) resource Manager: ManagerPublic {
         access(self) let lockedVaults: @{UInt64: LockedVault}
         access(self) let addressMap: {Address: [UInt64]}
         // for extra metadata
