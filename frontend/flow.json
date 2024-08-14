@@ -125,7 +125,9 @@
 		"Burner": {
 			"source": "./src/flow/cadence/utility/Burner.cdc",
 			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "80d5c8ffed6d5e3c",
+				"mainnet": "f233dcee88fe0abe"
 			}
 		},
 		"ExampleToken": {
@@ -280,13 +282,7 @@
 			]
 		},
 		"mainnet": {
-			"mainnet-account": [
-				"ToucansTokens",
-				"ToucansLockTokens",
-				"ToucansUtils",
-				"ToucansActions",
-				"Toucans"
-			]
+			"mainnet-account": ["ToucansLockTokens"]
 		}
 	}
 }
