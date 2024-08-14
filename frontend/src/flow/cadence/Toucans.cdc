@@ -761,7 +761,7 @@ access(all) contract Toucans {
         amount: amount,
         to: vault.owner!.address
       )
-      vault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
+      vault.deposit(from: <- self.treasury[vaultType]?.withdraw(amount: amount)!)
     }
 
     access(self) fun batchWithdrawFromTreasury(vaultType: Type, vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}, tokenSymbol: String) {
@@ -771,7 +771,7 @@ access(all) contract Toucans {
         let amount: UFix64 = amounts[wallet]!
         totalAmount = totalAmount + amount
         if let recipientVault: &{FungibleToken.Receiver} = vaults[wallet]!.borrow() {
-          recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
+          recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw(amount: amount)!)
         } else {
           failed.append(wallet)
         }
@@ -1021,7 +1021,7 @@ access(all) contract Toucans {
       }
 
       let tokenLockManager: auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
-      let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw!(amount: amount)
+      let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw(amount: amount)!
       tokenLockManager.deposit(recipient: recipient, unlockTime: unlockTime, vault: <- vaultToLock, tokenInfo: tokenInfo)
 
       emit LockTokens(
@@ -1056,7 +1056,7 @@ access(all) contract Toucans {
     // DISCLAIMER: Only works on Mainnet.
     access(account) fun stakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
       // withdraw flow from treasury
-      let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw!(amount: flowAmount)
+      let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw(amount: flowAmount)!
       // deposit stFlow to treasury
       let outVault: @stFlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.1654653399040a61.FlowToken") as! @stFlowToken.Vault
       assert(outVault.balance >= stFlowAmountOutMin, message: SwapError.ErrorEncode(
@@ -1075,7 +1075,7 @@ access(all) contract Toucans {
     // DISCLAIMER: Only works on Mainnet.
     access(account) fun unstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
       // withdraw stFlow from treasury
-      let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw!(amount: stFlowAmount)
+      let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw(amount: stFlowAmount)!
       // deposit flow to treasury
       let outVault: @FlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.d6f80565193ad727.stFlowToken") as! @FlowToken.Vault
       assert(outVault.balance >= flowAmountOutMin, message: SwapError.ErrorEncode(
@@ -1101,7 +1101,7 @@ access(all) contract Toucans {
                          
 
     access(account) fun burn(tokenType: Type, tokenSymbol: String, amount: UFix64) {
-      let tokens <- self.treasury[tokenType]?.withdraw!(amount: amount)
+      let tokens <- self.treasury[tokenType]?.withdraw(amount: amount)!
       Burner.burn(<- tokens)
 
       emit Burn(
