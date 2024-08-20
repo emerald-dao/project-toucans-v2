@@ -7,8 +7,8 @@
 		TreasuryWallet,
 		DaoStatsIntro
 	} from './_components';
+	import Staging from './_components/Staging.svelte';
 	import * as AdminPage from './_components/admin-page';
-	import StageContract from './_components/admin-page/StageContract.svelte';
 
 	export let data;
 </script>
@@ -16,9 +16,11 @@
 {#if data.activeDao}
 	<AdminPage.Root>
 		<DaoStatsIntro daoData={data.activeDao} />
-		<!-- <StageContract daoData={data.activeDao} /> -->
 		<div class="secondary-wrapper">
 			<div class="column-8">
+				{#if data.activeDao.generalInfo.contract_address && data.activeDao.generalInfo.project_id != 'FlovatarDAO'}
+					<Staging daoData={data.activeDao} />
+				{/if}
 				<GeneralStats daoData={data.activeDao} />
 				<PrimaryTabs daoData={data.activeDao} />
 			</div>

@@ -13,6 +13,7 @@ import {
 
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
+import rawCadence1ExampleTokenCode from './cadence/utility/c1.0/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import deployDAOTx from './cadence/transactions/deploy_dao.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
@@ -105,18 +106,25 @@ export const logIn = async () => fcl.logIn();
 /* STAGING CONTRACT */
 
 const stageContract = async (data: DAOProject) => {
-	let contractCode = rawExampleTokenCode
-		.replaceAll('INSERT NAME', data.generalInfo.name)
-		.replaceAll('INSERT DESCRIPTION', data.generalInfo.description.replace(/(\r\n|\n|\r)/gm, ''))
-		.replaceAll('INSERT SYMBOL', data.generalInfo.token_symbol!)
-		.replaceAll('INSERT URL', data.generalInfo.website!)
-		.replaceAll('INSERT TWITTER', data.generalInfo.twitter!)
-		.replaceAll('INSERT LOGO', data.generalInfo.logo)
-		.replaceAll('INSERT BANNER LOGO', data.generalInfo.banner_image)
-		.replaceAll('INSERT DISCORD', data.generalInfo.discord!);
+	let contractCode = replaceWithProperValues(
+		rawCadence1ExampleTokenCode,
+		data.generalInfo.project_id,
+		data.generalInfo.contract_address as string
+	)
+		.replaceAll('INSERT NAME', data.generalInfo.name || '')
+		.replaceAll(
+			'INSERT DESCRIPTION',
+			data.generalInfo.description ? data.generalInfo.description.replace(/(\r\n|\n|\r)/gm, '') : ''
+		)
+		.replaceAll('INSERT SYMBOL', data.generalInfo.token_symbol || '')
+		.replaceAll('INSERT URL', data.generalInfo.website || '')
+		.replaceAll('INSERT TWITTER', data.generalInfo.twitter || '')
+		.replaceAll('INSERT LOGO', data.generalInfo.logo || '')
+		.replaceAll('INSERT BANNER LOGO', data.generalInfo.banner_image || '')
+		.replaceAll('INSERT DISCORD', data.generalInfo.discord || '');
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(stageContractTx),
-		args: (arg, t) => [arg(daoData.generalInfo.project_id, t.String), arg(contractCode, t.String)],
+		args: (arg, t) => [arg(data.generalInfo.project_id, t.String), arg(contractCode, t.String)],
 		proposer: fcl.authz,
 		payer: fcl.authz,
 		authorizations: [fcl.authz],
@@ -125,7 +133,7 @@ const stageContract = async (data: DAOProject) => {
 };
 
 export const stageContractExecution = (daoData: DAOProject) =>
-	executeTransaction(() => stageContract(daoData), saveEventAction);
+	executeTransaction(() => stageContract(daoData));
 
 export const isStaged: (contractAddress: string, contractName: string) => Promise<boolean> = async (
 	contractAddress: string,
