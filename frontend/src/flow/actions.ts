@@ -111,14 +111,17 @@ const stageContract = async (data: DAOProject) => {
 		data.generalInfo.project_id,
 		data.generalInfo.contract_address as string
 	)
-		.replaceAll('INSERT NAME', data.generalInfo.name)
-		.replaceAll('INSERT DESCRIPTION', data.generalInfo.description.replace(/(\r\n|\n|\r)/gm, ''))
-		.replaceAll('INSERT SYMBOL', data.generalInfo.token_symbol)
-		.replaceAll('INSERT URL', data.generalInfo.website)
-		.replaceAll('INSERT TWITTER', data.generalInfo.twitter)
-		.replaceAll('INSERT LOGO', data.generalInfo.logo)
-		.replaceAll('INSERT BANNER LOGO', data.generalInfo.banner_image)
-		.replaceAll('INSERT DISCORD', data.generalInfo.discord);
+		.replaceAll('INSERT NAME', data.generalInfo.name || '')
+		.replaceAll(
+			'INSERT DESCRIPTION',
+			data.generalInfo.description ? data.generalInfo.description.replace(/(\r\n|\n|\r)/gm, '') : ''
+		)
+		.replaceAll('INSERT SYMBOL', data.generalInfo.token_symbol || '')
+		.replaceAll('INSERT URL', data.generalInfo.website || '')
+		.replaceAll('INSERT TWITTER', data.generalInfo.twitter || '')
+		.replaceAll('INSERT LOGO', data.generalInfo.logo || '')
+		.replaceAll('INSERT BANNER LOGO', data.generalInfo.banner_image || '')
+		.replaceAll('INSERT DISCORD', data.generalInfo.discord || '');
 	return await fcl.mutate({
 		cadence: replaceWithProperValues(stageContractTx),
 		args: (arg, t) => [arg(data.generalInfo.project_id, t.String), arg(contractCode, t.String)],

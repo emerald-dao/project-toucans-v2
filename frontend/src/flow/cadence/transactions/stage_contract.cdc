@@ -1,4 +1,4 @@
-import MigrationContractStaging from "../utility/MigrationContractStaging.cdc"
+import MigrationContractStaging from 0x56100d46aa9b0212
 
 /// This transaction is used to stage a contract update for Cadence 1.0 contract migrations.
 ///
