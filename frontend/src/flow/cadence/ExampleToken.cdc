@@ -21,9 +21,6 @@ access(all) contract ExampleToken: FungibleToken {
     access(all) let AdministratorStoragePath: StoragePath
 
     // Events
-    access(all) event TokensInitialized(initialSupply: UFix64)
-    access(all) event TokensWithdrawn(amount: UFix64, from: Address?)
-    access(all) event TokensDeposited(amount: UFix64, to: Address?)
     access(all) event TokensTransferred(amount: UFix64, from: Address, to: Address)
     access(all) event TokensMinted(amount: UFix64)
     access(all) event TokensBurned(amount: UFix64)
@@ -42,7 +39,6 @@ access(all) contract ExampleToken: FungibleToken {
 
         access(FungibleToken.Withdraw) fun withdraw(amount: UFix64): @{FungibleToken.Vault} {
             self.balance = self.balance - amount
-            emit TokensWithdrawn(amount: amount, from: self.owner?.address)
 
             if let owner: Address = self.owner?.address {
                 ExampleToken.setBalance(address: owner, balance: self.balance)
@@ -53,7 +49,6 @@ access(all) contract ExampleToken: FungibleToken {
         access(all) fun deposit(from: @{FungibleToken.Vault}) {
             let vault: @Vault <- from as! @Vault
             self.balance = self.balance + vault.balance
-            emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             destroy vault
 
             if let owner: Address = self.owner?.address {
@@ -247,9 +242,6 @@ access(all) contract ExampleToken: FungibleToken {
       )
 
       self.account.storage.save(<- create Administrator(), to: self.AdministratorStoragePath)
-
-      // Events
-      emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
  
