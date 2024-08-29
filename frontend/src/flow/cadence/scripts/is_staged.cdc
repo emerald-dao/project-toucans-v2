@@ -1,5 +1,5 @@
 import MigrationContractStaging from "../utility/MigrationContractStaging.cdc"
 
 access(all) fun main(contractAddress: Address, contractName: String): Bool {
-    return MigrationContractStaging.isStaged(address: contractAddress, name: contractName)
+    return MigrationContractStaging.isStaged(address: contractAddress, name: contractName) && MigrationContractStaging.isValidated(address: contractAddress, name: contractName)
 }
