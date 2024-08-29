@@ -263,7 +263,9 @@ access(all) contract Toucans {
     }
   }
 
-  access(all) resource Project {
+  access(all) resource interface ProjectPublic {}
+
+  access(all) resource Project: ProjectPublic {
     access(all) let projectId: String
     access(all) var projectTokenInfo: ToucansTokens.TokenInfo
     access(all) let paymentTokenInfo: ToucansTokens.TokenInfo
@@ -1387,7 +1389,9 @@ access(all) contract Toucans {
     }
   }
 
-  access(all) resource Collection {
+  access(all) resource interface CollectionPublic {}
+
+  access(all) resource Collection: CollectionPublic {
     access(self) let projects: @{String: Project}
 
     access(CollectionOwner) fun createProjectNoToken(
@@ -1576,8 +1580,10 @@ access(all) contract Toucans {
         self.action = _action
       }
   }
+
+  access(all) resource interface ManagerPublic {}
   
-  access(all) resource Manager {
+  access(all) resource Manager: ManagerPublic {
     access(all) var threshold: UInt64
     access(self) let signers: [Address]
     // Maps the `uuid` of the MultiSignAction
