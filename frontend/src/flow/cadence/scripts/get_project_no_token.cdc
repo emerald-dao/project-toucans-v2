@@ -42,7 +42,6 @@ access(all) struct Info {
     self.totalFunding = info.totalFunding
     self.editDelay = info.editDelay
     self.fundingCycles = info.getFundingCycles()
-    self.funders = info.getFunders()
     self.overflowBalance = info.getOverflowBalance()
     self.minting = info.minting
     self.treasuryBalances = {

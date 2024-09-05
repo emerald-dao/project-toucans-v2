@@ -33,6 +33,7 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"../utility/SwapFactory.cdc"', addresses.SwapFactory)
 			.replace('"../utility/EmeraldIdentity.cdc"', addresses.EmeraldIdentity)
 			.replace('"../utility/stFlowToken.cdc"', addresses.stFlowToken)
+			.replace('"../utility/MigrationContractStaging.cdc"', addresses.Migration)
 			// Two directories deep
 			.replace('"../../ExampleToken.cdc"', contractAddress)
 			.replace('"../../utility/NonFungibleToken.cdc"', addresses.NonFungibleToken)
@@ -60,17 +61,32 @@ export function replaceWithProperValues(script: string, contractName = '', contr
 			.replace('"./ToucansActions.cdc"', addresses.Toucans)
 			.replace('"./ToucansTokens.cdc"', addresses.Toucans)
 			// For All
-			.replaceAll('ExampleToken', contractName)
+			.replaceAll(
+				'ExampleToken',
+				contractName === 'FlovatarDAO' ? 'FlovatarDustToken' : contractName
+			)
 			.replaceAll('0x5643fd47a29770e7', addresses.ECTreasury)
 	);
 }
 
-export function switchToToken(script: string, currency: ECurrencies) {
+export function switchToToken(script: string, currency: ECurrencies | 'DUST') {
 	if (currency === ECurrencies.USDC) {
 		return script
 			.replaceAll('flowTokenReceiver', 'USDCVaultReceiver')
 			.replaceAll('flowTokenVault', 'USDCVault')
 			.replaceAll('FlowToken', 'FiatToken');
+	} else if (currency === ECurrencies.stFlow) {
+		return script
+			.replaceAll('flowTokenReceiver', 'stFlowTokenReceiver')
+			.replaceAll('flowTokenVault', 'stFlowTokenVault')
+			.replaceAll('FlowToken', 'stFlowToken');
+	} else if (currency === 'DUST') {
+		return script
+			.replaceAll('.ReceiverPublicPath', '.VaultReceiverPath')
+			.replaceAll('.VaultPublicPath', '.VaultBalancePath')
+			.replaceAll('ExampleToken.getBalances()', '{}')
+			.replaceAll('ExampleToken.maxSupply', 'nil')
+			.replaceAll(', MetadataViews.Resolver', '');
 	}
 	return script;
 }

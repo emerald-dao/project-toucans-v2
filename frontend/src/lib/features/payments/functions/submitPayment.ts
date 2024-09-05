@@ -8,7 +8,12 @@ import {
 
 export const submitPayment = async (paymentData: DonationData | FundData) => {
 	if (paymentData.type === 'donation') {
-		if (paymentData.NFTs && paymentData.NFTCollection && paymentData.currency === 'NFTs' && paymentData.NFTs.length > 0) {
+		if (
+			paymentData.NFTs &&
+			paymentData.NFTCollection &&
+			paymentData.currency === 'NFTs' &&
+			paymentData.NFTs.length > 0
+		) {
 			return await donateNFTsExecution(
 				paymentData.daoAddress,
 				paymentData.projectId,
@@ -19,6 +24,7 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 		} else if (paymentData.currency === paymentData.daoTokenSymbol) {
 			return await transferProjectTokenToTreasuryExecution(
 				paymentData.daoAddress,
+				paymentData.contractAddress as string,
 				paymentData.projectId,
 				(paymentData.amount as number).toString(),
 				paymentData.specialMessage
@@ -34,7 +40,7 @@ export const submitPayment = async (paymentData: DonationData | FundData) => {
 	} else {
 		const expectedAmount =
 			(paymentData.amount as number) *
-			0.95 *
+			0.98 *
 			(paymentData as FundData).issuanceRate *
 			(1 - (paymentData as FundData).reserveRate);
 		return await fundProjectExecution(

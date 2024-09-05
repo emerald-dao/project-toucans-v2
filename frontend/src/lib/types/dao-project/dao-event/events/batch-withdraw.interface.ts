@@ -1,4 +1,4 @@
-import type { BaseEvent } from './common/base-event.interface';
+import type { BaseEvent } from '$lib/utilities/api/supabase/fetchProjectEvents';
 
 export interface BatchWithdrawEvent extends BaseEvent {
 	type: 'BatchWithdraw';
@@ -6,6 +6,6 @@ export interface BatchWithdrawEvent extends BaseEvent {
 		amount: string;
 		tokenSymbol: string;
 		currentCycle: string | null;
-		amounts: { [address: string]: string }
+		amounts: { [address: string]: string };
 	};
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import VotingWidget from '$lib/features/voting-rounds/components/voting-widget/VotingWidget.svelte';
+	import VotingWidgetExpanded from '$lib/features/voting-rounds/components/voting-widget/VotingWidgetExpanded.svelte';
 	import { Button } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 
@@ -19,7 +19,12 @@
 {#if roundData}
 	<div class="main-wrapper" id={`${roundData.id}`}>
 		{#key roundData.id}
-			<VotingWidget votingRound={roundData} daoActions={data.onChainData.actions} />
+			<VotingWidgetExpanded
+				votingRound={roundData}
+				daoActions={data.onChainData.actions} 
+				completedActionIds={data.onChainData.completedActionIds}
+				tokenContractAddress={data.generalInfo.contract_address}
+			/>
 		{/key}
 		<div class="row-3 row-space-between">
 			<Button

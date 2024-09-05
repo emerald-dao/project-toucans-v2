@@ -9,7 +9,7 @@ const fungibleTokenDistributionValidation = create(
 		currentField,
 		availableBalance: number | undefined | 'infinite',
 		amountOfTokensInStaging: number,
-		projectOwner: string,
+		contractAddress: string | null,
 		projectId: string,
 		currencyToDistribute: ECurrencies | string
 	) => {
@@ -27,7 +27,7 @@ const fungibleTokenDistributionValidation = create(
 			test('address', "Address doesn't have a vault set up.", async () => {
 				return (await checkAddress(
 					data.address,
-					projectOwner,
+					contractAddress,
 					projectId,
 					currencyToDistribute
 				)) as string;
@@ -48,7 +48,7 @@ const fungibleTokenDistributionValidation = create(
 
 const checkAddress = async (
 	address: string,
-	projectOwner: string,
+	contractAddress: string | null,
 	projectId: string,
 	currencyToDistribute: ECurrencies | string
 ) => {
@@ -58,7 +58,7 @@ const checkAddress = async (
 			if (currencyToDistribute == ECurrencies.FLOW || currencyToDistribute == ECurrencies.USDC) {
 				success = await canReceiveToucansToken(address, currencyToDistribute);
 			} else {
-				success = await canReceiveProjectToken(projectOwner, projectId, address);
+				success = await canReceiveProjectToken(contractAddress as string, projectId, address);
 			}
 
 			if (success) {

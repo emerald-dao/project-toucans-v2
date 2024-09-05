@@ -2,7 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import type { Distribution } from '$lib/types/dao-project/funding-rounds/distribution.interface';
 	import Papa from 'papaparse';
-	import { Button, Currency, DropZone } from '@emerald-dao/component-library';
+	import { Button, DropZone } from '@emerald-dao/component-library';
 	import Icon from '@iconify/svelte';
 	import { InputWrapper, Tabs, Tab, TabList, TabPanel } from '@emerald-dao/component-library';
 	import fungibleTokenDistributionValidation from '../_validations/fungibleTokenDistributionValidation';
@@ -13,7 +13,7 @@
 	export let csvDist: Distribution[];
 	export let activeCurrency: string;
 	export let availableBalance: number | undefined | 'infinite';
-	export let projectOwner: string;
+	export let contractAddress: string | null;
 	export let projectId: string;
 	export let distStaging: Distribution[];
 
@@ -64,7 +64,7 @@
 			target.name,
 			availableBalance,
 			amountOfTokensInStaging,
-			projectOwner,
+			contractAddress,
 			projectId,
 			activeCurrency
 		);

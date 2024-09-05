@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 	import UserSidebar from './_components/sections/sidebar/UserSidebar.svelte';
 	import UserMain from './_components/sections/main/UserMain.svelte';
@@ -8,20 +8,19 @@
 
 	export let data;
 
-	let selectedVault = writable(null);
+	let selectedVaultStore: Writable<null | number> = writable(null);
 
-	setContext('userData', data);
-	setContext('selectedVault', selectedVault);
+	setContext('selectedVault', selectedVaultStore);
 </script>
 
 <OpenGraph title={data.profile.name} />
 
 <div class="container section">
-	<UserSidebar />
-	<UserMain />
+	<UserSidebar userData={data} />
+	<UserMain userData={data} />
 </div>
-{#if $selectedVault !== null}
-	<VaultDetail />
+{#if $selectedVaultStore !== null}
+	<VaultDetail userData={data} {selectedVaultStore} />
 {/if}
 
 <style lang="scss">

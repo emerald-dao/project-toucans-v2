@@ -69,7 +69,7 @@
 						</div>
 						<div class="column-1 align-end">
 							<span class="votes text-small text-right">
-								{thisOptionVotes}
+								{thisOptionVotes.toLocaleString()}
 								<span>votes</span>
 							</span>
 							<span class="text-xsmall text-right"

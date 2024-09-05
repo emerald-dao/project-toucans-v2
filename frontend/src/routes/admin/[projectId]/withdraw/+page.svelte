@@ -73,7 +73,7 @@
 						{csvDist}
 						{activeCurrency}
 						{availableBalance}
-						projectOwner={data.activeDao.generalInfo.owner}
+						contractAddress={data.activeDao.generalInfo.contract_address}
 						projectId={data.activeDao.generalInfo.project_id}
 						bind:distStaging
 					/>

@@ -11,8 +11,19 @@
 
 	let hover = false;
 
-	$: imageWidth = position === 1 ? '120px' : '55px';
-	$: modalMargin = `${Number(imageWidth.replace('px', '')) / 2 + 18}px`;
+	const imageWidth = {
+		1: '130px',
+		2: '85px',
+		3: '85px',
+		4: '55px',
+		5: '55px',
+		6: '55px',
+		7: '55px',
+		8: '55px',
+		9: '55px'
+	}[position];
+
+	$: modalMargin = `${Number((imageWidth as string).replace('px', '')) / 2 + 18}px`;
 </script>
 
 <div
@@ -41,10 +52,6 @@
 					🥈 2nd place
 				{:else if position === 3}
 					🥉 3rd place
-				{:else if position === 4}
-					4th place
-				{:else if position === 5}
-					5th place
 				{/if}
 			</span>
 			<UserName profile={userProfile} fontSize="1rem" showWallet={true} showCreateProfile={false} />

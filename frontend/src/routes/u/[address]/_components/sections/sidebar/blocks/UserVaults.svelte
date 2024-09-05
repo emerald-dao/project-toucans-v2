@@ -6,7 +6,7 @@
 	import type { UserData } from '../../../../_types/user-data.interface';
 	import UserVault from './UserVault.svelte';
 
-	const userData: UserData = getContext('userData');
+	export let userData: UserData;
 
 	const selectedVaultStore: Writable<number | null> = getContext('selectedVault');
 

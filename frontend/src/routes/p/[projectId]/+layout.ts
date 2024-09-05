@@ -2,13 +2,13 @@ import { getProjectInfo } from '$flow/actions';
 import '$flow/config.ts';
 import { fetchProjectDatabaseData } from '$lib/utilities/api/supabase/fetchProject';
 import { fetchProjectEvents } from '$lib/utilities/api/supabase/fetchProjectEvents';
-import { fetchDaoVotes } from '$lib/utilities/api/supabase/fetchDaoVotes';
 import { fetchDaoFundingInfo } from '$lib/utilities/api/supabase/fetchDaoFundingInfo';
 import { fetchAllVotingRounds } from '$lib/utilities/api/supabase/fetchAllVotingRounds.js';
+import type { DAOProject } from '$lib/types/dao-project/dao-project.interface.js';
 
 export const ssr = false;
 
-export const load = async ({ params, depends }) => {
+export const load = async ({ params, depends }): Promise<DAOProject> => {
 	depends('app:discover');
 
 	const generalInfo = await fetchProjectDatabaseData(params.projectId);
@@ -16,11 +16,14 @@ export const load = async ({ params, depends }) => {
 
 	return {
 		generalInfo,
-		onChainData: getProjectInfo(generalInfo.contract_address, generalInfo.owner, params.projectId),
-		events: fetchProjectEvents(params.projectId),
-		votes: fetchDaoVotes(params.projectId),
+		onChainData: await getProjectInfo(
+			generalInfo.contract_address,
+			generalInfo.owner,
+			params.projectId
+		),
+		events: await fetchProjectEvents(params.projectId),
 		hasToken,
-		funding: fetchDaoFundingInfo(params.projectId),
+		funding: await fetchDaoFundingInfo(params.projectId),
 		votingRounds: await fetchAllVotingRounds(params.projectId)
 	};
 };

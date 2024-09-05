@@ -20,6 +20,12 @@ access(all) fun main(user: Address, projects: {String: Address}): {String: UFix6
 
   let flowVault = getAccount(user).capabilities.borrow<&{FungibleToken.Balance}>(/public/flowTokenBalance)!
   answer["Flow"] = flowVault.balance
+
+  let usdcVault = getAccount(user).getCapability(/public/USDCVaultBalance).borrow<&{FungibleToken.Balance}>()
+  answer["USDC"] = usdcVault?.balance ?? 0.0
+
+  let stFlowVault = getAccount(user).getCapability(/public/stFlowTokenBalance).borrow<&{FungibleToken.Balance}>()
+  answer["stFlow"] = stFlowVault?.balance ?? 0.0
   
   return answer
 }

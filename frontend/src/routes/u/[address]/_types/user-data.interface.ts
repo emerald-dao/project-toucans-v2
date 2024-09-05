@@ -13,6 +13,7 @@ interface TokenProfile {
 	tokenSymbol: string;
 	projectId?: string;
 	owner?: string;
+	contractAddress?: string;
 }
 
 export interface Vault {

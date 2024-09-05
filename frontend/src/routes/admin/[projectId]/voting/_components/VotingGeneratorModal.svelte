@@ -5,6 +5,7 @@
 	import StepsProcessModal from '$components/step-process-modal/StepsProcessModal.svelte';
 	import { setContext } from 'svelte';
 	import { votingGeneratorActiveStep, votingGeneratorSteps } from '../_config/votingGeneratorSteps';
+	import { resetVotingGeneratorStores } from '../_config/votingGeneratorData';
 
 	export let daoData: DAOProject;
 
@@ -14,13 +15,16 @@
 
 	const id = `voting-generator-${daoData.generalInfo.project_id}`;
 
+	let isOpen = false;
+
 	setContext('activeDao', daoData);
 </script>
 
 <Button
 	on:click={() => {
-		getModal(id).open();
+		resetVotingGeneratorStores();
 		votingGeneratorActiveStep.goToStep(0);
+		getModal(id).open();
 	}}
 	width="extended"
 >

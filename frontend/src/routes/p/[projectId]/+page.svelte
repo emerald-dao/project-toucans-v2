@@ -94,7 +94,7 @@
 			<DiscoverProjectSidebar daoData={$daoDataStore} />
 		</div>
 		<div class="secondary-wrapper">
-			<DiscoverProjectMain daoData={$daoDataStore} votingRounds={data.votingRounds} />
+			<DiscoverProjectMain daoData={$daoDataStore} {reloadUserBalance} />
 		</div>
 	</div>
 	{#if data.generalInfo.long_description}

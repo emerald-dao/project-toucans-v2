@@ -2,8 +2,8 @@ import type { DaoEvent } from './dao-event/dao-event.type';
 import type { FundingCycle } from './funding-rounds/funding-cycle.interface';
 import type { MultisigActions } from './multisig-actions/multisig-actions.type';
 import type { ECurrencies } from '../common/enums';
-import type { Vote } from './bot-votes/votes.interface';
 import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRounds';
+import type { DaoDatabaseData } from '$lib/utilities/api/supabase/fetchProject';
 
 // A DAO Project is a combination of two data types: DAOBlockchainData and DaoDatabaseData.
 // DAOBlockchainData is the data that is stored on the blockchain.
@@ -12,7 +12,6 @@ import type { VotingRound } from '$lib/utilities/api/supabase/fetchAllVotingRoun
 export interface DAOProject {
 	generalInfo: DaoDatabaseData;
 	onChainData: DaoBlockchainData;
-	votes: Vote[];
 	events: DaoEvent[];
 	userBalance?: number;
 	vaultSetup?: boolean;
@@ -23,22 +22,6 @@ export interface DAOProject {
 		funders: { [address: string]: { amount: number; num_nfts: number } };
 	};
 	votingRounds: VotingRound[];
-}
-
-export interface DaoDatabaseData {
-	contract_address: string | null;
-	created_at: string;
-	description: string;
-	long_description?: string;
-	discord: string | null;
-	logo: string;
-	banner_image: string;
-	name: string;
-	owner: string;
-	project_id: string;
-	token_symbol: string | null;
-	twitter: string | null;
-	website: string | null;
 }
 
 export interface DaoBlockchainData {

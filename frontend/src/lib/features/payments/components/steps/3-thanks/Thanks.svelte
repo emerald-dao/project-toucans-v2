@@ -36,7 +36,7 @@
 				and got
 				<span class="strong">
 					{`${
-						$paymentData.amount * 0.95 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
+						$paymentData.amount * 0.98 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
 					} $${$paymentData.tokenName}.`}
 				</span>
 			{/if}
@@ -84,7 +84,7 @@
 					}%20with%20${$paymentData.amount}%20$${
 						$paymentData.currency
 					}%20on%20Toucans%20and%20got%20${
-						$paymentData.amount * 0.95 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
+						$paymentData.amount * 0.98 * $paymentData.issuanceRate * (1 - $paymentData.reserveRate)
 					}%20$${$paymentData.tokenName}.%0D%0A%0D%0Ahttps://toucans.ecdao.org/p/${
 						daoData.generalInfo.project_id
 					}`}

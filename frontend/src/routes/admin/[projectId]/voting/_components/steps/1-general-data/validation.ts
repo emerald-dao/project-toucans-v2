@@ -15,4 +15,6 @@ const validationSuite = create((title: string, description: string) => {
 	});
 });
 
+export const reset = validationSuite.reset;
+
 export default validationSuite;
