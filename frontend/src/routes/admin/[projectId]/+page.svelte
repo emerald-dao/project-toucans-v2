@@ -7,7 +7,6 @@
 		TreasuryWallet,
 		DaoStatsIntro
 	} from './_components';
-	import Staging from './_components/Staging.svelte';
 	import * as AdminPage from './_components/admin-page';
 
 	export let data;
