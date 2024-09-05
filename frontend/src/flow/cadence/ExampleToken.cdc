@@ -1,10 +1,10 @@
-import "FungibleToken"
-import "FungibleTokenMetadataViews"
-import "MetadataViews"
-import "Toucans"
-import "ToucansTokens"
-import "FlowToken"
-import "ViewResolver"
+import FungibleToken from "./utility/FungibleToken.cdc"
+import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc"
+import MetadataViews from "./utility/MetadataViews.cdc"
+import Toucans from "./Toucans.cdc"
+import ToucansTokens from "./ToucansTokens.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import ViewResolver from "./utility/ViewResolver.cdc"
  
 access(all) contract ExampleToken: FungibleToken {
 

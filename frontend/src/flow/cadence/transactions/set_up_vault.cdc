@@ -1,7 +1,7 @@
-import "ExampleToken"
-import "FungibleToken"
-import "MetadataViews"
-import "Toucans"
+import ExampleToken from "../ExampleToken.cdc"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import MetadataViews from "../utility/MetadataViews.cdc"
+import Toucans from "../Toucans.cdc"
 
 transaction() {
   prepare(user: auth(Storage, Capabilities) &Account) {

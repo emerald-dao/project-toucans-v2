@@ -1,5 +1,5 @@
 // This is the most basic script you can execute on Flow Network
-import "Toucans"
+import Toucans from "../Toucans.cdc"
 
 transaction(
   projectId: String, 

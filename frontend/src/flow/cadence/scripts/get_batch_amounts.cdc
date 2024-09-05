@@ -1,4 +1,4 @@
-import "Toucans"
+import Toucans from "../Toucans.cdc"
 import ToucansActions from "../ToucansActions.cdc"
 
 access(all) fun main(projectOwner: Address, projectId: String, actionId: UInt64): Result? {

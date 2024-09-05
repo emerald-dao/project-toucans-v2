@@ -1,6 +1,6 @@
-// import "ExampleToken"
-// import "FungibleToken"
-// import "Toucans"
+// import ExampleToken from "../ExampleToken.cdc"
+// import FungibleToken from "../utility/FungibleToken.cdc"
+// import Toucans from "../Toucans.cdc"
 
 // transaction(
 //   projectOwner: Address, 

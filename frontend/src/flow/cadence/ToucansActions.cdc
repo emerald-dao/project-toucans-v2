@@ -1,7 +1,7 @@
-import "FungibleToken"
-import "NonFungibleToken"
-import "ToucansUtils"
-import "NFTCatalog"
+import FungibleToken from "./utility/FungibleToken.cdc"
+import NonFungibleToken from "./utility/NonFungibleToken.cdc"
+import ToucansUtils from "./ToucansUtils.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
 
 access(all) contract ToucansActions {
 

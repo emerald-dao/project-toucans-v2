@@ -1,4 +1,4 @@
-import "NFTCatalog"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
 
 access(all) fun main(collectionIdentifiers: [String]): {String: Info} {
   let res: {String: Info} = {}

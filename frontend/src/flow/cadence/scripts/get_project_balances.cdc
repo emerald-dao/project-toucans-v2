@@ -1,5 +1,5 @@
-import "FungibleToken"
-import "Toucans"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import Toucans from "../Toucans.cdc"
 
 access(all) fun main(user: Address, projects: {String: Address}): {String: UFix64} {
   let answer: {String: UFix64} = {}

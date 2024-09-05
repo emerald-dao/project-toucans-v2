@@ -1,9 +1,9 @@
-import "Toucans"
-import "ExampleToken"
-import "FungibleToken"
+import Toucans from "../Toucans.cdc"
+import ExampleToken from "../ExampleToken.cdc"
+import FungibleToken from "../utility/FungibleToken.cdc"
 
 transaction(projectOwner: Address, projectId: String, amount: UFix64, message: String) {
- 
+
   let Project: &Toucans.Project
   let Payment: @ExampleToken.Vault
   let Payer: Address

@@ -1,12 +1,12 @@
-import "ExampleToken"
-import "Toucans"
-import "FlowToken"
-import "FiatToken"
-import "stFlowToken"
-import "NFTCatalog"
-import "SwapInterfaces"
-import "SwapConfig"
-import "SwapFactory"
+import ExampleToken from "../ExampleToken.cdc"
+import Toucans from "../Toucans.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import FiatToken from "../utility/FiatToken.cdc"
+import stFlowToken from "../utility/stFlowToken.cdc"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
+import SwapInterfaces from "../utility/SwapInterfaces.cdc"
+import SwapConfig from "../utility/SwapConfig.cdc"
+import SwapFactory from "../utility/SwapFactory.cdc"
 
 access(all) fun main(projectOwner: Address, projectId: String): Info {
   let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
