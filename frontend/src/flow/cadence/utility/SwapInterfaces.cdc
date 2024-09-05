@@ -5,7 +5,7 @@
 # Author: Increment Labs
 
 */
-import "FungibleToken"
+import FungibleToken from "../utility/FungibleToken.cdc"
 
 access(all) contract interface SwapInterfaces {
     access(all) resource interface PairPublic {

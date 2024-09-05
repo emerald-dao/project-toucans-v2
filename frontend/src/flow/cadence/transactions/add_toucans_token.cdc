@@ -1,5 +1,5 @@
-import "ToucansTokens"
-import "stFlowToken"
+import ToucansTokens from "../ToucansTokens.cdc"
+import stFlowToken from "../utility/stFlowToken.cdc"
 
 transaction() {
   

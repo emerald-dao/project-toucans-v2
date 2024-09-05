@@ -1,6 +1,6 @@
-import "NFTCatalog"
-import "NonFungibleToken"
-import "EmeraldIdentity"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
+import NonFungibleToken from "../utility/NonFungibleToken.cdc"
+import EmeraldIdentity from "../utility/EmeraldIdentity.cdc"
 
 access(all) fun main(user: Address, collectionIdentifier: String): Bool {
   if let entry: NFTCatalog.NFTCatalogMetadata = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier) {

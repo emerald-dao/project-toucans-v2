@@ -1,7 +1,7 @@
-import "FungibleToken"
-import "MetadataViews"
-import "FungibleTokenMetadataViews"
-import "Burner"
+import FungibleToken from "./FungibleToken.cdc"
+import MetadataViews from "./MetadataViews.cdc"
+import FungibleTokenMetadataViews from "./FungibleTokenMetadataViews.cdc"
+import Burner from "./Burner.cdc"
 
 access(all) contract FiatToken: FungibleToken {
 

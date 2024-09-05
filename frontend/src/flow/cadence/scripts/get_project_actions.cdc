@@ -1,4 +1,4 @@
-import "Toucans"
+import Toucans from "../Toucans.cdc"
 
 access(all) fun main(projectOwner: Address, projectId: String): [Action] {
   let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)

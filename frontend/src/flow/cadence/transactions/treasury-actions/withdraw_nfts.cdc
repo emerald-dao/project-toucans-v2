@@ -1,6 +1,6 @@
-import "Toucans"
-import "NFTCatalog"
-import "NonFungibleToken"
+import Toucans from "../../Toucans.cdc"
+import NFTCatalog from "../../utility/NFTCatalog.cdc"
+import NonFungibleToken from "../../utility/NonFungibleToken.cdc"
 
 // An example of proposing an action.
 //
@@ -24,9 +24,7 @@ transaction(projectOwner: Address, projectId: String, collectionIdentifier: Stri
     let publicPath: PublicPath = self.CatalogEntry.collectionData.publicPath
 
     self.RecipientCollectionReceiver = getAccount(recipientAddr).capabilities.get<&{NonFungibleToken.Receiver}>(publicPath)
-          ?? panic("Recipient doesn't have a receiver set up.")
     self.RecipientCollectionPublic = getAccount(recipientAddr).capabilities.get<&{NonFungibleToken.CollectionPublic}>(publicPath)
-          ?? panic("Recipient doesn't have a public collection set up.")
   }
 
   execute {

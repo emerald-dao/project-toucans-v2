@@ -1,5 +1,5 @@
-import "NFTCatalog"
-import "NonFungibleToken"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
+import NonFungibleToken from "../utility/NonFungibleToken.cdc"
 
 access(all) fun main(user: Address, collectionIdentifier: String): Bool {
 

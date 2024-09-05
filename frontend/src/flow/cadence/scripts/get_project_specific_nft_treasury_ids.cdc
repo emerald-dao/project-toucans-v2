@@ -1,5 +1,5 @@
-import "Toucans"
-import "NFTCatalog"
+import Toucans from "../Toucans.cdc"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
 
 access(all) fun main(projectOwner: Address, projectId: String, collectionIdentifier: String): [UInt64] {
     let catalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier)

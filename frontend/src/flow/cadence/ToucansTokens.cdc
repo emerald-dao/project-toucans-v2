@@ -1,6 +1,6 @@
-import "FlowToken"
-import "FiatToken"
-import "FungibleToken"
+import FlowToken from "./utility/FlowToken.cdc"
+import FiatToken from "./utility/FiatToken.cdc"
+import FungibleToken from "./utility/FungibleToken.cdc"
 
 access(all) contract ToucansTokens {
 

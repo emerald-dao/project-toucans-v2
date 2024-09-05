@@ -1,13 +1,13 @@
 import Crypto
-import "FungibleToken"
-import "NFTCatalog"
-import "NonFungibleToken"
-import "FIND"
-import "EmeraldIdentity"
-import "SwapInterfaces"
-import "LiquidStaking"
-import "FlowToken"
-import "stFlowToken"
+import FungibleToken from "./utility/FungibleToken.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
+import NonFungibleToken from "./utility/NonFungibleToken.cdc"
+import FIND from "./utility/FIND.cdc"
+import EmeraldIdentity from "./utility/EmeraldIdentity.cdc"
+import SwapInterfaces from "./utility/SwapInterfaces.cdc"
+import LiquidStaking from "./utility/LiquidStaking.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import stFlowToken from "./utility/stFlowToken.cdc"
 
 access(all) contract ToucansUtils {
   access(all) fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {

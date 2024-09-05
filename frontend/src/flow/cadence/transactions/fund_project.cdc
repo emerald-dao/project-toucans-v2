@@ -1,8 +1,8 @@
-import "FungibleToken"
-import "FlowToken"
-import "Toucans"
-import "ExampleToken"
-import "MetadataViews"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import Toucans from "../Toucans.cdc"
+import ExampleToken from "../ExampleToken.cdc"
+import MetadataViews from "../utility/MetadataViews.cdc"
 
 transaction(projectOwner: Address, projectId: String, amount: UFix64, message: String, expectedAmount: UFix64) {
 

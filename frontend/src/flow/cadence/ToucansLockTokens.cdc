@@ -1,5 +1,5 @@
-import "FungibleToken"
-import "ToucansTokens"
+import FungibleToken from "./utility/FungibleToken.cdc"
+import ToucansTokens from "./ToucansTokens.cdc"
 
 access(all) contract ToucansLockTokens {
 

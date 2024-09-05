@@ -1,4 +1,4 @@
-import "Toucans"
+import Toucans from "../../Toucans.cdc"
 
 transaction(projectId: String, projectOwner: Address, stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
 

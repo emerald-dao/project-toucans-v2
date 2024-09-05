@@ -6,9 +6,9 @@ transaction(recipient: Address, amount: UFix64) {
   let RecipientVault: &{FungibleToken.Receiver}
   let TokenVault: @ExampleToken.Vault
 
-  prepare(user: AuthAccount) {
-    self.TokenVault <- user.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath)!.withdraw(amount: amount) as! @ExampleToken.Vault
-    self.RecipientVault = getAccount(recipient).getCapability(ExampleToken.ReceiverPublicPath).borrow<&{FungibleToken.Receiver}>()
+  prepare(user: auth(Storage, Capabilities) &Account) {
+    self.TokenVault <- user.storage.borrow<auth(FungibleToken.Withdraw) &ExampleToken.Vault>(from: ExampleToken.VaultStoragePath)!.withdraw(amount: amount) as! @ExampleToken.Vault
+    self.RecipientVault = getAccount(recipient).capabilities.borrow<&{FungibleToken.Receiver}>(ExampleToken.ReceiverPublicPath)
                                 ?? panic("Recipient does not have vault set up.")
   }
 

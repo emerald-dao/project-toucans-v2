@@ -1,6 +1,6 @@
-import "Toucans"
-import "MetadataViews"
-import "NFTCatalog"
+import Toucans from "../Toucans.cdc"
+import MetadataViews from "../utility/MetadataViews.cdc"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
 
 access(all) fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
     let res: {String: [NFTData]} = {}

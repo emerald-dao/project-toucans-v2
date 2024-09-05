@@ -1,8 +1,8 @@
-import "FungibleToken"
-import "FiatToken"
-import "FlowToken"
-import "Toucans"
-import "ToucansTokens"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import FiatToken from "../utility/FiatToken.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
+import Toucans from "../Toucans.cdc"
+import ToucansTokens from "../ToucansTokens.cdc"
 
 transaction(
   contractName: String,

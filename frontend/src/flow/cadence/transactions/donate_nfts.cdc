@@ -1,6 +1,6 @@
-import "Toucans"
-import "NFTCatalog"
-import "NonFungibleToken"
+import Toucans from "../Toucans.cdc"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
+import NonFungibleToken from "../utility/NonFungibleToken.cdc"
 
 transaction(projectOwner: Address, projectId: String, nftIDs: [UInt64], collectionIdentifier: String, message: String) {
  

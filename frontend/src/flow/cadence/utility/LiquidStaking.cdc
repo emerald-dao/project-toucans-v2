@@ -6,8 +6,8 @@
 
 */
 
-import "FlowToken"
-import "stFlowToken"
+import FlowToken from "./FlowToken.cdc"
+import stFlowToken from "./stFlowToken.cdc"
 
 access(all) contract LiquidStaking {
 

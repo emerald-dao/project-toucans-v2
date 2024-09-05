@@ -1,6 +1,6 @@
-import "FungibleToken"
-import "Toucans"
-import "ExampleToken"
+import FungibleToken from "../../utility/FungibleToken.cdc"
+import Toucans from "../../Toucans.cdc"
+import ExampleToken from "../../ExampleToken.cdc"
 
 transaction(projectId: String, projectOwner: Address, amount: UFix64, recipient: Address) {
 
@@ -14,7 +14,6 @@ transaction(projectId: String, projectOwner: Address, amount: UFix64, recipient:
                   ?? panic("Project does not exist, at least in this collection.")
     
     self.ProjectTokenReceiver = getAccount(recipient).capabilities.get<&{FungibleToken.Receiver}>(ExampleToken.ReceiverPublicPath)
-          ?? panic("The person you are attempting to mint to does not have a vault set up.")
   }
 
   execute {

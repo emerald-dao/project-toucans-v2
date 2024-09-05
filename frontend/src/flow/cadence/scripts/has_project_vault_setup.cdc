@@ -1,4 +1,4 @@
-import "ExampleToken"
+import ExampleToken from "../ExampleToken.cdc"
 
 access(all) fun main(user: Address): Bool {
   let authAccount = getAuthAccount<auth(Storage, Capabilities) &Account>(user)

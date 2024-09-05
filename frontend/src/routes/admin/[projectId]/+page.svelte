@@ -18,9 +18,6 @@
 		<DaoStatsIntro daoData={data.activeDao} />
 		<div class="secondary-wrapper">
 			<div class="column-8">
-				{#if data.activeDao.generalInfo.contract_address && data.activeDao.generalInfo.project_id != 'FlovatarDAO'}
-					<Staging daoData={data.activeDao} />
-				{/if}
 				<GeneralStats daoData={data.activeDao} />
 				<PrimaryTabs daoData={data.activeDao} />
 			</div>

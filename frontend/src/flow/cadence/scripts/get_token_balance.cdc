@@ -1,5 +1,5 @@
-import "FungibleToken"
-import "Toucans"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import Toucans from "../Toucans.cdc"
 
 access(all) fun main(user: Address, projectId: String, projectOwner: Address): UFix64 {
   let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)

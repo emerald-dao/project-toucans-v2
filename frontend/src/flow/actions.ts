@@ -76,9 +76,6 @@ import getCatalogNFTsScript from './cadence/scripts/get_catalog_nfts.cdc?raw';
 import getCatalogSpecificNFTsScript from './cadence/scripts/get_catalog_specific_nfts.cdc?raw';
 import ownsNFTFromCatalogScript from './cadence/scripts/owns_nft_from_catalog.cdc?raw';
 
-import stageContractTx from './cadence/transactions/stage_contract.cdc?raw';
-import isStagedScript from './cadence/scripts/is_staged.cdc?raw';
-
 import { get } from 'svelte/store';
 import { currencies } from '$stores/flow/TokenStore';
 import { roundGeneratorData } from '../lib/features/round-generator/stores/RoundGeneratorData';
@@ -101,54 +98,6 @@ if (browser) {
 // Lifecycle FCL Auth functions
 export const unauthenticate = () => fcl.unauthenticate();
 export const logIn = async () => fcl.logIn();
-
-/* STAGING CONTRACT */
-
-const stageContract = async (data: DAOProject) => {
-	let contractCode = replaceWithProperValues(
-		rawCadence1ExampleTokenCode,
-		data.generalInfo.project_id,
-		data.generalInfo.contract_address as string
-	)
-		.replaceAll('INSERT NAME', data.generalInfo.name || '')
-		.replaceAll(
-			'INSERT DESCRIPTION',
-			data.generalInfo.description ? data.generalInfo.description.replace(/(\r\n|\n|\r)/gm, '') : ''
-		)
-		.replaceAll('INSERT SYMBOL', data.generalInfo.token_symbol || '')
-		.replaceAll('INSERT URL', data.generalInfo.website || '')
-		.replaceAll('INSERT TWITTER', data.generalInfo.twitter || '')
-		.replaceAll('INSERT LOGO', data.generalInfo.logo || '')
-		.replaceAll('INSERT BANNER LOGO', data.generalInfo.banner_image || '')
-		.replaceAll('INSERT DISCORD', data.generalInfo.discord || '');
-	return await fcl.mutate({
-		cadence: replaceWithProperValues(stageContractTx),
-		args: (arg, t) => [arg(data.generalInfo.project_id, t.String), arg(contractCode, t.String)],
-		proposer: fcl.authz,
-		payer: fcl.authz,
-		authorizations: [fcl.authz],
-		limit: 9999
-	});
-};
-
-export const stageContractExecution = (daoData: DAOProject) =>
-	executeTransaction(() => stageContract(daoData));
-
-export const isStaged: (contractAddress: string, contractName: string) => Promise<boolean> = async (
-	contractAddress: string,
-	contractName: string
-) => {
-	try {
-		return await fcl.query({
-			cadence: replaceWithProperValues(isStagedScript),
-			args: (arg, t) => [arg(contractAddress, t.Address), arg(contractName, t.String)]
-		});
-	} catch (e) {
-		console.log('Error in isStaged');
-		console.log(e);
-		return false;
-	}
-};
 
 /********************/
 

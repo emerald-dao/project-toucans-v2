@@ -1,6 +1,6 @@
-import "Toucans"
-import "ToucansTokens"
-import "FungibleToken"
+import Toucans from "../../Toucans.cdc"
+import ToucansTokens from "../../ToucansTokens.cdc"
+import FungibleToken from "../../utility/FungibleToken.cdc"
 
 // An example of proposing an action.
 //

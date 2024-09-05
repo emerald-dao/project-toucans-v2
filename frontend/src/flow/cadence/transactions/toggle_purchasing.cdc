@@ -1,4 +1,4 @@
-import "Toucans"
+import Toucans from "../Toucans.cdc"
 
 transaction(projectId: String) {
 

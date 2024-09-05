@@ -1,16 +1,16 @@
-import "FungibleToken"
+import FungibleToken from "./utility/FungibleToken.cdc"
 import Crypto
-import "ToucansTokens"
-import "ToucansUtils"
-import "ToucansActions"
-import "FlowToken"
-import "ToucansLockTokens"
-import "NonFungibleToken"
-import "NFTCatalog"
-import "SwapInterfaces"
-import "stFlowToken"
-import "SwapError"
-import "Burner"
+import ToucansTokens from "./ToucansTokens.cdc"
+import ToucansUtils from "./ToucansUtils.cdc"
+import ToucansActions from "./ToucansActions.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import ToucansLockTokens from "./ToucansLockTokens.cdc"
+import NonFungibleToken from "./utility/NonFungibleToken.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
+import SwapInterfaces from "./utility/SwapInterfaces.cdc"
+import stFlowToken from "./utility/stFlowToken.cdc"
+import SwapError from "./utility/SwapError.cdc"
+import Burner from "./utility/Burner.cdc"
 
 access(all) contract Toucans {
 

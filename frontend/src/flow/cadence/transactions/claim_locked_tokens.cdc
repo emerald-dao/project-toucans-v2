@@ -1,5 +1,5 @@
-import "FungibleToken"
-import "Toucans"
+import FungibleToken from "../utility/FungibleToken.cdc"
+import Toucans from "../Toucans.cdc"
 
 transaction(
   projectOwner: Address, 

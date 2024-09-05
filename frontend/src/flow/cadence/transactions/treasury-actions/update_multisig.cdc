@@ -1,5 +1,5 @@
 import ToucansActions from "../../ToucansActions.cdc"
-import "Toucans"
+import Toucans from "../../Toucans.cdc"
 
 // An example of proposing an action.
 //

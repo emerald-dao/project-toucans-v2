@@ -1,6 +1,6 @@
-import "FungibleToken"
-import "Toucans"
-import "ToucansTokens"
+import FungibleToken from "../../utility/FungibleToken.cdc"
+import Toucans from "../../Toucans.cdc"
+import ToucansTokens from "../../ToucansTokens.cdc"
 
 transaction(tokenSymbol: String, projectId: String, projectOwner: Address, amount: UFix64) {
 

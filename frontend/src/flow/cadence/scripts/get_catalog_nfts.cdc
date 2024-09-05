@@ -1,6 +1,6 @@
-import "NFTCatalog"
-import "NonFungibleToken"
-import "MetadataViews"
+import NFTCatalog from "../utility/NFTCatalog.cdc"
+import NonFungibleToken from "../utility/NonFungibleToken.cdc"
+import MetadataViews from "../utility/MetadataViews.cdc"
 
 access(all) fun main(collectionIdentifiers: [String], user: Address): {String: [NFTData]} {
   let res: {String: [NFTData]} = {}
