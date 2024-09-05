@@ -1,6 +1,6 @@
-import NFTCatalog from "../utility/NFTCatalog.cdc"
+import "NFTCatalog"
 
-pub fun main(collectionIdentifiers: [String]): {String: Info} {
+access(all) fun main(collectionIdentifiers: [String]): {String: Info} {
   let res: {String: Info} = {}
   for collectionID in collectionIdentifiers {
       if let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionID) {
@@ -10,10 +10,10 @@ pub fun main(collectionIdentifiers: [String]): {String: Info} {
   return res
 }
 
-pub struct Info {
-  pub let identifier: String
-  pub let name: String
-  pub let image: String 
+access(all) struct Info {
+  access(all) let identifier: String
+  access(all) let name: String
+  access(all) let image: String 
 
   init(_ id: String, _ n: String, _ i: String) {
     self.identifier = id

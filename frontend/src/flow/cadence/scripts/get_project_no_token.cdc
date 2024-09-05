@@ -1,41 +1,41 @@
-import Toucans from "../Toucans.cdc"
-import FlowToken from "../utility/FlowToken.cdc"
-import FiatToken from "../utility/FiatToken.cdc"
-import stFlowToken from "../utility/stFlowToken.cdc"
-import NFTCatalog from "../utility/NFTCatalog.cdc"
-import SwapInterfaces from "../utility/SwapInterfaces.cdc"
-import SwapConfig from "../utility/SwapConfig.cdc"
-import SwapFactory from "../utility/SwapFactory.cdc"
+import "Toucans"
+import "FlowToken"
+import "FiatToken"
+import "stFlowToken"
+import "NFTCatalog"
+import "SwapInterfaces"
+import "SwapConfig"
+import "SwapFactory"
 
-pub fun main(projectOwner: Address, projectId: String): Info {
-  let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+access(all) fun main(projectOwner: Address, projectId: String): Info {
+  let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                 ?? panic("User does not have a Toucans Collection")
 
   return Info(projectCollection.borrowProjectPublic(projectId: projectId)!)
 }
 
-pub struct Info {
-  pub let projectId: String
-  pub let tokenType: Type
-  pub let currentFundingCycle: Toucans.FundingCycle?
-  pub let totalFunding: UFix64
-  pub let editDelay: UFix64
-  pub let fundingCycles: [Toucans.FundingCycle]
-  pub let overflowBalance: UFix64
-  pub let treasuryBalances: {String: UFix64}
-  pub let signers: [Address]
-  pub let threshold: UInt64
-  pub let minting: Bool
-  pub let paymentCurrency: String
-  pub let purchasing: Bool
-  pub let requiredNft: NFTData?
-  pub let allowedNFTCollections: [String]
-  pub var trading: Bool
-  pub let lpAddresses: {String: Address}
-  pub let completedActionIds: {UInt64: Bool}
+access(all) struct Info {
+  access(all) let projectId: String
+  access(all) let tokenType: Type
+  access(all) let currentFundingCycle: Toucans.FundingCycle?
+  access(all) let totalFunding: UFix64
+  access(all) let editDelay: UFix64
+  access(all) let fundingCycles: [Toucans.FundingCycle]
+  access(all) let overflowBalance: UFix64
+  access(all) let treasuryBalances: {String: UFix64}
+  access(all) let funders: {Address: UFix64}
+  access(all) let signers: [Address]
+  access(all) let threshold: UInt64
+  access(all) let minting: Bool
+  access(all) let paymentCurrency: String
+  access(all) let purchasing: Bool
+  access(all) let requiredNft: NFTData?
+  access(all) let allowedNFTCollections: [String]
+  access(all) var trading: Bool
+  access(all) let lpAddresses: {String: Address}
+  access(all) let completedActionIds: {UInt64: Bool}
 
-  init(_ info: &Toucans.Project{Toucans.ProjectPublic}) {
+  init(_ info: &Toucans.Project) {
     self.projectId = info.projectId
     self.tokenType = info.projectTokenInfo.tokenType
     self.currentFundingCycle = info.getCurrentFundingCycle()
@@ -100,11 +100,11 @@ pub struct Info {
   }
 }
 
-pub struct NFTData {
-  pub let identifier: String
-  pub let name: String
-  pub let image: String
-  pub let link: String 
+access(all) struct NFTData {
+  access(all) let identifier: String
+  access(all) let name: String
+  access(all) let image: String
+  access(all) let link: String 
 
   init(collectionIdentifier: String) {
     let data = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier)!

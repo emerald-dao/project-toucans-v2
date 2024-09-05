@@ -26,7 +26,7 @@ async function getSwapPairInfo(pairAddr) {
       import SwapInterfaces from 0xb78ef7afa52ff906
       import SwapConfig from 0xb78ef7afa52ff906
 
-      pub fun main(pairAddr: Address): [AnyStruct] {
+      access(all) fun main(pairAddr: Address): [AnyStruct] {
         let pairPublicRef = getAccount(pairAddr)
           .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
           .borrow()
@@ -213,22 +213,22 @@ function generateGetTrendingDataScript(
   import stFlowToken from "../utility/stFlowToken.cdc"
   ${imports}
 
-  pub fun main(): {String: Info} {
+  access(all) fun main(): {String: Info} {
     let answer: {String: Info} = {}
     ${mainCode}
     return answer
   }
 
-  pub struct Info {
-    pub let totalSupply: UFix64?
-    pub let pairInfo: [AnyStruct]?
-    pub let paymentCurrency: String
-    pub let numProposals: Int
-    pub let treasuryBalances: {String: UFix64}
-    pub let maxSupply: UFix64?
-    pub let totalFunding: UFix64
-    pub let funders: [Address]
-    pub let holders: [Address]
+  access(all) struct Info {
+    access(all) let totalSupply: UFix64?
+    access(all) let pairInfo: [AnyStruct]?
+    access(all) let paymentCurrency: String
+    access(all) let numProposals: Int
+    access(all) let treasuryBalances: {String: UFix64}
+    access(all) let maxSupply: UFix64?
+    access(all) let totalFunding: UFix64
+    access(all) let funders: [Address]
+    access(all) let holders: [Address]
   
     init(_ ts: UFix64?, _ pi: [AnyStruct]?, _ pc: String, _ np: Int, _ tb: {String: UFix64}, _ ms: UFix64?, _ tf: UFix64, _ f: [Address], _ h: [Address]) {
       self.totalSupply = ts

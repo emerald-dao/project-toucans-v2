@@ -8,52 +8,52 @@
 
 import FlowIDTableStaking from "./FlowIDTableStaking.cdc"
 
-pub contract LiquidStakingConfig {
+access(all) contract LiquidStakingConfig {
 
     /// Minimum limit of staking
-    pub var minStakingAmount: UFix64
+    access(all) var minStakingAmount: UFix64
 
     /// Pauses
-    pub var isStakingPaused: Bool
-    pub var isUnstakingPaused: Bool
-    pub var isMigratingPaused: Bool
+    access(all) var isStakingPaused: Bool
+    access(all) var isUnstakingPaused: Bool
+    access(all) var isMigratingPaused: Bool
 
     /// Max staking amount
-    pub var stakingCap: UFix64
+    access(all) var stakingCap: UFix64
 
     // Windows size before auction stage end, left for bots to handle unstaking requests
-    pub var windowSizeBeforeStakingEnd: UInt64
+    access(all) var windowSizeBeforeStakingEnd: UInt64
 
     /// Fee of quick unstaking from reserved committed vault
-    pub var quickUnstakeFee: UFix64
+    access(all) var quickUnstakeFee: UFix64
 
     /// Cut of staking interests reserved as protocol fees
-    pub var protocolFee: UFix64
+    access(all) var protocolFee: UFix64
 
     /// Scale factor applied to fixed point number calculation.
     /// Note: The use of scale factor is due to fixed point number in cadence is only precise to 1e-8:
     /// https://docs.onflow.org/cadence/language/values-and-types/#fixed-point-numbers
-    pub let scaleFactor: UInt256
+    access(all) let scaleFactor: UInt256
 
     /// 100_000_000.0, i.e. 1.0e8
-    pub let ufixScale: UFix64
+    access(all) let ufixScale: UFix64
 
-    pub let adminPath: StoragePath
+    access(all) let adminPath: StoragePath
 
     /// events
-    pub event ConfigMinStakingAmount(newValue: UFix64, oldValue: UFix64)
-    pub event ConfigStakingCap(newValue: UFix64, oldValue: UFix64)
-    pub event ConfigStakingPause(newValue: Bool, oldValue: Bool)
-    pub event ConfigUnstakingPause(newValue: Bool, oldValue: Bool)
-    pub event ConfigMigratingPause(newValue: Bool, oldValue: Bool)
-    pub event ConfigQuickUnstakeFee(newValue: UFix64, oldValue: UFix64)
-    pub event ConfigProtocolFee(newValue: UFix64, oldValue: UFix64)
-    pub event ConfigWindowSize(newValue: UInt64, oldValue: UInt64)
+    access(all) event ConfigMinStakingAmount(newValue: UFix64, oldValue: UFix64)
+    access(all) event ConfigStakingCap(newValue: UFix64, oldValue: UFix64)
+    access(all) event ConfigStakingPause(newValue: Bool, oldValue: Bool)
+    access(all) event ConfigUnstakingPause(newValue: Bool, oldValue: Bool)
+    access(all) event ConfigMigratingPause(newValue: Bool, oldValue: Bool)
+    access(all) event ConfigQuickUnstakeFee(newValue: UFix64, oldValue: UFix64)
+    access(all) event ConfigProtocolFee(newValue: UFix64, oldValue: UFix64)
+    access(all) event ConfigWindowSize(newValue: UInt64, oldValue: UInt64)
 
     /// Reserved parameter fields: {ParamName: Value}
     access(self) let _reservedFields: {String: AnyStruct}
 
-    pub fun calcEstimatedStakingPayout(stakedAmount: UFix64): UFix64 {
+    access(all) fun calcEstimatedStakingPayout(stakedAmount: UFix64): UFix64 {
         let scaledStakedAmount = self.UFix64ToScaledUInt256(stakedAmount)
         let scaledSystemTotalStaked = self.UFix64ToScaledUInt256(FlowIDTableStaking.getTotalStaked())
         let scaledEpochTokenPayout = self.UFix64ToScaledUInt256(FlowIDTableStaking.getEpochTokenPayout())
@@ -77,7 +77,7 @@ pub contract LiquidStakingConfig {
     /// Utility function to convert a UFix64 number to its scaled equivalent in UInt256 format
     /// e.g. 184467440737.09551615 (UFix64.max) => 184467440737095516150000000000
     ///
-    pub fun UFix64ToScaledUInt256(_ f: UFix64): UInt256 {
+    access(all) fun UFix64ToScaledUInt256(_ f: UFix64): UInt256 {
         let integral = UInt256(f)
         let fractional = f % 1.0
         let ufixScaledInteger =  integral * UInt256(self.ufixScale) + UInt256(fractional * self.ufixScale)
@@ -87,7 +87,7 @@ pub contract LiquidStakingConfig {
     /// Utility function to convert a fixed point number in form of scaled UInt256 back to UFix64 format
     /// e.g. 184467440737095516150000000000 => 184467440737.09551615
     ///
-    pub fun ScaledUInt256ToUFix64(_ scaled: UInt256): UFix64 {
+    access(all) fun ScaledUInt256ToUFix64(_ scaled: UInt256): UFix64 {
         let integral = scaled / self.scaleFactor
         let ufixScaledFractional = (scaled % self.scaleFactor) * UInt256(self.ufixScale) / self.scaleFactor
         return UFix64(integral) + (UFix64(ufixScaledFractional) / self.ufixScale)
@@ -95,19 +95,19 @@ pub contract LiquidStakingConfig {
 
     /// Config Admin
     ///
-    pub resource Admin {
+    access(all) resource Admin {
 
-        pub fun setMinStakingAmount(minStakingAmount: UFix64) {
+        access(all) fun setMinStakingAmount(minStakingAmount: UFix64) {
             emit ConfigMinStakingAmount(newValue: minStakingAmount, oldValue: LiquidStakingConfig.minStakingAmount)
             LiquidStakingConfig.minStakingAmount = minStakingAmount
         }
 
-        pub fun setStakingCap(stakingCap: UFix64) {
+        access(all) fun setStakingCap(stakingCap: UFix64) {
             emit ConfigStakingCap(newValue: stakingCap, oldValue: LiquidStakingConfig.stakingCap)
             LiquidStakingConfig.stakingCap = stakingCap
         }
 
-        pub fun setQuickUnstakeFee(quickUnstakeFee: UFix64) {
+        access(all) fun setQuickUnstakeFee(quickUnstakeFee: UFix64) {
             pre {
                 quickUnstakeFee < 1.0: "Invalid quick unstake fee"
             }
@@ -115,7 +115,7 @@ pub contract LiquidStakingConfig {
             LiquidStakingConfig.quickUnstakeFee = quickUnstakeFee
         }
 
-        pub fun setProtocolFee(protocolFee: UFix64) {
+        access(all) fun setProtocolFee(protocolFee: UFix64) {
             pre {
                 protocolFee < 1.0: "Invalid protocol fee"
             }
@@ -123,7 +123,7 @@ pub contract LiquidStakingConfig {
             LiquidStakingConfig.protocolFee = protocolFee
         }
 
-        pub fun setPause(stakingPause: Bool, unstakingPause: Bool, migratingPause: Bool) {
+        access(all) fun setPause(stakingPause: Bool, unstakingPause: Bool, migratingPause: Bool) {
             if LiquidStakingConfig.isStakingPaused != stakingPause {
                 emit ConfigStakingPause(newValue: stakingPause, oldValue: LiquidStakingConfig.isStakingPaused)
                 LiquidStakingConfig.isStakingPaused = stakingPause
@@ -139,7 +139,7 @@ pub contract LiquidStakingConfig {
             }
         }
 
-        pub fun setWindowSize(windowSize: UInt64) {
+        access(all) fun setWindowSize(windowSize: UInt64) {
             emit ConfigWindowSize(newValue: windowSize, oldValue: LiquidStakingConfig.windowSizeBeforeStakingEnd)
             LiquidStakingConfig.windowSizeBeforeStakingEnd = windowSize
         }

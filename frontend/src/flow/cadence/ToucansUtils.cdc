@@ -1,16 +1,16 @@
 import Crypto
-import FungibleToken from "./utility/FungibleToken.cdc"
-import NFTCatalog from "./utility/NFTCatalog.cdc"
-import NonFungibleToken from "./utility/NonFungibleToken.cdc"
-import FIND from "./utility/FIND.cdc"
-import EmeraldIdentity from "./utility/EmeraldIdentity.cdc"
-import SwapInterfaces from "./utility/SwapInterfaces.cdc"
-import LiquidStaking from "./utility/LiquidStaking.cdc"
-import FlowToken from "./utility/FlowToken.cdc"
-import stFlowToken from "./utility/stFlowToken.cdc"
+import "FungibleToken"
+import "NFTCatalog"
+import "NonFungibleToken"
+import "FIND"
+import "EmeraldIdentity"
+import "SwapInterfaces"
+import "LiquidStaking"
+import "FlowToken"
+import "stFlowToken"
 
-pub contract ToucansUtils {
-  pub fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {
+access(all) contract ToucansUtils {
+  access(all) fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {
     if let entry: NFTCatalog.NFTCatalogMetadata = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier) {
       let publicPath: PublicPath = entry.collectionData.publicPath
       let contractAddressToString: String = entry.contractAddress.toString()
@@ -22,7 +22,7 @@ pub contract ToucansUtils {
       }
       assert(addresses.contains(user), message: "Should always be true. Just making sure so the user doesn't get punished accidentally ;)")
       for address in addresses {
-        if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).getCapability(publicPath).borrow<&{NonFungibleToken.CollectionPublic}>() {
+        if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).capabilities.borrow<&{NonFungibleToken.CollectionPublic}>(publicPath) {
           let identifier: String = collection.getType().identifier
           if identifier == constructedIdentifier && collection.getIDs().length > 0 {
             return true
@@ -34,13 +34,13 @@ pub contract ToucansUtils {
     return false
   }
 
-  pub fun depositTokensToAccount(funds: @FungibleToken.Vault, to: Address, publicPath: PublicPath) {
-    let vault = getAccount(to).getCapability(publicPath).borrow<&{FungibleToken.Receiver}>() 
+  access(all) fun depositTokensToAccount(funds: @{FungibleToken.Vault}, to: Address, publicPath: PublicPath) {
+    let vault = getAccount(to).capabilities.borrow<&{FungibleToken.Receiver}>(publicPath) 
               ?? panic("Account does not have a proper Vault set up.")
     vault.deposit(from: <- funds)
   }
 
-  pub fun rangeFunc(_ start: Int, _ end: Int, _ f : ((Int):Void) ) {
+  access(all) fun rangeFunc(_ start: Int, _ end: Int, _ f : (fun (Int): Void) ) {
     var current = start
     while current < end{
         f(current)
@@ -48,7 +48,7 @@ pub contract ToucansUtils {
     }
   } 
 
-  pub fun range(_ start: Int, _ end: Int): [Int]{
+  access(all) fun range(_ start: Int, _ end: Int): [Int]{
     var res:[Int] = []
     self.rangeFunc(start, end, fun (i:Int){
         res.append(i)
@@ -56,7 +56,7 @@ pub contract ToucansUtils {
     return res
   }
 
-  pub fun index(_ s : String, _ substr : String, _ startIndex: Int): Int?{
+  access(all) fun index(_ s : String, _ substr : String, _ startIndex: Int): Int?{
     for i in self.range(startIndex,s.length-substr.length+1){
         if s[i]==substr[0] && s.slice(from:i, upTo:i+substr.length) == substr{
             return i
@@ -65,21 +65,21 @@ pub contract ToucansUtils {
     return nil
   }
 
-  pub fun getFind(_ address: Address): String {
+  access(all) fun getFind(_ address: Address): String {
     if let name = FIND.reverseLookup(address) {
       return name.concat(".find")
     }
     return address.toString()
   }
 
-  pub fun fixToReadableString(num: UFix64): String {
+  access(all) fun fixToReadableString(num: UFix64): String {
     let numToString: String = num.toString()
     let indexOfDot: Int = ToucansUtils.index(numToString, ".", 1)!
     return numToString.slice(from: 0, upTo: indexOfDot + 3)
   }
 
   // stringAddress DOES NOT include the `0x`
-  pub fun stringToAddress(stringAddress: String): Address {
+  access(all) fun stringToAddress(stringAddress: String): Address {
     var r: UInt64 = 0
     var bytes: [UInt8] = stringAddress.decodeHex()
 
@@ -92,17 +92,17 @@ pub contract ToucansUtils {
 
   // returns:
   // [address, contractname]
-  pub fun getAddressAndContractNameFromCollectionIdentifier(identifier: String): [AnyStruct] {
+  access(all) fun getAddressAndContractNameFromCollectionIdentifier(identifier: String): [AnyStruct] {
     let address: Address = self.stringToAddress(stringAddress: identifier.slice(from: 2, upTo: 18))
     let contractName: String = identifier.slice(from: 19, upTo: identifier.length - 11)
     return [address, contractName]
   }
 
-  pub fun getEstimatedOut(amountIn: UFix64, tokenInKey: String): UFix64 {
+  access(all) fun getEstimatedOut(amountIn: UFix64, tokenInKey: String): UFix64 {
     // normal xyk pool
-    let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
     // stableswap pool with most liquidity
-    let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    let poolCapStable = getAccount(0xc353b9d685ec427d).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
     
     let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
     let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
@@ -116,13 +116,13 @@ pub contract ToucansUtils {
     return estimatedSwapOut
   }
 
-  pub fun swapTokensWithPotentialStake(inVault: @FungibleToken.Vault, tokenInKey: String): @FungibleToken.Vault {
+  access(all) fun swapTokensWithPotentialStake(inVault: @{FungibleToken.Vault}, tokenInKey: String): @{FungibleToken.Vault} {
     let amountIn = inVault.balance
     // normal xyk pool
-    let poolCapV1 = getAccount(0x396c0cda3302d8c5).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
     let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
     // stableswap pool with most liquidity
-    let poolCapStable = getAccount(0xc353b9d685ec427d).getCapability<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair).borrow()!
+    let poolCapStable = getAccount(0xc353b9d685ec427d).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
     let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
 
     let estimatedSwapPoolCap = (estimatedSwapOutStable > estimatedSwapOutV1) ? poolCapStable : poolCapV1
@@ -137,7 +137,7 @@ pub contract ToucansUtils {
     return <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
   }
 
-  pub fun getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: String): String {
+  access(all) fun getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: String): String {
     let nftTypeIdentifier: String = collectionIdentifier.slice(from: 0, upTo: collectionIdentifier.length - 10).concat("NFT")
     let collectionsForType: {String: Bool} = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier) ?? panic("This collection is not supported in the NFTCatalog.")
     let collectionIdentifier: String = collectionsForType.keys[0]

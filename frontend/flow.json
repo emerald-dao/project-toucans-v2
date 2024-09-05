@@ -122,6 +122,20 @@
 				"testnet": "631e88ae7f1d7c20"
 			}
 		},
+		"Burner": {
+			"source": "./src/flow/cadence/utility/Burner.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "80d5c8ffed6d5e3c",
+				"mainnet": "f233dcee88fe0abe"
+			}
+		},
+		"ExampleToken": {
+			"source": "./src/flow/cadence/ExampleToken.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
 		"OnChainMultiSig": {
 			"source": "./src/flow/cadence/utility/OnChainMultiSig.cdc",
 			"aliases": {
@@ -256,43 +270,19 @@
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": [
-				"FCLCrypto",
-				"FungibleTokenMetadataViews",
-				"FUSD",
-				"FIND",
-				"stFlowToken",
-				"LiquidStaking",
-				"OnChainMultiSig",
-				"NFTCatalogSnapshot",
-				"NFTCatalog",
-				"ExampleNFT",
-				"ChinoNFT",
-				"FiatToken",
-				"EmeraldIdentityDapper",
-				"EmeraldIdentityLilico",
-				"EmeraldIdentity",
-				"ToucansUtils",
-				"ToucansTokens",
-				"ToucansLockTokens",
-				"Toucans",
-				"ToucansActions",
-				"TestingDAO",
-				"SwapError",
-				"SwapConfig",
-				"SwapInterfaces",
-				"SwapFactory"
-			]
+			"emulator-account": ["ViewResolver", "NonFungibleToken"]
 		},
 		"testnet": {
 			"testnet-account": [
+				"ToucansTokens",
+				"ToucansLockTokens",
+				"ToucansUtils",
+				"ToucansActions",
 				"Toucans"
 			]
 		},
 		"mainnet": {
-			"mainnet-account": [
-				"Toucans"
-			]
+			"mainnet-account": ["Toucans"]
 		}
 	}
 }

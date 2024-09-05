@@ -1,7 +1,6 @@
-import ExampleToken from "../ExampleToken.cdc"
-import FungibleToken from "../utility/FungibleToken.cdc"
-import MetadataViews from "../utility/MetadataViews.cdc"
+import "ExampleToken"
 
-pub fun main(user: Address): Bool {
-  return getAuthAccount(user).borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) != nil
+access(all) fun main(user: Address): Bool {
+  let authAccount = getAuthAccount<auth(Storage, Capabilities) &Account>(user)
+  return authAccount.storage.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath) != nil
 }

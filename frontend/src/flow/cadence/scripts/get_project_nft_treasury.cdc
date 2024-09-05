@@ -1,12 +1,11 @@
-import Toucans from "../Toucans.cdc"
-import MetadataViews from "../utility/MetadataViews.cdc"
-import NFTCatalog from "../utility/NFTCatalog.cdc"
+import "Toucans"
+import "MetadataViews"
+import "NFTCatalog"
 
-pub fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
+access(all) fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
     let res: {String: [NFTData]} = {}
-    let projectCollection = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                    .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
-                    ?? panic("User does not have a Toucans Collection")
+    let projectCollection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
+                ?? panic("User does not have a Toucans Collection")
     let project = projectCollection.borrowProjectPublic(projectId: projectId)!
 
     for collectionType in project.getCollectionTypesInTreasury() {
@@ -16,7 +15,7 @@ pub fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
         }
         let nftDatas: [NFTData] = []
         let nftTypeIdentifier: String = nftRefs[0].getType().identifier
-        let collectionIdentifier = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier)!.keys[0]
+        // let collectionIdentifier = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier)!.keys[0]
         for nftRef in nftRefs {
             let display = nftRef.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display
             var serialNum: UInt64? = nil
@@ -33,18 +32,18 @@ pub fun main(projectOwner: Address, projectId: String): {String: [NFTData]} {
             }
             nftDatas.append(NFTData(nftRef.uuid, nftRef.id, display.name, display.thumbnail.uri(), serialNum, traitsOpt))
         }
-        res[collectionIdentifier] = nftDatas
+        res[collectionType.identifier] = nftDatas
     }
     return res
 }
 
-pub struct NFTData {
-    pub let uuid: UInt64
-    pub let id: UInt64
-    pub let name: String
-    pub let thumbnail: String
-    pub let serial: UInt64?
-    pub let traits: [MetadataViews.Trait]
+access(all) struct NFTData {
+    access(all) let uuid: UInt64
+    access(all) let id: UInt64
+    access(all) let name: String
+    access(all) let thumbnail: String
+    access(all) let serial: UInt64?
+    access(all) let traits: [MetadataViews.Trait]
 
     init(_ uuid: UInt64, _ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?, _ traits: MetadataViews.Traits?) {
         self.uuid = uuid

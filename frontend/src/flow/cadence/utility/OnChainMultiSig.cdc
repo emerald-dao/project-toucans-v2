@@ -1,46 +1,46 @@
 import Crypto
 import FungibleToken from "./FungibleToken.cdc"
 
-pub contract OnChainMultiSig {
+access(all) contract OnChainMultiSig {
     
     
     // ------- Events ------- 
-    pub event NewPayloadAdded(resourceId: UInt64, txIndex: UInt64);
-    pub event NewPayloadSigAdded(resourceId: UInt64, txIndex: UInt64);
+    access(all) event NewPayloadAdded(resourceId: UInt64, txIndex: UInt64);
+    access(all) event NewPayloadSigAdded(resourceId: UInt64, txIndex: UInt64);
 
     
     // ------- Interfaces ------- 
-    pub resource interface PublicSigner {
-        pub fun addNewPayload(payload: @PayloadDetails, publicKey: String, sig: [UInt8]);
-        pub fun addPayloadSignature (txIndex: UInt64, publicKey: String, sig: [UInt8]);
-        pub fun executeTx(txIndex: UInt64): @AnyResource?;
-        pub fun UUID(): UInt64;
-        pub fun getTxIndex(): UInt64;
-        pub fun getSignerKeys(): [String];
-        pub fun getSignerKeyAttr(publicKey: String): PubKeyAttr?;
+    access(all) resource interface PublicSigner {
+        access(all) fun addNewPayload(payload: @PayloadDetails, publicKey: String, sig: [UInt8]);
+        access(all) fun addPayloadSignature (txIndex: UInt64, publicKey: String, sig: [UInt8]);
+        access(all) fun executeTx(txIndex: UInt64): @AnyResource?;
+        access(all) fun UUID(): UInt64;
+        access(all) fun getTxIndex(): UInt64;
+        access(all) fun getSignerKeys(): [String];
+        access(all) fun getSignerKeyAttr(publicKey: String): PubKeyAttr?;
     }
     
     
-    pub resource interface KeyManager {
-        pub fun addKeys( multiSigPubKeys: [String], multiSigKeyWeights: [UFix64], multiSigAlgos: [UInt8]);
-        pub fun removeKeys( multiSigPubKeys: [String]);
+    access(all) resource interface KeyManager {
+        access(all) fun addKeys( multiSigPubKeys: [String], multiSigKeyWeights: [UFix64], multiSigAlgos: [UInt8]);
+        access(all) fun removeKeys( multiSigPubKeys: [String]);
     }
     
 
-    pub resource interface SignatureManager {
-        pub fun getSignerKeys(): [String];
-        pub fun getSignerKeyAttr(publicKey: String): PubKeyAttr?;
-        pub fun addNewPayload (resourceId: UInt64, payload: @PayloadDetails, publicKey: String, sig: [UInt8]);
-        pub fun addPayloadSignature (resourceId: UInt64, txIndex: UInt64, publicKey: String, sig: [UInt8]);
-        pub fun readyForExecution(txIndex: UInt64): @PayloadDetails?;
-        pub fun configureKeys (pks: [String], kws: [UFix64], sa: [UInt8]);
-        pub fun removeKeys (pks: [String]);
+    access(all) resource interface SignatureManager {
+        access(all) fun getSignerKeys(): [String];
+        access(all) fun getSignerKeyAttr(publicKey: String): PubKeyAttr?;
+        access(all) fun addNewPayload (resourceId: UInt64, payload: @PayloadDetails, publicKey: String, sig: [UInt8]);
+        access(all) fun addPayloadSignature (resourceId: UInt64, txIndex: UInt64, publicKey: String, sig: [UInt8]);
+        access(all) fun readyForExecution(txIndex: UInt64): @PayloadDetails?;
+        access(all) fun configureKeys (pks: [String], kws: [UFix64], sa: [UInt8]);
+        access(all) fun removeKeys (pks: [String]);
     }
     
     // ------- Structs -------
-    pub struct PubKeyAttr {
-        pub let sigAlgo: UInt8;
-        pub let weight: UFix64
+    access(all) struct PubKeyAttr {
+        access(all) let sigAlgo: UInt8;
+        access(all) let weight: UFix64
         
         init(sa: UInt8, w: UFix64) {
             self.sigAlgo = sa;
@@ -50,21 +50,21 @@ pub contract OnChainMultiSig {
 
     
     // ------- Resources ------- 
-    pub resource PayloadDetails {
-        pub var txIndex: UInt64;
-        pub var method: String;
+    access(all) resource PayloadDetails {
+        access(all) var txIndex: UInt64;
+        access(all) var method: String;
         pub(set) var rsc: @AnyResource?;
         access(self) let args: [AnyStruct];
         
         access(contract) let signatures: [[UInt8]];
         access(contract) let pubKeys: [String];
         
-        pub fun getArg(i: UInt): AnyStruct? {
+        access(all) fun getArg(i: UInt): AnyStruct? {
             return self.args[i]
         }      
 
         // Calculate the bytes of a payload
-        pub fun getSignableData(): [UInt8] {
+        access(all) fun getSignableData(): [UInt8] {
             var s = self.txIndex.toBigEndianBytes();
             s = s.concat(self.method.utf8);
             var i: Int = 0;
@@ -106,7 +106,7 @@ pub contract OnChainMultiSig {
         }
         
         // Verify the signature and return the total weight of valid signatures, if any.
-        pub fun verifySigners (pks: [String], sigs: [[UInt8]], currentKeyList: {String: PubKeyAttr}): UFix64? {
+        access(all) fun verifySigners (pks: [String], sigs: [[UInt8]], currentKeyList: {String: PubKeyAttr}): UFix64? {
             assert(pks.length == sigs.length, message: "Cannot verify signatures without corresponding public keys");
             
             var totalAuthorizedWeight: UFix64 = 0.0;
@@ -153,7 +153,7 @@ pub contract OnChainMultiSig {
             }
         }
         
-        pub fun addSignature(sig: [UInt8], publicKey: String){
+        access(all) fun addSignature(sig: [UInt8], publicKey: String){
             self.signatures.append(sig);
             self.pubKeys.append(publicKey);
         }
@@ -180,29 +180,29 @@ pub contract OnChainMultiSig {
         }
     }
     
-    pub resource Manager: SignatureManager {
+    access(all) resource Manager: SignatureManager {
         
         // Sequential identifier for each stored tx payload.
-        pub var txIndex: UInt64;
+        access(all) var txIndex: UInt64;
         // Map of {publicKey: PubKeyAttr}
         access(self) let keyList: {String: PubKeyAttr};
         // Map of {txIndex: PayloadDetails}
         access(self) let payloads: @{UInt64: PayloadDetails}
 
-        pub fun getSignerKeys(): [String] {
+        access(all) fun getSignerKeys(): [String] {
             return self.keyList.keys
         }
 
-        pub fun getSignerKeyAttr(publicKey: String): PubKeyAttr? {
+        access(all) fun getSignerKeyAttr(publicKey: String): PubKeyAttr? {
             return self.keyList[publicKey]
         }
         
-        pub fun removePayload(txIndex: UInt64): @PayloadDetails {
+        access(all) fun removePayload(txIndex: UInt64): @PayloadDetails {
             assert(self.payloads.containsKey(txIndex), message: "no payload at txIndex")
             return <- self.payloads.remove(key: txIndex)!
         }
         
-        pub fun configureKeys (pks: [String], kws: [UFix64], sa: [UInt8]) {
+        access(all) fun configureKeys (pks: [String], kws: [UFix64], sa: [UInt8]) {
             var i: Int =  0;
             while (i < pks.length) {
                 let a = PubKeyAttr(sa: sa[i], w: kws[i])
@@ -211,7 +211,7 @@ pub contract OnChainMultiSig {
             }
         }
 
-        pub fun removeKeys (pks: [String]) {
+        access(all) fun removeKeys (pks: [String]) {
             var i: Int =  0;
             while (i < pks.length) {
                 self.keyList.remove(key:pks[i])
@@ -219,7 +219,7 @@ pub contract OnChainMultiSig {
             }
         }
         
-        pub fun addNewPayload (resourceId: UInt64, payload: @PayloadDetails, publicKey: String, sig: [UInt8]) {
+        access(all) fun addNewPayload (resourceId: UInt64, payload: @PayloadDetails, publicKey: String, sig: [UInt8]) {
 
             // Reject the tx if the provided key is not in the keyList
             assert(self.keyList.containsKey(publicKey), message: "Public key is not a registered signer");
@@ -244,7 +244,7 @@ pub contract OnChainMultiSig {
             emit NewPayloadAdded(resourceId: resourceId, txIndex: txIndex)
         }
 
-        pub fun addPayloadSignature (resourceId: UInt64, txIndex: UInt64, publicKey: String, sig: [UInt8]) {
+        access(all) fun addPayloadSignature (resourceId: UInt64, txIndex: UInt64, publicKey: String, sig: [UInt8]) {
             assert(self.payloads.containsKey(txIndex), message: "Payload has not been added");
             assert(self.keyList.containsKey(publicKey), message: "Public key is not a registered signer");
 
@@ -276,7 +276,7 @@ pub contract OnChainMultiSig {
         }
 
         // Ensure the total weights of the tx signers is sufficient to execute the tx
-        pub fun readyForExecution(txIndex: UInt64): @PayloadDetails? {
+        access(all) fun readyForExecution(txIndex: UInt64): @PayloadDetails? {
             assert(self.payloads.containsKey(txIndex), message: "No payload for such index");
             let p <- self.payloads.remove(key: txIndex)!;
             let approvalWeight = p.verifySigners( pks: p.pubKeys, sigs: p.signatures, currentKeyList: self.keyList)
@@ -306,11 +306,11 @@ pub contract OnChainMultiSig {
         }
     }
         
-    pub fun createMultiSigManager(publicKeys: [String], pubKeyAttrs: [PubKeyAttr]): @Manager {
+    access(all) fun createMultiSigManager(publicKeys: [String], pubKeyAttrs: [PubKeyAttr]): @Manager {
         return <- create Manager(publicKeys: publicKeys, pubKeyAttrs: pubKeyAttrs)
     }
 
-    pub fun createPayload(txIndex: UInt64, method: String, args: [AnyStruct], rsc: @AnyResource?): @PayloadDetails{
+    access(all) fun createPayload(txIndex: UInt64, method: String, args: [AnyStruct], rsc: @AnyResource?): @PayloadDetails{
         return <- create PayloadDetails(txIndex: txIndex, method: method, args: args, rsc: <-rsc)
     }
 }
