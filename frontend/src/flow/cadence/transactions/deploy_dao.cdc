@@ -1,8 +1,8 @@
-import FungibleToken from "../utility/FungibleToken.cdc"
-import FiatToken from "../utility/FiatToken.cdc"
-import FlowToken from "../utility/FlowToken.cdc"
-import Toucans from "../Toucans.cdc"
-import ToucansTokens from "../ToucansTokens.cdc"
+import "FungibleToken"
+import "FiatToken"
+import "FlowToken"
+import "Toucans"
+import "ToucansTokens"
 
 transaction(
   projectId: String,
@@ -16,25 +16,29 @@ transaction(
   ptStoragePath: StoragePath
 ) {
 
-  prepare(signer: AuthAccount) {
+  prepare(signer: auth(Storage, Capabilities) &Account) {
     /**************************************************************************************/
     /********************************** Setup USDC if not *********************************/
     /**************************************************************************************/
-    if signer.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
-      signer.save(<- FiatToken.createEmptyVault(), to: /storage/USDCVault)
-      signer.link<&FiatToken.Vault{FungibleToken.Receiver}>(/public/USDCVaultReceiver, target: /storage/USDCVault)
-      signer.link<&FiatToken.Vault{FungibleToken.Balance}>(/public/USDCVaultBalance, target: /storage/USDCVault)
+    if signer.storage.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
+      signer.storage.save(<- FiatToken.createEmptyVault(vaultType: Type<@FiatToken.Vault>()), to: /storage/USDCVault)
+      let receiverCap = signer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
+      signer.capabilities.publish(receiverCap, at: /public/USDCVaultReceiver)
+
+      let publicCap = signer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
+      signer.capabilities.publish(publicCap, at: /public/USDCVaultBalance)
     }
 
     // Blank empty for now
     let extra: {String: AnyStruct} = {}
 
-    if signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
-      signer.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
-      signer.link<&Toucans.Collection{Toucans.CollectionPublic}>(Toucans.CollectionPublicPath, target: Toucans.CollectionStoragePath)
+    if signer.storage.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath) == nil {
+      signer.storage.save(<- Toucans.createCollection(), to: Toucans.CollectionStoragePath)
+      let cap = signer.capabilities.storage.issue<&Toucans.Collection>(Toucans.CollectionStoragePath)
+      signer.capabilities.publish(cap, at: Toucans.CollectionPublicPath)
     }
 
-    let toucansProjectCollection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
+    let toucansProjectCollection = signer.storage.borrow<auth(Toucans.CollectionOwner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)!
     toucansProjectCollection.createProjectNoToken(
       projectId: projectId,
       paymentTokenInfo: ToucansTokens.TokenInfo(ptContractName, ptContractAddress, ptSymbol, ptReceiverPath, ptPublicPath, ptStoragePath), 

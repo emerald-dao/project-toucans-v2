@@ -5,22 +5,22 @@
 # Author: Increment Labs
 
 */
-pub contract LiquidStakingError {
+access(all) contract LiquidStakingError {
 
-    pub enum ErrorCode: UInt8 {
-        pub case NO_ERROR
-        pub case INVALID_PARAMETERS
-        pub case STAKING_REWARD_NOT_PAID
-        pub case EXCEED_STAKE_CAP
-        pub case STAKE_NOT_OPEN
-        pub case UNSTAKE_NOT_OPEN
-        pub case MIGRATE_NOT_OPEN
-        pub case STAKING_AUCTION_NOT_IN_PROGRESS
-        pub case QUOTE_EPOCH_EXPIRED
-        pub case CANNOT_CASHOUT_WITHDRAW_VOUCHER
+    access(all) enum ErrorCode: UInt8 {
+        access(all) case NO_ERROR
+        access(all) case INVALID_PARAMETERS
+        access(all) case STAKING_REWARD_NOT_PAID
+        access(all) case EXCEED_STAKE_CAP
+        access(all) case STAKE_NOT_OPEN
+        access(all) case UNSTAKE_NOT_OPEN
+        access(all) case MIGRATE_NOT_OPEN
+        access(all) case STAKING_AUCTION_NOT_IN_PROGRESS
+        access(all) case QUOTE_EPOCH_EXPIRED
+        access(all) case CANNOT_CASHOUT_WITHDRAW_VOUCHER
     }
 
-    pub fun ErrorEncode(msg: String, err: ErrorCode): String {
+    access(all) fun ErrorEncode(msg: String, err: ErrorCode): String {
         return "[IncLiquidStakingErrorMsg:".concat(msg).concat("]").concat(
                "[IncLiquidStakingErrorCode:").concat(err.rawValue.toString()).concat("]")
     }

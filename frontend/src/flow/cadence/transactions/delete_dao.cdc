@@ -1,11 +1,11 @@
-import Toucans from "../Toucans.cdc"
+import "Toucans"
 
 transaction(
   projectId: String
 ) {
 
-  prepare(signer: AuthAccount) {
-    let toucansProjectCollection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)!
+  prepare(signer: auth(Storage) &Account) {
+    let toucansProjectCollection = signer.storage.borrow<auth(Toucans.CollectionOwner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)!
     toucansProjectCollection.deleteProject(projectId: projectId)
   }
 

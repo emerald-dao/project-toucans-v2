@@ -1,6 +1,6 @@
-import FlowToken from "../utility/FlowToken.cdc"
+import "FlowToken"
 
-pub fun main(address: Address): Bool {
-  let testVault = getAuthAccount(address).borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
+access(all) fun main(address: Address): Bool {
+  let testVault = getAuthAccount<auth(Storage) &Account>(address).storage.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
   return testVault != nil
 }

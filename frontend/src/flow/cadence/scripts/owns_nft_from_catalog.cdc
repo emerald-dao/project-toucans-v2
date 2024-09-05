@@ -1,8 +1,8 @@
-import NFTCatalog from "../utility/NFTCatalog.cdc"
-import NonFungibleToken from "../utility/NonFungibleToken.cdc"
-import EmeraldIdentity from "../utility/EmeraldIdentity.cdc"
+import "NFTCatalog"
+import "NonFungibleToken"
+import "EmeraldIdentity"
 
-pub fun main(user: Address, collectionIdentifier: String): Bool {
+access(all) fun main(user: Address, collectionIdentifier: String): Bool {
   if let entry: NFTCatalog.NFTCatalogMetadata = NFTCatalog.getCatalogEntry(collectionIdentifier: collectionIdentifier) {
     let publicPath: PublicPath = entry.collectionData.publicPath
     let contractAddressToString: String = entry.contractAddress.toString()
@@ -14,7 +14,7 @@ pub fun main(user: Address, collectionIdentifier: String): Bool {
     }
     assert(addresses.contains(user), message: "Should always be true. Just making sure so the user doesn't get punished accidentally ;)")
     for address in addresses {
-      if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).getCapability(publicPath).borrow<&{NonFungibleToken.CollectionPublic}>() {
+      if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).capabilities.borrow<&{NonFungibleToken.Collection}>(publicPath) {
         let identifier: String = collection.getType().identifier
         if identifier == constructedIdentifier && collection.getIDs().length > 0 {
           return true

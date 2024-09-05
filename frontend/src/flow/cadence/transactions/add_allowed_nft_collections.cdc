@@ -1,4 +1,4 @@
-import Toucans from "../Toucans.cdc"
+import "Toucans"
 
 transaction(
   projectOwner: Address, 
@@ -6,13 +6,13 @@ transaction(
   collectionIdentifiers: [String]
 ) {
 
-  let Project: &Toucans.Project
+  let Project: auth(Toucans.ProjectOwner) &Toucans.Project
   
-  prepare(signer: AuthAccount) {
-    let collection = signer.borrow<&Toucans.Collection>(from: Toucans.CollectionStoragePath)
+  prepare(signer: auth(Storage) &Account) {
+    let collection = signer.storage.borrow<auth(Toucans.CollectionOwner) &Toucans.Collection>(from: Toucans.CollectionStoragePath)
                     ?? panic("A DAOTreasury doesn't exist here.")
     self.Project = collection.borrowProject(projectId: projectId) ?? panic("Project does not exist.")
-   
+  
   }
   execute {
     self.Project.addAllowedNFTCollections(collectionIdentifiers: collectionIdentifiers)
