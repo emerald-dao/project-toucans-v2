@@ -14,6 +14,12 @@
 				"testnet": "4d47bf3ce5e4393f"
 			}
 		},
+		"AllDay": {
+			"source": "./src/flow/cadence/utility/AllDay.cdc",
+			"aliases": {
+				"mainnet": "e4cf4bdc1751c65d"
+			}
+		},
 		"EmeraldIdentityDapper": {
 			"source": "./src/flow/cadence/utility/EmeraldIdentityDapper.cdc",
 			"aliases": {
