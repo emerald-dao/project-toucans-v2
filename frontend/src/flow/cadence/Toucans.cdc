@@ -986,7 +986,8 @@ access(all) contract Toucans {
         to: recipientAddr,
         message: message
       )
-      let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)!
+      let treasury = self.borrowNFTTreasury()!
+      let specificNFTTreasury <- treasury.remove(key: collectionType)!
       // if main receiver available, use that
       if let receiver = collectionReceiver {
         for id in nftIDs {
@@ -999,6 +1000,7 @@ access(all) contract Toucans {
           backupReceiver!.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
         }
       }
+      treasury[collectionType] <-! specificNFTTreasury
     }
 
     access(all) view fun getAllowedNFTCollections(): [String] {
@@ -1318,16 +1320,16 @@ access(all) contract Toucans {
       return nil
     }
 
-    access(self) fun borrowNFTTreasury(): auth(Mutate, NonFungibleToken.Withdraw) &{Type: {NonFungibleToken.Collection}}? {
+    access(self) fun borrowNFTTreasury(): auth(Mutate) &{Type: {NonFungibleToken.Collection}}? {
       if let nftTreasury = &self.additions["nftTreasury"] as auth(Mutate) &AnyResource? {
-        return nftTreasury as! auth(Mutate, NonFungibleToken.Withdraw) &{Type: {NonFungibleToken.Collection}}
+        return nftTreasury as! auth(Mutate) &{Type: {NonFungibleToken.Collection}}
       }
       return nil
     }
 
-    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): auth(NonFungibleToken.Withdraw) &{NonFungibleToken.Collection}? {
+    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): &{NonFungibleToken.Collection}? {
       if let nftTreasury = self.borrowNFTTreasury() {
-        return nftTreasury[type] as! auth(NonFungibleToken.Withdraw) &{NonFungibleToken.Collection}?
+        return nftTreasury[type]
       }
       return nil
     }
