@@ -433,7 +433,7 @@ access(all) contract Toucans {
       if actionState == ActionState.ACCEPTED {
         self.markCompletedAction(actionUUID: actionUUID, mark: true)
         let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
-        let action: &{ToucansActions.Action} = actionWrapper.action
+        let action: {ToucansActions.Action} = actionWrapper.getAction()
         switch action.getType() {
           case Type<ToucansActions.WithdrawToken>():
             let withdraw: ToucansActions.WithdrawToken = action as! ToucansActions.WithdrawToken
@@ -1517,6 +1517,10 @@ access(all) contract Toucans {
       access(self) let signers: [Address]
       access(self) let votes: {Address: Bool}
       access(all) let threshold: UInt64
+
+      access(all) view fun getAction(): {ToucansActions.Action} {
+        return self.action
+      }
 
       access(contract) fun vote(acctAddress: Address, vote: Bool) {
         pre {
