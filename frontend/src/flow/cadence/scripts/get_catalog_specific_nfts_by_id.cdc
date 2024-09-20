@@ -18,7 +18,13 @@ access(all) fun main(collectionIdentifier: String, user: Address, ids: [UInt64])
                         serialNum = serial.number
                     }
                 }
-                let nftData = NFTData(id, display.name, display.thumbnail.uri(), serialNum)
+                var traitsOpt: MetadataViews.Traits? = nil
+                if let traitsView = nft.resolveView(Type<MetadataViews.Traits>()) {
+                    if let traits = traitsView as? MetadataViews.Traits {
+                        traitsOpt = traits
+                    }
+                }
+                let nftData = NFTData(id, display.name, display.thumbnail.uri(), serialNum, traitsOpt)
                 res.append(nftData)
             }
         }
@@ -31,11 +37,13 @@ access(all) struct NFTData {
     access(all) let name: String
     access(all) let thumbnail: String
     access(all) let serial: UInt64?
+    access(all) let traits: [MetadataViews.Trait]
 
-    init(_ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?) {
+    init(_ id: UInt64, _ name: String, _ thumbnail: String, _ serial: UInt64?, _ traits: MetadataViews.Traits?) {
         self.id = id
         self.name = name
         self.thumbnail = thumbnail
         self.serial = serial
+        self.traits = traits?.traits ?? []
     }
 }
