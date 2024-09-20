@@ -1180,34 +1180,6 @@ export const getProjectSpecificNFTTreasury: (
 	}
 };
 
-export const getProjectSpecificNFTTreasuryByIDs: (
-	owner: string,
-	projectId: string,
-	collectionIdentifier: string,
-	ids: string[]
-) => Promise<Nft[]> = async (
-	owner: string,
-	projectId: string,
-	collectionIdentifier: string,
-	ids: string[]
-) => {
-	try {
-		const response = await fcl.query({
-			cadence: replaceWithProperValues(getProjectSpecificNFTTreasuryScript),
-			args: (arg, t) => [
-				arg(owner, t.Address),
-				arg(projectId, t.String),
-				arg(collectionIdentifier, t.String),
-				arg(ids, t.Array(t.UInt64))
-			]
-		});
-		return convertTraitsForSpecific(response);
-	} catch (e) {
-		console.log('Error in getProjectSpecificNFTTreasuryByIDs');
-		console.log(e);
-	}
-};
-
 export const getProjectSpecificNFTTreasuryIDs: (
 	owner: string,
 	projectId: string,
@@ -1465,7 +1437,6 @@ const getCatalogSpecificNFTsIDs = async (
 			cadence: replaceWithProperValues(getCatalogSpecificNFTsIDsScript),
 			args: (arg, t) => [arg(collectionIdentifier, t.String), arg(user, t.Address)]
 		});
-
 		return response;
 	} catch (e) {
 		console.log('Error in getCatalogSpecificNFTsIDs');
@@ -1503,7 +1474,6 @@ export const getCatalogSpecificNFTs: (
 ) => Promise<Nft[]> = async (collectionIdentifier: string, user: string) => {
 	try {
 		const nftIds = await getCatalogSpecificNFTsIDs(user, collectionIdentifier);
-		console.log(nftIds);
 		const chunkSize = 300;
 		let promises = [];
 		for (let i = 0; i < nftIds.length; i += chunkSize) {
@@ -1521,6 +1491,7 @@ export const getCatalogSpecificNFTs: (
 		}
 		let nfts = await Promise.all(promises);
 		let ans: Nft[] = [].concat(...nfts);
+		convertTraitsForSpecific(ans);
 		return ans;
 	} catch (e) {
 		console.log('Error in getCatalogSpecificNFTs');

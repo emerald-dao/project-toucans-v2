@@ -72,6 +72,7 @@
 		.main-wrapper {
 			padding: var(--space-9);
 			gap: var(--space-7);
+			overflow-y: scroll;
 
 			.title-wrapper {
 				padding-bottom: var(--space-4);

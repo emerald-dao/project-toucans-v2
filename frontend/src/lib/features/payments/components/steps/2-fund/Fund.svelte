@@ -203,7 +203,7 @@
 <style type="scss">
 	form {
 		width: 100%;
-		margin-bottom: var(--space-9);
+		// margin-bottom: var(--space-9);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);

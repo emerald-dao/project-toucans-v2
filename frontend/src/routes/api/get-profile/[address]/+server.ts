@@ -44,7 +44,7 @@ const fetchProfile = async (
 		.single();
 
 	if (error) {
-		console.error('Error fetching profile', error);
+		// console.error('Error fetching profile', error);
 	}
 
 	if (toucansProfile !== null && (toucansProfile.use_find === false || allProfiles === true)) {
