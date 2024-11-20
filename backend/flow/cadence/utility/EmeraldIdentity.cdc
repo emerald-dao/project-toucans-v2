@@ -11,8 +11,8 @@
 // multiple addresses to your DiscordID, and you cannot configure
 // multiple DiscordIDs to your address. 1-1.
 
-import EmeraldIdentityDapper from "./EmeraldIdentityDapper.cdc"
-import EmeraldIdentityLilico from "./EmeraldIdentityLilico.cdc"
+import "EmeraldIdentityDapper"
+import "EmeraldIdentityLilico"
 
 access(all) contract EmeraldIdentity {
 
@@ -68,9 +68,9 @@ access(all) contract EmeraldIdentity {
             emit EmeraldIDRemoved(account: account, discordID: discordID)
         }
 
-        access(all) fun createAdministrator(): Capability<&Administrator> {
-            return EmeraldIdentity.account.getCapability<&Administrator>(EmeraldIdentity.AdministratorPrivatePath)
-        }
+        // access(all) fun createAdministrator(): Capability<&Administrator> {
+        //     return EmeraldIdentity.account.getCapability<&Administrator>(EmeraldIdentity.AdministratorPrivatePath)
+        // }
 
         init() {
             self.accountToDiscord = {}
@@ -80,13 +80,13 @@ access(all) contract EmeraldIdentity {
 
     /*** USE THE BELOW FUNCTIONS FOR SECURE VERIFICATION OF ID ***/ 
 
-    access(all) fun getDiscordFromAccount(account: Address): String?  {
-        let admin = EmeraldIdentity.account.borrow<&Administrator>(from: EmeraldIdentity.AdministratorStoragePath)!
+    access(all) view fun getDiscordFromAccount(account: Address): String?  {
+        let admin = EmeraldIdentity.account.storage.borrow<&Administrator>(from: EmeraldIdentity.AdministratorStoragePath)!
         return admin.accountToDiscord[account]
     }
 
-    access(all) fun getAccountFromDiscord(discordID: String): Address? {
-        let admin = EmeraldIdentity.account.borrow<&Administrator>(from: EmeraldIdentity.AdministratorStoragePath)!
+    access(all) view fun getAccountFromDiscord(discordID: String): Address? {
+        let admin = EmeraldIdentity.account.storage.borrow<&Administrator>(from: EmeraldIdentity.AdministratorStoragePath)!
         return admin.discordToAccount[discordID]
     }
 
@@ -108,8 +108,7 @@ access(all) contract EmeraldIdentity {
         self.AdministratorStoragePath = /storage/EmeraldIDAdministrator
         self.AdministratorPrivatePath = /private/EmeraldIDAdministrator
 
-        self.account.save(<- create Administrator(), to: EmeraldIdentity.AdministratorStoragePath)
-        self.account.link<&Administrator>(EmeraldIdentity.AdministratorPrivatePath, target: EmeraldIdentity.AdministratorStoragePath)
+        self.account.storage.save(<- create Administrator(), to: EmeraldIdentity.AdministratorStoragePath)
     }
 }
  

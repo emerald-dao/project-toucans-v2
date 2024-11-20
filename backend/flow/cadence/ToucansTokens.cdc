@@ -37,15 +37,15 @@ access(all) contract ToucansTokens {
     }
   }
 
-  access(all) fun getTokenInfo(tokenType: Type): TokenInfo? {
+  access(all) view fun getTokenInfo(tokenType: Type): TokenInfo? {
     return self.tokens[tokenType]
   }
 
-  access(all) fun getTokenSymbol(tokenType: Type): String? {
+  access(all) view fun getTokenSymbol(tokenType: Type): String? {
     return self.tokens[tokenType]?.symbol
   }
 
-  access(all) fun getTokenInfoFromSymbol(symbol: String): TokenInfo? {
+  access(all) view fun getTokenInfoFromSymbol(symbol: String): TokenInfo? {
     for info in self.tokens.values {
       if info.symbol == symbol {
         return info
@@ -66,12 +66,23 @@ access(all) contract ToucansTokens {
     return Address(r)
   }
 
+  access(all) fun dummyFlowTokenInfo(): TokenInfo {
+    return TokenInfo(
+      "FlowToken", 
+      self.stringToAddress(stringAddress: FlowToken.getType().identifier.slice(from: 2, upTo: 18)), 
+      "FLOW", 
+      /public/flowTokenReceiver, 
+      /public/flowTokenBalance, 
+      /storage/flowTokenVault
+    )
+  }
+
   init() {
     self.tokens = {
       Type<@FlowToken.Vault>(): TokenInfo("FlowToken", self.stringToAddress(stringAddress: FlowToken.getType().identifier.slice(from: 2, upTo: 18)), "FLOW", /public/flowTokenReceiver, /public/flowTokenBalance, /storage/flowTokenVault),
       Type<@FiatToken.Vault>(): TokenInfo("FiatToken", self.stringToAddress(stringAddress: FiatToken.getType().identifier.slice(from: 2, upTo: 18)), "USDC", /public/USDCVaultReceiver, /public/USDCVaultBalance, /storage/USDCVault)
     }
-    self.account.save(<- create Admin(), to: /storage/ToucansTokensAdmin)
+    self.account.storage.save(<- create Admin(), to: /storage/ToucansTokensAdmin)
   }
 
 }

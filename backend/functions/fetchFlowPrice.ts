@@ -43,16 +43,14 @@ export const fetchStFlowPrice = async (flowPrice) => {
       access(all) fun main(amountIn: UFix64, tokenInKey: String): UFix64 {
           // let pairv1Address: Address = 0x396c0cda3302d8c5
           // let pairv1PublicRef = getAccount(pairv1Address)
-          //     .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
-          //     .borrow()
+          //     .capabilities.borrow<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
           //     ?? panic("cannot borrow reference to PairPublic resource")
 
           // let pairv1Info = pairv1PublicRef.getPairInfo()
 
           let pairStableAddress: Address = 0xc353b9d685ec427d
           let pairStablePublicRef = getAccount(pairStableAddress)
-              .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
-              .borrow()
+              .capabilities.borrow<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
               ?? panic("cannot borrow reference to PairPublic resource")
 
           let amountOut = pairStablePublicRef.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)

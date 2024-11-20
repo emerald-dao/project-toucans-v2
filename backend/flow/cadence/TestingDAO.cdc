@@ -3,6 +3,7 @@ import FungibleTokenMetadataViews from "./utility/FungibleTokenMetadataViews.cdc
 import MetadataViews from "./utility/MetadataViews.cdc"
 import Toucans from "./Toucans.cdc"
 import ToucansTokens from "./ToucansTokens.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
  
 access(all) contract TestingDAO: FungibleToken {
 

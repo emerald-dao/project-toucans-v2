@@ -28,8 +28,7 @@ async function getSwapPairInfo(pairAddr) {
 
       access(all) fun main(pairAddr: Address): [AnyStruct] {
         let pairPublicRef = getAccount(pairAddr)
-          .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
-          .borrow()
+          .capabilities.borrow<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
           ?? panic("cannot borrow reference to PairPublic resource")
 
         return pairPublicRef.getPairInfo()
@@ -150,8 +149,7 @@ function generateGetTrendingDataScript(
         let holders =
           v === "FlovatarDAO" ? "[]" : `${contractName}.getBalances().keys`;
         return `\n
-      let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
-                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+      let projectCollection${i} = getAccount(${projectOwners[i]}).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                   ?? panic("User does not have a Toucans Collection")
   
       let project${i} = projectCollection${i}.borrowProjectPublic(projectId: "${v}")!
@@ -165,8 +163,7 @@ function generateGetTrendingDataScript(
       ) {
         // GET PRICE
         let pairPublicRef = getAccount(pairAddress)
-              .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
-              .borrow()
+              .capabilities.borrow<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
               ?? panic("cannot borrow reference to PairPublic resource")
   
         pairInfo${i} = pairPublicRef.getPairInfo()
@@ -183,8 +180,7 @@ function generateGetTrendingDataScript(
       `;
       } else {
         return `\n
-      let projectCollection${i} = getAccount(${projectOwners[i]}).getCapability(Toucans.CollectionPublicPath)
-                  .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+      let projectCollection${i} = getAccount(${projectOwners[i]}).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                   ?? panic("User does not have a Toucans Collection")
 
       let project${i} = projectCollection${i}.borrowProjectPublic(projectId: "${v}")!

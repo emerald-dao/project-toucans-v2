@@ -3,6 +3,8 @@ import ToucansTokens from "./ToucansTokens.cdc"
 
 access(all) contract ToucansLockTokens {
 
+    access(all) entitlement ManagerOwner
+
     access(all) struct LockedVaultDetails {
         access(all) let lockedVaultUuid: UInt64
         access(all) let recipient: Address
@@ -32,7 +34,7 @@ access(all) contract ToucansLockTokens {
 
     access(all) resource LockedVault {
         access(all) let details: LockedVaultDetails
-        access(contract) var vault: @FungibleToken.Vault?
+        access(contract) var vault: @{FungibleToken.Vault}?
         // for extra metadata
         access(self) var additions: @{String: AnyResource}
 
@@ -45,7 +47,7 @@ access(all) contract ToucansLockTokens {
             receiver.deposit(from: <- vault!)
         }
 
-        init(recipient: Address, unlockTime: UFix64, vault: @FungibleToken.Vault, tokenInfo: ToucansTokens.TokenInfo) {
+        init(recipient: Address, unlockTime: UFix64, vault: @{FungibleToken.Vault}, tokenInfo: ToucansTokens.TokenInfo) {
             self.details = LockedVaultDetails(
                 lockedVaultUuid: self.uuid,
                 recipient: recipient, 
@@ -57,20 +59,9 @@ access(all) contract ToucansLockTokens {
             self.vault <- vault
             self.additions <- {}
         }
-
-        destroy() {
-            destroy self.vault
-            destroy self.additions
-        }
     }
 
-    access(all) resource interface ManagerPublic {
-        access(all) fun claim(lockedVaultUuid: UInt64, receiver: &{FungibleToken.Receiver})
-        access(all) fun getIDs(): [UInt64]
-        access(all) fun getIDsForAddress(address: Address): [UInt64]
-        access(all) fun getLockedVaultInfos(): [LockedVaultDetails]
-        access(all) fun getLockedVaultInfosForAddress(address: Address): [LockedVaultDetails]
-    }
+    access(all) resource interface ManagerPublic {}
 
     access(all) resource Manager: ManagerPublic {
         access(self) let lockedVaults: @{UInt64: LockedVault}
@@ -78,7 +69,7 @@ access(all) contract ToucansLockTokens {
         // for extra metadata
         access(self) var additions: @{String: AnyResource}
 
-        access(all) fun deposit(recipient: Address, unlockTime: UFix64, vault: @FungibleToken.Vault, tokenInfo: ToucansTokens.TokenInfo) {
+        access(ManagerOwner) fun deposit(recipient: Address, unlockTime: UFix64, vault: @{FungibleToken.Vault}, tokenInfo: ToucansTokens.TokenInfo) {
             pre {
                 tokenInfo.tokenType == vault.getType(): "Types are not the same"
             }
@@ -102,11 +93,11 @@ access(all) contract ToucansLockTokens {
             self.addressMap[receiver.owner!.address]!.remove(at: indexOfUuid)
         }
 
-        access(all) fun getIDs(): [UInt64] {
+        access(all) view fun getIDs(): [UInt64] {
             return self.lockedVaults.keys
         }
 
-        access(all) fun getIDsForAddress(address: Address): [UInt64] {
+        access(all) view fun getIDsForAddress(address: Address): [UInt64] {
             return self.addressMap[address] ?? []
         }
 
@@ -132,11 +123,6 @@ access(all) contract ToucansLockTokens {
             self.lockedVaults <- {}
             self.addressMap = {}
             self.additions <- {}
-        }
-
-        destroy() {
-            destroy self.lockedVaults
-            destroy self.additions
         }
     }
 

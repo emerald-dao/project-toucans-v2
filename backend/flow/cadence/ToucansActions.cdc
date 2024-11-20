@@ -1,6 +1,7 @@
 import FungibleToken from "./utility/FungibleToken.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
 
 access(all) contract ToucansActions {
 
@@ -80,27 +81,35 @@ access(all) contract ToucansActions {
     access(all) let collectionType: Type
     access(all) let recipientCollection: Capability<&{NonFungibleToken.Receiver}>
     access(all) let nftIDs: [UInt64]
-    access(all) let contractAddress: Address
-    access(all) let contractName: String
+    access(all) let collectionIdentifier: String
+    access(all) let collectionName: String
+    access(all) let collectionExternalURL: String
+    access(all) let extra: {String: AnyStruct}
 
     access(all) fun getIntent(): String {
-      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.contractName).concat(" NFTs from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.borrow()!.owner!.address))
+      return "Withdraw ".concat(self.nftIDs.length.toString()).concat(" ").concat(self.collectionName).concat(" NFT(s) from the treasury to ").concat(ToucansUtils.getFind(self.recipientCollection.address))
     }
 
     access(all) fun getTitle(): String {
       return "WithdrawNFTs"
     }
 
-    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>) {
+    init(_ collectionType: Type, _ nftIDs: [UInt64], _ recipientCollection: Capability<&{NonFungibleToken.Receiver}>, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>, _ message: String) {
       pre {
-        recipientCollection.check(): "Invalid recipient capability."
+        recipientCollection.check() || recipientCollectionBackup.check(): "Invalid recipient capability."
       }
       self.collectionType = collectionType
       self.recipientCollection = recipientCollection
       self.nftIDs = nftIDs
-      let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collectionType.identifier)
-      self.contractAddress = nameAndAddress[0] as! Address
-      self.contractName = nameAndAddress[1] as! String
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collectionType.identifier)
+      let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
+      self.collectionIdentifier = nftCatalogCollectionIdentifier
+      self.collectionName = nftCatalogEntry.collectionDisplay.name
+      self.collectionExternalURL = nftCatalogEntry.collectionDisplay.externalURL.url
+      self.extra = {
+        "backupReceiver": recipientCollectionBackup,
+        "message": message
+      }
     }
   }
 
@@ -251,7 +260,7 @@ access(all) contract ToucansActions {
     }
   }
 
-  // burn your DAOs token from the treasury
+  // lock a token to a user
   access(all) struct LockTokens: Action {
     access(all) let recipient: Address
     access(all) let amount: UFix64
@@ -273,6 +282,52 @@ access(all) contract ToucansActions {
       self.readableAmount = ToucansUtils.fixToReadableString(num: amount)
       self.unlockTime = unlockTime
       self.recipient = recipient
+    }
+  }
+
+  // stake flow by swapping it to stFlow on increment fi
+  access(all) struct StakeFlow: Action {
+    access(all) let flowAmount: UFix64
+    access(all) let readableAmount: String
+    access(all) let stFlowAmountOutMin: UFix64
+    access(all) let readableMin: String
+
+    access(all) fun getIntent(): String {
+      return "Stake ".concat(self.readableAmount).concat(" FLOW ").concat(" tokens by swapping them for a minimum of ").concat(self.readableMin).concat(" stFlow.")
+    }
+
+    access(all) fun getTitle(): String {
+      return "StakeFlow"
+    }
+
+    init(_ flowAmount: UFix64, _ stFlowAmountOutMin: UFix64) {
+      self.flowAmount = flowAmount
+      self.readableAmount = ToucansUtils.fixToReadableString(num: flowAmount)
+      self.stFlowAmountOutMin = stFlowAmountOutMin
+      self.readableMin = ToucansUtils.fixToReadableString(num: stFlowAmountOutMin)
+    }
+  }
+
+  // unstake flow by swapping stFlow for flow on increment fi
+  access(all) struct UnstakeFlow: Action {
+    access(all) let stFlowAmount: UFix64
+    access(all) let readableAmount: String
+    access(all) let flowAmountOutMin: UFix64
+    access(all) let readableMin: String
+
+    access(all) fun getIntent(): String {
+      return "Unstake FLOW".concat(" tokens by swapping ").concat(self.readableAmount).concat(" stFlow for a minimum of ").concat(self.readableMin).concat(" FLOW.")
+    }
+
+    access(all) fun getTitle(): String {
+      return "UnstakeFlow"
+    }
+
+    init(_ stFlowAmount: UFix64, _ flowAmountOutMin: UFix64) {
+      self.stFlowAmount = stFlowAmount
+      self.readableAmount = ToucansUtils.fixToReadableString(num: stFlowAmount)
+      self.flowAmountOutMin = flowAmountOutMin
+      self.readableMin = ToucansUtils.fixToReadableString(num: flowAmountOutMin)
     }
   }
 }

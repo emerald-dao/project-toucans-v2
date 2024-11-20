@@ -1,7 +1,4 @@
 import MetadataViews from "./MetadataViews.cdc"
-import NFTCatalogSnapshot from "./NFTCatalogSnapshot.cdc"
-import ExampleNFT from "./ExampleNFT.cdc"
-import NonFungibleToken from "./NonFungibleToken.cdc"
 
 // NFTCatalog
 //
@@ -23,9 +20,7 @@ access(all) contract NFTCatalog {
         nftType : Type,
         storagePath: StoragePath,
         publicPath: PublicPath,
-        privatePath: PrivatePath,
         publicLinkedType : Type,
-        privateLinkedType : Type,
         displayName : String,
         description: String,
         externalURL : String
@@ -40,9 +35,7 @@ access(all) contract NFTCatalog {
         nftType : Type,
         storagePath: StoragePath,
         publicPath: PublicPath,
-        privatePath: PrivatePath,
         publicLinkedType : Type,
-        privateLinkedType : Type,
         displayName : String,
         description: String,
         externalURL : String
@@ -97,6 +90,33 @@ access(all) contract NFTCatalog {
             }
     }
 
+
+    access(all) resource Snapshot {
+        access(all) var catalogSnapshot: {String : NFTCatalogMetadata}
+        access(all) var shouldUseSnapshot: Bool
+
+        access(all) fun setPartialSnapshot(_ snapshotKey: String, _ snapshotEntry: NFTCatalogMetadata) {
+            self.catalogSnapshot[snapshotKey] = snapshotEntry
+        }
+
+        access(all) fun setShouldUseSnapshot(_ shouldUseSnapshot: Bool) {
+            self.shouldUseSnapshot = shouldUseSnapshot
+        }
+
+        access(all) fun getCatalogSnapshot(): {String : NFTCatalogMetadata} {
+            return self.catalogSnapshot
+        }
+
+        init() {
+            self.shouldUseSnapshot = false
+            self.catalogSnapshot = {}
+        }
+    }
+
+    access(all) fun createEmptySnapshot(): @Snapshot {
+        return <- create Snapshot()
+    }
+
     // NFTCollectionData
     // Represents information about an NFT collection resource
     // Note: Not suing the struct from Metadata standard due to
@@ -105,22 +125,16 @@ access(all) contract NFTCatalog {
 
         access(all) let storagePath : StoragePath
         access(all) let publicPath : PublicPath
-        access(all) let privatePath: PrivatePath
         access(all) let publicLinkedType: Type
-        access(all) let privateLinkedType: Type
 
         init(
             storagePath : StoragePath,
             publicPath : PublicPath,
-            privatePath : PrivatePath,
             publicLinkedType : Type,
-            privateLinkedType : Type
         ) {
             self.storagePath = storagePath
             self.publicPath = publicPath
-            self.privatePath = privatePath
             self.publicLinkedType = publicLinkedType
-            self.privateLinkedType = privateLinkedType
         }
     }
 
@@ -165,25 +179,32 @@ access(all) contract NFTCatalog {
 
     /*
         DEPRECATED
-        If obtaining all elements from the catalog is truly essential, make sure to use getCatalogKeys and forEachCatalogKey methods instead.
+        If obtaining all elements from the catalog is essential, please
+        use the getCatalogKeys and forEachCatalogKey methods instead.
      */
     access(all) fun getCatalog() : {String : NFTCatalogMetadata} {
-        let snapshot = NFTCatalogSnapshot.getCatalogSnapshot()
+        let snapshot = self.account.storage.borrow<&NFTCatalog.Snapshot>(from: /storage/CatalogSnapshot)
         if snapshot != nil {
-            return snapshot! as? {String : NFTCatalogMetadata} ?? self.catalog
+            let snapshot = snapshot!
+            if snapshot.shouldUseSnapshot {
+                return snapshot.getCatalogSnapshot()
+            } else {
+                return self.catalog
+            }
+        } else {
+            return self.catalog
         }
-        return self.catalog
     }
 
     access(all) fun getCatalogKeys(): [String] {
         return self.catalog.keys
     }
 
-    access(all) fun forEachCatalogKey(_ function: ((String): Bool)) {
+    access(all) fun forEachCatalogKey(_ function: fun (String): Bool) {
         self.catalog.forEachKey(function)
     }
 
-    access(all) fun getCatalogEntry(collectionIdentifier : String) : NFTCatalogMetadata? {
+    access(all) view fun getCatalogEntry(collectionIdentifier : String) : NFTCatalogMetadata? {
         return self.catalog[collectionIdentifier]
     }
 
@@ -201,11 +222,9 @@ access(all) contract NFTCatalog {
     // @param message: A message to the catalog owners
     // @param proposer: Who is making the proposition(the address needs to be verified)
     access(all) fun proposeNFTMetadata(collectionIdentifier : String, metadata : NFTCatalogMetadata, message : String, proposer : Address) : UInt64 {
-        let proposerManagerCap = getAccount(proposer).getCapability<&NFTCatalogProposalManager{NFTCatalog.NFTCatalogProposalManagerPublic}>(NFTCatalog.ProposalManagerPublicPath)
-
-        assert(proposerManagerCap.check(), message : "Proposer needs to set up a manager")
-
-        let proposerManagerRef = proposerManagerCap.borrow()!
+        let proposerManagerRef = getAccount(proposer).capabilities.borrow<&NFTCatalogProposalManager>(
+            NFTCatalog.ProposalManagerPublicPath
+        ) ?? panic("Proposer needs to set up a manager")
 
         assert(proposerManagerRef.getCurrentProposalEntry()! == collectionIdentifier, message: "Expected proposal entry does not match entry for the proposer")
 
@@ -226,11 +245,9 @@ access(all) contract NFTCatalog {
         let proposal = self.catalogProposals[proposalID]!
         let proposer = proposal.proposer
 
-        let proposerManagerCap = getAccount(proposer).getCapability<&NFTCatalogProposalManager{NFTCatalog.NFTCatalogProposalManagerPublic}>(NFTCatalog.ProposalManagerPublicPath)
-
-        assert(proposerManagerCap.check(), message : "Proposer needs to set up a manager")
-
-        let proposerManagerRef = proposerManagerCap.borrow()!
+        let proposerManagerRef = getAccount(proposer).capabilities.borrow<&NFTCatalogProposalManager>(
+            NFTCatalog.ProposalManagerPublicPath
+        ) ?? panic("Proposer needs to set up a manager")
 
         assert(proposerManagerRef.getCurrentProposalEntry()! == proposal.collectionIdentifier, message: "Expected proposal entry does not match entry for the proposer")
 
@@ -241,7 +258,7 @@ access(all) contract NFTCatalog {
         return self.catalogProposals
     }
 
-    access(all) fun getCatalogProposalEntry(proposalID : UInt64) : NFTCatalogProposal? {
+    access(all) view fun getCatalogProposalEntry(proposalID : UInt64) : NFTCatalogProposal? {
         return self.catalogProposals[proposalID]
     }
 
@@ -249,7 +266,7 @@ access(all) contract NFTCatalog {
         return self.catalogProposals.keys
     }
 
-    access(all) fun forEachCatalogProposalKey(_ function: ((UInt64): Bool)) {
+    access(all) fun forEachCatalogProposalKey(_ function: fun (UInt64): Bool) {
         self.catalogProposals.forEachKey(function)
     }
 
@@ -273,9 +290,7 @@ access(all) contract NFTCatalog {
             nftType: metadata.nftType,
             storagePath: metadata.collectionData.storagePath,
             publicPath: metadata.collectionData.publicPath,
-            privatePath: metadata.collectionData.privatePath,
             publicLinkedType : metadata.collectionData.publicLinkedType,
-            privateLinkedType : metadata.collectionData.privateLinkedType,
             displayName : metadata.collectionDisplay.name,
             description: metadata.collectionDisplay.description,
             externalURL : metadata.collectionDisplay.externalURL.url
@@ -302,9 +317,7 @@ access(all) contract NFTCatalog {
             nftType: metadata.nftType,
             storagePath: metadata.collectionData.storagePath,
             publicPath: metadata.collectionData.publicPath,
-            privatePath: metadata.collectionData.privatePath,
             publicLinkedType : metadata.collectionData.publicLinkedType,
-            privateLinkedType : metadata.collectionData.privateLinkedType,
             displayName : metadata.collectionDisplay.name,
             description: metadata.collectionDisplay.description,
             externalURL : metadata.collectionDisplay.externalURL.url
@@ -320,6 +333,22 @@ access(all) contract NFTCatalog {
         self.catalog.remove(key: collectionIdentifier)
 
         emit EntryRemoved(collectionIdentifier : collectionIdentifier, nftType: removedType)
+    }
+
+    // This function is not preferred, and was used for the following issue:
+    // https://github.com/onflow/cadence/issues/2649
+    // If a contract's type is no longer resolvable in cadence and crashing,
+    // this function can be used to remove it from the catalog.
+    access(account) fun removeCatalogEntryUnsafe(collectionIdentifier: String, nftTypeIdentifier: String) {
+        // Remove the catalog entry
+        self.catalog.remove(key: collectionIdentifier)
+
+        // Remove the type entry
+        if (self.catalogTypeData[nftTypeIdentifier]!.keys.length == 1) {
+            self.catalogTypeData.remove(key: nftTypeIdentifier)
+        } else {
+            self.catalogTypeData[nftTypeIdentifier]!.remove(key: collectionIdentifier)
+        }
     }
 
     access(account) fun updateCatalogProposal(proposalID: UInt64, proposalMetadata : NFTCatalogProposal) {
@@ -365,38 +394,7 @@ access(all) contract NFTCatalog {
         self.ProposalManagerPublicPath = /public/nftCatalogProposalManager
 
         self.totalProposals = 0
-        
-        // setup a dummy one for emulator
-        let media = MetadataViews.Media(
-          file: MetadataViews.HTTPFile(
-              url: "https://assets.website-files.com/5f6294c0c7a8cdd643b1c820/5f6294c0c7a8cda55cb1c936_Flow_Wordmark.svg"
-          ),
-          mediaType: "image/svg+xml"
-        )
-        self.catalog = {
-          "ExampleNFT": NFTCatalogMetadata(
-            contractName: "ExampleNFT", 
-            contractAddress: self.account.address, 
-            nftType: Type<@ExampleNFT.NFT>(), 
-            collectionData: NFTCollectionData(
-              storagePath: ExampleNFT.CollectionStoragePath,
-              publicPath: ExampleNFT.CollectionPublicPath,
-              privatePath: /private/exampleNFTCollection,
-              publicLinkedType: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
-              privateLinkedType: Type<&ExampleNFT.Collection{ExampleNFT.ExampleNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>()
-            ), 
-            collectionDisplay : MetadataViews.NFTCollectionDisplay(
-              name: "The Example Collection",
-              description: "This collection is used as an example to help you develop your next Flow NFT.",
-              externalURL: MetadataViews.ExternalURL("https://example-nft.onflow.org"),
-              squareImage: media,
-              bannerImage: media,
-              socials: {
-                "twitter": MetadataViews.ExternalURL("https://twitter.com/flow_blockchain")
-              }
-            )
-          )
-        }
+        self.catalog = {}
         self.catalogTypeData = {}
 
         self.catalogProposals = {}

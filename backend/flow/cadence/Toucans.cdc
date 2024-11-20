@@ -1,4 +1,4 @@
-import "FungibleToken"
+import FungibleToken from "./utility/FungibleToken.cdc"
 import Crypto
 import ToucansTokens from "./ToucansTokens.cdc"
 import ToucansUtils from "./ToucansUtils.cdc"
@@ -6,14 +6,22 @@ import ToucansActions from "./ToucansActions.cdc"
 import FlowToken from "./utility/FlowToken.cdc"
 import ToucansLockTokens from "./ToucansLockTokens.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
+import NFTCatalog from "./utility/NFTCatalog.cdc"
+import SwapInterfaces from "./utility/SwapInterfaces.cdc"
+import stFlowToken from "./utility/stFlowToken.cdc"
+import SwapError from "./utility/SwapError.cdc"
+import Burner from "./utility/Burner.cdc"
 
 access(all) contract Toucans {
+
+  access(all) entitlement ProjectOwner
+  access(all) entitlement CollectionOwner
 
   access(all) let CollectionStoragePath: StoragePath
   access(all) let CollectionPublicPath: PublicPath
 
   access(all) resource interface Minter {
-    access(all) fun mint(amount: UFix64): @FungibleToken.Vault {
+    access(all) fun mint(amount: UFix64): @{FungibleToken.Vault} {
       post {
         result.balance == amount: "Did not mint correct number of tokens."
       }
@@ -21,8 +29,8 @@ access(all) contract Toucans {
   }
 
   access(all) resource DummyMinter: Minter {
-    access(all) fun mint(amount: UFix64): @FungibleToken.Vault {
-      return <- FlowToken.createEmptyVault()
+    access(all) fun mint(amount: UFix64): @{FungibleToken.Vault} {
+      return <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
     }
   }
 
@@ -66,8 +74,10 @@ access(all) contract Toucans {
     projectId: String,
     projectOwner: Address, 
     amount: UInt64,
-    contractName: String,
-    contractAddress: Address,
+    uuids: [UInt64],
+    collectionIdentifier: String,
+    collectionName: String,
+    collectionExternalURL: String,
     by: Address,
     message: String
   )
@@ -93,10 +103,12 @@ access(all) contract Toucans {
   access(all) event WithdrawNFTs(
     projectId: String,
     projectOwner: Address, 
-    contractName: String,
-    contractAddress: Address,
+    collectionIdentifier: String,
+    collectionName: String,
+    collectionExternalURL: String,
     amount: UInt64,
-    to: Address
+    to: Address,
+    message: String
   )
   access(all) event Mint(
     projectId: String,
@@ -130,6 +142,18 @@ access(all) contract Toucans {
     tokenSymbol: String,
     amount: UFix64,
     unlockTime: UFix64
+  )
+  access(all) event StakeFlow(
+    projectId: String,
+    by: Address, 
+    amountIn: UFix64,
+    amountOut: UFix64
+  )
+  access(all) event UnstakeFlow(
+    projectId: String,
+    by: Address, 
+    amountIn: UFix64,
+    amountOut: UFix64
   )
   access(all) event AddSigner(projectId: String, signer: Address)
   access(all) event RemoveSigner(projectId: String, signer: Address)
@@ -199,7 +223,7 @@ access(all) contract Toucans {
   }
 
   access(all) struct FundingCycle {
-    pub(set) var details: FundingCycleDetails
+    access(all) var details: FundingCycleDetails
     // the amount of tokens that users acquired during
     // this round (does not count the amount that got
     // reserved to treasury)
@@ -226,6 +250,10 @@ access(all) contract Toucans {
       self.raisedTowardsGoal = self.raisedTowardsGoal + amount
     }
 
+    access(contract) fun changeDetails(newDetails: FundingCycleDetails) {
+      self.details = newDetails
+    }
+
     init(details: FundingCycleDetails) {
       self.details = details
       self.projectTokensAcquired = 0.0
@@ -235,51 +263,7 @@ access(all) contract Toucans {
     }
   }
 
-  access(all) resource interface ProjectPublic {
-    access(all) let projectId: String
-    access(all) var projectTokenInfo: ToucansTokens.TokenInfo
-    access(all) let paymentTokenInfo: ToucansTokens.TokenInfo
-    access(all) var totalFunding: UFix64
-    access(all) var editDelay: UFix64
-    access(all) var purchasing: Bool
-    access(all) let minting: Bool
-
-    // Setters
-    // Some proposals we think make sense to be public initially
-    access(all) fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
-    access(all) fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64])
-    access(all) fun proposeMint(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64)
-    access(all) fun proposeBurn(tokenType: Type, amount: UFix64)
-    access(all) fun proposeAddSigner(signer: Address)
-    access(all) fun proposeRemoveSigner(signer: Address)
-    access(all) fun proposeUpdateThreshold(threshold: UInt64)
-    // If the action is ready to execute, then allow anyone to do it.
-    access(all) fun finalizeAction(actionUUID: UInt64)
-    access(all) fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
-    access(all) fun donateNFTToTreasury(collection: @NonFungibleToken.Collection, sender: Address, message: String)
-    access(all) fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String)
-    access(all) fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String)
-    access(all) fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver})
-    access(all) fun claimLockedTokens(lockedVaultUuid: UInt64, recipientVault: &{FungibleToken.Receiver})
-    
-    // Getters
-    access(all) fun getCurrentIssuanceRate(): UFix64?
-    access(all) fun getCurrentFundingCycle(): FundingCycle?
-    access(all) fun getCurrentFundingCycleId(): UInt64?
-    access(all) fun getFundingCycle(cycleIndex: UInt64): FundingCycle
-    access(all) fun getFundingCycles(): [FundingCycle]
-    access(all) fun getVaultTypesInTreasury(): [Type]
-    access(all) fun getVaultBalanceInTreasury(vaultType: Type): UFix64?
-    access(all) fun getExtra(): {String: AnyStruct}
-    access(all) fun getCompletedActionIds(): {UInt64: Bool}
-    access(all) fun getFunders(): {Address: UFix64}
-    access(all) fun getOverflowBalance(): UFix64
-    access(all) fun borrowManagerPublic(): &Manager{ManagerPublic}
-    access(all) fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}?
-    access(all) fun hasTokenContract(): Bool
-    access(all) fun getCollectionTypesInTreasury(): [Type]
-    access(all) fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT]
-  }
+  access(all) resource interface ProjectPublic {}
 
   access(all) resource Project: ProjectPublic {
     access(all) let projectId: String
@@ -298,9 +282,9 @@ access(all) contract Toucans {
     // must have a start time greater
     // than the one before it
     access(self) let fundingCycles: [FundingCycle]
-    access(self) let treasury: @{Type: FungibleToken.Vault}
+    access(self) let treasury: @{Type: {FungibleToken.Vault}}
     access(self) let multiSignManager: @Manager
-    access(self) let overflow: @FungibleToken.Vault
+    access(self) let overflow: @{FungibleToken.Vault}
     access(self) var minter: @{Minter}
     access(self) let funders: {Address: UFix64}
     access(self) var extra: {String: AnyStruct}
@@ -337,8 +321,7 @@ access(all) contract Toucans {
     //                                  |___/       
 
 
-    access(all) fun proposeWithdraw(recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
-      let vaultType: Type = recipientVault.borrow()!.getType()
+    access(all) fun proposeWithdraw(vaultType: Type, recipientVault: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vaultType) 
                 ?? panic("Unsupported token type for withdrawing.")
       let action = ToucansActions.WithdrawToken(vaultType, recipientVault, amount, tokenInfo.symbol)
@@ -352,14 +335,15 @@ access(all) contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
-    access(all) fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64]) {
+    access(all) fun proposeWithdrawNFTs(collectionType: Type, recipientCollection: Capability<&{NonFungibleToken.Receiver}>, nftIDs: [UInt64], message: String, _ recipientCollectionBackup: Capability<&{NonFungibleToken.CollectionPublic}>) {
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)
                         ?? panic("This collection type does not exist in the NFT Treasury.")
       let existingIDs: [UInt64] = specificNFTTreasury.getIDs()
       for id in nftIDs {
         assert(existingIDs.contains(id), message: "The NFT ID ".concat(id.toString()).concat(" does not exist in the NFT Treasury."))
       }
-      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection)
+      
+      let action = ToucansActions.WithdrawNFTs(collectionType, nftIDs, recipientCollection, recipientCollectionBackup, message)
       self.multiSignManager.createMultiSign(action: action)
     }
 
@@ -432,6 +416,16 @@ access(all) contract Toucans {
       self.multiSignManager.createMultiSign(action: action)
     }
 
+    access(all) fun proposeStakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
+      let action = ToucansActions.StakeFlow(flowAmount, stFlowAmountOutMin)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
+    access(all) fun proposeUnstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
+      let action = ToucansActions.UnstakeFlow(stFlowAmount, flowAmountOutMin)
+      self.multiSignManager.createMultiSign(action: action)
+    }
+
     access(all) fun finalizeAction(actionUUID: UInt64) {
       let actionState: ActionState = self.multiSignManager.getActionState(actionUUID: actionUUID)
       assert(actionState == ActionState.ACCEPTED || actionState == ActionState.DECLINED, message: "Cannot finalize this action yet.")
@@ -439,7 +433,7 @@ access(all) contract Toucans {
       if actionState == ActionState.ACCEPTED {
         self.markCompletedAction(actionUUID: actionUUID, mark: true)
         let actionWrapper: &MultiSignAction = self.multiSignManager.borrowAction(actionUUID: actionUUID)
-        let action: {ToucansActions.Action} = actionWrapper.action
+        let action: {ToucansActions.Action} = actionWrapper.getAction()
         switch action.getType() {
           case Type<ToucansActions.WithdrawToken>():
             let withdraw: ToucansActions.WithdrawToken = action as! ToucansActions.WithdrawToken
@@ -450,8 +444,23 @@ access(all) contract Toucans {
             self.batchWithdrawFromTreasury(vaultType: withdraw.vaultType, vaults: withdraw.recipientVaults, amounts: withdraw.amounts, tokenSymbol: withdraw.tokenSymbol)
           case Type<ToucansActions.WithdrawNFTs>():
             let withdraw: ToucansActions.WithdrawNFTs = action as! ToucansActions.WithdrawNFTs
-            let recipientCollection: &{NonFungibleToken.Receiver} = withdraw.recipientCollection.borrow()!
-            self.withdrawNFTsFromTreasury(collectionType: withdraw.collectionType, collection: recipientCollection, nftIDs: withdraw.nftIDs, contractName: withdraw.contractName, contractAddress: withdraw.contractAddress)
+            let recipientAddr: Address = withdraw.recipientCollection.address
+            var backupReceiver: &{NonFungibleToken.CollectionPublic}? = nil
+            if withdraw.extra["backupReceiver"] != nil {
+              backupReceiver = (withdraw.extra["backupReceiver"]! as! Capability<&{NonFungibleToken.CollectionPublic}>).borrow()
+            }
+            let message: String = withdraw.extra["message"] == nil ? "" : withdraw.extra["message"]! as! String
+            self.withdrawNFTsFromTreasury(
+              collectionType: withdraw.collectionType, 
+              collectionReceiver: withdraw.recipientCollection.borrow(), 
+              nftIDs: withdraw.nftIDs, 
+              collectionIdentifier: withdraw.collectionIdentifier, 
+              collectionName: withdraw.collectionName, 
+              collectionExternalURL: withdraw.collectionExternalURL,
+              recipientAddr: recipientAddr,
+              message: message,
+              backupReceiver
+            )
           case Type<ToucansActions.MintTokens>():
             let mint: ToucansActions.MintTokens = action as! ToucansActions.MintTokens
             self.mint(recipientVault: mint.recipientVault.borrow()!, amount: mint.amount)
@@ -467,7 +476,7 @@ access(all) contract Toucans {
             }
           case Type<ToucansActions.MintTokensToTreasury>():
             let mint: ToucansActions.MintTokensToTreasury = action as! ToucansActions.MintTokensToTreasury
-            let ref: &FungibleToken.Vault = (&self.treasury[self.projectTokenInfo.tokenType] as &FungibleToken.Vault?)!
+            let ref: &{FungibleToken.Vault} = (&self.treasury[self.projectTokenInfo.tokenType] as &{FungibleToken.Vault}?)!
             self.mint(recipientVault: ref, amount: mint.amount)
           case Type<ToucansActions.AddOneSigner>():
             let addSigner: ToucansActions.AddOneSigner = action as! ToucansActions.AddOneSigner
@@ -488,6 +497,12 @@ access(all) contract Toucans {
             } else {
               self.sendToLock(recipient: tokenLock.recipient, tokenInfo: ToucansTokens.getTokenInfoFromSymbol(symbol: tokenLock.tokenSymbol)!, amount: tokenLock.amount, unlockTime: tokenLock.unlockTime)
             }
+          case Type<ToucansActions.StakeFlow>():
+            let tokenLock: ToucansActions.StakeFlow = action as! ToucansActions.StakeFlow
+            self.stakeFlow(flowAmount: tokenLock.flowAmount, stFlowAmountOutMin: tokenLock.stFlowAmountOutMin)
+          case Type<ToucansActions.UnstakeFlow>():
+            let tokenLock: ToucansActions.UnstakeFlow = action as! ToucansActions.UnstakeFlow
+            self.unstakeFlow(stFlowAmount: tokenLock.stFlowAmount, flowAmountOutMin: tokenLock.flowAmountOutMin)
         }
       }
       if actionState == ActionState.DECLINED {
@@ -513,7 +528,7 @@ access(all) contract Toucans {
     // NOTES:
     // If `fundingTarget` is nil, that means this is an on-going funding round,
     // and there is no limit. 
-    access(all) fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
+    access(ProjectOwner) fun configureFundingCycle(fundingTarget: UFix64?, issuanceRate: UFix64, reserveRate: UFix64, timeframe: CycleTimeFrame, payouts: [Payout], allowOverflow: Bool, allowedAddresses: [Address]?, catalogCollectionIdentifier: String?, extra: {String: AnyStruct}) {
       pre {
         getCurrentBlock().timestamp + self.editDelay <= timeframe.startTime: "You cannot configure a new cycle to start within the edit delay."
         timeframe.startTime >= getCurrentBlock().timestamp: "Start time must be now or in the future."
@@ -571,7 +586,7 @@ access(all) contract Toucans {
     }
 
     // Allows you to edit a cycle that has not happened yet
-    access(all) fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
+    access(ProjectOwner) fun editUpcomingCycle(cycleIndex: UInt64, details: FundingCycleDetails) {
       let fundingCycle: &FundingCycle = self.borrowFundingCycleRef(cycleIndex: cycleIndex)
       let currentTime: UFix64 = getCurrentBlock().timestamp
       assert(fundingCycle.details.cycleId == details.cycleId, message: "Cannot edit the cycleId.")
@@ -602,14 +617,14 @@ access(all) contract Toucans {
         Toucans.assertNonConflictingCycles(earlierCycle: belowCycle.details, laterCycle: details)
       }
 
-      fundingCycle.details = details
+      fundingCycle.changeDetails(newDetails: details)
     }
 
-    access(all) fun togglePurchasing() {
+    access(ProjectOwner) fun togglePurchasing() {
       self.purchasing = !self.purchasing
     }
 
-    access(all) fun purchase(paymentTokens: @FungibleToken.Vault, projectTokenReceiver: &{FungibleToken.Receiver}, message: String) {
+    access(all) fun purchase(paymentTokens: @{FungibleToken.Vault}, projectTokenReceiver: &{FungibleToken.Receiver}, message: String) {
       pre {
         paymentTokens.getType() == self.paymentTokenInfo.tokenType: "This is not the correct payment."
         self.purchasing: "Purchasing is turned off at the moment."
@@ -617,17 +632,16 @@ access(all) contract Toucans {
       }
       let fundingCycleRef: &FundingCycle = self.borrowCurrentFundingCycleRef() ?? panic("There is no active cycle.")
 
-      // tax for emerald city (5%)
-      let emeraldCityTreasury = getAccount(0xf8d6e0586b0a20c7).getCapability(self.paymentTokenInfo.receiverPath)
-                                          .borrow<&{FungibleToken.Receiver}>()
+      // tax for emerald city (2%)
+      let emeraldCityTreasury = getAccount(0x5643fd47a29770e7).capabilities.borrow<&{FungibleToken.Receiver}>(self.paymentTokenInfo.receiverPath)
                                           ?? panic("Emerald City treasury cannot accept this payment. Please contact us in our Discord.")
-      emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.05))
+      emeraldCityTreasury.deposit(from: <- paymentTokens.withdraw(amount: paymentTokens.balance * 0.02))
       
       let paymentAfterTax: UFix64 = paymentTokens.balance
       let payer: Address = projectTokenReceiver.owner!.address
 
       // If there is a limit on allowed addresses, check that here.
-      if let allowedAddresses: [Address] = fundingCycleRef.details.allowedAddresses {
+      if let allowedAddresses: &[Address] = fundingCycleRef.details.allowedAddresses {
         assert(
           allowedAddresses.contains(payer),
           message: "This account is not allowed to participate in this round."
@@ -644,12 +658,12 @@ access(all) contract Toucans {
  
       let issuanceRate: UFix64 = self.getCurrentIssuanceRate()!
       let amountToMint: UFix64 = issuanceRate * paymentAfterTax
-      let mintedTokens: @FungibleToken.Vault <- self.minter.mint(amount: amountToMint)
+      let mintedTokens: @{FungibleToken.Vault} <- self.minter.mint(amount: amountToMint)
       assert(mintedTokens.getType() == self.projectTokenInfo.tokenType, message: "Someone is messing with the minter. It's not minting the original type.")
       assert(amountToMint == mintedTokens.balance, message: "Not enough tokens were minted.")
 
       // RESERVE RATE: Withhold some of the purchased tokens
-      let reserved: @FungibleToken.Vault <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.details.reserveRate)
+      let reserved: @{FungibleToken.Vault} <- mintedTokens.withdraw(amount: mintedTokens.balance * fundingCycleRef.details.reserveRate)
       // Deposit tax to project treasury
       self.depositToTreasury(vault: <- reserved)
 
@@ -712,15 +726,15 @@ access(all) contract Toucans {
     //                |_|              
 
 
-    access(self) fun depositToTreasury(vault: @FungibleToken.Vault) {
-      if let existingVault = &self.treasury[vault.getType()] as &FungibleToken.Vault? {
+    access(self) fun depositToTreasury(vault: @{FungibleToken.Vault}) {
+      if let existingVault = &self.treasury[vault.getType()] as &{FungibleToken.Vault}? {
         existingVault.deposit(from: <- vault)
       } else {
         self.treasury[vault.getType()] <-! vault
       }
     }
 
-    access(self) fun depositToOverflow(vault: @FungibleToken.Vault) {
+    access(self) fun depositToOverflow(vault: @{FungibleToken.Vault}) {
       pre {
         vault.getType() == self.paymentTokenInfo.tokenType: "Not payment token type."
       }
@@ -731,7 +745,7 @@ access(all) contract Toucans {
       return &self.multiSignManager as &Manager
     }
 
-    access(all) fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
+    access(all) view fun getTokenInfo(inputVaultType: Type): ToucansTokens.TokenInfo? {
       if inputVaultType == self.projectTokenInfo.tokenType {
         return self.projectTokenInfo
       } else if let tokenInfo = ToucansTokens.getTokenInfo(tokenType: inputVaultType) {
@@ -749,7 +763,7 @@ access(all) contract Toucans {
         amount: amount,
         to: vault.owner!.address
       )
-      vault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
+      vault.deposit(from: <- self.treasury[vaultType]?.withdraw(amount: amount)!)
     }
 
     access(self) fun batchWithdrawFromTreasury(vaultType: Type, vaults: {Address: Capability<&{FungibleToken.Receiver}>}, amounts: {Address: UFix64}, tokenSymbol: String) {
@@ -759,7 +773,7 @@ access(all) contract Toucans {
         let amount: UFix64 = amounts[wallet]!
         totalAmount = totalAmount + amount
         if let recipientVault: &{FungibleToken.Receiver} = vaults[wallet]!.borrow() {
-          recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw!(amount: amount))
+          recipientVault.deposit(from: <- self.treasury[vaultType]?.withdraw(amount: amount)!)
         } else {
           failed.append(wallet)
         }
@@ -775,7 +789,7 @@ access(all) contract Toucans {
       )
     }
 
-    access(all) fun donateToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
+    access(all) fun donateToTreasury(vault: @{FungibleToken.Vault}, payer: Address, message: String) {
       let tokenInfo = self.getTokenInfo(inputVaultType: vault.getType())
                 ?? panic("Unsupported token type for donating.")
 
@@ -802,7 +816,7 @@ access(all) contract Toucans {
       self.depositToTreasury(vault: <- vault)
     }
 
-    access(all) fun transferProjectTokenToTreasury(vault: @FungibleToken.Vault, payer: Address, message: String) {
+    access(all) fun transferProjectTokenToTreasury(vault: @{FungibleToken.Vault}, payer: Address, message: String) {
       pre {
         vault.getType() == self.projectTokenInfo.tokenType: "The received vault is not the project's token type."
         self.hasTokenContract(): "There is no project token."
@@ -827,7 +841,7 @@ access(all) contract Toucans {
       (self.extra["completedActionIds"]! as! {UInt64: Bool}).insert(key: actionUUID, mark)
     }
 
-    access(all) fun addAllowedNFTCollections(collectionIdentifiers: [String]) {
+    access(ProjectOwner) fun addAllowedNFTCollections(collectionIdentifiers: [String]) {
       if self.extra["allowedNFTCollections"] == nil {
         self.extra["allowedNFTCollections"] = {} as {String: Bool}
       }
@@ -837,7 +851,7 @@ access(all) contract Toucans {
       }
     }
 
-    access(all) fun removeAllowedNFTCollections(collectionIdentifiers: [String]) {      
+    access(ProjectOwner) fun removeAllowedNFTCollections(collectionIdentifiers: [String]) {      
       for collectionIdentifier in collectionIdentifiers {
         (self.extra["allowedNFTCollections"]! as! {String: Bool}).remove(key: collectionIdentifier)
       }
@@ -912,51 +926,88 @@ access(all) contract Toucans {
     //  |_| \_|_|       |_|   
                                    
 
-    access(all) fun donateNFTToTreasury(collection: @NonFungibleToken.Collection, sender: Address, message: String) {
-      let nameAndAddress: [AnyStruct] = ToucansUtils.getAddressAndContractNameFromCollectionIdentifier(identifier: collection.getType().identifier)
-      let contractAddress: Address = nameAndAddress[0] as! Address
-      let contractName: String = nameAndAddress[1] as! String
-      emit DonateNFT(
-        projectId: self.projectId,
-        projectOwner: self.owner!.address, 
-        amount: UInt64(collection.getIDs().length),
-        contractName: contractName,
-        contractAddress: contractAddress,
-        by: sender,
-        message: message
-      )
+    access(all) fun donateNFTToTreasury(collection: @{NonFungibleToken.Collection}, sender: Address, message: String) {
+      // make sure this DAO accepts this nft type
+      let nftCatalogCollectionIdentifier = ToucansUtils.getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: collection.getType().identifier)
+      let nftCatalogEntry = NFTCatalog.getCatalogEntry(collectionIdentifier: nftCatalogCollectionIdentifier)!
+      assert(self.getAllowedNFTCollections().contains(nftCatalogCollectionIdentifier), message: "This DAO does not accept this NFT type.")
 
       if self.additions["nftTreasury"] == nil {
-        self.additions["nftTreasury"] <-! ({} as @{Type: NonFungibleToken.Collection})
+        self.additions["nftTreasury"] <-! ({} as @{Type: {NonFungibleToken.Collection}})
       }
       let nftTreasury = self.borrowNFTTreasury()!
 
       if nftTreasury[collection.getType()] == nil {
-        let nftContract = getAccount(contractAddress).contracts.borrow<&NonFungibleToken>(name: contractName)!
-        nftTreasury[collection.getType()] <-! nftContract.createEmptyCollection()
+        // CHECK THIS!!!!!!!!!!!!
+        nftTreasury[collection.getType()] <-! collection.createEmptyCollection()
       }
       let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collection.getType())!
 
+      let donatedUUIDs: [UInt64] = []
       for id in collection.getIDs() {
-        specificNFTTreasury.deposit(token: <- collection.withdraw(withdrawID: id))
+        let nft <- collection.withdraw(withdrawID: id)
+        donatedUUIDs.append(nft.uuid)
+        specificNFTTreasury.deposit(token: <- nft)
       }
-      
+      assert(collection.getIDs().length == 0, message: "This collection is not empty.")
       destroy collection
+      
+      emit DonateNFT(
+        projectId: self.projectId,
+        projectOwner: self.owner!.address, 
+        amount: UInt64(donatedUUIDs.length),
+        uuids: donatedUUIDs,
+        collectionIdentifier: nftCatalogCollectionIdentifier,
+        collectionName: nftCatalogEntry.collectionDisplay.name,
+        collectionExternalURL: nftCatalogEntry.collectionDisplay.externalURL.url,
+        by: sender,
+        message: message
+      )
     }
 
-    access(self) fun withdrawNFTsFromTreasury(collectionType: Type, collection: &{NonFungibleToken.Receiver}, nftIDs: [UInt64], contractName: String, contractAddress: Address) {
+    access(self) fun withdrawNFTsFromTreasury(
+      collectionType: Type, 
+      collectionReceiver: &{NonFungibleToken.Receiver}?, 
+      nftIDs: [UInt64], 
+      collectionIdentifier: String, 
+      collectionName: String, 
+      collectionExternalURL: String, 
+      recipientAddr: Address,
+      message: String,
+      _ backupReceiver: &{NonFungibleToken.CollectionPublic}?
+    ) {
       emit WithdrawNFTs(
         projectId: self.projectId,
         projectOwner: self.owner!.address, 
-        contractName: contractName,
-        contractAddress: contractAddress,
+        collectionIdentifier: collectionIdentifier,
+        collectionName: collectionName,
+        collectionExternalURL: collectionExternalURL,
         amount: UInt64(nftIDs.length),
-        to: collection.owner!.address
+        to: recipientAddr,
+        message: message
       )
-      let specificNFTTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType)!
-      for id in nftIDs {
-        collection.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+      let treasury = self.borrowNFTTreasury()!
+      let specificNFTTreasury <- treasury.remove(key: collectionType)!
+      // if main receiver available, use that
+      if let receiver = collectionReceiver {
+        for id in nftIDs {
+          receiver.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+        }
+      } else {
+        log("using backuop")
+        // otherwise use backup receiver
+        for id in nftIDs {
+          backupReceiver!.deposit(token: <- specificNFTTreasury.withdraw(withdrawID: id))
+        }
       }
+      treasury[collectionType] <-! specificNFTTreasury
+    }
+
+    access(all) view fun getAllowedNFTCollections(): [String] {
+      if let allowedNFTCollections = self.extra["allowedNFTCollections"] {
+        return (allowedNFTCollections as! {String: Bool}).keys
+      }
+      return []
     }
 
 
@@ -973,8 +1024,8 @@ access(all) contract Toucans {
         self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
       }
 
-      let tokenLockManager: &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
-      let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw!(amount: amount)
+      let tokenLockManager: auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager = self.borrowLockTokensManager()!
+      let vaultToLock <- self.treasury[tokenInfo.tokenType]?.withdraw(amount: amount)!
       tokenLockManager.deposit(recipient: recipient, unlockTime: unlockTime, vault: <- vaultToLock, tokenInfo: tokenInfo)
 
       emit LockTokens(
@@ -993,9 +1044,56 @@ access(all) contract Toucans {
         self.additions["lockedTokensManager"] <-! ToucansLockTokens.createManager()
       }
 
-      let tokenLockManager: &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic} = self.borrowLockTokensManagerPublic()!
+      let tokenLockManager: &ToucansLockTokens.Manager = self.borrowLockTokensManagerPublic()!
       tokenLockManager.claim(lockedVaultUuid: lockedVaultUuid, receiver: recipientVault)
     } 
+
+
+    //   _____        __ _ 
+    //  |  __ \      / _(_)
+    //  | |  | | ___| |_ _ 
+    //  | |  | |/ _ \  _| |
+    //  | |__| |  __/ | | |
+    //  |_____/ \___|_| |_|
+                        
+    
+    // DISCLAIMER: Only works on Mainnet.
+    access(account) fun stakeFlow(flowAmount: UFix64, stFlowAmountOutMin: UFix64) {
+      // withdraw flow from treasury
+      let inVault <- self.treasury[Type<@FlowToken.Vault>()]?.withdraw(amount: flowAmount)!
+      // deposit stFlow to treasury
+      let outVault: @stFlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.1654653399040a61.FlowToken") as! @stFlowToken.Vault
+      assert(outVault.balance >= stFlowAmountOutMin, message: SwapError.ErrorEncode(
+        msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(stFlowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
+        err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
+      ))
+      emit StakeFlow(
+        projectId: self.projectId,
+        by: self.owner!.address,
+        amountIn: flowAmount,
+        amountOut: outVault.balance
+      )
+      self.depositToTreasury(vault: <- outVault)
+    }
+
+    // DISCLAIMER: Only works on Mainnet.
+    access(account) fun unstakeFlow(stFlowAmount: UFix64, flowAmountOutMin: UFix64) {
+      // withdraw stFlow from treasury
+      let inVault <- self.treasury[Type<@stFlowToken.Vault>()]?.withdraw(amount: stFlowAmount)!
+      // deposit flow to treasury
+      let outVault: @FlowToken.Vault <- ToucansUtils.swapTokensWithPotentialStake(inVault: <- inVault, tokenInKey: "A.d6f80565193ad727.stFlowToken") as! @FlowToken.Vault
+      assert(outVault.balance >= flowAmountOutMin, message: SwapError.ErrorEncode(
+        msg: "SLIPPAGE_OFFSET_TOO_LARGE expect min ".concat(flowAmountOutMin.toString()).concat(" got ").concat(outVault.balance.toString()),
+        err: SwapError.ErrorCode.SLIPPAGE_OFFSET_TOO_LARGE
+      ))
+      emit UnstakeFlow(
+        projectId: self.projectId,
+        by: self.owner!.address,
+        amountIn: stFlowAmount,
+        amountOut: outVault.balance
+      )
+      self.depositToTreasury(vault: <- outVault)
+    }
 
 
     //   ____                   
@@ -1007,8 +1105,8 @@ access(all) contract Toucans {
                          
 
     access(account) fun burn(tokenType: Type, tokenSymbol: String, amount: UFix64) {
-      let tokens <- self.treasury[tokenType]?.withdraw!(amount: amount)
-      destroy tokens
+      let tokens <- self.treasury[tokenType]?.withdraw(amount: amount)!
+      Burner.burn(<- tokens)
 
       emit Burn(
         projectId: self.projectId,
@@ -1029,7 +1127,7 @@ access(all) contract Toucans {
                                                                         
 
     // can only be called if amount does not put us over the funding target
-    access(all) fun transferOverflowToCurrentRound(amount: UFix64) {
+    access(ProjectOwner) fun transferOverflowToCurrentRound(amount: UFix64) {
       let cycle = self.borrowCurrentFundingCycleRef() ?? panic("There must be an active funding cycle in order to do this.")
       let overflow <- self.overflow.withdraw(amount: amount)
       // will fail if this puts the cycle over the funding target
@@ -1042,20 +1140,20 @@ access(all) contract Toucans {
       )
     }
 
-    access(all) fun claimOverflow(tokenVault: @FungibleToken.Vault, receiver: &{FungibleToken.Receiver}) {
-      pre {
-        tokenVault.getType() == self.projectTokenInfo.tokenType: "This is not the project's token."
-      }
-      let balance: UFix64 = tokenVault.balance
-      let totalSupply: UFix64 = getAccount(self.projectTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: self.projectTokenInfo.contractName)!.totalSupply
-      let percent: UFix64 = balance / totalSupply
-      assert(percent >= 0.0 && percent <= 1.0, message: "Percent must be a percent value.")
+    // access(all) fun claimOverflow(tokenVault: @{FungibleToken.Vault}, receiver: &{FungibleToken.Receiver}) {
+    //   pre {
+    //     tokenVault.getType() == self.projectTokenInfo.tokenType: "This is not the project's token."
+    //   }
+    //   let balance: UFix64 = tokenVault.balance
+    //   let totalSupply: UFix64 = getAccount(self.projectTokenInfo.contractAddress).contracts.borrow<&{FungibleToken}>(name: self.projectTokenInfo.contractName)!.totalSupply
+    //   let percent: UFix64 = balance / totalSupply
+    //   assert(percent >= 0.0 && percent <= 1.0, message: "Percent must be a percent value.")
 
-      let overflowBalance: UFix64 = self.getOverflowBalance()
+    //   let overflowBalance: UFix64 = self.getOverflowBalance()
       
-      receiver.deposit(from: <- self.overflow.withdraw(amount: overflowBalance * percent))
-      self.depositToTreasury(vault: <- tokenVault)
-    }
+    //   receiver.deposit(from: <- self.overflow.withdraw(amount: overflowBalance * percent))
+    //   self.depositToTreasury(vault: <- tokenVault)
+    // }
 
 
     //    _____      _   _                
@@ -1066,30 +1164,51 @@ access(all) contract Toucans {
     //   \_____|\___|\__|\__\___|_|  |___/
                                    
                                    
-    access(all) fun getVaultTypesInTreasury(): [Type] {
+    access(all) view fun getProjectTokenInfo(): ToucansTokens.TokenInfo {
+      return self.projectTokenInfo
+    }
+
+    access(all) view fun getVaultTypesInTreasury(): [Type] {
       return self.treasury.keys
     }
 
     // Returns nil if the requested type doesn't exist in the treasury
-    access(all) fun getVaultBalanceInTreasury(vaultType: Type): UFix64? {
+    access(all) view fun getVaultBalanceInTreasury(vaultType: Type): UFix64? {
       return self.treasury[vaultType]?.balance
     }
 
-    access(all) fun getCollectionTypesInTreasury(): [Type] {
-      return self.borrowNFTTreasury()?.keys ?? []
+    access(all) fun getCollectionTypesInTreasury(): &[Type] {
+      return self.borrowNFTTreasury()?.keys ?? &[]
     }
 
-    access(all) fun getNFTRefs(collectionType: Type): [&NonFungibleToken.NFT] {
-      let ans: [&NonFungibleToken.NFT] = []
+    access(all) fun getNFTRefs(collectionType: Type): [&{NonFungibleToken.NFT}] {
+      let ans: [&{NonFungibleToken.NFT}] = []
       if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
         for id in nftTreasury.getIDs() {
-          ans.append(nftTreasury.borrowNFT(id: id))
+          ans.append(nftTreasury.borrowNFT(id)!)
         }
       }
       return ans
     }
 
-    access(all) fun getCurrentFundingCycleIndex(): Int? {
+    access(all) fun getNFTRefsByIDs(collectionType: Type, ids: [UInt64]): [&{NonFungibleToken.NFT}] {
+      let ans: [&{NonFungibleToken.NFT}] = []
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        for id in ids {
+          ans.append(nftTreasury.borrowNFT(id)!)
+        }
+      }
+      return ans
+    }
+
+    access(all) fun getNFTIDs(collectionType: Type): [UInt64] {
+      if let nftTreasury = self.borrowSpecificNFTTreasuryCollection(type: collectionType) {
+        return nftTreasury.getIDs()
+      }
+      return []
+    }
+
+    access(all) view fun getCurrentFundingCycleIndex(): Int? {
       var i: Int = self.fundingCycles.length - 1
       let timestamp: UFix64 = getCurrentBlock().timestamp
 
@@ -1112,7 +1231,7 @@ access(all) contract Toucans {
     }
 
     // Returns nil if there is no current round
-    access(all) fun getCurrentFundingCycle(): FundingCycle? {
+    access(all) view fun getCurrentFundingCycle(): FundingCycle? {
       let index: Int? = self.getCurrentFundingCycleIndex()
       if index == nil {
         return nil
@@ -1120,29 +1239,29 @@ access(all) contract Toucans {
       return self.fundingCycles[index!]
     }
 
-    access(all) fun getCurrentFundingCycleId(): UInt64? {
+    access(all) view fun getCurrentFundingCycleId(): UInt64? {
       let currentCycle = self.getCurrentFundingCycle()
       return currentCycle?.details?.cycleId
     }
 
     // Returns nil if there is no current round
-    access(all) fun getCurrentIssuanceRate(): UFix64? {
+    access(all) view fun getCurrentIssuanceRate(): UFix64? {
       return self.getCurrentFundingCycle()?.details?.issuanceRate
     }
 
-    access(all) fun getFundingCycle(cycleIndex: UInt64): FundingCycle {
+    access(all) view fun getFundingCycle(cycleIndex: UInt64): FundingCycle {
       return self.fundingCycles[cycleIndex]
     }
 
-    access(all) fun getFundingCycles(): [FundingCycle] {
+    access(all) view fun getFundingCycles(): [FundingCycle] {
       return self.fundingCycles
     }
 
-    access(all) fun getExtra(): {String: AnyStruct} {
+    access(all) view fun getExtra(): {String: AnyStruct} {
       return self.extra
     }
 
-    access(all) fun getCompletedActionIds(): {UInt64: Bool} {
+    access(all) view fun getCompletedActionIds(): {UInt64: Bool} {
       if self.extra["completedActionIds"] == nil {
         return {}
       }
@@ -1150,15 +1269,15 @@ access(all) contract Toucans {
       return self.extra["completedActionIds"]! as! {UInt64: Bool}
     }
 
-    access(all) fun getFunders(): {Address: UFix64} {
+    access(all) view fun getFunders(): {Address: UFix64} {
       return self.funders
     }
 
-    access(all) fun getOverflowBalance(): UFix64 {
+    access(all) view fun getOverflowBalance(): UFix64 {
       return self.overflow.balance
     }
 
-    access(all) fun hasTokenContract(): Bool {
+    access(all) view fun hasTokenContract(): Bool {
       return self.minter.getType() != Type<@DummyMinter>()
     }
 
@@ -1183,35 +1302,34 @@ access(all) contract Toucans {
       return &self.fundingCycles[index!] as &FundingCycle
     }
 
-    access(all) fun borrowManagerPublic(): &Manager{ManagerPublic} {
-      return &self.multiSignManager as &Manager{ManagerPublic}
+    access(all) fun borrowManagerPublic(): &Manager {
+      return &self.multiSignManager as &Manager
     }
 
-    access(self) fun borrowLockTokensManager(): &ToucansLockTokens.Manager? {
-      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
+    access(self) fun borrowLockTokensManager(): auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth(ToucansLockTokens.ManagerOwner) &AnyResource? {
+        return lockTokensManager as! auth(ToucansLockTokens.ManagerOwner) &ToucansLockTokens.Manager
+      }
+      return nil
+    }
+
+    access(all) fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager? {
+      if let lockTokensManager = &self.additions["lockedTokensManager"] as &AnyResource? {
         return lockTokensManager as! &ToucansLockTokens.Manager
       }
       return nil
     }
 
-    access(all) fun borrowLockTokensManagerPublic(): &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}? {
-      if let lockTokensManager = &self.additions["lockedTokensManager"] as auth &AnyResource? {
-        return lockTokensManager as! &ToucansLockTokens.Manager{ToucansLockTokens.ManagerPublic}
+    access(self) fun borrowNFTTreasury(): auth(Mutate) &{Type: {NonFungibleToken.Collection}}? {
+      if let nftTreasury = &self.additions["nftTreasury"] as auth(Mutate) &AnyResource? {
+        return nftTreasury as! auth(Mutate) &{Type: {NonFungibleToken.Collection}}
       }
       return nil
     }
 
-    access(self) fun borrowNFTTreasury(): &{Type: NonFungibleToken.Collection}? {
-      if let nftTreasury = &self.additions["nftTreasury"] as auth &AnyResource? {
-        return nftTreasury as! &{Type: NonFungibleToken.Collection}
-      }
-      return nil
-    }
-
-    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): &NonFungibleToken.Collection? {
-      if let nftTreasury = &self.additions["nftTreasury"] as auth &AnyResource? {
-        let casted = nftTreasury as! &{Type: NonFungibleToken.Collection}
-        return &casted[type] as &NonFungibleToken.Collection?
+    access(self) fun borrowSpecificNFTTreasuryCollection(type: Type): &{NonFungibleToken.Collection}? {
+      if let nftTreasury = self.borrowNFTTreasury() {
+        return nftTreasury[type]
       }
       return nil
     }
@@ -1233,14 +1351,14 @@ access(all) contract Toucans {
         ToucansTokens.getTokenInfo(tokenType: paymentTokenInfo.tokenType) != nil: "Unsupported token type for payment."
       }
 
-      let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&FungibleToken>(name: paymentTokenInfo.contractName)!
-      let emptyPaymentVault <- paymentContract.createEmptyVault()
+      let paymentContract = getAccount(paymentTokenInfo.contractAddress).contracts.borrow<&{FungibleToken}>(name: paymentTokenInfo.contractName)!
+      let emptyPaymentVault <- paymentContract.createEmptyVault(vaultType: paymentTokenInfo.tokenType)
 
       // no new token created
       if minter.getType() == Type<@DummyMinter>() {
         self.treasury <- {emptyPaymentVault.getType(): <- emptyPaymentVault}
       } else {
-        let initialVault: @FungibleToken.Vault <- minter.mint(amount: initialTreasurySupply)
+        let initialVault: @{FungibleToken.Vault} <- minter.mint(amount: initialTreasurySupply)
         assert(initialVault.getType() == projectTokenInfo.tokenType, message: "The passed in minter did not mint the correct token type.")
         self.treasury <- {projectTokenInfo.tokenType: <- initialVault, emptyPaymentVault.getType(): <- emptyPaymentVault}
       }
@@ -1266,33 +1384,19 @@ access(all) contract Toucans {
       self.purchasing = true
       self.additions <- {
         "lockedTokensManager": <- ToucansLockTokens.createManager(),
-        "nftTreasury": <- ({} as @{Type: NonFungibleToken.Collection})
+        "nftTreasury": <- ({} as @{Type: {NonFungibleToken.Collection}})
       }
-      self.overflow <- paymentContract.createEmptyVault()
+      self.overflow <- paymentContract.createEmptyVault(vaultType: paymentTokenInfo.tokenType)
       self.multiSignManager <- create Manager(_initialSigners: initialSigners, _initialThreshold: initialThreshold)
     }
-
-    destroy() {
-      pre {
-        false: "Disabled for now."
-      }
-      destroy self.treasury
-      destroy self.minter
-      destroy self.overflow
-      destroy self.multiSignManager
-      destroy self.additions
-    }
   }
 
-  access(all) resource interface CollectionPublic {
-    access(all) fun getProjectIds(): [String]
-    access(all) fun borrowProjectPublic(projectId: String): &Project{ProjectPublic}?
-  }
+  access(all) resource interface CollectionPublic {}
 
   access(all) resource Collection: CollectionPublic {
-    access(all) let projects: @{String: Project}
+    access(self) let projects: @{String: Project}
 
-    access(all) fun createProjectNoToken(
+    access(CollectionOwner) fun createProjectNoToken(
       projectId: String,
       paymentTokenInfo: ToucansTokens.TokenInfo,
       initialAllowedNFTCollections: [String],
@@ -1320,7 +1424,7 @@ access(all) contract Toucans {
       )
     }
 
-    access(all) fun createProject(
+    access(CollectionOwner) fun createProject(
       projectTokenInfo: ToucansTokens.TokenInfo, 
       paymentTokenInfo: ToucansTokens.TokenInfo,
       minter: @{Minter},
@@ -1356,25 +1460,24 @@ access(all) contract Toucans {
       )
     }
 
-    access(all) fun borrowProject(projectId: String): &Project? {
+    access(all) fun borrowProjectPublic(projectId: String): &Project? {
       return &self.projects[projectId] as &Project?
     }
 
-    access(all) fun getProjectIds(): [String] {
+    access(all) view fun getProjectIds(): [String] {
       return self.projects.keys
     }
 
-    access(all) fun borrowProjectPublic(projectId: String): &Project{ProjectPublic}? {
-      return &self.projects[projectId] as &Project{ProjectPublic}?
+    access(CollectionOwner) fun borrowProject(projectId: String): auth(ProjectOwner) &Project? {
+      return &self.projects[projectId] as auth(ProjectOwner) &Project?
     }
 
     // use this function to vote on other projects proposals
-    access(all) fun voteOnProjectAction(projectOwner: Address, projectId: String, actionUUID: UInt64, vote: Bool) {
-      let collection: &Collection{CollectionPublic} = getAccount(projectOwner).getCapability(Toucans.CollectionPublicPath)
-                    .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+    access(CollectionOwner) fun voteOnProjectAction(projectOwner: Address, projectId: String, actionUUID: UInt64, vote: Bool) {
+      let collection: &Collection = getAccount(projectOwner).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                     ?? panic("A DAOTreasury doesn't exist here.")
-      let project: &Project{ProjectPublic} = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
-      let manager: &Manager{ManagerPublic} = project.borrowManagerPublic()
+      let project: &Project = collection.borrowProjectPublic(projectId: projectId) ?? panic("Project does not exist.")
+      let manager: &Manager = project.borrowManagerPublic()
       let action: &MultiSignAction = manager.borrowAction(actionUUID: actionUUID)
       action.vote(acctAddress: self.owner!.address, vote: vote)
 
@@ -1383,12 +1486,12 @@ access(all) contract Toucans {
       }
     }
 
-    init() {
-      self.projects <- {}
+    access(CollectionOwner) fun deleteProject(projectId: String) {
+      destroy self.projects.remove(key: projectId)
     }
 
-    destroy() {
-      destroy self.projects
+    init() {
+      self.projects <- {}
     }
   }
 
@@ -1415,6 +1518,10 @@ access(all) contract Toucans {
       access(self) let votes: {Address: Bool}
       access(all) let threshold: UInt64
 
+      access(all) view fun getAction(): {ToucansActions.Action} {
+        return self.action
+      }
+
       access(contract) fun vote(acctAddress: Address, vote: Bool) {
         pre {
           self.signers.contains(acctAddress): "This person cannot vote."
@@ -1422,16 +1529,16 @@ access(all) contract Toucans {
         self.votes[acctAddress] = vote
       }
 
-      access(all) fun getSigners(): [Address] {
+      access(all) view fun getSigners(): [Address] {
           return self.signers
       }
 
       // Only returns people who have actually voted
-      access(all) fun getVotes(): {Address: Bool} {
+      access(all) view fun getVotes(): {Address: Bool} {
         return self.votes
       }
 
-      access(all) fun getAccepted(): UInt64 {
+      access(all) view fun getAccepted(): UInt64 {
         var count: UInt64 = 0
         for voter in self.votes.keys {
             if self.votes[voter]! {
@@ -1441,7 +1548,7 @@ access(all) contract Toucans {
         return count
       }
 
-      access(all) fun getDeclined(): UInt64 {
+      access(all) view fun getDeclined(): UInt64 {
         var count: UInt64 = 0
         for voter in self.votes.keys {
             if !self.votes[voter]! {
@@ -1451,7 +1558,7 @@ access(all) contract Toucans {
         return count
       }
 
-      access(all) fun getActionState(): ActionState {
+      access(all) view fun getActionState(): ActionState {
         // If this action is to add a signer,
         // and the person being added declined it,
         // it is automatically declined.
@@ -1480,14 +1587,7 @@ access(all) contract Toucans {
       }
   }
 
-  access(all) resource interface ManagerPublic {
-      access(all) var threshold: UInt64
-      access(all) fun borrowAction(actionUUID: UInt64): &MultiSignAction
-      access(all) fun getActionState(actionUUID: UInt64): ActionState
-      access(all) fun readyToFinalize(actionUUID: UInt64): Bool
-      access(all) fun getIDs(): [UInt64]
-      access(all) fun getSigners(): [Address]
-  }
+  access(all) resource interface ManagerPublic {}
   
   access(all) resource Manager: ManagerPublic {
     access(all) var threshold: UInt64
@@ -1514,12 +1614,12 @@ access(all) contract Toucans {
       self.actions[newAction.uuid] <-! newAction
     }
 
-    access(all) fun getActionState(actionUUID: UInt64): ActionState {
+    access(all) view fun getActionState(actionUUID: UInt64): ActionState {
       let actionRef: &MultiSignAction = (&self.actions[actionUUID] as &MultiSignAction?)!
       return actionRef.getActionState()
     }
 
-    access(all) fun readyToFinalize(actionUUID: UInt64): Bool {
+    access(all) view fun readyToFinalize(actionUUID: UInt64): Bool {
       let actionState: ActionState = self.getActionState(actionUUID: actionUUID)
       return actionState != ActionState.PENDING
     }
@@ -1566,11 +1666,11 @@ access(all) contract Toucans {
       return (&self.actions[actionUUID] as &MultiSignAction?)!
     }
 
-    access(all) fun getIDs(): [UInt64] {
+    access(all) view fun getIDs(): [UInt64] {
       return self.actions.keys
     }
 
-    access(all) fun getSigners(): [Address] {
+    access(all) view fun getSigners(): [Address] {
       return self.signers
     }
 
@@ -1585,10 +1685,6 @@ access(all) contract Toucans {
       self.actions <- {}
       self.threshold = _initialThreshold
       self.assertValidTreasury()
-    }
-
-    destroy() {
-      destroy self.actions
     }
   }
       

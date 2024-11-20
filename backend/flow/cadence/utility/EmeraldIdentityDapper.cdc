@@ -65,9 +65,9 @@ access(all) contract EmeraldIdentityDapper {
             emit EmeraldIDRemoved(account: account, discordID: discordID)
         }
 
-        access(all) fun createAdministrator(): Capability<&Administrator> {
-            return EmeraldIdentityDapper.account.getCapability<&Administrator>(EmeraldIdentityDapper.AdministratorPrivatePath)
-        }
+        // access(all) fun createAdministrator(): Capability<&Administrator> {
+        //     return EmeraldIdentityDapper.account.getCapability<&Administrator>(EmeraldIdentityDapper.AdministratorPrivatePath)
+        // }
 
         init() {
             self.accountToDiscord = {}
@@ -77,13 +77,13 @@ access(all) contract EmeraldIdentityDapper {
 
     /*** USE THE BELOW FUNCTIONS FOR SECURE VERIFICATION OF ID ***/ 
 
-    access(all) fun getDiscordFromAccount(account: Address): String?  {
-        let admin = EmeraldIdentityDapper.account.borrow<&Administrator>(from: EmeraldIdentityDapper.AdministratorStoragePath)!
+    access(all) view fun getDiscordFromAccount(account: Address): String?  {
+        let admin = EmeraldIdentityDapper.account.storage.borrow<&Administrator>(from: EmeraldIdentityDapper.AdministratorStoragePath)!
         return admin.accountToDiscord[account]
     }
 
-    access(all) fun getAccountFromDiscord(discordID: String): Address? {
-        let admin = EmeraldIdentityDapper.account.borrow<&Administrator>(from: EmeraldIdentityDapper.AdministratorStoragePath)!
+    access(all) view fun getAccountFromDiscord(discordID: String): Address? {
+        let admin = EmeraldIdentityDapper.account.storage.borrow<&Administrator>(from: EmeraldIdentityDapper.AdministratorStoragePath)!
         return admin.discordToAccount[discordID]
     }
 
@@ -91,7 +91,6 @@ access(all) contract EmeraldIdentityDapper {
         self.AdministratorStoragePath = /storage/EmeraldIDDapperAdministrator
         self.AdministratorPrivatePath = /private/EmeraldIDDapperAdministrator
 
-        self.account.save(<- create Administrator(), to: EmeraldIdentityDapper.AdministratorStoragePath)
-        self.account.link<&Administrator>(EmeraldIdentityDapper.AdministratorPrivatePath, target: EmeraldIdentityDapper.AdministratorStoragePath)
+        self.account.storage.save(<- create Administrator(), to: EmeraldIdentityDapper.AdministratorStoragePath)
     }
 }

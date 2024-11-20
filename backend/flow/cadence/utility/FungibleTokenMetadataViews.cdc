@@ -1,16 +1,18 @@
-import FungibleToken from "./FungibleToken.cdc"
+import FungibleToken from "../utility/FungibleToken.cdc"
 import MetadataViews from "./MetadataViews.cdc"
+import ViewResolver from "./ViewResolver.cdc"
 
 /// This contract implements the metadata standard proposed
 /// in FLIP-1087.
 /// 
-/// Ref: https://github.com/onflow/flow/blob/master/flips/20220811-fungible-tokens-metadata.md
+/// Ref: https://github.com/onflow/flips/blob/main/application/20220811-fungible-tokens-metadata.md
 /// 
 /// Structs and resources can implement one or more
 /// metadata types, called views. Each view type represents
 /// a different kind of metadata.
 ///
 access(all) contract FungibleTokenMetadataViews {
+
     /// FTView wraps FTDisplay and FTVaultData, and is used to give a complete 
     /// picture of a Fungible Token. Most Fungible Token contracts should 
     /// implement this view.
@@ -18,7 +20,7 @@ access(all) contract FungibleTokenMetadataViews {
     access(all) struct FTView {
         access(all) let ftDisplay: FTDisplay?     
         access(all) let ftVaultData: FTVaultData?
-        init(
+        view init(
             ftDisplay: FTDisplay?,
             ftVaultData: FTVaultData?
         ) {
@@ -32,7 +34,7 @@ access(all) contract FungibleTokenMetadataViews {
     /// @param viewResolver: A reference to the resolver resource
     /// @return A FTView struct
     ///
-    access(all) fun getFTView(viewResolver: &{MetadataViews.Resolver}): FTView {
+    access(all) fun getFTView(viewResolver: &{ViewResolver.Resolver}): FTView {
         let maybeFTView = viewResolver.resolveView(Type<FTView>())
         if let ftView = maybeFTView {
             return ftView as! FTView
@@ -74,7 +76,7 @@ access(all) contract FungibleTokenMetadataViews {
         /// Possible keys may be "instagram", "twitter", "discord", etc.
         access(all) let socials: {String: MetadataViews.ExternalURL}
 
-        init(
+        view init(
             name: String,
             symbol: String,
             description: String,
@@ -96,7 +98,7 @@ access(all) contract FungibleTokenMetadataViews {
     /// @param viewResolver: A reference to the resolver resource
     /// @return An optional FTDisplay struct
     ///
-    access(all) fun getFTDisplay(_ viewResolver: &{MetadataViews.Resolver}): FTDisplay? {
+    access(all) fun getFTDisplay(_ viewResolver: &{ViewResolver.Resolver}): FTDisplay? {
         if let maybeDisplayView = viewResolver.resolveView(Type<FTDisplay>()) {
             if let displayView = maybeDisplayView as? FTDisplay {
                 return displayView
@@ -119,48 +121,35 @@ access(all) contract FungibleTokenMetadataViews {
         /// Public path which must be linked to expose the balance and resolver public capabilities.
         access(all) let metadataPath: PublicPath
 
-        /// Private path which should be linked to expose the provider capability to withdraw funds 
-        /// from the vault.
-        access(all) let providerPath: PrivatePath
-
         /// Type that should be linked at the `receiverPath`. This is a restricted type requiring 
         /// the `FungibleToken.Receiver` interface.
         access(all) let receiverLinkedType: Type
 
         /// Type that should be linked at the `receiverPath`. This is a restricted type requiring 
-        /// the `FungibleToken.Balance` and `MetadataViews.Resolver` interfaces.
+        /// the `ViewResolver.Resolver` interfaces.
         access(all) let metadataLinkedType: Type
-
-        /// Type that should be linked at the aforementioned private path. This 
-        /// is normally a restricted type with at a minimum the `FungibleToken.Provider` interface.
-        access(all) let providerLinkedType: Type
 
         /// Function that allows creation of an empty FT vault that is intended
         /// to store the funds.
-        access(all) let createEmptyVault: ((): @FungibleToken.Vault)
+        access(all) let createEmptyVault: fun(): @{FungibleToken.Vault}
 
-        init(
+        view init(
             storagePath: StoragePath,
             receiverPath: PublicPath,
             metadataPath: PublicPath,
-            providerPath: PrivatePath,
             receiverLinkedType: Type,
             metadataLinkedType: Type,
-            providerLinkedType: Type,
-            createEmptyVaultFunction: ((): @FungibleToken.Vault)
+            createEmptyVaultFunction: fun(): @{FungibleToken.Vault}
         ) {
             pre {
                 receiverLinkedType.isSubtype(of: Type<&{FungibleToken.Receiver}>()): "Receiver public type must include FungibleToken.Receiver."
-                metadataLinkedType.isSubtype(of: Type<&{FungibleToken.Balance, MetadataViews.Resolver}>()): "Metadata public type must include FungibleToken.Balance and MetadataViews.Resolver interfaces."
-                providerLinkedType.isSubtype(of: Type<&{FungibleToken.Provider}>()): "Provider type must include FungibleToken.Provider interface."
+                metadataLinkedType.isSubtype(of: Type<&{FungibleToken.Vault}>()): "Metadata linked type must be a fungible token vault"
             }
             self.storagePath = storagePath
             self.receiverPath = receiverPath
             self.metadataPath = metadataPath
-            self.providerPath = providerPath
             self.receiverLinkedType = receiverLinkedType
             self.metadataLinkedType = metadataLinkedType
-            self.providerLinkedType = providerLinkedType
             self.createEmptyVault = createEmptyVaultFunction
         }
     }
@@ -170,7 +159,7 @@ access(all) contract FungibleTokenMetadataViews {
     /// @param viewResolver: A reference to the resolver resource
     /// @return A optional FTVaultData struct
     ///
-    access(all) fun getFTVaultData(_ viewResolver: &{MetadataViews.Resolver}): FTVaultData? {
+    access(all) fun getFTVaultData(_ viewResolver: &{ViewResolver.Resolver}): FTVaultData? {
         if let view = viewResolver.resolveView(Type<FTVaultData>()) {
             if let v = view as? FTVaultData {
                 return v
@@ -179,4 +168,13 @@ access(all) contract FungibleTokenMetadataViews {
         return nil
     }
 
+    /// View to expose the total supply of the Vault's token
+    access(all) struct TotalSupply {
+        access(all) let supply: UFix64
+
+        view init(totalSupply: UFix64) {
+            self.supply = totalSupply
+        }
+    }
 }
+ 

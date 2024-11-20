@@ -31,6 +31,7 @@
 	const connect = async () => {
 		logIn().then(async () => {
 			const userExists = await checkUser($user as CurrentUserObject);
+			console.log({ userExists });
 
 			if (userExists) {
 				console.log('User exists');

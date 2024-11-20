@@ -257,11 +257,11 @@ async function refillUserFunding() {
 
 // refillUserFunding();
 
-// gatherTrendingProjects();
-cron.schedule("*/10 * * * *", () => {
-  gatherTrendingProjects();
-  console.log("executing ranking task");
-});
+gatherTrendingProjects();
+// cron.schedule("*/10 * * * *", () => {
+//   gatherTrendingProjects();
+//   console.log("executing ranking task");
+// });
 
 async function saveFlowTokenPrice() {
   const tokenPrice = await fetchCoinMarketCapFlowPrice();
@@ -272,7 +272,7 @@ async function saveFlowTokenPrice() {
     .eq("id", 1);
 }
 
-cron.schedule("*/5 * * * *", () => {
-  saveFlowTokenPrice();
-  console.log("executing price task");
-});
+// cron.schedule("*/5 * * * *", () => {
+//   saveFlowTokenPrice();
+//   console.log("executing price task");
+// });

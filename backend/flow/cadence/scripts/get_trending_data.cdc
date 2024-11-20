@@ -9,9 +9,8 @@ import SwapFactory from "../utility/SwapFactory.cdc"
 access(all) fun main(contractNames: [String], contractAddresses: [Address]): {String: Info} {
   let answer: {String: Info} = {}
   for i, contractName in contractNames {
-    let contract = getAccount(contractAddresses[i]).contracts.borrow<&FungibleToken>(name: contractName)!
-    let projectCollection = getAccount(contractAddresses[i]).getCapability(Toucans.CollectionPublicPath)
-                .borrow<&Toucans.Collection{Toucans.CollectionPublic}>()
+    let contract = getAccount(contractAddresses[i]).contracts.borrow<&{FungibleToken}>(name: contractName)!
+    let projectCollection = getAccount(contractAddresses[i]).capabilities.borrow<&Toucans.Collection>(Toucans.CollectionPublicPath)
                 ?? panic("User does not have a Toucans Collection")
 
     let project = projectCollection.borrowProjectPublic(projectId: contractName)!
@@ -25,8 +24,7 @@ access(all) fun main(contractNames: [String], contractAddresses: [Address]): {St
     ) {
       // GET PRICE
       let pairPublicRef = getAccount(pairAddress)
-            .getCapability<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
-            .borrow()
+            .capabilities.borrow<&{SwapInterfaces.PairPublic}>(SwapConfig.PairPublicPath)
             ?? panic("cannot borrow reference to PairPublic resource")
 
       pairInfo = pairPublicRef.getPairInfo()

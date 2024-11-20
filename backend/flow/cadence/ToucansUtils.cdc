@@ -4,6 +4,10 @@ import NFTCatalog from "./utility/NFTCatalog.cdc"
 import NonFungibleToken from "./utility/NonFungibleToken.cdc"
 import FIND from "./utility/FIND.cdc"
 import EmeraldIdentity from "./utility/EmeraldIdentity.cdc"
+import SwapInterfaces from "./utility/SwapInterfaces.cdc"
+import LiquidStaking from "./utility/LiquidStaking.cdc"
+import FlowToken from "./utility/FlowToken.cdc"
+import stFlowToken from "./utility/stFlowToken.cdc"
 
 access(all) contract ToucansUtils {
   access(all) fun ownsNFTFromCatalogCollectionIdentifier(collectionIdentifier: String, user: Address): Bool {
@@ -18,7 +22,7 @@ access(all) contract ToucansUtils {
       }
       assert(addresses.contains(user), message: "Should always be true. Just making sure so the user doesn't get punished accidentally ;)")
       for address in addresses {
-        if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).getCapability(publicPath).borrow<&{NonFungibleToken.CollectionPublic}>() {
+        if let collection: &{NonFungibleToken.CollectionPublic} = getAccount(address).capabilities.borrow<&{NonFungibleToken.CollectionPublic}>(publicPath) {
           let identifier: String = collection.getType().identifier
           if identifier == constructedIdentifier && collection.getIDs().length > 0 {
             return true
@@ -30,13 +34,13 @@ access(all) contract ToucansUtils {
     return false
   }
 
-  access(all) fun depositTokensToAccount(funds: @FungibleToken.Vault, to: Address, publicPath: PublicPath) {
-    let vault = getAccount(to).getCapability(publicPath).borrow<&{FungibleToken.Receiver}>() 
+  access(all) fun depositTokensToAccount(funds: @{FungibleToken.Vault}, to: Address, publicPath: PublicPath) {
+    let vault = getAccount(to).capabilities.borrow<&{FungibleToken.Receiver}>(publicPath) 
               ?? panic("Account does not have a proper Vault set up.")
     vault.deposit(from: <- funds)
   }
 
-  access(all) fun rangeFunc(_ start: Int, _ end: Int, _ f : ((Int):Void) ) {
+  access(all) fun rangeFunc(_ start: Int, _ end: Int, _ f : (fun (Int): Void) ) {
     var current = start
     while current < end{
         f(current)
@@ -92,5 +96,51 @@ access(all) contract ToucansUtils {
     let address: Address = self.stringToAddress(stringAddress: identifier.slice(from: 2, upTo: 18))
     let contractName: String = identifier.slice(from: 19, upTo: identifier.length - 11)
     return [address, contractName]
+  }
+
+  access(all) fun getEstimatedOut(amountIn: UFix64, tokenInKey: String): UFix64 {
+    // normal xyk pool
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    // stableswap pool with most liquidity
+    let poolCapStable = getAccount(0xc353b9d685ec427d).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    
+    let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
+
+    if tokenInKey == "A.1654653399040a61.FlowToken" {
+      let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
+      return (estimatedSwapOut > estimatedStakeOut) ? estimatedSwapOut : estimatedStakeOut
+    }
+
+    return estimatedSwapOut
+  }
+
+  access(all) fun swapTokensWithPotentialStake(inVault: @{FungibleToken.Vault}, tokenInKey: String): @{FungibleToken.Vault} {
+    let amountIn = inVault.balance
+    // normal xyk pool
+    let poolCapV1 = getAccount(0x396c0cda3302d8c5).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    let estimatedSwapOutV1 = poolCapV1.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+    // stableswap pool with most liquidity
+    let poolCapStable = getAccount(0xc353b9d685ec427d).capabilities.borrow<&{SwapInterfaces.PairPublic}>(/public/increment_swap_pair)!
+    let estimatedSwapOutStable = poolCapStable.getAmountOut(amountIn: amountIn, tokenInKey: tokenInKey)
+
+    let estimatedSwapPoolCap = (estimatedSwapOutStable > estimatedSwapOutV1) ? poolCapStable : poolCapV1
+    
+    let estimatedSwapOut = (estimatedSwapOutStable > estimatedSwapOutV1) ? estimatedSwapOutStable : estimatedSwapOutV1
+    let estimatedStakeOut = LiquidStaking.calcStFlowFromFlow(flowAmount: amountIn)
+
+    if tokenInKey == "A.1654653399040a61.FlowToken" && estimatedStakeOut > estimatedSwapOut {
+      return <- LiquidStaking.stake(flowVault: <- (inVault as! @FlowToken.Vault))
+    }
+
+    return <- estimatedSwapPoolCap.swap(vaultIn: <- inVault, exactAmountOut: nil)
+  }
+
+  access(all) fun getNFTCatalogCollectionIdentifierFromCollectionIdentifier(collectionIdentifier: String): String {
+    let nftTypeIdentifier: String = collectionIdentifier.slice(from: 0, upTo: collectionIdentifier.length - 10).concat("NFT")
+    let collectionsForType: {String: Bool} = NFTCatalog.getCollectionsForType(nftTypeIdentifier: nftTypeIdentifier) ?? panic("This collection is not supported in the NFTCatalog.")
+    let collectionIdentifier: String = collectionsForType.keys[0]
+    return collectionIdentifier
   }
 }
