@@ -1,5 +1,4 @@
 import FungibleToken from "../utility/FungibleToken.cdc"
-import FiatToken from "../utility/FiatToken.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTokens from "../ToucansTokens.cdc"
@@ -17,18 +16,6 @@ transaction(
 ) {
 
   prepare(signer: auth(Storage, Capabilities) &Account) {
-    /**************************************************************************************/
-    /********************************** Setup USDC if not *********************************/
-    /**************************************************************************************/
-    if signer.storage.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
-      signer.storage.save(<- FiatToken.createEmptyVault(vaultType: Type<@FiatToken.Vault>()), to: /storage/USDCVault)
-      let receiverCap = signer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
-      signer.capabilities.publish(receiverCap, at: /public/USDCVaultReceiver)
-
-      let publicCap = signer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
-      signer.capabilities.publish(publicCap, at: /public/USDCVaultBalance)
-    }
-
     // Blank empty for now
     let extra: {String: AnyStruct} = {}
 

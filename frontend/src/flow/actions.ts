@@ -13,7 +13,6 @@ import {
 
 // Transactions
 import rawExampleTokenCode from './cadence/ExampleToken.cdc?raw';
-import rawCadence1ExampleTokenCode from './cadence/utility/c1.0/ExampleToken.cdc?raw';
 import deployExampleTokenTx from './cadence/transactions/deploy_contract.cdc?raw';
 import deployDAOTx from './cadence/transactions/deploy_dao.cdc?raw';
 import fundProjectTx from './cadence/transactions/fund_project.cdc?raw';
