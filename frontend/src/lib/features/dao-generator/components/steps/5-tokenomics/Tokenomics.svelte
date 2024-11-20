@@ -22,7 +22,7 @@
 </script>
 
 <form in:fly={{ y: 30, duration: 400 }} class="column-2" autocomplete="off">
-	<div class="payment-currency column-2">
+	<!-- <div class="payment-currency column-2">
 		<div class="row-2 align-center">
 			<label for="currencies">Payment Currency</label>
 			<TooltipIcon tooltip={GLOSSARY.paymentCurrency} width={0.75} />
@@ -31,7 +31,7 @@
 			currencies={[ECurrencies.FLOW, ECurrencies.USDC]}
 			bind:value={$daoGeneratorData.tokenomics.paymentCurrency}
 		/>
-	</div>
+	</div> -->
 	<label
 		for="max-supply"
 		class="switch"

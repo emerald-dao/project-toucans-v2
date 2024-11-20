@@ -1,5 +1,4 @@
 import FungibleToken from "../utility/FungibleToken.cdc"
-import FiatToken from "../utility/FiatToken.cdc"
 import FlowToken from "../utility/FlowToken.cdc"
 import Toucans from "../Toucans.cdc"
 import ToucansTokens from "../ToucansTokens.cdc"
@@ -24,18 +23,6 @@ transaction(
 ) {
 
   prepare(deployer: auth(Storage, Capabilities, Contracts) &Account) {
-    /**************************************************************************************/
-    /********************************** Setup USDC if not *********************************/
-    /**************************************************************************************/
-    if deployer.storage.borrow<&FiatToken.Vault>(from: /storage/USDCVault) == nil {
-      deployer.storage.save(<- FiatToken.createEmptyVault(vaultType: Type<@FiatToken.Vault>()), to: /storage/USDCVault)
-      let receiverCap = deployer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
-      deployer.capabilities.publish(receiverCap, at: /public/USDCVaultReceiver)
-
-      let publicCap = deployer.capabilities.storage.issue<&FiatToken.Vault>(/storage/USDCVault)
-      deployer.capabilities.publish(publicCap, at: /public/USDCVaultBalance)
-    }
-
     // Blank empty for now
     let extra: {String: AnyStruct} = {
       "initialAllowedNFTCollections": initialAllowedNFTCollections
