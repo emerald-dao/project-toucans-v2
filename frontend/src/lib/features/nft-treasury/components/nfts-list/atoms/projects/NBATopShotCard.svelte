@@ -18,7 +18,7 @@
 <style lang="scss">
 	.content-wrapper {
 		width: 100%;
-		padding: var(--space-4) var(--space-2);
+		padding: var(--space-4) var(--space-4);
 		border-top: 1px solid var(--clr-neutral-badge);
 		display: flex;
 		flex-direction: column;
@@ -27,6 +27,7 @@
 		.heading {
 			text-align: left;
 			font-size: var(--font-size-2);
+			padding-bottom: var(--space-2);
 		}
 
 		.text {

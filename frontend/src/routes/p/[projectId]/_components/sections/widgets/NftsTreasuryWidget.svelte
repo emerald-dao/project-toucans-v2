@@ -6,6 +6,7 @@
 	import type { DAOProject } from '$lib/types/dao-project/dao-project.interface';
 	import Icon from '@iconify/svelte';
 	import DownloadNftTreasury from '../../../../../admin/[projectId]/_components/stats-blocks/atoms/DownloadNFTTreasury.svelte';
+	import { page } from '$app/stores';
 
 	export let pageSize = 5;
 	export let hasTitle = true;
@@ -30,8 +31,6 @@
 	} = {};
 
 	async function fetchUserNFTs(collectionIdentifier: string) {
-		console.log('Reloading!');
-
 		if (!storedUserNFTs[collectionIdentifier]) {
 			storedUserNFTs[collectionIdentifier] = await getProjectSpecificNFTTreasury(
 				daoData.generalInfo.owner,
@@ -46,10 +45,19 @@
 {#if projectNFTsCollections.length > 0}
 	<div class="column-3">
 		{#if hasTitle}
-			<span class="title">
-				<Icon icon="tabler:hexagon" />
-				NFT Treasury
-			</span>
+			<div class="row-space-between">
+				<span class="title">
+					<Icon icon="tabler:hexagon" />
+					NFT Treasury
+				</span>
+				<a
+					class="header-link row-1 align-center"
+					href={`/p/${$page.params.projectId}/nft-treasury`}
+				>
+					See all
+					<Icon icon="tabler:arrow-right" />
+				</a>
+			</div>
 		{/if}
 		<div class="card">
 			<div class="column-3">
@@ -61,11 +69,11 @@
 					<span class="small"><i>Loading...</i></span>
 				{:then userCatalogNFTs}
 					<NFTsList
-						{selectedCollection}
 						NFTs={userCatalogNFTs}
 						{pageSize}
 						{nftUuidOwnerMap}
 						sortNFTs={true}
+						{selectedCollection}
 					/>
 					{#if downloadable}
 						<DownloadNftTreasury

@@ -2,21 +2,26 @@
 	import Icon from '@iconify/svelte';
 
 	export let amountOfItems: number;
-
 	export let pageSize = 6;
-
 	export let pageStart = 0;
 	export let pageEnd = pageSize;
+	export let scrollToTopOnChange: boolean = false;
 
 	$: currentPage = Math.ceil(pageEnd / pageSize);
 
 	const nextPage = () => {
 		pageStart += pageSize;
 		pageEnd += pageSize;
+		if (scrollToTopOnChange) {
+			window.scrollTo(0, 0);
+		}
 	};
 	const prevPage = () => {
 		pageStart -= pageSize;
 		pageEnd -= pageSize;
+		if (scrollToTopOnChange) {
+			window.scrollTo(0, 0);
+		}
 	};
 
 	$: if (amountOfItems <= pageStart) {

@@ -2,25 +2,22 @@
 	import UserAvatar from '$components/atoms/user/UserAvatar.svelte';
 	import Image from '$lib/components/Image.svelte';
 	import type { Nft } from '$lib/features/nft-treasury/types/nft.interface';
-	import Icon from '@iconify/svelte';
 	import NFTCardDetails from './NFTCardDetails.svelte';
-	import NBATopShot from './projects/NBATopShot.svelte';
-	import NFLAllDay from './projects/NFLAllDay.svelte';
+	import NBATopShotCard from './projects/NBATopShotCard.svelte';
+	import NFLAllDayCard from './projects/NFLAllDayCard.svelte';
 
 	export let nft: Nft;
 	export let isSelected: boolean;
 	export let clickable: boolean;
-	export let selectedCollection: string;
 	export let donatedBy: string | undefined;
+	export let nftTreasuryPage: boolean = false;
+	export let selectedCollection: string | null = null;
+
+	let resolvedCollectionId = selectedCollection || nft.collectionId;
 
 	let imgSrc = nft.thumbnail.startsWith('ipfs://')
 		? `https://ipfs.io/ipfs/${nft.thumbnail.slice(7)}`
 		: nft.thumbnail;
-
-	let cardDetailComponents = {
-		NFLAllDay: NFLAllDay,
-		NBATopShot: NBATopShot
-	};
 </script>
 
 <div class="nft-wrapper" class:clickable class:selected={isSelected} on:click>
@@ -30,19 +27,18 @@
 		</div>
 	{/if}
 	<div class="image-wrapper">
-		<Image src={imgSrc} alt="NFT" width="100%" height="120px" />
+		<Image src={imgSrc} alt="NFT" width="100%" height={nftTreasuryPage ? '200px' : '150px'} />
 	</div>
-	<svelte:component
-		this={cardDetailComponents[selectedCollection] || NFTCardDetails}
-		{nft}
-		{donatedBy}
-	/>
+	{#if resolvedCollectionId === 'NBATopShot'}
+		<NBATopShotCard {nft} />
+	{:else if resolvedCollectionId === 'NFLAllDay'}
+		<NFLAllDayCard {nft} />
+	{:else}
+		<NFTCardDetails {nft} />
+	{/if}
 	{#if donatedBy}
 		<div class="donated-by">
-			<p class="xsmall">
-				<!-- <Icon icon="tabler:gift" /> -->
-				Donated by
-			</p>
+			<p class="xsmall">Donated by</p>
 			<UserAvatar
 				address={donatedBy}
 				imageSize="33px"
@@ -67,13 +63,18 @@
 
 		.donated-by {
 			width: 100%;
-			padding: var(--space-1) var(--space-2);
+			padding-inline: var(--space-4);
+			padding-block: var(--space-1) var(--space-4);
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-1);
+
 			p {
-				font-style: italic;
 				display: flex;
 				justify-content: left;
 				align-items: center;
 				gap: var(--space-1);
+				color: var(--clr-text-off);
 			}
 		}
 
